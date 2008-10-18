@@ -4,7 +4,7 @@
 AC_PREREQ(2.59)
 AC_INIT([BlackFiveImagingLibrary], [0.1.0], [blackfive@fakenhamweb.co.uk])
 AC_CONFIG_AUX_DIR([scripts])
-AC_CONFIG_SRCDIR([test.cpp])
+AC_CONFIG_SRCDIR([threadtest.cpp])
 AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([1.9 foreign])
 

@@ -732,7 +732,7 @@ PACKAGE_VERSION='0.1.0'
 PACKAGE_STRING='BlackFiveImagingLibrary 0.1.0'
 PACKAGE_BUGREPORT='blackfive@fakenhamweb.co.uk'
 
-ac_unique_file="test.cpp"
+ac_unique_file="threadtest.cpp"
 gt_needs=
 # Factoring default headers for most tests.
 ac_includes_default="\
