@@ -1,0 +1,5 @@
+2008-10-15  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): New variable.
+	(EXTRA_DIST): Add m4/ChangeLog.
+

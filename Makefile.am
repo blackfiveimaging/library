@@ -1,0 +1,69 @@
+# Makefile.am
+# RL 28/11/04
+
+SUBDIRS = po support imagesource stpui_widgets stp_support pixbufthumbnail profilemanager
+
+localedir=$(datadir)/locale
+
+AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -I./splashscreen -I./profilemanager -I./effects \
+	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
+
+bin_PROGRAMS = profileuitest mkrgbprofile mklabprofile mkgreyprofile \
+				composite imgsrctest \
+				jpegcheck pvtest threadtest \
+				printqueuetest stpuitest
+
+profileuitest_SOURCES = profileuitest.cpp
+mkrgbprofile_SOURCES = mkrgbprofile.cpp
+mkgreyprofile_SOURCES = mkgreyprofile.cpp
+mklabprofile_SOURCES = mklabprofile.cpp
+composite_SOURCES = composite.cpp
+imgsrctest_SOURCES = imgsrctest.cpp
+pathcheck_SOURCES = pathcheck.cpp
+pathcheck_DEPENDENCIES = libsupport.la
+pathcheck_LDADD = -L. -lsupport ${GTK2_LIBS}
+jpegcheck_SOURCES = jpegcheck.cpp
+pvtest_SOURCES = pvtest.cpp
+threadtest_SOURCES = threadtest.cpp
+printqueuetest_SOURCES = printqueuetest.cpp
+stpuitest_SOURCES = stpuitest.cpp
+
+LDADD = \
+	support/libsupport.la	\
+	imagesource/libimagesource.la	\
+	profilemanager/libprofilemanager.la	\
+	stpui_widgets/libstpui_widgets.la	\
+	stp_support/libstp_support.la \
+	pixbufthumbnail/libpixbufthumbnail.la	\
+	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(GP_LIBS) $(GTK2_LIBS)
+
+
+imagesource/libimagesource.la:
+	cd imagesource
+	$(MAKE) libimagesource.la
+	
+support/libsupport.la:
+	cd support
+	$(MAKE) libsupport.la
+
+profilemanager/libprofilemanager.la:
+	cd profilemanager
+	$(MAKE) libprofilemanager.la
+
+stpui_widgets/libstpui_widgets.la:
+	cd stpui_widgets
+	$(MAKE) libstpui_widgets.la
+
+stp_support/libstp_support.la:
+	cd stp_support
+	$(MAKE) libstp_support.la
+
+pixbufthumbnail/libpixbufthumbnail.la:
+	cd pixbufthumbnail
+	$(MAKE) libpixbufthumbnail.la
+
+
+EXTRA_DIST = m4/ChangeLog  COPYING README TODO
+
+
+ACLOCAL_AMFLAGS = -I m4
