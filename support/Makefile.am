@@ -58,6 +58,9 @@ libsupport_la_SOURCES =	\
 	tiffsave.cpp	\
 	tiffsave.h \
 	\
+	tempfile.cpp	\
+	tempfile.h	\
+	\
 	util.cpp \
 	util.h
 

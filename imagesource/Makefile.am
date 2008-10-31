@@ -42,6 +42,10 @@ libimagesource_la_SOURCES =	\
 	imagesource_mask.h	\
 	imagesource_montage.cpp	\
 	imagesource_montage.h	\
+	imagesource_devicen_preview.cpp \
+	imagesource_devicen_preview.h \
+	imagesource_devicen_remap.cpp \
+	imagesource_devicen_remap.h \
 	imagesource_promote.cpp \
 	imagesource_promote.h \
 	imagesource_pnm.cpp \

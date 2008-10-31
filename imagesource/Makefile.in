@@ -38,7 +38,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(install_sh) -d
+mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
@@ -51,7 +51,8 @@ am_libimagesource_la_OBJECTS = imagesource.lo imagesource_bilinear.lo \
 	imagesource_gaussianblur.lo imagesource_gdkpixbuf.lo \
 	imagesource_gs.lo imagesource_jpeg.lo \
 	imagesource_lanczossinc.lo imagesource_mask.lo \
-	imagesource_montage.lo imagesource_promote.lo \
+	imagesource_montage.lo imagesource_devicen_preview.lo \
+	imagesource_devicen_remap.lo imagesource_promote.lo \
 	imagesource_pnm.lo imagesource_rotate.lo imagesource_scale.lo \
 	imagesource_segmentmask.lo imagesource_solid.lo \
 	imagesource_tiff.lo imagesource_unsharpmask.lo \
@@ -270,6 +271,10 @@ libimagesource_la_SOURCES = \
 	imagesource_mask.h	\
 	imagesource_montage.cpp	\
 	imagesource_montage.h	\
+	imagesource_devicen_preview.cpp \
+	imagesource_devicen_preview.h \
+	imagesource_devicen_remap.cpp \
+	imagesource_devicen_remap.h \
 	imagesource_promote.cpp \
 	imagesource_promote.h \
 	imagesource_pnm.cpp \
@@ -353,6 +358,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_convolution.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_crop.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_desaturate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_devicen_preview.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_devicen_remap.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_dither.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_downsample.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_flatten.Plo@am__quote@

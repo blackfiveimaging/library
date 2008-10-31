@@ -14,6 +14,8 @@
 #include "imagesource_convolution.h"
 #include "imagesource_gaussianblur.h"
 #include "imagesource_unsharpmask.h"
+#include "imagesource_devicen_preview.h"
+#include "imagesource_devicen_remap.h"
 #include "convkernel_gaussian.h"
 #include "convkernel_unsharpmask.h"
 #include "tiffsave.h"
@@ -24,6 +26,39 @@ int main(int argc,char **argv)
 {
 	try
 	{
+		if(argc==3)
+		{
+			int channelmap[]={5,4,0,1,2,3};
+			ISDeviceN_Colorant_Preview colorants[]=
+			{
+				ISDeviceN_Colorant_Preview(255,255,0),
+				ISDeviceN_Colorant_Preview(0,0,0),
+				ISDeviceN_Colorant_Preview(0,95,127),
+				ISDeviceN_Colorant_Preview(127,0,95),
+				ISDeviceN_Colorant_Preview(255,0,190),
+				ISDeviceN_Colorant_Preview(0,190,255),
+				ISDeviceN_Colorant_Preview(127,127,127)
+			};
+
+			ImageSource *is=ISLoadImage(argv[1]);
+			is=new ImageSource_DeviceN_Remap(is,channelmap);
+			ImageSource_DeviceN_Preview dst(is,colorants);
+			TIFFSaver ts(argv[2],&dst);
+			ProgressText p;
+			ts.SetProgress(&p);
+			ts.Save();
+		}
+		if(argc==5)
+		{
+			ImageSource *is=ISLoadImage(argv[1]);
+			int w=atoi(argv[2]);
+			int h=atoi(argv[3]);
+			ImageSource_Downsample dst(is,w,h);
+			TIFFSaver ts(argv[4],&dst);
+			ProgressText p;
+			ts.SetProgress(&p);
+			ts.Save();
+		}
 #if 0
 		if(argc==4)
 		{
@@ -104,7 +139,6 @@ int main(int argc,char **argv)
 			ts.Save();
 			delete is;
 		}
-#endif
 		if(argc==3)
 		{
 			ImageSource *is=ISLoadImage(argv[1]);
@@ -142,7 +176,6 @@ int main(int argc,char **argv)
 			ts.Save();
 			delete is;	
 		}
-#if 0
 		if(argc==2)
 		{
 			// Rescue routine for CM screwup!

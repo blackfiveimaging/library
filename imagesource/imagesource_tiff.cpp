@@ -78,6 +78,8 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 {
 	int i,j;
 
+	cerr << "In TIFFStrip constructor" << endl;
+
 	if((prev=header->strips))
 	{
 		while(prev->next)
@@ -94,6 +96,8 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 	lastrow=header->filerow+header->stripheight-1;
 	if(lastrow>=header->height)
 		lastrow=header->height-1;
+
+	cerr << "Stripsize = " << header->stripsize << "  -  allocating" << endl;
 
 	imgdata=(unsigned char *)malloc(header->stripsize);
 
@@ -156,6 +160,7 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 			break;
 		case PHOTOMETRIC_RGB:
 		case PHOTOMETRIC_SEPARATED:
+			cerr << "Reading strip" << endl;
 			TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
 			break;
 		default:
@@ -266,10 +271,10 @@ int ImageSource_TIFF::CountTIFFDirs(const char *filename,int &largestdir)
 
 ImageSource_TIFF::ImageSource_TIFF(const char *filename)
 {
-	ttile_t stripcount;
-	uint16 photometric,spp,bps;
-	uint32 width,height,sl;
-	uint32 stripsize;
+	ttile_t stripcount=0;
+	uint16 photometric=0,spp=0,bps=0;
+	uint32 width=0,height=0,sl=0;
+	uint32 stripsize=0;
 	float xres,yres;
 	uint16 resunit=RESUNIT_INCH;
 	uint16 *palettered,*palettegreen,*paletteblue;
@@ -296,6 +301,9 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename)
 	TIFFGetField(file, TIFFTAG_IMAGEWIDTH, &width);
 	TIFFGetField(file, TIFFTAG_IMAGELENGTH, &height);
 	TIFFGetField(file, TIFFTAG_ROWSPERSTRIP, &sl);
+
+	// If striplength is undefined, assume the image data is in a single strip.
+	if(sl==0) sl=height;
 
 	switch(bps)
 	{
@@ -362,6 +370,18 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename)
 		case PHOTOMETRIC_SEPARATED:
 			TIFFGetField(file, TIFFTAG_INKSET, &inkset);
 			type=IS_TYPE_CMYK;
+			switch(spp)
+			{
+				case 4:
+					type=IS_TYPE_CMYK;
+					break;
+				case 5:
+					type=IS_TYPE_CMYKA;
+					break;
+				default:
+					type=IS_TYPE_DEVICEN;
+					break;
+			}
 			break;
 		default:
 			throw "Unsupported file format - must be either 1, 8 or 16-bit greyscale, RGB or CMYK...";

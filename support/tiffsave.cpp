@@ -225,6 +225,8 @@ TIFFSaver::TIFFSaver(const char *filename,struct ImageSource *is,bool deep,int b
 	
 		default:
 			fprintf(stderr,"FIXME: unsupported bitspersample: %d\n",bitsperpixel);
+			TIFFClose(file);
+			throw "Unsupported image type";
 			break;
 	}
 	TIFFSetField(file, TIFFTAG_IMAGEWIDTH, width);
@@ -246,5 +248,9 @@ TIFFSaver::TIFFSaver(const char *filename,struct ImageSource *is,bool deep,int b
 	bytesperrow = (width*bitsperpixel+7)/8;
 
 	if(!(tmpbuffer=(unsigned char *)malloc(stripsize)))
+	{
+		TIFFClose(file);
 		throw "No memory for tmpbuffer";
+	}
 }
+
