@@ -28,7 +28,6 @@ class ISDeviceN_Colorant_Preview
 		: red(EIGHTTOIS(red)),green(EIGHTTOIS(green)),blue(EIGHTTOIS(blue))
 	{
 	}
-	private:
 	ISDataType red, green, blue;
 	friend class ImageSource_DeviceN_Preview;
 };
@@ -40,8 +39,8 @@ class ISDeviceN_Colorant_Preview
 #define ISDEVICEN_PREVIEW_MAGENTA ISDeviceN_Colorant_Preview(255,0,190)
 #define ISDEVICEN_PREVIEW_YELLOW ISDeviceN_Colorant_Preview(255,255,0)
 #define ISDEVICEN_PREVIEW_BLACK ISDeviceN_Colorant_Preview(0,0,0)
-#define ISDEVICEN_PREVIEW_LIGHTCYAN ISDeviceN_Colorant_Preview(0,95,127)
-#define ISDEVICEN_PREVIEW_LIGHTMAGENTA ISDeviceN_Colorant_Preview(127,0,95)
+#define ISDEVICEN_PREVIEW_LIGHTCYAN ISDeviceN_Colorant_Preview(127,190,255)
+#define ISDEVICEN_PREVIEW_LIGHTMAGENTA ISDeviceN_Colorant_Preview(255,127,190)
 #define ISDEVICEN_PREVIEW_LIGHTBLACK ISDeviceN_Colorant_Preview(127,127,127)
 #define ISDEVICEN_PREVIEW_RED ISDeviceN_Colorant_Preview(255,0,0)
 #define ISDEVICEN_PREVIEW_BLUE ISDeviceN_Colorant_Preview(0,0,255)

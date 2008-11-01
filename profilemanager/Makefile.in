@@ -44,7 +44,8 @@ CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libprofilemanager_la_LIBADD =
 am_libprofilemanager_la_OBJECTS = lcmswrapper.lo md5.lo \
-	profilemanager.lo profileselector.lo intentselector.lo
+	profilemanager.lo profileselector.lo intentselector.lo \
+	ciesupport.lo
 libprofilemanager_la_OBJECTS = $(am_libprofilemanager_la_OBJECTS)
 libprofilemanager_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -229,7 +230,9 @@ libprofilemanager_la_SOURCES = \
 	profileselector.cpp	\
 	profileselector.h	\
 	intentselector.cpp	\
-	intentselector.h
+	intentselector.h	\
+	ciesupport.cpp \
+	ciesupport.h
 
 libprofilemanager_la_LDFLAGS = -static
 all: all-am
@@ -283,6 +286,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ciesupport.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/intentselector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lcmswrapper.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Plo@am__quote@
