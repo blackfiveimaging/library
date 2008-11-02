@@ -99,6 +99,16 @@ struct printernode *printernode_create(struct pqprivate *head,const char *name)
 	if(pn)
 	{
 		struct printernode *p=head->first;
+		while(p)
+		{
+			if(strcmp(p->name,name)==0)
+			{
+				free(pn);
+				return(p);
+			}
+			p=p->next;
+		}
+		p=head->first;
 		pn->next=pn->prev=NULL;
 		pn->Dispose=pn_dispose;
 		pn->head=head;

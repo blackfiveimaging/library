@@ -24,6 +24,7 @@ class ImageSource_DeviceN_Preview;
 class ISDeviceN_Colorant_Preview
 {
 	public:
+	ISDeviceN_Colorant_Preview() : red(0), green(0), blue(0) {}
 	ISDeviceN_Colorant_Preview(int red, int green, int blue)
 		: red(EIGHTTOIS(red)),green(EIGHTTOIS(green)),blue(EIGHTTOIS(blue))
 	{
@@ -39,8 +40,8 @@ class ISDeviceN_Colorant_Preview
 #define ISDEVICEN_PREVIEW_MAGENTA ISDeviceN_Colorant_Preview(255,0,190)
 #define ISDEVICEN_PREVIEW_YELLOW ISDeviceN_Colorant_Preview(255,255,0)
 #define ISDEVICEN_PREVIEW_BLACK ISDeviceN_Colorant_Preview(0,0,0)
-#define ISDEVICEN_PREVIEW_LIGHTCYAN ISDeviceN_Colorant_Preview(127,190,255)
-#define ISDEVICEN_PREVIEW_LIGHTMAGENTA ISDeviceN_Colorant_Preview(255,127,190)
+#define ISDEVICEN_PREVIEW_LIGHTCYAN ISDeviceN_Colorant_Preview(127,220,255)
+#define ISDEVICEN_PREVIEW_LIGHTMAGENTA ISDeviceN_Colorant_Preview(255,127,220)
 #define ISDEVICEN_PREVIEW_LIGHTBLACK ISDeviceN_Colorant_Preview(127,127,127)
 #define ISDEVICEN_PREVIEW_RED ISDeviceN_Colorant_Preview(255,0,0)
 #define ISDEVICEN_PREVIEW_BLUE ISDeviceN_Colorant_Preview(0,0,255)

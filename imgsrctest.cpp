@@ -33,8 +33,8 @@ int main(int argc,char **argv)
 			{
 				ISDeviceN_Colorant_Preview(255,255,0),
 				ISDeviceN_Colorant_Preview(0,0,0),
-				ISDeviceN_Colorant_Preview(0,95,127),
-				ISDeviceN_Colorant_Preview(127,0,95),
+				ISDeviceN_Colorant_Preview(127,220,255),
+				ISDeviceN_Colorant_Preview(255,127,220),
 				ISDeviceN_Colorant_Preview(255,0,190),
 				ISDeviceN_Colorant_Preview(0,190,255),
 				ISDeviceN_Colorant_Preview(127,127,127)
