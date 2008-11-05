@@ -18,7 +18,8 @@
 class ImageSource_DeviceN_Remap : public ImageSource
 {
 	public:
-	ImageSource_DeviceN_Remap(ImageSource *source,const int *maptable);
+	// If outchannels==0, the output will have the same number of channels as the input
+	ImageSource_DeviceN_Remap(ImageSource *source,const int *maptable,int outchannels=0);
 	~ImageSource_DeviceN_Remap();
 	ISDataType *GetRow(int row);
 	private:

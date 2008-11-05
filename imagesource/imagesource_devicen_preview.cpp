@@ -19,6 +19,107 @@
 
 using namespace std;
 
+
+ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview()
+	: red(0), green(0), blue(0), longname(NULL), alias(0)
+{
+}
+
+
+ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const char *longname,int red, int green, int blue, char alias)
+	: red(EIGHTTOIS(red)),green(EIGHTTOIS(green)),blue(EIGHTTOIS(blue)),longname(NULL),alias(alias)
+{
+	if(longname)
+		this->longname=strdup(longname);
+}
+
+
+ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const char *longname)
+	: red(EIGHTTOIS(red)),green(EIGHTTOIS(green)),blue(EIGHTTOIS(blue)),longname(NULL),alias(alias)
+{
+	if(longname)
+		this->longname=strdup(longname);
+	if(strcasecmp(longname,"Cyan")==0)
+	{
+		red=EIGHTTOIS(0); green=EIGHTTOIS(190); blue=EIGHTTOIS(255); alias='C';
+	}
+	else if(strcasecmp(longname,"Magenta")==0)
+	{
+		red=EIGHTTOIS(255); green=EIGHTTOIS(0); blue=EIGHTTOIS(190); alias='M';
+	}
+	else if(strcasecmp(longname,"Yellow")==0)
+	{
+		red=EIGHTTOIS(255); green=EIGHTTOIS(255); blue=EIGHTTOIS(0); alias='Y';
+	}
+	else if(strcasecmp(longname,"Black")==0)
+	{
+		red=EIGHTTOIS(0); green=EIGHTTOIS(0); blue=EIGHTTOIS(0); alias='K';
+	}
+	else if(strcasecmp(longname,"Photo Black")==0)
+	{
+		red=EIGHTTOIS(0); green=EIGHTTOIS(0); blue=EIGHTTOIS(0); alias='K';
+	}
+	else if(strcasecmp(longname,"Matte Black")==0)
+	{
+		red=EIGHTTOIS(0); green=EIGHTTOIS(0); blue=EIGHTTOIS(0); alias='T';
+	}
+	else if(strcasecmp(longname,"Light Cyan")==0)
+	{
+		red=EIGHTTOIS(127); green=EIGHTTOIS(220); blue=EIGHTTOIS(255); alias='c';
+	}
+	else if(strcasecmp(longname,"Light Magenta")==0)
+	{
+		red=EIGHTTOIS(255); green=EIGHTTOIS(127); blue=EIGHTTOIS(220); alias='m';
+	}
+	else if(strcasecmp(longname,"Light Black")==0)
+	{
+		red=EIGHTTOIS(127); green=EIGHTTOIS(127); blue=EIGHTTOIS(127); alias='k';
+	}
+	else if(strcasecmp(longname,"Red")==0)
+	{
+		red=EIGHTTOIS(255); green=EIGHTTOIS(0); blue=EIGHTTOIS(0); alias='R';
+	}
+	else if(strcasecmp(longname,"Blue")==0)
+	{
+		red=EIGHTTOIS(0); green=EIGHTTOIS(0); blue=EIGHTTOIS(255); alias='B';
+	}
+	else
+		throw "Unknown colorant";
+}
+
+
+ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const ISDeviceN_Colorant_Preview &other)
+	: red(other.red), green(other.green), blue(other.blue), longname(NULL), alias(other.alias)
+{
+	if(other.longname)
+		longname=strdup(other.longname);
+}
+
+
+ISDeviceN_Colorant_Preview::~ISDeviceN_Colorant_Preview()
+{
+	if(longname)
+		free(longname);
+}
+
+
+ISDeviceN_Colorant_Preview &ISDeviceN_Colorant_Preview::operator=(const ISDeviceN_Colorant_Preview &other)
+{
+	if(longname)
+		free(longname);
+	if(other.longname)
+		longname=strdup(other.longname);
+	red=other.red;
+	green=other.green;
+	blue=other.blue;
+	alias=other.alias;
+	return(*this);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 ImageSource_DeviceN_Preview::~ImageSource_DeviceN_Preview()
 {
 	if(source)

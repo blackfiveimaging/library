@@ -13,6 +13,8 @@
 #ifndef IMAGESOURCE_DEVICEN_H
 #define IMAGESOURCE_DEVICEN_H
 
+#include <string.h>
+
 #include "imagesource.h"
 
 // A Colorant preview is just an RGB approximate of a colorant's colour.
@@ -24,27 +26,30 @@ class ImageSource_DeviceN_Preview;
 class ISDeviceN_Colorant_Preview
 {
 	public:
-	ISDeviceN_Colorant_Preview() : red(0), green(0), blue(0) {}
-	ISDeviceN_Colorant_Preview(int red, int green, int blue)
-		: red(EIGHTTOIS(red)),green(EIGHTTOIS(green)),blue(EIGHTTOIS(blue))
-	{
-	}
+	ISDeviceN_Colorant_Preview();
+	ISDeviceN_Colorant_Preview(const char *longname,int red, int green, int blue, char alias=0);
+	ISDeviceN_Colorant_Preview(const char *longname);
+	ISDeviceN_Colorant_Preview(const ISDeviceN_Colorant_Preview &other);
+	ISDeviceN_Colorant_Preview &operator=(const ISDeviceN_Colorant_Preview &other);
+	~ISDeviceN_Colorant_Preview();
 	ISDataType red, green, blue;
+	char *longname;
+	char alias;
 	friend class ImageSource_DeviceN_Preview;
 };
 
 // These defines can be used in creating colorant tables to avoid
 // specifying RGB values directly.
 
-#define ISDEVICEN_PREVIEW_CYAN ISDeviceN_Colorant_Preview(0,190,255)
-#define ISDEVICEN_PREVIEW_MAGENTA ISDeviceN_Colorant_Preview(255,0,190)
-#define ISDEVICEN_PREVIEW_YELLOW ISDeviceN_Colorant_Preview(255,255,0)
-#define ISDEVICEN_PREVIEW_BLACK ISDeviceN_Colorant_Preview(0,0,0)
-#define ISDEVICEN_PREVIEW_LIGHTCYAN ISDeviceN_Colorant_Preview(127,220,255)
-#define ISDEVICEN_PREVIEW_LIGHTMAGENTA ISDeviceN_Colorant_Preview(255,127,220)
-#define ISDEVICEN_PREVIEW_LIGHTBLACK ISDeviceN_Colorant_Preview(127,127,127)
-#define ISDEVICEN_PREVIEW_RED ISDeviceN_Colorant_Preview(255,0,0)
-#define ISDEVICEN_PREVIEW_BLUE ISDeviceN_Colorant_Preview(0,0,255)
+#define ISDEVICEN_PREVIEW_CYAN ISDeviceN_Colorant_Preview("Cyan",0,190,255,'C')
+#define ISDEVICEN_PREVIEW_MAGENTA ISDeviceN_Colorant_Preview("Magenta",255,0,190,'M')
+#define ISDEVICEN_PREVIEW_YELLOW ISDeviceN_Colorant_Preview("Yellow",255,255,0,'Y')
+#define ISDEVICEN_PREVIEW_BLACK ISDeviceN_Colorant_Preview("Black",0,0,0,'K')
+#define ISDEVICEN_PREVIEW_LIGHTCYAN ISDeviceN_Colorant_Preview("Light Cyan",127,220,255,'c')
+#define ISDEVICEN_PREVIEW_LIGHTMAGENTA ISDeviceN_Colorant_Preview("Light Magenta",255,127,220,'m')
+#define ISDEVICEN_PREVIEW_LIGHTBLACK ISDeviceN_Colorant_Preview("Light Black",127,127,127,'k')
+#define ISDEVICEN_PREVIEW_RED ISDeviceN_Colorant_Preview("Red",255,0,0,'R')
+#define ISDEVICEN_PREVIEW_BLUE ISDeviceN_Colorant_Preview("Blue",0,0,255,'B')
 
 class ImageSource_DeviceN_Preview : public ImageSource
 {
