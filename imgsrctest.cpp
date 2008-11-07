@@ -31,13 +31,13 @@ int main(int argc,char **argv)
 			int channelmap[]={5,4,0,1,2,3};
 			ISDeviceN_Colorant_Preview colorants[]=
 			{
-				ISDeviceN_Colorant_Preview(255,255,0),
-				ISDeviceN_Colorant_Preview(0,0,0),
-				ISDeviceN_Colorant_Preview(127,220,255),
-				ISDeviceN_Colorant_Preview(255,127,220),
-				ISDeviceN_Colorant_Preview(255,0,190),
-				ISDeviceN_Colorant_Preview(0,190,255),
-				ISDeviceN_Colorant_Preview(127,127,127)
+				ISDeviceN_Colorant_Preview("Yellow"),
+				ISDeviceN_Colorant_Preview("Black"),
+				ISDeviceN_Colorant_Preview("Light Cyan"),
+				ISDeviceN_Colorant_Preview("Light Magenta"),
+				ISDeviceN_Colorant_Preview("Magenta"),
+				ISDeviceN_Colorant_Preview("Cyan"),
+				ISDeviceN_Colorant_Preview("Light Black")
 			};
 
 			ImageSource *is=ISLoadImage(argv[1]);

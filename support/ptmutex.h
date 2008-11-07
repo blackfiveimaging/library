@@ -5,23 +5,7 @@
 
 #include <glib.h>
 
-//#ifdef G_THREADS_ENABLED
-#if 0
-
-class PTMutex
-{
-	public:
-	PTMutex();
-	~PTMutex();
-	void ObtainMutex();
-	bool AttemptMutex();
-	void ReleaseMutex();
-	protected:
-	GMutex *mutex;
-	friend class Thread;
-};
-
-#elif defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
+#if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
 
 #include <pthread.h>
 

@@ -37,8 +37,6 @@ ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const char *longname,int 
 ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const char *longname)
 	: red(EIGHTTOIS(red)),green(EIGHTTOIS(green)),blue(EIGHTTOIS(blue)),longname(NULL),alias(alias)
 {
-	if(longname)
-		this->longname=strdup(longname);
 	if(strcasecmp(longname,"Cyan")==0)
 	{
 		red=EIGHTTOIS(0); green=EIGHTTOIS(190); blue=EIGHTTOIS(255); alias='C';
@@ -85,6 +83,8 @@ ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const char *longname)
 	}
 	else
 		throw "Unknown colorant";
+	if(longname)
+		this->longname=strdup(longname);
 }
 
 
