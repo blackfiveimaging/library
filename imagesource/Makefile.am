@@ -32,6 +32,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_gaussianblur.h \
 	imagesource_gdkpixbuf.cpp 	\
 	imagesource_gdkpixbuf.h	\
+	imagesource_greyscale.cpp	\
+	imagesource_greycsale.h	\
 	imagesource_gs.cpp	\
 	imagesource_gs.h	\
 	imagesource_jpeg.cpp	\

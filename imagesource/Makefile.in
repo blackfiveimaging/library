@@ -49,7 +49,7 @@ am_libimagesource_la_OBJECTS = imagesource.lo imagesource_bilinear.lo \
 	imagesource_dither.lo imagesource_desaturate.lo \
 	imagesource_downsample.lo imagesource_flatten.lo \
 	imagesource_gaussianblur.lo imagesource_gdkpixbuf.lo \
-	imagesource_gs.lo imagesource_jpeg.lo \
+	imagesource_greyscale.lo imagesource_gs.lo imagesource_jpeg.lo \
 	imagesource_lanczossinc.lo imagesource_mask.lo \
 	imagesource_montage.lo imagesource_devicen_preview.lo \
 	imagesource_devicen_remap.lo imagesource_promote.lo \
@@ -261,6 +261,8 @@ libimagesource_la_SOURCES = \
 	imagesource_gaussianblur.h \
 	imagesource_gdkpixbuf.cpp 	\
 	imagesource_gdkpixbuf.h	\
+	imagesource_greyscale.cpp	\
+	imagesource_greycsale.h	\
 	imagesource_gs.cpp	\
 	imagesource_gs.h	\
 	imagesource_jpeg.cpp	\
@@ -365,6 +367,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_flatten.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gaussianblur.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gdkpixbuf.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_greyscale.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_jpeg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_lanczossinc.Plo@am__quote@
