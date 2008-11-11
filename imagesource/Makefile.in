@@ -56,7 +56,8 @@ am_libimagesource_la_OBJECTS = imagesource.lo imagesource_bilinear.lo \
 	imagesource_pnm.lo imagesource_rotate.lo imagesource_scale.lo \
 	imagesource_segmentmask.lo imagesource_solid.lo \
 	imagesource_tiff.lo imagesource_unsharpmask.lo \
-	imagesource_util.lo pixbuf_from_imagesource.lo iccjpeg.lo
+	imagesource_util.lo devicencolorant.lo \
+	pixbuf_from_imagesource.lo iccjpeg.lo
 libimagesource_la_OBJECTS = $(am_libimagesource_la_OBJECTS)
 libimagesource_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -295,6 +296,8 @@ libimagesource_la_SOURCES = \
 	imagesource_unsharpmask.h	\
 	imagesource_util.cpp	\
 	imagesource_util.h	\
+	devicencolorant.cpp \
+	devicencolorant.h \
 	pixbuf_from_imagesource.cpp	\
 	pixbuf_from_imagesource.h	\
 	iccjpeg.cpp	\
@@ -352,6 +355,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/devicencolorant.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iccjpeg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_bilinear.Plo@am__quote@

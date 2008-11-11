@@ -116,8 +116,15 @@ ISDeviceN_Colorant_Preview &ISDeviceN_Colorant_Preview::operator=(const ISDevice
 	return(*this);
 }
 
+//////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+class ISDeviceNPreview_Colorant
+{
+	public:
+	ISDataType red,green,blue;
+};
+
+//////////////////////////////////////////////////////////////////////////////
 
 
 ImageSource_DeviceN_Preview::~ImageSource_DeviceN_Preview()
@@ -186,8 +193,8 @@ ISDataType *ImageSource_DeviceN_Preview::GetRow(int row)
 }
 
 
-ImageSource_DeviceN_Preview::ImageSource_DeviceN_Preview(struct ImageSource *source,ISDeviceN_Colorant_Preview *colorants)
-	: ImageSource(source), source(source), colorants(colorants)
+ImageSource_DeviceN_Preview::ImageSource_DeviceN_Preview(struct ImageSource *source,DeviceNColorantList *cols,int firstcolorant)
+	: ImageSource(source), source(source), colorants(NULL)
 {
 	if(HAS_ALPHA(type))
 	{
@@ -198,6 +205,17 @@ ImageSource_DeviceN_Preview::ImageSource_DeviceN_Preview(struct ImageSource *sou
 	{
 		type=IS_TYPE_RGB;
 		samplesperpixel=3;
+	}
+	int c=cols->GetColorantCount();
+	if((c-firstcolorant)<source->samplesperpixel)
+		throw "ISDeviceN: Not enough colorants provided!";
+	colorants=new ISDeviceNPreview_Colorant[c];
+	for(int i=0;i<(c-firstcolorant);++i)
+	{
+		DeviceNColorant *col=(*cols)[i+firstcolorant];
+		colorants[i].red=EIGHTTOIS(col->red);
+		colorants[i].green=EIGHTTOIS(col->green);
+		colorants[i].blue=EIGHTTOIS(col->blue);
 	}
 	MakeRowBuffer();
 }

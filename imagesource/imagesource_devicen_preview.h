@@ -17,6 +17,8 @@
 
 #include "imagesource.h"
 
+#include "devicencolorant.h"
+
 // A Colorant preview is just an RGB approximate of a colorant's colour.
 // This is used by the DeviceN Preview to render an approximate RGB
 // impression of the complete DeviceN image.
@@ -51,15 +53,17 @@ class ISDeviceN_Colorant_Preview
 #define ISDEVICEN_PREVIEW_RED ISDeviceN_Colorant_Preview("Red",255,0,0,'R')
 #define ISDEVICEN_PREVIEW_BLUE ISDeviceN_Colorant_Preview("Blue",0,0,255,'B')
 
+class ISDeviceNPreview_Colorant;
+
 class ImageSource_DeviceN_Preview : public ImageSource
 {
 	public:
-	ImageSource_DeviceN_Preview(ImageSource *source,ISDeviceN_Colorant_Preview *colorants);
+	ImageSource_DeviceN_Preview(ImageSource *source,DeviceNColorantList *cols,int firstcolorant=0);
 	~ImageSource_DeviceN_Preview();
 	ISDataType *GetRow(int row);
-	private:
+	protected:
 	ImageSource *source;
-	class ISDeviceN_Colorant_Preview *colorants;
+	ISDeviceNPreview_Colorant *colorants;
 };
 
 #endif

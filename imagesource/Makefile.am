@@ -66,6 +66,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_unsharpmask.h	\
 	imagesource_util.cpp	\
 	imagesource_util.h	\
+	devicencolorant.cpp \
+	devicencolorant.h \
 	pixbuf_from_imagesource.cpp	\
 	pixbuf_from_imagesource.h	\
 	iccjpeg.cpp	\
