@@ -29,20 +29,19 @@ int main(int argc,char **argv)
 		if(argc==3)
 		{
 			int channelmap[]={5,4,0,1,2,3};
-			ISDeviceN_Colorant_Preview colorants[]=
-			{
-				ISDeviceN_Colorant_Preview("Yellow"),
-				ISDeviceN_Colorant_Preview("Black"),
-				ISDeviceN_Colorant_Preview("Light Cyan"),
-				ISDeviceN_Colorant_Preview("Light Magenta"),
-				ISDeviceN_Colorant_Preview("Magenta"),
-				ISDeviceN_Colorant_Preview("Cyan"),
-				ISDeviceN_Colorant_Preview("Light Black")
-			};
+
+			DeviceNColorantList colorants;
+			new DeviceNColorant(colorants,"Yellow");
+			new DeviceNColorant(colorants,"Black");
+			new DeviceNColorant(colorants,"Light Cyan");
+			new DeviceNColorant(colorants,"Light Magenta");
+			new DeviceNColorant(colorants,"Magenta");
+			new DeviceNColorant(colorants,"Cyan");
+			new DeviceNColorant(colorants,"Light Black");
 
 			ImageSource *is=ISLoadImage(argv[1]);
 			is=new ImageSource_DeviceN_Remap(is,channelmap);
-			ImageSource_DeviceN_Preview dst(is,colorants);
+			ImageSource_DeviceN_Preview dst(is,&colorants);
 			TIFFSaver ts(argv[2],&dst);
 			ProgressText p;
 			ts.SetProgress(&p);
