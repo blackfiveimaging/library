@@ -8,6 +8,7 @@ class DeviceNColorantList
 	DeviceNColorantList();
 	virtual ~DeviceNColorantList();
 	virtual int GetColorantCount();
+	virtual int GetColorantIndex(const char *name);
 	virtual DeviceNColorant *FirstColorant();
 	virtual DeviceNColorant *operator[](int idx);
 	protected:

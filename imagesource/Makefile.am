@@ -33,7 +33,7 @@ libimagesource_la_SOURCES =	\
 	imagesource_gdkpixbuf.cpp 	\
 	imagesource_gdkpixbuf.h	\
 	imagesource_greyscale.cpp	\
-	imagesource_greycsale.h	\
+	imagesource_greyscale.h	\
 	imagesource_gs.cpp	\
 	imagesource_gs.h	\
 	imagesource_jpeg.cpp	\

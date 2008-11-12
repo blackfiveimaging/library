@@ -39,6 +39,25 @@ DeviceNColorant *DeviceNColorantList::FirstColorant()
 }
 
 
+int DeviceNColorantList::GetColorantIndex(const char *name)
+{
+	DeviceNColorant *col=FirstColorant();
+	int result=0;
+	while(col)
+	{
+		const char *colname;
+		if((colname=col->GetName()))
+		{
+			if(strcmp(colname,name)==0)
+				return(result);
+		}		
+		++result;
+		col=col->NextColorant();
+	}
+	return(-1);
+}
+
+
 DeviceNColorant *DeviceNColorantList::operator[](int idx)
 {
 	DeviceNColorant *result=FirstColorant();
