@@ -12,6 +12,7 @@
 #define UTIL_H
 
 bool CheckSettingsDir(const char *dirname);
+char *BuildFilename(const char *root,const char *suffix,const char *fileext);
 char *BuildAbsoluteFilename(const char *fname);
 char *SerialiseFilename(const char *fname,int serialno,int max=0);
 int TestHostName(char *str,char **hostname,int *port);
