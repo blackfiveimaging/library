@@ -110,17 +110,28 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 					TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
 					break;
 				case 8:
+//					switch(header->samplesperpixel)
+//					{
+//						case 1:
+							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
+							break;
+//						case 2:
+//							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
+//							for(j=0;j<(header->stripsize/2);++j)
+//								imgdata[j]=imgdata[j*2];
+//							break;
+//						default:
+//							break;
+//					}
+					break;
+				case 16:
 					switch(header->samplesperpixel)
 					{
 						case 1:
 							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
 							break;
-						case 2:
-							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
-							for(j=0;j<(header->stripsize/2);++j)
-								imgdata[j]=imgdata[j*2];
-							break;
 						default:
+							cerr << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
 							break;
 					}
 					break;
@@ -135,21 +146,39 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 						imgdata[j]=imgdata[j]^255;
 					break;
 				case 8:
+//					switch(header->samplesperpixel)
+//					{
+//						case 1:
+							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
+							for(j=0;j<(header->stripsize);++j)
+								imgdata[j]=255-imgdata[j];
+//							break;
+//						case 2:
+//							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
+//							for(j=0;j<(header->stripsize/2);++j)
+//								imgdata[j]=255-imgdata[j*2];
+//							break;
+//						default:
+//							break;
+//					}
+					break;
+				case 16:
 					switch(header->samplesperpixel)
 					{
 						case 1:
 							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
-							for(j=0;j<(header->stripsize);++j)
-								imgdata[j]=255-imgdata[j];
-							break;
-						case 2:
-							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
-							for(j=0;j<(header->stripsize/2);++j)
-								imgdata[j]=255-imgdata[j*2];
+							{	// New scope for srcrow declaration
+								unsigned short *srcrow16=(unsigned short *)imgdata;
+								for(j=0;j<(header->stripsize/2);++j)
+									imgdata[j]=imgdata[j]^65535;
+							}
 							break;
 						default:
+							cerr << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
 							break;
 					}
+					break;
+					// FIXME - handle 16-bit data!
 					break;
 			}
 			break;
@@ -326,7 +355,19 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename)
 			if(bps==1)
 				type=IS_TYPE_BW;
 			else
-				type=IS_TYPE_GREY;
+			{
+				switch(spp)
+				{
+					case 3:
+						type=IS_TYPE_GREY;
+						break;
+					case 4:
+						type=IS_TYPE_GREYA;
+						break;
+					default:
+						break;
+				}
+			}
 			break;
 		case PHOTOMETRIC_PALETTE:
 			TIFFGetField(file, TIFFTAG_COLORMAP,&palettered,&palettegreen,&paletteblue);
@@ -369,7 +410,6 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename)
 			break;
 		case PHOTOMETRIC_SEPARATED:
 			TIFFGetField(file, TIFFTAG_INKSET, &inkset);
-			type=IS_TYPE_CMYK;
 			switch(spp)
 			{
 				case 4:
@@ -426,10 +466,12 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename)
 
 	source_spp=samplesperpixel;
 
-	if(samplesperpixel==2)
-	{
-		this->spr/=2;
-	}
+//  This is no longer valid.  If memory serves it was to hack around Greyscale TIFFs with Alpha.
+//  FIXME: Verify that greyscale TIFFs with Alpha still work OK!
+//	if(samplesperpixel==2)
+//	{
+//		this->spr/=2;
+//	}
 	
 	cerr << "TIFF Samples per pixel: " << samplesperpixel << endl;
 	cerr << "Samples per row: " << this->spr << endl;

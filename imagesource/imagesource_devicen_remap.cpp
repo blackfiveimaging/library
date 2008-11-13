@@ -39,7 +39,7 @@ ISDataType *ImageSource_DeviceN_Remap::GetRow(int row)
 
 	ISDataType *srcdata=source->GetRow(row);
 
-	// For each pixel we remap each source channel to a channe in the rowbuffer, using the translation table.
+	// For each pixel we remap each source channel to a channel in the rowbuffer, using the translation table.
 	if(HAS_ALPHA(type))
 	{
 		for(int x=0;x<width;++x)
@@ -73,6 +73,7 @@ ImageSource_DeviceN_Remap::ImageSource_DeviceN_Remap(struct ImageSource *source,
 	: ImageSource(source), source(source)
 {
 	table=(int *)malloc(sizeof(int)*source->samplesperpixel);
+
 	if(outchannels)
 		samplesperpixel=outchannels;
 	for(int i=0;i<source->samplesperpixel;++i)

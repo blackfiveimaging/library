@@ -41,6 +41,8 @@ DeviceNColorant *DeviceNColorantList::FirstColorant()
 
 int DeviceNColorantList::GetColorantIndex(const char *name)
 {
+	if(!name)
+		return(-1);
 	DeviceNColorant *col=FirstColorant();
 	int result=0;
 	while(col)
