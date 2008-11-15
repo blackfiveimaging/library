@@ -15,6 +15,8 @@ libsupport_la_SOURCES =	\
 	\
 	generaldialogs.cpp	\
 	generaldialogs.h	\
+	simplecombo.cpp	\
+	simplecombo.h	\
 	\
 	layoutrectangle.cpp	\
 	layoutrectangle.h	\

@@ -38,17 +38,17 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libsupport_la_LIBADD =
 am_libsupport_la_OBJECTS = maskpixbuf.lo rotatepixbuf.lo consumer.lo \
-	configdb.lo generaldialogs.lo layoutrectangle.lo signature.lo \
-	circlemontage.lo pathsupport.lo pixbufview.lo progressbar.lo \
-	rangeparser.lo thread.lo ptmutex.lo rwmutex.lo searchpath.lo \
-	patheditor.lo imageselector.lo jpegsave.lo tiffsave.lo \
-	tempfile.lo util.lo
+	configdb.lo generaldialogs.lo simplecombo.lo \
+	layoutrectangle.lo signature.lo circlemontage.lo \
+	pathsupport.lo pixbufview.lo progressbar.lo rangeparser.lo \
+	thread.lo ptmutex.lo rwmutex.lo searchpath.lo patheditor.lo \
+	imageselector.lo jpegsave.lo tiffsave.lo tempfile.lo util.lo
 libsupport_la_OBJECTS = $(am_libsupport_la_OBJECTS)
 libsupport_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -236,6 +236,8 @@ libsupport_la_SOURCES = \
 	\
 	generaldialogs.cpp	\
 	generaldialogs.h	\
+	simplecombo.cpp	\
+	simplecombo.h	\
 	\
 	layoutrectangle.cpp	\
 	layoutrectangle.h	\
@@ -355,6 +357,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rwmutex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/searchpath.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/signature.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simplecombo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tempfile.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffsave.Plo@am__quote@
