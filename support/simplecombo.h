@@ -48,7 +48,7 @@ struct _SimpleComboClass
 };
 
 GType simplecombo_get_type (void);
-GtkWidget* simplecombo_new (SimpleComboOption *opts);  // Null-terminated array
+GtkWidget* simplecombo_new (SimpleComboOption *opts);  // Null-terminated array.  Must last the lifetime of the widget
 const char *simplecombo_get(SimpleCombo *c);
 bool simplecombo_set(SimpleCombo *c,const char *cond);
 G_END_DECLS
