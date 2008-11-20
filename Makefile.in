@@ -68,6 +68,7 @@ composite_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -81,6 +82,7 @@ imgsrctest_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -94,6 +96,7 @@ jpegcheck_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -107,6 +110,7 @@ mkgreyprofile_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -120,6 +124,7 @@ mklabprofile_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -133,6 +138,7 @@ mkrgbprofile_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -146,6 +152,7 @@ printqueuetest_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -159,6 +166,7 @@ profileuitest_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -172,6 +180,7 @@ pvtest_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -185,6 +194,7 @@ stpuitest_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -198,6 +208,7 @@ threadtest_DEPENDENCIES = support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -390,7 +401,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = po support imagesource stpui_widgets stp_support pixbufthumbnail profilemanager
+SUBDIRS = po support imagesource stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
 AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -I./splashscreen -I./profilemanager -I./effects \
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
@@ -411,6 +422,7 @@ LDADD = \
 	profilemanager/libprofilemanager.la	\
 	stpui_widgets/libstpui_widgets.la	\
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la	\
 	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(GP_LIBS) $(GTK2_LIBS)
 
@@ -993,6 +1005,10 @@ stpui_widgets/libstpui_widgets.la:
 stp_support/libstp_support.la:
 	cd stp_support
 	$(MAKE) libstp_support.la
+
+gp_cppsupport/libgp_cppsupport.la:
+	cd gp_cppsupport
+	$(MAKE) libgp_cppsupport.la
 
 pixbufthumbnail/libpixbufthumbnail.la:
 	cd pixbufthumbnail

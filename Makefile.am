@@ -1,7 +1,7 @@
 # Makefile.am
 # RL 28/11/04
 
-SUBDIRS = po support imagesource stpui_widgets stp_support pixbufthumbnail profilemanager
+SUBDIRS = po support imagesource stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
 
 localedir=$(datadir)/locale
 
@@ -31,6 +31,7 @@ LDADD = \
 	profilemanager/libprofilemanager.la	\
 	stpui_widgets/libstpui_widgets.la	\
 	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la	\
 	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(GP_LIBS) $(GTK2_LIBS)
 
@@ -54,6 +55,10 @@ stpui_widgets/libstpui_widgets.la:
 stp_support/libstp_support.la:
 	cd stp_support
 	$(MAKE) libstp_support.la
+
+gp_cppsupport/libgp_cppsupport.la:
+	cd gp_cppsupport
+	$(MAKE) libgp_cppsupport.la
 
 pixbufthumbnail/libpixbufthumbnail.la:
 	cd pixbufthumbnail

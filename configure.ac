@@ -89,5 +89,6 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
                  profilemanager/Makefile
                  pixbufthumbnail/Makefile
                  stpui_widgets/Makefile
-                 stp_support/Makefile])
+                 stp_support/Makefile
+				 gp_cppsupport/Makefile])
 AC_OUTPUT
