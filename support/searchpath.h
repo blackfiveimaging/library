@@ -11,7 +11,7 @@
 
 	The following public functions are provided:
 
-	char *Search(const char *file)
+	char *SearchPaths(const char *file)
 		Returns an absolute path, given a relative path, or NULL for failure.
 		If the supplied path is already absolute, and the referenced file exists, a
 		strdup()ed version of it will be returned.
@@ -75,7 +75,7 @@ class SearchPathHandler
 	public:
 	SearchPathHandler();
 	virtual ~SearchPathHandler();
-	char *Search(const char *file);
+	char *SearchPaths(const char *file);
 	char *MakeRelative(const char *file);
 	virtual void AddPath(const char *path);
 	virtual void RemovePath(const char *path);

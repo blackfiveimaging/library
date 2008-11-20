@@ -198,7 +198,7 @@ static void populate_list(ImageSelector *il)
 
 		GdkPixbuf *pb=NULL;
 		if(ii->filename)
-			pb=egg_pixbuf_get_thumbnail_for_file(sp->Search(ii->filename),EGG_PIXBUF_THUMBNAIL_NORMAL,&err);
+			pb=egg_pixbuf_get_thumbnail_for_file(sp->SearchPaths(ii->filename),EGG_PIXBUF_THUMBNAIL_NORMAL,&err);
 		else
 			pb=ii->pixbuf;
 		if(pb)
@@ -279,7 +279,7 @@ static void selection_changed(GtkTreeSelection *select,gpointer user_data)
 			pe->filename=NULL;
 
 			if(ii->filename)
-				pe->filename=pe->searchpath->Search(ii->filename);
+				pe->filename=pe->searchpath->SearchPaths(ii->filename);
 		}
 		g_signal_emit(G_OBJECT (pe),imageselector_signals[CHANGED_SIGNAL], 0);
 	}

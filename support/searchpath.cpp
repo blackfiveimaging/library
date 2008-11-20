@@ -132,7 +132,7 @@ SearchPathHandler::~SearchPathHandler()
 }
 
 
-char *SearchPathHandler::Search(const char *file)
+char *SearchPathHandler::SearchPaths(const char *file)
 {
 	struct stat statbuf;
 	SearchPathInstance*spi=first;

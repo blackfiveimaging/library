@@ -15,4 +15,9 @@ const char *get_homedir();
 
 char *substitute_homedir(const char *path);
 
+// substitute_xdgdatahome(const char *path);
+//
+// Similar to substitute_homedir, but instead uses the XDG Base Directory specification.
+char *substitute_xdgconfighome(const char *path);
+
 #endif

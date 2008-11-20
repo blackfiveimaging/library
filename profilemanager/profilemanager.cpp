@@ -102,7 +102,7 @@ CMSProfile *ProfileManager::GetProfile(const char *name)
 		}
 		else
 		{
-			char *fn=Search(name);
+			char *fn=SearchPaths(name);
 			if(fn && strlen(fn))
 			{
 				try
