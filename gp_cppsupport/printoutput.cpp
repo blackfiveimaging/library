@@ -8,8 +8,8 @@ using namespace std;
 #include "support/generaldialogs.h"
 
 #include "printoutput.h"
+#include "printoutputselector.h"
 
-#include "pp_printoutput.h"
 
 class PODBHandler : public ConfigDBHandler
 {
@@ -109,7 +109,7 @@ void PrintOutput::DBToQueues()
 	else
 	{
 		cerr << "Warning - printer queue not found" << endl;
-		pp_printoutput_queue_dialog(this);
+		printoutput_queue_dialog(this);
 		tmp=FindString("Queue");
 	}
 	SetPrinterQueue(tmp);

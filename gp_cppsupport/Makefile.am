@@ -12,8 +12,8 @@ libgp_cppsupport_la_SOURCES = 		\
 	printerqueueswrapper.h	\
 	gprinter.cpp	\
 	gprinter.h	\
-	pp_printoutput.cpp \
-	pp_printoutput.h
+	printoutputselector.cpp \
+	printoutputselector.h
 
 
 libgp_cppsupport_la_LDFLAGS = -static

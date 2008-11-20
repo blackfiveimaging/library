@@ -14,7 +14,7 @@
 #include "stpui_widgets/stpui_queue.h"
 #include "stpui_widgets/stpui_printerselector.h"
 
-#include "pp_printoutput.h"
+#include "printoutputselector.h"
 
 #include "config.h"
 #include "gettext.h"
@@ -27,32 +27,32 @@ enum {
 	LAST_SIGNAL
 };
 
-static guint pp_printoutput_signals[LAST_SIGNAL] = { 0 };
+static guint printoutputselector_signals[LAST_SIGNAL] = { 0 };
 
-static void pp_printoutput_class_init (pp_PrintOutputClass *klass);
-static void pp_printoutput_init (pp_PrintOutput *stpuicombo);
+static void printoutputselector_class_init (PrintOutputSelectorClass *klass);
+static void printoutputselector_init (PrintOutputSelector *stpuicombo);
 
 
 static void printersel_changed(GtkWidget *wid,gpointer *ob)
 {
 	cerr << "In printersel_changed()" << endl;
-	pp_PrintOutput *lo=(pp_PrintOutput *)ob;
+	PrintOutputSelector *lo=(PrintOutputSelector *)ob;
 
 	const char *driver=stpui_printerselector_get_driver(STPUI_PRINTERSELECTOR(wid));
 	if(driver)
 	{
 		lo->po->SetString("Driver",driver);
 
-		g_signal_emit(G_OBJECT (ob),pp_printoutput_signals[CHANGED_SIGNAL], 0);
+		g_signal_emit(G_OBJECT (ob),printoutputselector_signals[CHANGED_SIGNAL], 0);
 	}
 }
 
 
-static void pp_printoutput_queue_changed(GtkEntry *entry,gpointer *ud)
+static void printoutputselector_queue_changed(GtkEntry *entry,gpointer *ud)
 {
-	cerr << "In pp_printoutput_queue_changed()" << endl;
+	cerr << "In printoutputselectorqueue_changed()" << endl;
 
-	pp_PrintOutput *ob=PP_PRINTOUTPUT(ud);
+	PrintOutputSelector *ob=PRINTOUTPUTSELECTOR(ud);
 	PrintOutput *po=ob->po;
 
 	cerr << "Getting printer queue..." << endl;
@@ -69,15 +69,15 @@ static void pp_printoutput_queue_changed(GtkEntry *entry,gpointer *ud)
 			stpui_printerselector_set_driver(STPUI_PRINTERSELECTOR(ob->printersel),driver);
 			free(driver);
 		}
-		g_signal_emit(G_OBJECT (ob),pp_printoutput_signals[CHANGED_SIGNAL], 0);
+		g_signal_emit(G_OBJECT (ob),printoutputselector_signals[CHANGED_SIGNAL], 0);
 	}
 }
 
 
 
-void pp_printoutput_refresh(pp_PrintOutput *ob)
+void printoutputselector_refresh(PrintOutputSelector *ob)
 {
-	cerr << "In pp_printoutput_refresh()" << endl;
+	cerr << "In printoutputselectorrefresh()" << endl;
 	PrintOutput *po=ob->po;
 
 	const char *driver=po->FindString("Driver");
@@ -95,9 +95,9 @@ void pp_printoutput_refresh(pp_PrintOutput *ob)
 
 
 GtkWidget*
-pp_printoutput_new (PrintOutput *po)
+printoutputselector_new (PrintOutput *po)
 {
-	pp_PrintOutput *ob=PP_PRINTOUTPUT(g_object_new (pp_printoutput_get_type (), NULL));
+	PrintOutputSelector *ob=PRINTOUTPUTSELECTOR(g_object_new (printoutputselector_get_type (), NULL));
 	gtk_box_set_spacing(GTK_BOX(ob),5);
 
 	ob->po=po;
@@ -125,7 +125,7 @@ pp_printoutput_new (PrintOutput *po)
 	gtk_table_attach_defaults(GTK_TABLE(table),ob->combo,1,2,0,1);
 	gtk_widget_show(ob->combo);
 
-	g_signal_connect(GTK_WIDGET(ob->combo),"changed",G_CALLBACK(pp_printoutput_queue_changed),ob);
+	g_signal_connect(GTK_WIDGET(ob->combo),"changed",G_CALLBACK(printoutputselector_queue_changed),ob);
 
 
 	label=gtk_label_new(_("Printer Model:"));
@@ -144,55 +144,55 @@ pp_printoutput_new (PrintOutput *po)
 
 
 GType
-pp_printoutput_get_type (void)
+printoutputselector_get_type (void)
 {
 	static GType stpuic_type = 0;
 
 	if (!stpuic_type)
 	{
-		static const GTypeInfo pp_printoutput_info =
+		static const GTypeInfo printoutputselector_info =
 		{
-			sizeof (pp_PrintOutputClass),
+			sizeof (PrintOutputSelectorClass),
 			NULL, /* base_init */
 			NULL, /* base_finalize */
-			(GClassInitFunc) pp_printoutput_class_init,
+			(GClassInitFunc) printoutputselector_class_init,
 			NULL, /* class_finalize */
 			NULL, /* class_data */
-			sizeof (pp_PrintOutput),
+			sizeof (PrintOutputSelector),
 			0,
-			(GInstanceInitFunc) pp_printoutput_init,
+			(GInstanceInitFunc) printoutputselector_init,
 		};
-		stpuic_type = g_type_register_static (GTK_TYPE_VBOX, "pp_PrintOutput", &pp_printoutput_info, (GTypeFlags)0);
+		stpuic_type = g_type_register_static (GTK_TYPE_VBOX, "PrintOutputSelector", &printoutputselector_info, (GTypeFlags)0);
 	}
 	return stpuic_type;
 }
 
 
 static void
-pp_printoutput_class_init (pp_PrintOutputClass *klass)
+printoutputselector_class_init (PrintOutputSelectorClass *klass)
 {
-	pp_printoutput_signals[CHANGED_SIGNAL] =
+	printoutputselector_signals[CHANGED_SIGNAL] =
 	g_signal_new ("changed",
 		G_TYPE_FROM_CLASS (klass),
 		GSignalFlags(G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION),
-		G_STRUCT_OFFSET (pp_PrintOutputClass, changed),
+		G_STRUCT_OFFSET (PrintOutputSelectorClass, changed),
 		NULL, NULL,
 		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
 
 static void
-pp_printoutput_init (pp_PrintOutput *ob)
+printoutputselector_init (PrintOutputSelector *ob)
 {
 	ob->po=NULL;
 }
 
 
-void pp_printoutput_queue_dialog(PrintOutput *po)
+void printoutput_queue_dialog(PrintOutput *po)
 {
 	const char *oldqueue=po->FindString("Queue");
-	char *labeltext=g_strdup_printf("The printer queue %s\n is not found - please choose another",oldqueue);
-	GtkWidget *dlg=gtk_dialog_new_with_buttons("Printer queue not found",NULL,
+	char *labeltext=g_strdup_printf(_("The printer queue %s\n is not found - please choose another"),oldqueue);
+	GtkWidget *dlg=gtk_dialog_new_with_buttons(_("Printer queue not found"),NULL,
 		GtkDialogFlags(0),GTK_STOCK_OK,GTK_RESPONSE_OK,NULL);
 
 	GtkWidget *vbox=gtk_vbox_new(FALSE,5);
