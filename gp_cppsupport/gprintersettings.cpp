@@ -6,6 +6,7 @@
  * Distributed under the terms of the GNU General Public License -
  * see the file named "COPYING" for more details.
  *
+ * TODO: Add support for multi-line parameters (heredoc syntax?)
  */
 
 #include <iostream>

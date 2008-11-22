@@ -29,6 +29,11 @@
 
 #include "gprinter.h"
 
+#include "../config.h"
+#define _(x) gettext(x)
+#define N_(x) gettext_noop(x)
+
+
 #define USE16BITPRINTING
 
 using namespace std;
@@ -276,6 +281,19 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 			stp_set_string_parameter(stpvars, "ChannelBitDepth", "16");
 #endif
 			break;
+		case IS_TYPE_DEVICEN:
+			stp_set_string_parameter(stpvars, "InputImageType", "RAW");
+			{
+				char nchan[10];
+				sprintf(nchan,"%d",src->samplesperpixel);
+				stp_set_string_parameter(stpvars, "RawChannels", nchan);
+			}
+#ifdef USE8BITPRINTING
+			stp_set_string_parameter(stpvars, "ChannelBitDepth", "8");
+#else
+			stp_set_string_parameter(stpvars, "ChannelBitDepth", "16");
+#endif
+			break;
 		default:
 			throw "Only RGB and CMYK images are currently supported!";
 			break;
@@ -312,7 +330,7 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 
 //	Dump();
 	bool result=true;
-	const char *error="Unable to generate print data";
+	const char *error=_("Unable to generate print data");
 	result&=stp_verify(tmpvars);
 	if(result)
 	{
@@ -547,6 +565,7 @@ stp_image_status_t GPrinter::GetRow(int row,unsigned char *data)
 	{
 		case IS_TYPE_RGB:
 		case IS_TYPE_CMYK:
+		case IS_TYPE_DEVICEN:
 			for(i=0;i<pixelwidth*source->samplesperpixel;++i)
 			{
 #ifdef USE8BITPRINTING

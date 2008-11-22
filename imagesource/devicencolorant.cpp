@@ -114,6 +114,14 @@ DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name)
 	{
 		red=(127); green=(127); blue=(127);
 	}
+	else if(strcasecmp(name,"Light Light Black")==0)
+	{
+		red=(191); green=(191); blue=(191);
+	}
+	else if(strcasecmp(name,"Medium Black")==0)
+	{
+		red=(63); green=(63); blue=(63);
+	}
 	else if(strcasecmp(name,"Red")==0)
 	{
 		red=(255); green=(0); blue=(0);
@@ -123,7 +131,10 @@ DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name)
 		red=(0); green=(0); blue=(255);
 	}
 	else
+	{
+		cerr << "Can't find colorant: " << name << endl;
 		throw "Colorant not recognised";
+	}
 	if(name)
 		this->name=strdup(name);
 	prev=header.first;
