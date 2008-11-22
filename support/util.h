@@ -11,6 +11,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+void CreateDirIfNeeded(const char *dirname);
 bool CheckSettingsDir(const char *dirname);
 char *BuildFilename(const char *root,const char *suffix,const char *fileext);
 char *BuildAbsoluteFilename(const char *fname);

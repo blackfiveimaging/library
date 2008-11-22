@@ -22,6 +22,22 @@
 
 using namespace std;
 
+void CreateDirIfNeeded(const char *path)
+{
+	struct stat s;
+	if(stat(path,&s)!=0)
+	{
+		cerr << "Need to create directory... " << errno << endl;
+		if(errno==ENOENT)
+#ifdef WIN32
+			mkdir(path);
+#else
+			mkdir(path,0755);
+#endif
+	}
+}
+
+
 bool CheckSettingsDir(const char *dirname)
 {
 //	const char *homedir=getenv("HOME");
@@ -32,18 +48,8 @@ bool CheckSettingsDir(const char *dirname)
 		sprintf(path,"%s%c%s",homedir,SEARCHPATH_SEPARATOR,dirname);
 
 		cerr << "Settings directory: " << path << endl;
-		
-		struct stat s;
-		if(stat(path,&s)!=0)
-		{
-			cerr << "Need to create directory... " << errno << endl;
-			if(errno==ENOENT)
-#ifdef WIN32
-				mkdir(path);
-#else
-				mkdir(path,0755);
-#endif
-		}
+		CreateDirIfNeeded(path);
+
 		free(path);
 		return(true);
 	}
@@ -73,7 +79,11 @@ char *BuildFilename(const char *root,const char *suffix,const char *fileext)
 	/* Build a filename like <imagename><channel>.<extension> */
 	char *extension;
 
-	char *filename=(char *)malloc(strlen(root)+strlen(suffix)+strlen(fileext)+3);
+	char *filename=NULL;
+	if(fileext)
+		filename=(char *)malloc(strlen(root)+strlen(suffix)+strlen(fileext)+3);
+	else
+		filename=(char *)malloc(strlen(root)+strlen(suffix)+3);
 
 	char *root2=strdup(root);
 	extension = root2 + strlen (root2) - 1;
@@ -82,13 +92,17 @@ char *BuildFilename(const char *root,const char *suffix,const char *fileext)
 		if (*extension == '.') break;
 		extension--;
 	}
-	if (extension >= root2)
+	if (extension >= root2 && fileext && strlen(fileext))
 	{
 		*(extension++) = '\0';
 		sprintf(filename,"%s%s.%s", root2, suffix, fileext);
 	}
 	else
+	{
+		if(extension>=root2)
+			*(extension++) = '\0';
 		sprintf(filename,"%s%s", root2, suffix);
+	}
 	free(root2);
 
 	return(filename);

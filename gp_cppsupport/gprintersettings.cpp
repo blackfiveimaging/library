@@ -2,7 +2,7 @@
  * gprintersettings.cpp - Bridges GutenPrint's stp_vars_t and the configuration file.
  * A subclass of ConfigSectionHandler.
  *
- * Copyright (c) 2004 by Alastair M. Robinson
+ * Copyright (c) 2004, 2008 by Alastair M. Robinson
  * Distributed under the terms of the GNU General Public License -
  * see the file named "COPYING" for more details.
  *
@@ -280,9 +280,13 @@ void GPrinterSettings::SaveSection(FILE *file)
 		cerr << "Saving PPDFile parameter..." << endl;
 		const char *ppd=stp_get_file_parameter(stpvars,"PPDFile");
 		char *defppd=output.GetPPD();
-		cerr << "Current PPD: " << ppd << endl;
-		cerr << "Default PPD: " << defppd << endl;
-		if(defppd && CompareFiles(defppd,ppd))
+		if(ppd)
+			cerr << "Current PPD: " << ppd << endl;
+		if(defppd)
+			cerr << "Default PPD: " << defppd << endl;
+		if(defppd && ppd && CompareFiles(defppd,ppd))
+			ppd=DEFAULT_PPD_STRING;
+		if(!ppd)
 			ppd=DEFAULT_PPD_STRING;
 		if(defppd)
 			free(defppd);
