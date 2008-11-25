@@ -12,7 +12,7 @@ using namespace std;
 
 #include "ptmutex.h"
 
-#if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
+// #if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
 
 // pthreads-based implementation
 
@@ -54,8 +54,8 @@ void PTMutex::ReleaseMutex()
 	pthread_mutex_unlock(&mutex);
 }
 
-#else
-
+// #else
+#if 0
 // Dummy implementation.  Obtaining the mutex always succeeds.
 
 PTMutex::PTMutex()

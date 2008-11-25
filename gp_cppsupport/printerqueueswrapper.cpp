@@ -104,7 +104,7 @@ char *PrinterQueues::GetPPD()
 		cerr << "PPD: " << ppd << endl;
 	else
 		cerr << "No PPD found" << endl;
-	return(queues->GetPPD(queues));
+	return(ppd);
 }
 
 

@@ -5,7 +5,7 @@
 
 #include <glib.h>
 
-#if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
+// #if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
 
 #include <pthread.h>
 
@@ -22,7 +22,8 @@ class PTMutex
 	friend class Thread;
 };
 
-#else
+//#else
+#if 0
 
 // We provide a dummy mutex implemntation for those occasions when no thread
 // implementation is available.  This allows such things as the profilemanager

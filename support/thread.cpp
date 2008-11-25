@@ -9,7 +9,7 @@
 
 #include "thread.h"
 
-#if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
+// #if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
 
 bool Thread::TestBreak()
 {
@@ -118,5 +118,5 @@ Thread::Thread(int (*entry)(Thread *t,void *ud),void *userdata)
 	pthread_cond_init(&cond,0);
 }
 
-#endif
+// #endif
 

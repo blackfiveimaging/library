@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
+// #if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
 
 // pthreads-based implementation
 
@@ -250,8 +250,8 @@ void RWMutex::Dump()
 	}
 }
 
-#else
-
+// #else
+#if 0
 // Dummy implementation.  Obtaining the rwlock always succeeds.
 
 RWMutex::RWMutex()

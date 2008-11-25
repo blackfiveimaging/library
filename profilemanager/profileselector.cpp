@@ -155,23 +155,32 @@ static void profileselector_build_options(ProfileSelector *c)
 		c->optionlist=NULL;
 	}
 
+	cerr << "Building profile option list" << endl;
 	ProfileInfo *pi=c->pm->GetFirstProfileInfo();
 	while(pi)
 	{
-		const char *filename=pi->GetFilename();
-		const char *uiname=pi->GetDescription();
-		profsel_entry *ps=new profsel_entry(filename,uiname);
-		if(!g_list_find_custom(c->optionlist,ps,mycmp))
+		try
 		{
-			if(verifyprofile(c,pi))
+			const char *filename=pi->GetFilename();
+			const char *uiname=pi->GetDescription();
+			profsel_entry *ps=new profsel_entry(filename,uiname);
+			if(!g_list_find_custom(c->optionlist,ps,mycmp))
 			{
-				profsel_entry *ps2=new profsel_entry(filename,uiname);
-				c->optionlist=g_list_append(c->optionlist,ps2);
+				if(verifyprofile(c,pi))
+				{
+					profsel_entry *ps2=new profsel_entry(filename,uiname);
+					c->optionlist=g_list_append(c->optionlist,ps2);
+				}
 			}
+			delete ps;
 		}
-		delete ps;
+		catch (const char *err)
+		{
+			cerr << "Error opening profile: " << err << endl;
+		}
 		pi=pi->Next();
 	}
+	cerr << "Done" << endl;
 
 	c->optionlist=g_list_sort(c->optionlist,mycmp_desc);
 

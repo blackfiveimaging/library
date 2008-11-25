@@ -5,7 +5,7 @@
 
 enum ThreadState {THREAD_IDLE,THREAD_STARTED,THREAD_RUNNING,THREAD_CANCELLED};
 
-#if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
+// #if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
 
 class Thread
 {
@@ -38,6 +38,6 @@ class Thread
 };
 
 
-#endif
+// #endif
 
 #endif
