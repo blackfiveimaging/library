@@ -30,6 +30,7 @@
 #include "gprinter.h"
 
 #include "../config.h"
+#include "../gettext.h"
 #define _(x) gettext(x)
 #define N_(x) gettext_noop(x)
 

@@ -298,7 +298,7 @@ int ImageSource_TIFF::CountTIFFDirs(const char *filename,int &largestdir)
 	return(count);
 }
 
-ImageSource_TIFF::ImageSource_TIFF(const char *filename)
+ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 {
 	ttile_t stripcount=0;
 	uint16 photometric=0,spp=0,bps=0;
@@ -358,10 +358,10 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename)
 			{
 				switch(spp)
 				{
-					case 3:
+					case 1:
 						type=IS_TYPE_GREY;
 						break;
-					case 4:
+					case 2:
 						type=IS_TYPE_GREYA;
 						break;
 					default:

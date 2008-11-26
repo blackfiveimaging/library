@@ -194,7 +194,7 @@ ISDataType *ImageSource_BMP::GetRow(int row)
 }
 
 
-ImageSource_BMP::ImageSource_BMP(const char *filename) : strips(NULL)
+ImageSource_BMP::ImageSource_BMP(const char *filename) : ImageSource(), strips(NULL)
 {
 	char fileheader[14];
 	char ImageHeader[64];
@@ -285,6 +285,8 @@ ImageSource_BMP::ImageSource_BMP(const char *filename) : strips(NULL)
 	}
 
 	embeddedprofile=NULL;
+
+	cerr << "BMP type: " << type << endl;
 
 	MakeRowBuffer();
 	randomaccess=true;
