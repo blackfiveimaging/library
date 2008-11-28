@@ -129,7 +129,9 @@ void PrintOutput::QueuesToDB()
 
 ConfigTemplate PrintOutput::Template[]=
 {
-	ConfigTemplate("Queue",""),	ConfigTemplate("Driver",""),
+	ConfigTemplate("Queue",""),
+	ConfigTemplate("Driver",""),
 	ConfigTemplate("Command",""),
 	ConfigTemplate()
 };
+

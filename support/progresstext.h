@@ -12,6 +12,8 @@
 #define PROGRESSTEXT_H
 
 #include <iostream>
+#include <string.h>
+#include <stdlib.h>
 
 #include "progress.h"
 

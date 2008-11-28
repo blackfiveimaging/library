@@ -37,6 +37,17 @@ void ErrorMessage_Dialog(const char *message,GtkWidget *parent)
 }
 
 
+bool Query_Dialog(const char *message,GtkWidget *parent)
+{
+	GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(parent),GtkDialogFlags(0),
+		GTK_MESSAGE_QUESTION,GTK_BUTTONS_YES_NO,
+		message);
+	int response=gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+	return(response==GTK_RESPONSE_YES);
+}
+
+
 // File dialog
 
 static void updatepreview(GtkWidget *fc,void *ud)
