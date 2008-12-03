@@ -265,6 +265,7 @@ void GPrinterSettings::SaveSection(FILE *file)
 {
 	stp_parameter_list_t params = stp_get_parameter_list(stpvars);
 	stp_parameter_t desc;
+	desc.is_active=false;
 
 	int count = stp_parameter_list_count(params);
 	
@@ -416,6 +417,7 @@ bool GPrinterSettings::SetDriver(const char *driver)
 
 
 		stp_parameter_t desc;
+		desc.is_active=false;
 		stp_describe_parameter(stpvars,"PPDFile",&desc);
 		cerr << "PPDFile parameter active? " << (desc.is_active ? "Yes" : "No") << endl;
 //		FIXME!!!

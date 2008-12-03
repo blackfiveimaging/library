@@ -26,6 +26,17 @@ int main(int argc,char **argv)
 {
 	try
 	{
+		if(argc==4)
+		{
+			ImageSource *is=ISLoadImage(argv[1]);
+			int pc=atoi(argv[2]);
+			ImageSource_Downsample dst(is,(is->width*pc)/100,(is->height*pc)/100);
+			TIFFSaver ts(argv[3],&dst);
+			ProgressText p;
+			ts.SetProgress(&p);
+			ts.Save();
+		}
+#if 0
 		if(argc==3)
 		{
 			int channelmap[]={5,4,0,1,2,3};
@@ -58,6 +69,7 @@ int main(int argc,char **argv)
 			ts.SetProgress(&p);
 			ts.Save();
 		}
+#endif
 #if 0
 		if(argc==4)
 		{
