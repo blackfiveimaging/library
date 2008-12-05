@@ -283,7 +283,7 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 #endif
 			break;
 		case IS_TYPE_DEVICEN:
-			stp_set_string_parameter(stpvars, "InputImageType", "RAW");
+			stp_set_string_parameter(stpvars, "InputImageType", "Raw");
 			{
 				char nchan[10];
 				sprintf(nchan,"%d",src->samplesperpixel);

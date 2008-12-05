@@ -28,6 +28,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_downsample.h	\
 	imagesource_flatten.cpp	\
 	imagesource_flatten.h	\
+	imagesource_gamma.cpp	\
+	imagesource_gamma.h	\
 	imagesource_gaussianblur.cpp \
 	imagesource_gaussianblur.h \
 	imagesource_gdkpixbuf.cpp 	\
@@ -56,6 +58,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_rotate.h	\
 	imagesource_scale.cpp	\
 	imagesource_scale.h	\
+	imagesource_scaledensity.cpp	\
+	imagesource_scaledensity.h	\
 	imagesource_segmentmask.cpp \
 	imagesource_segmentmask.h \
 	imagesource_solid.cpp	\

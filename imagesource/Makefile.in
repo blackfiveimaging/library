@@ -48,16 +48,17 @@ am_libimagesource_la_OBJECTS = imagesource.lo imagesource_bilinear.lo \
 	imagesource_convolution.lo imagesource_crop.lo \
 	imagesource_dither.lo imagesource_desaturate.lo \
 	imagesource_downsample.lo imagesource_flatten.lo \
-	imagesource_gaussianblur.lo imagesource_gdkpixbuf.lo \
-	imagesource_greyscale.lo imagesource_gs.lo imagesource_jpeg.lo \
+	imagesource_gamma.lo imagesource_gaussianblur.lo \
+	imagesource_gdkpixbuf.lo imagesource_greyscale.lo \
+	imagesource_gs.lo imagesource_jpeg.lo \
 	imagesource_lanczossinc.lo imagesource_mask.lo \
 	imagesource_montage.lo imagesource_devicen_preview.lo \
 	imagesource_devicen_remap.lo imagesource_promote.lo \
 	imagesource_pnm.lo imagesource_rotate.lo imagesource_scale.lo \
-	imagesource_segmentmask.lo imagesource_solid.lo \
-	imagesource_tiff.lo imagesource_unsharpmask.lo \
-	imagesource_util.lo devicencolorant.lo \
-	pixbuf_from_imagesource.lo iccjpeg.lo
+	imagesource_scaledensity.lo imagesource_segmentmask.lo \
+	imagesource_solid.lo imagesource_tiff.lo \
+	imagesource_unsharpmask.lo imagesource_util.lo \
+	devicencolorant.lo pixbuf_from_imagesource.lo iccjpeg.lo
 libimagesource_la_OBJECTS = $(am_libimagesource_la_OBJECTS)
 libimagesource_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -258,6 +259,8 @@ libimagesource_la_SOURCES = \
 	imagesource_downsample.h	\
 	imagesource_flatten.cpp	\
 	imagesource_flatten.h	\
+	imagesource_gamma.cpp	\
+	imagesource_gamma.h	\
 	imagesource_gaussianblur.cpp \
 	imagesource_gaussianblur.h \
 	imagesource_gdkpixbuf.cpp 	\
@@ -286,6 +289,8 @@ libimagesource_la_SOURCES = \
 	imagesource_rotate.h	\
 	imagesource_scale.cpp	\
 	imagesource_scale.h	\
+	imagesource_scaledensity.cpp	\
+	imagesource_scaledensity.h	\
 	imagesource_segmentmask.cpp \
 	imagesource_segmentmask.h \
 	imagesource_solid.cpp	\
@@ -369,6 +374,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_dither.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_downsample.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_flatten.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gamma.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gaussianblur.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gdkpixbuf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_greyscale.Plo@am__quote@
@@ -381,6 +387,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_promote.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_rotate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_scale.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_scaledensity.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_segmentmask.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_solid.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_tiff.Plo@am__quote@
