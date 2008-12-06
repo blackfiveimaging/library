@@ -31,4 +31,54 @@ enum IS_TYPE {
 #define STRIP_ALPHA(x) IS_TYPE(((x)&~IS_TYPE_ALPHA))
 #define HAS_ALPHA(x) ((x)&IS_TYPE_ALPHA)
 
+
+// DeviceNValue - reallly belongs in a sub-library containing all the specialised
+// DeviceN stuff, though potentially useful for RGB or CMYK stuff too.
+
+class ISDeviceNValue
+{
+	public:
+	ISDeviceNValue(int channels,ISDataType value=0) : channels(channels), values(NULL)
+	{
+		values=new ISDataType[channels];
+		for(int i=0;i<channels;++i)
+			values[i]=value;
+	}
+	ISDeviceNValue(ISDeviceNValue &other) : channels(other.channels), values(NULL)
+	{
+		values=new ISDataType[channels];
+		for(int i=0;i<channels;++i)
+			values[i]=other[i];
+	}
+	~ISDeviceNValue()
+	{
+		if(values)
+			delete[] values;
+	}
+	ISDataType &operator[](int i)
+	{
+		if(i<channels)
+			return(values[i]);
+		else
+			throw "DeviceNValue - bounds check failed";
+	}
+	ISDeviceNValue &operator=(ISDeviceNValue &other)
+	{
+		if(values)
+			delete[] values;
+		channels=other.channels;
+		values=new ISDataType[channels];
+		for(int i=0;i<channels;++i)
+			values[i]=other[i];
+		return(*this);
+	}
+	int GetChannels()
+	{
+		return(channels);
+	}
+	protected:
+	int channels;
+	ISDataType *values;
+};
+
 #endif

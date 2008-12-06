@@ -21,12 +21,12 @@
 class ImageSource_ScaleDensity : public ImageSource
 {
 	public:
-	ImageSource_ScaleDensity(ImageSource *source,float density);
+	ImageSource_ScaleDensity(ImageSource *source,ISDeviceNValue densities);
 	virtual ~ImageSource_ScaleDensity();
 	ISDataType *GetRow(int row);
 	private:
 	ImageSource *source;
-	float density;
+	ISDeviceNValue densities;
 };
 
 #endif

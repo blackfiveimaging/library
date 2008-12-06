@@ -131,6 +131,9 @@ ImageSource_DeviceN_Preview::~ImageSource_DeviceN_Preview()
 {
 	if(source)
 		delete source;
+
+	if(colorants)
+		delete[] colorants;
 }
 
 

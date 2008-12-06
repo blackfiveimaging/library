@@ -16,16 +16,123 @@
 #include "imagesource_unsharpmask.h"
 #include "imagesource_devicen_preview.h"
 #include "imagesource_devicen_remap.h"
+#include "imagesource_montage.h"
+#include "imagesource_scaledensity.h"
+#include "imagesource_chequerboard.h"
+#include "imagesource_hsweep.h"
+#include "imagesource_hticks.h"
 #include "convkernel_gaussian.h"
 #include "convkernel_unsharpmask.h"
 #include "tiffsave.h"
 #include "progresstext.h"
 
 
+// Render a sweep pattern for approximate gamma determination.
+// This doesn't need to be accurate (which is just as well, because it isn't!)
+// - just good enough to give us an approximate gamma so the test point when
+// printing the linearization charts are reasonably well-distributed.
+
+ImageSource *MakeGammaEvalSweep(DeviceNColorantList &colorants,int width,int height,int res)
+{
+	int cols=colorants.GetColorantCount();
+	int stripeheight=height/3;
+
+	// We search for black, and throw an error if not found...
+	int blk=-1;
+	blk=colorants.GetColorantIndex("Black");
+	if(blk==-1)
+		blk=colorants.GetColorantIndex("Matte Black");
+	if(blk==-1)
+		throw "Error: Can't find black ink!";
+
+	ISDeviceNValue bg(cols,0);	// Background colour
+	ISDeviceNValue fg(cols,0);	// Foreground for ticks.
+	fg[blk]=IS_SAMPLEMAX;	// Render ticks in black
+
+	ImageSource_Montage *mon=new ImageSource_Montage(IS_TYPE_DEVICEN,res,cols);
+	ImageSource_HTicks *ticks=new ImageSource_HTicks(width,stripeheight,IS_TYPE_DEVICEN,cols);
+	ticks->SetBG(bg);
+	ticks->SetFG(fg);
+	mon->Add(ticks,0,0);	// Now owned by the montage
+
+	ImageSource_HSweep *sweep = new ImageSource_HSweep(width,stripeheight,bg,fg,IS_TYPE_DEVICEN);
+	mon->Add(sweep,0,stripeheight);	// Now owned by the montage
+	
+	ImageSource_Chequerboard *cb = new ImageSource_Chequerboard(width,stripeheight,IS_TYPE_DEVICEN,cols,4);
+	cb->SetBG(bg);
+	cb->SetFG(fg);
+	mon->Add(cb,0,stripeheight*2);	// Now owned by the montage
+	return(mon);
+}
+
+
+// Render a density evaluation pattern - this pattern should be printed at reduced density in
+// Raw mode to determine absolute maximum ink levels for individual ink channels.
+
+ImageSource *MakeDensitEvalSweep(DeviceNColorantList &colorants,int width,int height,int res)
+{
+	int cols=colorants.GetColorantCount();
+	int stripeheight=(2*height)/(cols+1);	// We'll render each pass as stripeheight pixels
+											// and the row of "ticks" at half that height
+
+	// We search for black, and throw an error if not found...
+	int blk=-1;
+	blk=colorants.GetColorantIndex("Black");
+	if(blk==-1)
+		blk=colorants.GetColorantIndex("Matte Black");
+	if(blk==-1)
+		throw "Error: Can't find black ink!";
+
+	ISDeviceNValue bg(cols,0);	// Background colour
+	ISDeviceNValue tfg(cols,0);	// Foreground for ticks.
+	tfg[blk]=IS_SAMPLEMAX;	// Render ticks in black
+
+	ImageSource_Montage *mon=new ImageSource_Montage(IS_TYPE_DEVICEN,res,cols);
+	ImageSource_HTicks *ticks=new ImageSource_HTicks(width/2,stripeheight/2,IS_TYPE_DEVICEN,cols);
+	ticks->SetBG(bg);
+	ticks->SetFG(tfg);
+	mon->Add(ticks,0,0);	// Now owned by the montage
+
+	ticks=new ImageSource_HTicks(width/2,stripeheight/2,IS_TYPE_DEVICEN,cols);
+	ticks->SetBG(bg);
+	ticks->SetFG(tfg);
+	mon->Add(ticks,width/2,0);
+
+	for(int i=0;i<cols;++i)
+	{
+		ISDeviceNValue sfg(cols,0);
+		sfg[i]=IS_SAMPLEMAX;
+		ImageSource *is=new ImageSource_HSweep(width/2,stripeheight,bg,sfg,IS_TYPE_DEVICEN);
+		mon->Add(is,(width/2)*(i&1),stripeheight*(i/2)+stripeheight/2);
+	}
+	return(mon);
+}
+
+
 int main(int argc,char **argv)
 {
 	try
 	{
+		if(argc==2)
+		{
+			DeviceNColorantList colorants;
+			new DeviceNColorant(colorants,"Yellow");
+			new DeviceNColorant(colorants,"Black");
+			new DeviceNColorant(colorants,"Light Cyan");
+			new DeviceNColorant(colorants,"Light Magenta");
+			new DeviceNColorant(colorants,"Magenta");
+			new DeviceNColorant(colorants,"Cyan");
+
+//			ImageSource *is=MakeDensityEvalSweep(colorants,1140,200,144);
+			ImageSource *is=MakeGammaEvalSweep(colorants,1140,90,144);
+
+			ImageSource_DeviceN_Preview dst(is,&colorants);
+
+			TIFFSaver ts(argv[1],&dst);
+			ProgressText p;
+			ts.SetProgress(&p);
+			ts.Save();
+		}
 		if(argc==4)
 		{
 			ImageSource *is=ISLoadImage(argv[1]);

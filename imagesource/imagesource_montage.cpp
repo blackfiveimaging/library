@@ -93,12 +93,13 @@ ISMontage_Component::~ISMontage_Component()
 }
 
 
-ImageSource_Montage::ImageSource_Montage(IS_TYPE type,int resolution)
+ImageSource_Montage::ImageSource_Montage(IS_TYPE type,int resolution, int samplesperpixel)
 	: ImageSource(), first(NULL)
 {
 	xres=resolution;
 	yres=resolution;
 	this->type=type;
+	this->samplesperpixel=samplesperpixel;
 
 	switch(type)
 	{
@@ -110,11 +111,13 @@ ImageSource_Montage::ImageSource_Montage(IS_TYPE type,int resolution)
 //			samplesperpixel=2;
 //			break;
 		case IS_TYPE_RGB:
-			samplesperpixel=3;
+			this->samplesperpixel=3;
 			break;
 		case IS_TYPE_RGBA:
 		case IS_TYPE_CMYK:
-			samplesperpixel=4;
+			this->samplesperpixel=4;
+			break;
+		case IS_TYPE_DEVICEN:
 			break;
 		default:
 			throw "Montage: unsupported type";

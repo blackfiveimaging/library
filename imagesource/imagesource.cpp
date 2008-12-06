@@ -7,6 +7,12 @@ using namespace std;
 
 ImageSource::ImageSource() : embeddedprofile(NULL), embprofowned(false), rowbuffer(NULL)
 {
+	type=IS_TYPE_RGB;
+	samplesperpixel=3;
+	randomaccess=false;
+	xres=72.0;
+	yres=72.0;
+	currentrow=-1;
 }
 
 

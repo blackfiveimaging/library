@@ -20,7 +20,7 @@ class ISMontage_Component;
 class ImageSource_Montage : public ImageSource
 {
 	public:
-	ImageSource_Montage(IS_TYPE type,int res=360);
+	ImageSource_Montage(IS_TYPE type,int res=360,int samplesperpixel=0);	// Samplesperpixel is only needed for DeviceN type
 	~ImageSource_Montage();
 	virtual void Add(ImageSource *is,int xpos,int ypos);
 	ISDataType *GetRow(int row);

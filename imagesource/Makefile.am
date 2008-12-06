@@ -14,6 +14,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_bilinear.h	\
 	imagesource_bmp.cpp	\
 	imagesource_bmp.h	\
+	imagesource_chequerboard.cpp	\
+	imagesource_chequerboard.h	\
 	imagesource_cms.cpp	\
 	imagesource_cms.h	\
 	imagesource_convolution.cpp	\
@@ -38,6 +40,10 @@ libimagesource_la_SOURCES =	\
 	imagesource_greyscale.h	\
 	imagesource_gs.cpp	\
 	imagesource_gs.h	\
+	imagesource_hsweep.cpp	\
+	imagesource_hsweep.h	\
+	imagesource_hticks.cpp	\
+	imagesource_hticks.h	\
 	imagesource_jpeg.cpp	\
 	imagesource_jpeg.h	\
 	imagesource_lanczossinc.cpp	\

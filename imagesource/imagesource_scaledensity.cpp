@@ -44,7 +44,7 @@ ISDataType *ImageSource_ScaleDensity::GetRow(int row)
 				{
 					int j;
 					for(j=0;j<samplesperpixel-1;++j)
-						rowbuffer[i*samplesperpixel+j]=IS_SAMPLEMAX-ISDataType(density * (IS_SAMPLEMAX-src[i*samplesperpixel+j]));
+						rowbuffer[i*samplesperpixel+j]=IS_SAMPLEMAX-ISDataType((densities[j] * (IS_SAMPLEMAX-src[i*samplesperpixel+j]))/IS_SAMPLEMAX);
 					rowbuffer[i*samplesperpixel+j]=src[i*samplesperpixel+j];	// Copy alpha unchanged
 				}	
 			}
@@ -53,7 +53,7 @@ ISDataType *ImageSource_ScaleDensity::GetRow(int row)
 				for(int i=0;i<width;++i)
 				{
 					for(int j=0;j<samplesperpixel;++j)
-						rowbuffer[i*samplesperpixel+j]=IS_SAMPLEMAX-ISDataType(density * (IS_SAMPLEMAX-src[i*samplesperpixel+j]));
+						rowbuffer[i*samplesperpixel+j]=IS_SAMPLEMAX-ISDataType((densities[j] * (IS_SAMPLEMAX-src[i*samplesperpixel+j]))/IS_SAMPLEMAX);
 				}	
 			}		
 			break;
@@ -64,7 +64,7 @@ ISDataType *ImageSource_ScaleDensity::GetRow(int row)
 				{
 					int j;
 					for(j=0;j<samplesperpixel-1;++j)
-						rowbuffer[i*samplesperpixel+j]=ISDataType(density * src[i*samplesperpixel+j]);
+						rowbuffer[i*samplesperpixel+j]=ISDataType((densities[j] * src[i*samplesperpixel+j])/IS_SAMPLEMAX);
 					rowbuffer[i*samplesperpixel+j]=src[i*samplesperpixel+j];	// Copy alpha unchanged
 				}	
 			}
@@ -73,7 +73,7 @@ ISDataType *ImageSource_ScaleDensity::GetRow(int row)
 				for(int i=0;i<width;++i)
 				{
 					for(int j=0;j<samplesperpixel;++j)
-						rowbuffer[i*samplesperpixel+j]=ISDataType(density * src[i*samplesperpixel+j]);
+						rowbuffer[i*samplesperpixel+j]=ISDataType((densities[j] * src[i*samplesperpixel+j])/IS_SAMPLEMAX);
 				}	
 			}		
 			break;
@@ -84,8 +84,8 @@ ISDataType *ImageSource_ScaleDensity::GetRow(int row)
 }
 
 
-ImageSource_ScaleDensity::ImageSource_ScaleDensity(ImageSource *source,float density)
-	: ImageSource(source), source(source), density(density)
+ImageSource_ScaleDensity::ImageSource_ScaleDensity(ImageSource *source,ISDeviceNValue densities)
+	: ImageSource(source), source(source), densities(densities)
 {
 	MakeRowBuffer();
 }
