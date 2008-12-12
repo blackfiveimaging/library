@@ -18,6 +18,7 @@
 #include "imagesource_devicen_remap.h"
 #include "imagesource_montage.h"
 #include "imagesource_scaledensity.h"
+#include "imagesource_gamma.h"
 #include "imagesource_chequerboard.h"
 #include "imagesource_hsweep.h"
 #include "imagesource_hticks.h"
@@ -69,7 +70,7 @@ ImageSource *MakeGammaEvalSweep(DeviceNColorantList &colorants,int width,int hei
 // Render a density evaluation pattern - this pattern should be printed at reduced density in
 // Raw mode to determine absolute maximum ink levels for individual ink channels.
 
-ImageSource *MakeDensitEvalSweep(DeviceNColorantList &colorants,int width,int height,int res)
+ImageSource *MakeDensityEvalSweep(DeviceNColorantList &colorants,int width,int height,int res)
 {
 	int cols=colorants.GetColorantCount();
 	int stripeheight=(2*height)/(cols+1);	// We'll render each pass as stripeheight pixels
@@ -139,6 +140,19 @@ int main(int argc,char **argv)
 			int pc=atoi(argv[2]);
 			ImageSource_Downsample dst(is,(is->width*pc)/100,(is->height*pc)/100);
 			TIFFSaver ts(argv[3],&dst);
+			ProgressText p;
+			ts.SetProgress(&p);
+			ts.Save();
+		}
+		if(argc==5)
+		{
+			ImageSource *is=ISLoadImage(argv[1]);
+			int pc=atoi(argv[2]);
+			float gamma=atof(argv[3]);
+			is=new ImageSource_Gamma(is,gamma);
+			is=new ImageSource_Downsample(is,(is->width*pc)/100,(is->height*pc)/100);
+			ImageSource_Gamma dst(is,1.0/gamma);
+			TIFFSaver ts(argv[4],&dst);
 			ProgressText p;
 			ts.SetProgress(&p);
 			ts.Save();
