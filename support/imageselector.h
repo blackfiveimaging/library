@@ -47,7 +47,7 @@ struct _ImageSelectorClass
 
 GType imageselector_get_type (void);
 
-GtkWidget* imageselector_new (SearchPathHandler *pm,bool allowselection=true);
+GtkWidget* imageselector_new (SearchPathHandler *pm,bool allowselection=true,bool allowother=true);
 
 gboolean imageselector_refresh(ImageSelector *c);
 const char *imageselector_get_filename(ImageSelector *c);

@@ -85,17 +85,6 @@ pixbufview_class_init (PixbufViewClass *cl)
 }
 
 
-static void
-pixbufview_init (PixbufView *pv)
-{
-	pv->pb=NULL;
-	pv->pb_scaled=NULL;
-	pv->resized=false;
-	pv->xoffset=0;
-	pv->yoffset=0;
-}
-
-
 GtkWidget*
 pixbufview_new (GdkPixbuf *pb,bool scaletofit)
 {
@@ -437,12 +426,28 @@ pixbufview_motion_notify( GtkWidget      *widget,
 	return FALSE;
 }
 
+static void *parent_class=NULL;
 
 static void pixbufview_destroy(GtkObject *object)
 {
+	if (GTK_OBJECT_CLASS (parent_class)->destroy)
+		(* GTK_OBJECT_CLASS (parent_class)->destroy) (object);
+// FIXME - cleanup?  Memory leak here?
 //	PixbufView *pv=(PixbufView *)object;
 //	if(pv->pb)
 //		g_object_unref(G_OBJECT(pv->pb));
+}
+
+
+static void
+pixbufview_init (PixbufView *pv)
+{
+	parent_class = gtk_type_class (gtk_widget_get_type ());
+	pv->pb=NULL;
+	pv->pb_scaled=NULL;
+	pv->resized=false;
+	pv->xoffset=0;
+	pv->yoffset=0;
 }
 
 

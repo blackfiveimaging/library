@@ -123,13 +123,16 @@ static ImageEntry *add_node(ImageSelector *il,const char *filename)
 	GError *err=NULL;
 	GdkPixbuf *pb=NULL;
 
-	char *rel=il->searchpath->MakeRelative(filename);
-	if((ii=find_filename(il,rel)))
+	if(il->searchpath)
 	{
+		char *rel=il->searchpath->MakeRelative(filename);
+		if((ii=find_filename(il,rel)))
+		{
+			free(rel);
+			return(ii);
+		}
 		free(rel);
-		return(ii);
 	}
-	free(rel);
 
 	if(filename)
 		pb=egg_pixbuf_get_thumbnail_for_file(filename,EGG_PIXBUF_THUMBNAIL_NORMAL,&err);
@@ -138,7 +141,10 @@ static ImageEntry *add_node(ImageSelector *il,const char *filename)
 		if(filename)
 			cerr << "Loaded filename: " << filename << endl; 
 		ii=new ImageEntry;
-		ii->filename=il->searchpath->MakeRelative(filename);
+		if(il->searchpath)
+			ii->filename=il->searchpath->MakeRelative(filename);
+		else
+			ii->filename=strdup(filename);
 		ii->pixbuf=pb;
 		
 		il->imagelist=g_list_append(il->imagelist,ii);
@@ -153,6 +159,9 @@ static ImageEntry *add_node(ImageSelector *il,const char *filename)
 
 static void populate_list(ImageSelector *il)
 {
+	if(!il->searchpath)
+		return;
+
 	SearchPathHandler *sp=il->searchpath;
 	GtkTreeIter iter1;
 
@@ -279,7 +288,12 @@ static void selection_changed(GtkTreeSelection *select,gpointer user_data)
 			pe->filename=NULL;
 
 			if(ii->filename)
-				pe->filename=pe->searchpath->SearchPaths(ii->filename);
+			{
+				if(pe->searchpath)
+					pe->filename=pe->searchpath->SearchPaths(ii->filename);
+				else
+					pe->filename=strdup(ii->filename);
+			}
 		}
 		g_signal_emit(G_OBJECT (pe),imageselector_signals[CHANGED_SIGNAL], 0);
 	}
@@ -344,7 +358,7 @@ static void get_dnd_data(GtkWidget *widget, GdkDragContext *context,
 
 
 GtkWidget*
-imageselector_new (SearchPathHandler *sp,bool allowselection)
+imageselector_new (SearchPathHandler *sp,bool allowselection,bool allowother)
 {
 	ImageSelector *c=IMAGESELECTOR(g_object_new (imageselector_get_type (), NULL));
 
@@ -388,7 +402,7 @@ imageselector_new (SearchPathHandler *sp,bool allowselection)
 	gtk_box_pack_start(GTK_BOX(c),hbox,FALSE,FALSE,0);
 	gtk_widget_show(hbox);
 
-	if(allowselection)
+	if(allowselection && allowother)
 	{
 		GtkWidget *addbutton=gtk_button_new_with_label(_("Other..."));	
 		gtk_box_pack_start(GTK_BOX(c),addbutton,FALSE,FALSE,0);
