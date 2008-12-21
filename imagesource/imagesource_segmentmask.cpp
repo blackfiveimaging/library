@@ -58,21 +58,21 @@ ISDataType *ImageSource_SegmentMask::GetRow(int row)
 				{
 					if(t<(t1+overlap*2))
 					{
-						*dst++=ISDataType(IS_SAMPLEMAX*(t1-t)/(overlap*2));
+						*dst++=IS_SAMPLEMAX-ISDataType(IS_SAMPLEMAX*(t1-t)/(overlap*2));
 					}
 					else if(t>(t2-overlap*2))
 					{
-						*dst++=ISDataType(IS_SAMPLEMAX*(t-t2)/(overlap*2));
+						*dst++=IS_SAMPLEMAX-ISDataType(IS_SAMPLEMAX*(t-t2)/(overlap*2));
 					}
 					else
-						*dst++=0;
+						*dst++=IS_SAMPLEMAX;
 				}
 				else
-					*dst++=IS_SAMPLEMAX;
+					*dst++=0;
 			}
 			else
 			{
-				*dst++=IS_SAMPLEMAX;
+				*dst++=0;
 			}
 		}
 	}
@@ -90,14 +90,14 @@ ISDataType *ImageSource_SegmentMask::GetRow(int row)
 					t+=360;
 				if(t>=t1 && t<=t2)
 				{
-					*dst++=0;
+					*dst++=IS_SAMPLEMAX;
 				}
 				else
-					*dst++=IS_SAMPLEMAX;
+					*dst++=0;
 			}
 			else
 			{
-				*dst++=IS_SAMPLEMAX;
+				*dst++=0;
 			}
 		}
 

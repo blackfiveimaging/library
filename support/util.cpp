@@ -76,7 +76,10 @@ char *BuildAbsoluteFilename(const char *fname)
 
 char *BuildFilename(const char *root,const char *suffix,const char *fileext)
 {
-	/* Build a filename like <imagename><channel>.<extension> */
+	// Build a filename like <imagename><channel>.<extension>
+	// Must take care not to treat any . characters before the last slash as
+	// a file-extension point!
+
 	char *extension;
 
 	char *filename=NULL;
@@ -89,6 +92,8 @@ char *BuildFilename(const char *root,const char *suffix,const char *fileext)
 	extension = root2 + strlen (root2) - 1;
 	while (extension >= root2)
 	{
+		if(*extension == '/' || *extension == '\\')
+			extension=root2;
 		if (*extension == '.') break;
 		extension--;
 	}
@@ -223,5 +228,17 @@ bool CompareFiles(const char *fn1,const char *fn2)
 	i2.close();
 
 	return(result);
+}
+
+
+// A "safe" version of strdup which returns a valid point to an empty string
+// rather than NULL if src is NULL
+
+char *SafeStrdup(const char *src)
+{
+	if(src)
+		return(strdup(src));
+	else
+		return(strdup(""));
 }
 

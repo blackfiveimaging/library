@@ -166,7 +166,7 @@ ISDataType *ImageSource_Montage::GetRow(int row)
 				dst[i]=IS_SAMPLEMAX;
 				dst[i+1]=IS_SAMPLEMAX;
 				dst[i+2]=IS_SAMPLEMAX;
-				dst[i+3]=IS_SAMPLEMAX;
+				dst[i+3]=0;
 			}
 			break;
 		case IS_TYPE_RGB:
@@ -208,8 +208,8 @@ ISDataType *ImageSource_Montage::GetRow(int row)
 						}
 						if(a>0)
 						{
-							if(dst[xp+j]>ia)
-								dst[xp+j]=ia;
+							if(dst[xp+j]<a)
+								dst[xp+j]=a;
 //							dst[xp+j]=ia;
 						}
 //						if(dst[xp+j]>a)

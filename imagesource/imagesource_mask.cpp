@@ -44,7 +44,7 @@ ISDataType *ImageSource_Mask::GetRow(int row)
 			for(int s=0;s<source->samplesperpixel-1;++s)
 				rowbuffer[x*samplesperpixel+s]=srcdata[x*source->samplesperpixel+s];
 			rowbuffer[(x+1)*samplesperpixel-1]=
-				(srcdata[(x+1)*source->samplesperpixel-1]*(IS_SAMPLEMAX-maskdata[x]))/IS_SAMPLEMAX;
+				(srcdata[(x+1)*source->samplesperpixel-1]*maskdata[x])/IS_SAMPLEMAX;
 		}
 	}
 	else
@@ -53,7 +53,7 @@ ISDataType *ImageSource_Mask::GetRow(int row)
 		{
 			for(int s=0;s<source->samplesperpixel;++s)
 				rowbuffer[x*samplesperpixel+s]=srcdata[x*source->samplesperpixel+s];
-			rowbuffer[(x+1)*samplesperpixel-1]=IS_SAMPLEMAX-maskdata[x];
+			rowbuffer[(x+1)*samplesperpixel-1]=maskdata[x];
 		}
 	}
 

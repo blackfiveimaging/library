@@ -44,6 +44,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_hsweep.h	\
 	imagesource_hticks.cpp	\
 	imagesource_hticks.h	\
+	imagesource_invert.cpp	\
+	imagesource_invert.h	\
 	imagesource_jpeg.cpp	\
 	imagesource_jpeg.h	\
 	imagesource_lanczossinc.cpp	\
