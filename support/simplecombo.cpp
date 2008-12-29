@@ -160,14 +160,18 @@ const char *simplecombo_get(SimpleCombo *c)
 bool simplecombo_set(SimpleCombo *c,const char *value)
 {
 	int i=0;
-	while(c->opts[i].option)
+	if(value)
 	{
-		if(strcmp(value,c->opts[i].option)==0)
+		while(c->opts[i].option)
 		{
-			gtk_option_menu_set_history(GTK_OPTION_MENU(c->optionmenu),i);
-			return(true);
-		}	
-		++i;
+			if(strcmp(value,c->opts[i].option)==0)
+			{
+				gtk_option_menu_set_history(GTK_OPTION_MENU(c->optionmenu),i);
+				return(true);
+			}	
+			++i;
+		}
 	}
 	return(false);
 }
+
