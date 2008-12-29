@@ -231,7 +231,7 @@ bool CompareFiles(const char *fn1,const char *fn2)
 }
 
 
-// A "safe" version of strdup which returns a valid point to an empty string
+// A "safe" version of strdup which returns a valid pointer to an empty string
 // rather than NULL if src is NULL
 
 char *SafeStrdup(const char *src)
@@ -240,5 +240,29 @@ char *SafeStrdup(const char *src)
 		return(strdup(src));
 	else
 		return(strdup(""));
+}
+
+
+// A "safe" version of strcat which returns a valid pointer to an empty string
+// if both parameters are null, a copy of the non-null parameter if the other is
+// null, or a newly-allocated string containing the concatenated parameters if
+// both are valid.
+// In all cases the result is in newly-allocated storage and may (and must!) be
+// free()ed when no longer needed.
+
+char *SafeStrcat(const char *str1,const char *str2)
+{
+	if(str1 && str2)
+	{
+		int l=strlen(str1)+strlen(str2)+1;
+		char *result=(char *)malloc(l);
+		sprintf(result,"%s%s",str1,str2);
+		return(result);
+	}
+	if(str1)
+		return(strdup(str1));
+	if(str2)
+		return(strdup(str2));
+	return(strdup(""));
 }
 

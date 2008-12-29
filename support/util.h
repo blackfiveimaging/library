@@ -19,6 +19,7 @@ char *BuildAbsoluteFilename(const char *fname);
 char *SerialiseFilename(const char *fname,int serialno,int max=0);
 
 char *SafeStrdup(const char *src);
+char *SafeStrcat(const char *str1,const char *str2);
 
 int TestHostName(char *str,char **hostname,int *port);
 
