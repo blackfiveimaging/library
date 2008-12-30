@@ -39,7 +39,7 @@ bin_PROGRAMS = profileuitest$(EXEEXT) mkrgbprofile$(EXEEXT) \
 	mklabprofile$(EXEEXT) mkgreyprofile$(EXEEXT) \
 	composite$(EXEEXT) imgsrctest$(EXEEXT) jpegcheck$(EXEEXT) \
 	pvtest$(EXEEXT) threadtest$(EXEEXT) printqueuetest$(EXEEXT) \
-	stpuitest$(EXEEXT)
+	stpuitest$(EXEEXT) mkthumbnail$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -144,6 +144,20 @@ mkrgbprofile_DEPENDENCIES = support/libsupport.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
+am_mkthumbnail_OBJECTS = mkthumbnail.$(OBJEXT)
+mkthumbnail_OBJECTS = $(am_mkthumbnail_OBJECTS)
+mkthumbnail_LDADD = $(LDADD)
+mkthumbnail_DEPENDENCIES = support/libsupport.la \
+	imagesource/libimagesource.la \
+	profilemanager/libprofilemanager.la \
+	stpui_widgets/libstpui_widgets.la \
+	stp_support/libstp_support.la \
+	gp_cppsupport/libgp_cppsupport.la \
+	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_printqueuetest_OBJECTS = printqueuetest.$(OBJEXT)
 printqueuetest_OBJECTS = $(am_printqueuetest_OBJECTS)
 printqueuetest_LDADD = $(LDADD)
@@ -229,13 +243,15 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 SOURCES = $(composite_SOURCES) $(imgsrctest_SOURCES) \
 	$(jpegcheck_SOURCES) $(mkgreyprofile_SOURCES) \
 	$(mklabprofile_SOURCES) $(mkrgbprofile_SOURCES) \
-	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
-	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
+	$(mkthumbnail_SOURCES) $(printqueuetest_SOURCES) \
+	$(profileuitest_SOURCES) $(pvtest_SOURCES) \
+	$(stpuitest_SOURCES) $(threadtest_SOURCES)
 DIST_SOURCES = $(composite_SOURCES) $(imgsrctest_SOURCES) \
 	$(jpegcheck_SOURCES) $(mkgreyprofile_SOURCES) \
 	$(mklabprofile_SOURCES) $(mkrgbprofile_SOURCES) \
-	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
-	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
+	$(mkthumbnail_SOURCES) $(printqueuetest_SOURCES) \
+	$(profileuitest_SOURCES) $(pvtest_SOURCES) \
+	$(stpuitest_SOURCES) $(threadtest_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -406,6 +422,7 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
 profileuitest_SOURCES = profileuitest.cpp
+mkthumbnail_SOURCES = mkthumbnail.cpp
 mkrgbprofile_SOURCES = mkrgbprofile.cpp
 mkgreyprofile_SOURCES = mkgreyprofile.cpp
 mklabprofile_SOURCES = mklabprofile.cpp
@@ -529,6 +546,9 @@ mklabprofile$(EXEEXT): $(mklabprofile_OBJECTS) $(mklabprofile_DEPENDENCIES)
 mkrgbprofile$(EXEEXT): $(mkrgbprofile_OBJECTS) $(mkrgbprofile_DEPENDENCIES) 
 	@rm -f mkrgbprofile$(EXEEXT)
 	$(CXXLINK) $(mkrgbprofile_OBJECTS) $(mkrgbprofile_LDADD) $(LIBS)
+mkthumbnail$(EXEEXT): $(mkthumbnail_OBJECTS) $(mkthumbnail_DEPENDENCIES) 
+	@rm -f mkthumbnail$(EXEEXT)
+	$(CXXLINK) $(mkthumbnail_OBJECTS) $(mkthumbnail_LDADD) $(LIBS)
 printqueuetest$(EXEEXT): $(printqueuetest_OBJECTS) $(printqueuetest_DEPENDENCIES) 
 	@rm -f printqueuetest$(EXEEXT)
 	$(CXXLINK) $(printqueuetest_OBJECTS) $(printqueuetest_LDADD) $(LIBS)
@@ -557,6 +577,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkgreyprofile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mklabprofile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkrgbprofile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkthumbnail.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/printqueuetest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/profileuitest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pvtest.Po@am__quote@

@@ -11,9 +11,10 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -
 bin_PROGRAMS = profileuitest mkrgbprofile mklabprofile mkgreyprofile \
 				composite imgsrctest \
 				jpegcheck pvtest threadtest \
-				printqueuetest stpuitest
+				printqueuetest stpuitest mkthumbnail
 
 profileuitest_SOURCES = profileuitest.cpp
+mkthumbnail_SOURCES = mkthumbnail.cpp
 mkrgbprofile_SOURCES = mkrgbprofile.cpp
 mkgreyprofile_SOURCES = mkgreyprofile.cpp
 mklabprofile_SOURCES = mklabprofile.cpp

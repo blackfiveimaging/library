@@ -104,11 +104,11 @@ ImageSource_Montage::ImageSource_Montage(IS_TYPE type,int resolution, int sample
 	switch(type)
 	{
 //		case IS_TYPE_BW:
-//		case IS_TYPE_GREY:
-//			samplesperpixel=1;
-//			break;
+		case IS_TYPE_GREY:
+			this->samplesperpixel=1;
+			break;
 //		case ISTYPE_GREYA:
-//			samplesperpixel=2;
+//			this->samplesperpixel=2;
 //			break;
 		case IS_TYPE_RGB:
 			this->samplesperpixel=3;
