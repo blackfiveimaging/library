@@ -85,3 +85,152 @@ ImageSource_DeviceN_Remap::ImageSource_DeviceN_Remap(struct ImageSource *source,
 	MakeRowBuffer();
 }
 
+
+// ImageSource_ToDeviceN - "promotes" data from Greyscale, RGB or CMYK to DeviceN
+// RGB data is inverted.
+
+ImageSource_ToDeviceN::ImageSource_ToDeviceN(ImageSource *source) : ImageSource(source), source(source)
+{
+	if(STRIP_ALPHA(source->type)==IS_TYPE_RGB)
+	{
+		cerr << "Original image is RGB - inverting as well as re-interpreting..." << endl;
+		MakeRowBuffer();
+	}
+	type=IS_TYPE_DEVICEN;
+}
+
+ImageSource_ToDeviceN::~ImageSource_ToDeviceN()
+{
+	if(source)
+		delete source;
+}
+
+ISDataType *ImageSource_ToDeviceN::GetRow(int row)
+{
+	ISDataType *src=source->GetRow(row);
+	switch(source->type)
+	{
+		case IS_TYPE_RGB:
+			if(row==currentrow)
+				return(rowbuffer);
+
+			for(int x=0;x<width*samplesperpixel;++x)
+			{
+				rowbuffer[x]=IS_SAMPLEMAX-src[x];
+			}
+			currentrow=row;
+			return(rowbuffer);
+			break;
+		case IS_TYPE_RGBA:
+			if(row==currentrow)
+				return(rowbuffer);
+
+			for(int x=0;x<width;++x)
+			{
+				for(int s=0;s<samplesperpixel-1;++s)
+					rowbuffer[x*samplesperpixel+s]=IS_SAMPLEMAX-src[x*samplesperpixel+s];
+				rowbuffer[x*samplesperpixel+samplesperpixel-1]=src[x*samplesperpixel+samplesperpixel-1];
+			}
+			currentrow=row;
+			return(rowbuffer);
+			break;
+		default:
+			return(src);
+			break;
+	}
+}
+
+
+// Forces an ImageSource from DeviceN to RGB, inverting the data as it goes.
+// NOTE this *doesn't* remap the channels or downrender to RGB - it merely
+// re-interprets the data as RGB.
+// Alpha channel, if present, is not inverted.
+
+ImageSource_DeviceNToRGB::ImageSource_DeviceNToRGB(ImageSource *source) : ImageSource(source), source(source)
+{
+	switch(samplesperpixel)
+	{
+		case 3:
+			type=IS_TYPE_RGB;
+			break;
+		case 4:
+			type=IS_TYPE_RGBA;
+			break;
+		default:
+			throw "Can't reinterpret DeviceN image as RGB - wrong number of channels!";
+	}
+	MakeRowBuffer();
+}
+
+
+ImageSource_DeviceNToRGB::~ImageSource_DeviceNToRGB()
+{
+	if(source)
+		delete(source);
+}
+
+
+ISDataType *ImageSource_DeviceNToRGB::GetRow(int row)
+{
+	if(row==currentrow)
+		return(rowbuffer);
+
+	ISDataType *src=source->GetRow(row);
+
+	switch(source->type)
+	{
+		case IS_TYPE_RGB:
+			for(int x=0;x<width*samplesperpixel;++x)
+			{
+				rowbuffer[x]=IS_SAMPLEMAX-src[x];
+			}
+			break;
+		case IS_TYPE_RGBA:
+			for(int x=0;x<width;++x)
+			{
+				for(int s=0;s<samplesperpixel-1;++s)
+					rowbuffer[x*samplesperpixel+s]=IS_SAMPLEMAX-src[x*samplesperpixel+s];
+				rowbuffer[x*samplesperpixel+samplesperpixel-1]=src[x*samplesperpixel+samplesperpixel-1];
+			}
+			break;
+		default:
+			break;
+	}
+	currentrow=row;
+	return(rowbuffer);
+}
+
+
+// Forces an ImageSource from DeviceN to CMYK
+// NOTE this *doesn't* remap the channels or downrender to CMYK - it merely
+// re-interprets the data as CMYK.
+
+ImageSource_DeviceNToCMYK::ImageSource_DeviceNToCMYK(ImageSource *source) : ImageSource(source), source(source)
+{
+	switch(samplesperpixel)
+	{
+		case 4:
+			type=IS_TYPE_CMYK;
+			break;
+		case 5:
+			type=IS_TYPE_CMYKA;
+			break;
+		default:
+			throw "Can't reinterpret DeviceN image as RGB - wrong number of channels!";
+	}
+	MakeRowBuffer();
+}
+
+
+ImageSource_DeviceNToCMYK::~ImageSource_DeviceNToCMYK()
+{
+	if(source)
+		delete(source);
+}
+
+
+ISDataType *ImageSource_DeviceNToCMYK::GetRow(int row)
+{
+	return(source->GetRow(row));
+}
+

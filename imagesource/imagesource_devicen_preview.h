@@ -66,26 +66,5 @@ class ImageSource_DeviceN_Preview : public ImageSource
 	ISDeviceNPreview_Colorant *colorants;
 };
 
-// Shell class used to force an ImageSource to DeviceN type - which can't be done automatically
-// since 4spp Separated space is the only way TIFFs mark CMYK, for instance.
-class ImageSource_DeviceN : public ImageSource
-{
-	public:
-	ImageSource_DeviceN(ImageSource *source) : ImageSource(source), source(source)
-	{
-		type=IS_TYPE_DEVICEN;
-	}
-	~ImageSource_DeviceN()
-	{
-		if(source)
-			delete source;
-	}
-	ISDataType *GetRow(int row)
-	{
-		return(source->GetRow(row));
-	}
-	protected:
-	ImageSource *source;
-};
 
 #endif
