@@ -74,86 +74,72 @@ DeviceNColorant *DeviceNColorantList::operator[](int idx)
 
 /////////////////////////////////////////////////////////////////////////////
 
+struct colorantdefinition
+{
+	const char *name;
+	int red,green,blue;
+};
+
+static struct colorantdefinition colorantdefinitions[]=
+{
+	{"Cyan",0,190,255},
+	{"Magenta",255,0,190},
+	{"Yellow",255,255,0},
+	{"Black",0,0,0},
+	{"Photo Black",0,0,0},
+	{"Matte Black",0,0,0},
+	{"Light Cyan",127,220,255},
+	{"Light Magenta",255,127,220},
+	{"Light Black",127,127,127},
+	{"Light Light Black",191,191,191},
+	{"Medium Black",63,63,63},
+	{"Dark Yellow",160,140,0},
+	{"Red",255,0,0},
+	{"Blue",0,0,255},
+	{"Green",0,255,0},
+	{"Orange",255,128,0},
+	{"PhotoBlack",0,0,0},	// Colorants without spaces in the names
+	{"MatteBlack",0,0,0},
+	{"LightCyan",127,220,255},
+	{"LightMagenta",255,127,220},
+	{"LightBlack",127,127,127},
+	{"LightLightBlack",191,191,191},
+	{"MediumBlack",63,63,63},
+	{"DarkYellow",160,140,0},
+	{NULL,0,0,0}
+};
+
 
 DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name)
 	: red(0), green(0), blue(0), header(header), name(NULL), next(NULL), prev(NULL)
 {
-	if(strcasecmp(name,"Cyan")==0)
+	struct colorantdefinition *c=colorantdefinitions;
+	while(c->name)
 	{
-		red=(0); green=(190); blue=(255);
+		if(strcasecmp(name,c->name)==0)
+		{
+			if(name)
+				this->name=strdup(name);
+			red=c->red;
+			green=c->green;
+			blue=c->blue;
+
+			prev=header.first;
+			if(prev)
+			{
+				while(prev->next)
+					prev=prev->next;
+				prev->next=this;
+			}
+			else
+				header.first=this;
+
+			return;
+		}
+		++c;
 	}
-	else if(strcasecmp(name,"Magenta")==0)
-	{
-		red=(255); green=(0); blue=(190);
-	}
-	else if(strcasecmp(name,"Yellow")==0)
-	{
-		red=(255); green=(255); blue=(0);
-	}
-	else if(strcasecmp(name,"Black")==0)
-	{
-		red=(0); green=(0); blue=(0);
-	}
-	else if(strcasecmp(name,"Photo Black")==0)
-	{
-		red=(0); green=(0); blue=(0);
-	}
-	else if(strcasecmp(name,"Matte Black")==0)
-	{
-		red=(0); green=(0); blue=(0);
-	}
-	else if(strcasecmp(name,"Light Cyan")==0)
-	{
-		red=(127); green=(220); blue=(255);
-	}
-	else if(strcasecmp(name,"Light Magenta")==0)
-	{
-		red=(255); green=(127); blue=(220);
-	}
-	else if(strcasecmp(name,"Light Black")==0)
-	{
-		red=(127); green=(127); blue=(127);
-	}
-	else if(strcasecmp(name,"Light Light Black")==0)
-	{
-		red=(191); green=(191); blue=(191);
-	}
-	else if(strcasecmp(name,"Medium Black")==0)
-	{
-		red=(63); green=(63); blue=(63);
-	}
-	else if(strcasecmp(name,"Red")==0)
-	{
-		red=(255); green=(0); blue=(0);
-	}
-	else if(strcasecmp(name,"Blue")==0)
-	{
-		red=(0); green=(0); blue=(255);
-	}
-	else if(strcasecmp(name,"Green")==0)
-	{
-		red=(0); green=(255); blue=(0);
-	}
-	else if(strcasecmp(name,"Orange")==0)
-	{
-		red=(255); green=(128); blue=(0);
-	}
-	else
-	{
-		cerr << "Can't find colorant: " << name << endl;
-		throw "Colorant not recognised";
-	}
-	if(name)
-		this->name=strdup(name);
-	prev=header.first;
-	if(prev)
-	{
-		while(prev->next)
-			prev=prev->next;
-		prev->next=this;
-	}
-	else
-		header.first=this;
+	cerr << "Can't find colorant: " << name << endl;
+	throw "Colorant not recognised";
 }
 
 
