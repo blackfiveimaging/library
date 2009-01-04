@@ -46,6 +46,9 @@ libmiscwidgets_la_LIBADD =
 am_libmiscwidgets_la_OBJECTS = generaldialogs.lo simplecombo.lo \
 	pixbufview.lo patheditor.lo imageselector.lo
 libmiscwidgets_la_OBJECTS = $(am_libmiscwidgets_la_OBJECTS)
+libmiscwidgets_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(libmiscwidgets_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/scripts/depcomp
 am__depfiles_maybe = depfiles
@@ -231,7 +234,7 @@ libmiscwidgets_la_SOURCES = \
 	imageselector.h \
 	imageselector_noborder_image.h
 
-libsupport_la_LDFLAGS = -static
+libmiscwidgets_la_LDFLAGS = -static
 all: all-am
 
 .SUFFIXES:
@@ -275,7 +278,7 @@ clean-noinstLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libmiscwidgets.la: $(libmiscwidgets_la_OBJECTS) $(libmiscwidgets_la_DEPENDENCIES) 
-	$(CXXLINK)  $(libmiscwidgets_la_OBJECTS) $(libmiscwidgets_la_LIBADD) $(LIBS)
+	$(libmiscwidgets_la_LINK)  $(libmiscwidgets_la_OBJECTS) $(libmiscwidgets_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

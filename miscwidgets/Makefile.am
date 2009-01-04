@@ -17,5 +17,5 @@ libmiscwidgets_la_SOURCES =	\
 	imageselector.h \
 	imageselector_noborder_image.h
 
-libsupport_la_LDFLAGS = -static
+libmiscwidgets_la_LDFLAGS = -static
 
