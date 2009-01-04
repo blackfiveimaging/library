@@ -32,25 +32,36 @@ class Signature : public virtual PageExtent
 	void SetGutters(int hgutter,int vgutter);
 	void SetColumns(int columns);
 	void SetRows(int rows);
+	void SetCellWidth(int width);
+	void SetCellHeight(int height);
+	int GetCellWidth()
+	{
+		return(celwidth);
+	}
+	int GetCellHeight()
+	{
+		return(celheight);
+	}
 	int GetColumns()
 	{
-		return columns;
+		return(columns);
 	}
 	int GetRows()
 	{
-		return rows;
+		return(rows);
 	}
 	int GetHGutter()
 	{
-		return hgutter;
+		return(hgutter);
 	}
 	int GetVGutter()
 	{
-		return vgutter;
+		return(vgutter);
 	}
 	LayoutRectangle *GetLayoutRectangle(int row,int column);
 	void EqualiseMargins();
 	void ReCalc();
+	void ReCalcByCellSize();
 	int ColumnAt(int xpos);
 	int RowAt(int ypos);
 	private:

@@ -93,6 +93,39 @@ void Signature::SetRows(int rows)
   ReCalc();
 }
 
+void Signature::ReCalcByCellSize()
+{
+	int r=(pageheight-(topmargin+bottommargin))/celheight;
+	int c=(pagewidth-(leftmargin+rightmargin))/celwidth;
+	if(r<1)
+		celheight=pageheight-(topmargin+bottommargin);
+	if(c<1)
+		celwidth=pagewidth-(leftmargin+rightmargin);
+
+	if(r>1)
+	{
+		vgutter=((pageheight-(topmargin+bottommargin))-r*celheight)/(r-1);
+	}
+	if(c>1)
+	{
+		hgutter=((pagewidth-(leftmargin+rightmargin))-c*celwidth)/(c-1);
+	}
+}
+
+
+void Signature::SetCellWidth(int width)
+{
+	celwidth=width;
+	ReCalcByCellSize();
+}
+
+
+void Signature::SetCellHeight(int height)
+{
+	celheight=height;
+	ReCalcByCellSize();
+}
+
 
 Signature::Signature(int rows,int columns)
 	: PageExtent(), hgutter(DEFAULTGUTTER), vgutter(DEFAULTGUTTER),
