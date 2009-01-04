@@ -63,9 +63,9 @@ am_composite_OBJECTS = composite.$(OBJEXT)
 composite_OBJECTS = $(am_composite_OBJECTS)
 composite_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-composite_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+composite_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -77,9 +77,9 @@ composite_DEPENDENCIES = support/libsupport.la \
 am_imgsrctest_OBJECTS = imgsrctest.$(OBJEXT)
 imgsrctest_OBJECTS = $(am_imgsrctest_OBJECTS)
 imgsrctest_LDADD = $(LDADD)
-imgsrctest_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+imgsrctest_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -91,9 +91,9 @@ imgsrctest_DEPENDENCIES = support/libsupport.la \
 am_jpegcheck_OBJECTS = jpegcheck.$(OBJEXT)
 jpegcheck_OBJECTS = $(am_jpegcheck_OBJECTS)
 jpegcheck_LDADD = $(LDADD)
-jpegcheck_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+jpegcheck_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -105,9 +105,9 @@ jpegcheck_DEPENDENCIES = support/libsupport.la \
 am_mkgreyprofile_OBJECTS = mkgreyprofile.$(OBJEXT)
 mkgreyprofile_OBJECTS = $(am_mkgreyprofile_OBJECTS)
 mkgreyprofile_LDADD = $(LDADD)
-mkgreyprofile_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+mkgreyprofile_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -119,9 +119,9 @@ mkgreyprofile_DEPENDENCIES = support/libsupport.la \
 am_mklabprofile_OBJECTS = mklabprofile.$(OBJEXT)
 mklabprofile_OBJECTS = $(am_mklabprofile_OBJECTS)
 mklabprofile_LDADD = $(LDADD)
-mklabprofile_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+mklabprofile_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -133,9 +133,9 @@ mklabprofile_DEPENDENCIES = support/libsupport.la \
 am_mkrgbprofile_OBJECTS = mkrgbprofile.$(OBJEXT)
 mkrgbprofile_OBJECTS = $(am_mkrgbprofile_OBJECTS)
 mkrgbprofile_LDADD = $(LDADD)
-mkrgbprofile_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+mkrgbprofile_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -147,9 +147,9 @@ mkrgbprofile_DEPENDENCIES = support/libsupport.la \
 am_mkthumbnail_OBJECTS = mkthumbnail.$(OBJEXT)
 mkthumbnail_OBJECTS = $(am_mkthumbnail_OBJECTS)
 mkthumbnail_LDADD = $(LDADD)
-mkthumbnail_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+mkthumbnail_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -161,9 +161,9 @@ mkthumbnail_DEPENDENCIES = support/libsupport.la \
 am_printqueuetest_OBJECTS = printqueuetest.$(OBJEXT)
 printqueuetest_OBJECTS = $(am_printqueuetest_OBJECTS)
 printqueuetest_LDADD = $(LDADD)
-printqueuetest_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+printqueuetest_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -175,9 +175,9 @@ printqueuetest_DEPENDENCIES = support/libsupport.la \
 am_profileuitest_OBJECTS = profileuitest.$(OBJEXT)
 profileuitest_OBJECTS = $(am_profileuitest_OBJECTS)
 profileuitest_LDADD = $(LDADD)
-profileuitest_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+profileuitest_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -189,9 +189,9 @@ profileuitest_DEPENDENCIES = support/libsupport.la \
 am_pvtest_OBJECTS = pvtest.$(OBJEXT)
 pvtest_OBJECTS = $(am_pvtest_OBJECTS)
 pvtest_LDADD = $(LDADD)
-pvtest_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+pvtest_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -203,9 +203,9 @@ pvtest_DEPENDENCIES = support/libsupport.la \
 am_stpuitest_OBJECTS = stpuitest.$(OBJEXT)
 stpuitest_OBJECTS = $(am_stpuitest_OBJECTS)
 stpuitest_LDADD = $(LDADD)
-stpuitest_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+stpuitest_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -217,9 +217,9 @@ stpuitest_DEPENDENCIES = support/libsupport.la \
 am_threadtest_OBJECTS = threadtest.$(OBJEXT)
 threadtest_OBJECTS = $(am_threadtest_OBJECTS)
 threadtest_LDADD = $(LDADD)
-threadtest_DEPENDENCIES = support/libsupport.la \
-	imagesource/libimagesource.la \
-	profilemanager/libprofilemanager.la \
+threadtest_DEPENDENCIES = imageutils/libimageutils.la \
+	support/libsupport.la imagesource/libimagesource.la \
+	support/libsupport.la profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
 	gp_cppsupport/libgp_cppsupport.la \
@@ -417,8 +417,9 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = po support imagesource stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
-AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -I./splashscreen -I./profilemanager -I./effects \
+SUBDIRS = po support imagesource imageutils miscwidgets stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
+AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -I./imageutils -I./splashscreen \
+	-I./miscwidgets -I./profilemanager -I./effects \
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
 profileuitest_SOURCES = profileuitest.cpp
@@ -434,8 +435,10 @@ threadtest_SOURCES = threadtest.cpp
 printqueuetest_SOURCES = printqueuetest.cpp
 stpuitest_SOURCES = stpuitest.cpp
 LDADD = \
+	imageutils/libimageutils.la	\
 	support/libsupport.la	\
 	imagesource/libimagesource.la	\
+	support/libsupport.la	\
 	profilemanager/libprofilemanager.la	\
 	stpui_widgets/libstpui_widgets.la	\
 	stp_support/libstp_support.la \

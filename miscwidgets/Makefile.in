@@ -32,7 +32,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = imagesource
+subdir = miscwidgets
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -42,29 +42,10 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
-libimagesource_la_LIBADD =
-am_libimagesource_la_OBJECTS = imagesource.lo imagesource_bilinear.lo \
-	imagesource_bmp.lo imagesource_chequerboard.lo \
-	imagesource_cms.lo imagesource_convolution.lo \
-	imagesource_crop.lo imagesource_dither.lo \
-	imagesource_desaturate.lo imagesource_downsample.lo \
-	imagesource_flatten.lo imagesource_gamma.lo \
-	imagesource_gaussianblur.lo imagesource_gdkpixbuf.lo \
-	imagesource_greyscale.lo imagesource_gs.lo \
-	imagesource_hsweep.lo imagesource_hticks.lo \
-	imagesource_invert.lo imagesource_jpeg.lo \
-	imagesource_lanczossinc.lo imagesource_mask.lo \
-	imagesource_montage.lo imagesource_devicen_preview.lo \
-	imagesource_devicen_remap.lo imagesource_promote.lo \
-	imagesource_pnm.lo imagesource_rotate.lo imagesource_scale.lo \
-	imagesource_scaledensity.lo imagesource_segmentmask.lo \
-	imagesource_solid.lo imagesource_tiff.lo \
-	imagesource_unsharpmask.lo imagesource_util.lo \
-	devicencolorant.lo pixbuf_from_imagesource.lo iccjpeg.lo
-libimagesource_la_OBJECTS = $(am_libimagesource_la_OBJECTS)
-libimagesource_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(libimagesource_la_LDFLAGS) $(LDFLAGS) -o $@
+libmiscwidgets_la_LIBADD =
+am_libmiscwidgets_la_OBJECTS = generaldialogs.lo simplecombo.lo \
+	pixbufview.lo patheditor.lo imageselector.lo
+libmiscwidgets_la_OBJECTS = $(am_libmiscwidgets_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/scripts/depcomp
 am__depfiles_maybe = depfiles
@@ -86,8 +67,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libimagesource_la_SOURCES)
-DIST_SOURCES = $(libimagesource_la_SOURCES)
+SOURCES = $(libmiscwidgets_la_SOURCES)
+DIST_SOURCES = $(libmiscwidgets_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -233,92 +214,24 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CXXFLAGS = -Wall -I../support/ -I../profilemanager/ $(LCMS_CFLAGS) $(GTK2_CFLAGS) ${PNM_CFLAGS}
-noinst_LTLIBRARIES = libimagesource.la
-libimagesource_la_SOURCES = \
-	convkernel.h	\
-	convkernel_gaussian.h	\
-	convkernel_gaussian_1D.h	\
-	convkernel_unsharpmask.h	\
-	imagesource.cpp		\
-	imagesource.h		\
-	imagesource_types.h	\
-	imagesource_bilinear.cpp	\
-	imagesource_bilinear.h	\
-	imagesource_bmp.cpp	\
-	imagesource_bmp.h	\
-	imagesource_chequerboard.cpp	\
-	imagesource_chequerboard.h	\
-	imagesource_cms.cpp	\
-	imagesource_cms.h	\
-	imagesource_convolution.cpp	\
-	imagesource_convolution.h	\
-	imagesource_crop.cpp	\
-	imagesource_crop.h	\
-	imagesource_dither.cpp	\
-	imagesource_dither.h	\
-	imagesource_desaturate.cpp	\
-	imagesource_desaturate.h	\
-	imagesource_downsample.cpp	\
-	imagesource_downsample.h	\
-	imagesource_flatten.cpp	\
-	imagesource_flatten.h	\
-	imagesource_gamma.cpp	\
-	imagesource_gamma.h	\
-	imagesource_gaussianblur.cpp \
-	imagesource_gaussianblur.h \
-	imagesource_gdkpixbuf.cpp 	\
-	imagesource_gdkpixbuf.h	\
-	imagesource_greyscale.cpp	\
-	imagesource_greyscale.h	\
-	imagesource_gs.cpp	\
-	imagesource_gs.h	\
-	imagesource_hsweep.cpp	\
-	imagesource_hsweep.h	\
-	imagesource_hticks.cpp	\
-	imagesource_hticks.h	\
-	imagesource_invert.cpp	\
-	imagesource_invert.h	\
-	imagesource_jpeg.cpp	\
-	imagesource_jpeg.h	\
-	imagesource_lanczossinc.cpp	\
-	imagesource_lanczossinc.h	\
-	imagesource_mask.cpp	\
-	imagesource_mask.h	\
-	imagesource_montage.cpp	\
-	imagesource_montage.h	\
-	imagesource_devicen_preview.cpp \
-	imagesource_devicen_preview.h \
-	imagesource_devicen_remap.cpp \
-	imagesource_devicen_remap.h \
-	imagesource_promote.cpp \
-	imagesource_promote.h \
-	imagesource_pnm.cpp \
-	imagesource_pnm.h \
-	imagesource_rotate.cpp	\
-	imagesource_rotate.h	\
-	imagesource_scale.cpp	\
-	imagesource_scale.h	\
-	imagesource_scaledensity.cpp	\
-	imagesource_scaledensity.h	\
-	imagesource_segmentmask.cpp \
-	imagesource_segmentmask.h \
-	imagesource_solid.cpp	\
-	imagesource_solid.h	\
-	imagesource_tiff.cpp	\
-	imagesource_tiff.h	\
-	imagesource_unsharpmask.cpp	\
-	imagesource_unsharpmask.h	\
-	imagesource_util.cpp	\
-	imagesource_util.h	\
-	devicencolorant.cpp \
-	devicencolorant.h \
-	pixbuf_from_imagesource.cpp	\
-	pixbuf_from_imagesource.h	\
-	iccjpeg.cpp	\
-	iccjpeg.h
+AM_CXXFLAGS = -Wall -I../imagesource/ -I../pixbufthumbnail -I../profilemanager -I../support $(LCMS_CFLAGS) $(GTK2_CFLAGS) ${PNM_CFLAGS}
+noinst_LTLIBRARIES = libmiscwidgets.la
+libmiscwidgets_la_SOURCES = \
+	generaldialogs.cpp	\
+	generaldialogs.h	\
+	simplecombo.cpp	\
+	simplecombo.h	\
+	\
+	pixbufview.cpp \
+	pixbufview.h \
+	\
+	patheditor.cpp	\
+	patheditor.h	\
+	imageselector.cpp \
+	imageselector.h \
+	imageselector_noborder_image.h
 
-libimagesource_la_LDFLAGS = -static
+libsupport_la_LDFLAGS = -static
 all: all-am
 
 .SUFFIXES:
@@ -332,9 +245,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  imagesource/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  miscwidgets/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  imagesource/Makefile
+	  $(AUTOMAKE) --foreign  miscwidgets/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -361,8 +274,8 @@ clean-noinstLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libimagesource.la: $(libimagesource_la_OBJECTS) $(libimagesource_la_DEPENDENCIES) 
-	$(libimagesource_la_LINK)  $(libimagesource_la_OBJECTS) $(libimagesource_la_LIBADD) $(LIBS)
+libmiscwidgets.la: $(libmiscwidgets_la_OBJECTS) $(libmiscwidgets_la_DEPENDENCIES) 
+	$(CXXLINK)  $(libmiscwidgets_la_OBJECTS) $(libmiscwidgets_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -370,44 +283,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/devicencolorant.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iccjpeg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_bilinear.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_bmp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_chequerboard.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_cms.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_convolution.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_crop.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_desaturate.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_devicen_preview.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_devicen_remap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_dither.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_downsample.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_flatten.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gamma.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gaussianblur.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gdkpixbuf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_greyscale.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gs.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_hsweep.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_hticks.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_invert.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_jpeg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_lanczossinc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_mask.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_montage.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_pnm.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_promote.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_rotate.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_scale.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_scaledensity.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_segmentmask.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_solid.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_tiff.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_unsharpmask.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_util.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pixbuf_from_imagesource.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generaldialogs.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imageselector.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/patheditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pixbufview.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simplecombo.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

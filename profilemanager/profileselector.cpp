@@ -23,7 +23,7 @@
 #include <gtk/gtkfilechooser.h>
 #include <gtk/gtkmenuitem.h>
 
-#include "generaldialogs.h"
+#include "../miscwidgets/generaldialogs.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

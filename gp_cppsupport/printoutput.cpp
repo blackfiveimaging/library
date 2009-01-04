@@ -5,7 +5,7 @@
 
 using namespace std;
 
-#include "support/generaldialogs.h"
+#include "../miscwidgets/generaldialogs.h"
 
 #include "printoutput.h"
 #include "printoutputselector.h"

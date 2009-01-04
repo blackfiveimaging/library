@@ -38,17 +38,15 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libsupport_la_LIBADD =
-am_libsupport_la_OBJECTS = maskpixbuf.lo rotatepixbuf.lo consumer.lo \
-	configdb.lo generaldialogs.lo simplecombo.lo \
-	layoutrectangle.lo signature.lo circlemontage.lo \
-	pathsupport.lo pixbufview.lo progressbar.lo rangeparser.lo \
-	thread.lo ptmutex.lo rwmutex.lo searchpath.lo patheditor.lo \
-	imageselector.lo jpegsave.lo tiffsave.lo tempfile.lo util.lo
+am_libsupport_la_OBJECTS = consumer.lo configdb.lo layoutrectangle.lo \
+	signature.lo circlemontage.lo pathsupport.lo progressbar.lo \
+	rangeparser.lo thread.lo ptmutex.lo rwmutex.lo searchpath.lo \
+	tempfile.lo util.lo
 libsupport_la_OBJECTS = $(am_libsupport_la_OBJECTS)
 libsupport_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -224,20 +222,10 @@ top_srcdir = @top_srcdir@
 AM_CXXFLAGS = -Wall -I../imagesource/ -I../ -I../pixbufthumbnail -I../imagesource -I../profilemanager $(LCMS_CFLAGS) $(GTK2_CFLAGS) ${PNM_CFLAGS}
 noinst_LTLIBRARIES = libsupport.la
 libsupport_la_SOURCES = \
-	maskpixbuf.cpp	\
-	maskpixbuf.h	\
-	rotatepixbuf.cpp	\
-	rotatepixbuf.h	\
-	\
 	consumer.cpp	\
 	consumer.h	\
 	configdb.cpp	\
 	configdb.h	\
-	\
-	generaldialogs.cpp	\
-	generaldialogs.h	\
-	simplecombo.cpp	\
-	simplecombo.h	\
 	\
 	layoutrectangle.cpp	\
 	layoutrectangle.h	\
@@ -249,8 +237,6 @@ libsupport_la_SOURCES = \
 	\
 	pathsupport.cpp \
 	pathsupport.h \
-	pixbufview.cpp \
-	pixbufview.h \
 	progress.h	\
 	progresstext.h \
 	progressthread.h \
@@ -270,16 +256,6 @@ libsupport_la_SOURCES = \
 	searchpath.cpp \
 	searchpath.h \
 	searchpathdbhandler.h \
-	patheditor.cpp	\
-	patheditor.h	\
-	imageselector.cpp \
-	imageselector.h \
-	imageselector_noborder_image.h \
-	\
-	jpegsave.cpp	\
-	jpegsave.h	\
-	tiffsave.cpp	\
-	tiffsave.h \
 	\
 	tempfile.cpp	\
 	tempfile.h	\
@@ -342,25 +318,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/circlemontage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/configdb.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/consumer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generaldialogs.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imageselector.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpegsave.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/layoutrectangle.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/maskpixbuf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/patheditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pathsupport.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pixbufview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/progressbar.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ptmutex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rangeparser.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rotatepixbuf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rwmutex.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/searchpath.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/signature.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simplecombo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tempfile.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tiffsave.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Plo@am__quote@
 
 .cpp.o:

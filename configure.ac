@@ -85,7 +85,9 @@ AC_CHECK_FUNCS([memset mkdir strcasecmp strdup strncasecmp])
 
 AC_CONFIG_FILES([Makefile po/Makefile.in
                  imagesource/Makefile
+                 imageutils/Makefile
                  support/Makefile
+				 miscwidgets/Makefile
                  profilemanager/Makefile
                  pixbufthumbnail/Makefile
                  stpui_widgets/Makefile

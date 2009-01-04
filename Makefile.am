@@ -1,11 +1,12 @@
 # Makefile.am
 # RL 28/11/04
 
-SUBDIRS = po support imagesource stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
+SUBDIRS = po support imagesource imageutils miscwidgets stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
 
 localedir=$(datadir)/locale
 
-AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -I./splashscreen -I./profilemanager -I./effects \
+AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -I./imageutils -I./splashscreen \
+	-I./miscwidgets -I./profilemanager -I./effects \
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
 bin_PROGRAMS = profileuitest mkrgbprofile mklabprofile mkgreyprofile \
@@ -27,8 +28,10 @@ printqueuetest_SOURCES = printqueuetest.cpp
 stpuitest_SOURCES = stpuitest.cpp
 
 LDADD = \
+	imageutils/libimageutils.la	\
 	support/libsupport.la	\
 	imagesource/libimagesource.la	\
+	support/libsupport.la	\
 	profilemanager/libprofilemanager.la	\
 	stpui_widgets/libstpui_widgets.la	\
 	stp_support/libstp_support.la \

@@ -3,20 +3,10 @@ AM_CXXFLAGS = -Wall -I../imagesource/ -I../ -I../pixbufthumbnail -I../imagesourc
 noinst_LTLIBRARIES = libsupport.la
 
 libsupport_la_SOURCES =	\
-	maskpixbuf.cpp	\
-	maskpixbuf.h	\
-	rotatepixbuf.cpp	\
-	rotatepixbuf.h	\
-	\
 	consumer.cpp	\
 	consumer.h	\
 	configdb.cpp	\
 	configdb.h	\
-	\
-	generaldialogs.cpp	\
-	generaldialogs.h	\
-	simplecombo.cpp	\
-	simplecombo.h	\
 	\
 	layoutrectangle.cpp	\
 	layoutrectangle.h	\
@@ -28,8 +18,6 @@ libsupport_la_SOURCES =	\
 	\
 	pathsupport.cpp \
 	pathsupport.h \
-	pixbufview.cpp \
-	pixbufview.h \
 	progress.h	\
 	progresstext.h \
 	progressthread.h \
@@ -49,16 +37,6 @@ libsupport_la_SOURCES =	\
 	searchpath.cpp \
 	searchpath.h \
 	searchpathdbhandler.h \
-	patheditor.cpp	\
-	patheditor.h	\
-	imageselector.cpp \
-	imageselector.h \
-	imageselector_noborder_image.h \
-	\
-	jpegsave.cpp	\
-	jpegsave.h	\
-	tiffsave.cpp	\
-	tiffsave.h \
 	\
 	tempfile.cpp	\
 	tempfile.h	\

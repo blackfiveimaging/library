@@ -1,3 +1,4 @@
+
 /*
  * print.cpp - encapsulates printing via GIMP-Print/GutenPrint
  *
@@ -23,9 +24,9 @@
 #include <glib/gstrfuncs.h>
 #include <glib/gprintf.h>
 
-#include "imagesource/imagesource.h"
+#include "../imagesource/imagesource.h"
 
-#include "support/generaldialogs.h"
+#include "../miscwidgets/generaldialogs.h"
 
 #include "gprinter.h"
 

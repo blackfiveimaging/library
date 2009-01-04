@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "printerqueueswrapper.h"
-#include "support/generaldialogs.h"
+#include "../miscwidgets/generaldialogs.h"
 
 using namespace std;
 

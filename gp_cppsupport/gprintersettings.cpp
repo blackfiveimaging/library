@@ -17,9 +17,9 @@
 
 #include "stp_support/stputil.h"
 #include "gprintersettings.h"
-#include "support/util.h"
+#include "../support/util.h"
 
-#include "support/generaldialogs.h"
+#include "../miscwidgets/generaldialogs.h"
 
 #define DEFAULT_PPD_STRING "<Default Queue PPD>"
 
