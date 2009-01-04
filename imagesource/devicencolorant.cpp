@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../support/util.h"
 #include "devicencolorant.h"
 
 
@@ -50,7 +51,7 @@ int DeviceNColorantList::GetColorantIndex(const char *name)
 		const char *colname;
 		if((colname=col->GetName()))
 		{
-			if(strcmp(colname,name)==0)
+			if(StrcasecmpIgnoreSpaces(colname,name)==0)
 				return(result);
 		}		
 		++result;
@@ -98,14 +99,6 @@ static struct colorantdefinition colorantdefinitions[]=
 	{"Blue",0,0,255},
 	{"Green",0,255,0},
 	{"Orange",255,128,0},
-	{"PhotoBlack",0,0,0},	// Colorants without spaces in the names
-	{"MatteBlack",0,0,0},
-	{"LightCyan",127,220,255},
-	{"LightMagenta",255,127,220},
-	{"LightBlack",127,127,127},
-	{"LightLightBlack",191,191,191},
-	{"MediumBlack",63,63,63},
-	{"DarkYellow",160,140,0},
 	{NULL,0,0,0}
 };
 
@@ -116,7 +109,7 @@ DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name)
 	struct colorantdefinition *c=colorantdefinitions;
 	while(c->name)
 	{
-		if(strcasecmp(name,c->name)==0)
+		if(StrcasecmpIgnoreSpaces(name,c->name)==0)
 		{
 			if(name)
 				this->name=strdup(name);

@@ -266,3 +266,28 @@ char *SafeStrcat(const char *str1,const char *str2)
 	return(strdup(""));
 }
 
+
+// Utility function to compare two strings, but ignoring differences
+// due to spaces.
+int StrcasecmpIgnoreSpaces(const char *str1,const char *str2)
+{
+	while(*str1 && *str2)
+	{
+		while(*str1==32)
+			++str1;
+		while(*str2==32)
+			++str2;
+		int s1=(*str1++) & ~32;
+		int s2=(*str2++) & ~32;
+		if(s1!=s2)
+		{
+			if(s1<s2)
+				return(-1);
+			else
+				return(1);
+		}
+	}
+	// If we reach here, the strings must be equal.
+	return(0);
+}
+

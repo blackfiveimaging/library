@@ -15,6 +15,8 @@
 #include <string.h>
 #include <math.h>
 
+#include "../support/util.h"
+
 #include "imagesource_devicen_preview.h"
 
 using namespace std;
@@ -37,47 +39,47 @@ ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const char *longname,int 
 ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const char *longname)
 	: red(EIGHTTOIS(red)),green(EIGHTTOIS(green)),blue(EIGHTTOIS(blue)),longname(NULL),alias(alias)
 {
-	if(strcasecmp(longname,"Cyan")==0)
+	if(StrcasecmpIgnoreSpaces(longname,"Cyan")==0)
 	{
 		red=EIGHTTOIS(0); green=EIGHTTOIS(190); blue=EIGHTTOIS(255); alias='C';
 	}
-	else if(strcasecmp(longname,"Magenta")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Magenta")==0)
 	{
 		red=EIGHTTOIS(255); green=EIGHTTOIS(0); blue=EIGHTTOIS(190); alias='M';
 	}
-	else if(strcasecmp(longname,"Yellow")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Yellow")==0)
 	{
 		red=EIGHTTOIS(255); green=EIGHTTOIS(255); blue=EIGHTTOIS(0); alias='Y';
 	}
-	else if(strcasecmp(longname,"Black")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Black")==0)
 	{
 		red=EIGHTTOIS(0); green=EIGHTTOIS(0); blue=EIGHTTOIS(0); alias='K';
 	}
-	else if(strcasecmp(longname,"Photo Black")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Photo Black")==0)
 	{
 		red=EIGHTTOIS(0); green=EIGHTTOIS(0); blue=EIGHTTOIS(0); alias='K';
 	}
-	else if(strcasecmp(longname,"Matte Black")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Matte Black")==0)
 	{
 		red=EIGHTTOIS(0); green=EIGHTTOIS(0); blue=EIGHTTOIS(0); alias='T';
 	}
-	else if(strcasecmp(longname,"Light Cyan")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Light Cyan")==0)
 	{
 		red=EIGHTTOIS(127); green=EIGHTTOIS(220); blue=EIGHTTOIS(255); alias='c';
 	}
-	else if(strcasecmp(longname,"Light Magenta")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Light Magenta")==0)
 	{
 		red=EIGHTTOIS(255); green=EIGHTTOIS(127); blue=EIGHTTOIS(220); alias='m';
 	}
-	else if(strcasecmp(longname,"Light Black")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Light Black")==0)
 	{
 		red=EIGHTTOIS(127); green=EIGHTTOIS(127); blue=EIGHTTOIS(127); alias='k';
 	}
-	else if(strcasecmp(longname,"Red")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Red")==0)
 	{
 		red=EIGHTTOIS(255); green=EIGHTTOIS(0); blue=EIGHTTOIS(0); alias='R';
 	}
-	else if(strcasecmp(longname,"Blue")==0)
+	else if(StrcasecmpIgnoreSpaces(longname,"Blue")==0)
 	{
 		red=EIGHTTOIS(0); green=EIGHTTOIS(0); blue=EIGHTTOIS(255); alias='B';
 	}
