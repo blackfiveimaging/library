@@ -29,6 +29,7 @@ stpuitest_SOURCES = stpuitest.cpp
 
 LDADD = \
 	imageutils/libimageutils.la	\
+	miscwidgets/libmiscwidgets.la	\
 	support/libsupport.la	\
 	imagesource/libimagesource.la	\
 	support/libsupport.la	\
