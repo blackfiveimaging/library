@@ -23,11 +23,12 @@ void Signature::EqualiseMargins()
 
 void Signature::ReCalc()
 {
-  int w,h;
-  w=pagewidth-(leftmargin+rightmargin);
-  h=pageheight-(topmargin+bottommargin);
-  celwidth=(w-(columns-1)*hgutter); celwidth/=columns;
-  celheight=(h-(rows-1)*vgutter); celheight/=rows;
+	int w,h;
+	w=pagewidth-(leftmargin+rightmargin);
+	h=pageheight-(topmargin+bottommargin);
+	celwidth=(w-(columns-1)*hgutter); celwidth/=columns;
+	celheight=(h-(rows-1)*vgutter); celheight/=rows;
+	rightpadding=bottompadding=0;
 }
 
 
@@ -61,16 +62,40 @@ void Signature::SetMargins(int left,int right,int top,int bottom)
 
 void Signature::SetGutters(int hgutter,int vgutter)
 {
-  if(((columns-1)*hgutter)>=(pagewidth-(leftmargin+rightmargin)))
-    cerr << "Horizontal gutters too wide!" << endl;
-  else
-    this->hgutter=hgutter;
+	cerr << "Setting gutters to :" << hgutter << ", " << vgutter << endl;
+	if(((columns-1)*hgutter)>=(pagewidth-(leftmargin+rightmargin)))
+		cerr << "Horizontal gutters too wide!" << endl;
+	else
+		this->hgutter=hgutter;
+
+	if(((rows-1)*vgutter)>=(pageheight-(topmargin+bottommargin)))
+		cerr << "Horizontal gutters too tall!" << endl;
+	else
+		this->vgutter=vgutter;
+	ReCalc();
+	cerr << "After recalc: " << hgutter << ", " << vgutter << endl;
+}
+
+
+void Signature::SetHGutter(int gutter)
+{
+	cerr << "Setting HGutter to :" << gutter << endl;
+	if(((columns-1)*gutter)>=(pagewidth-(leftmargin+rightmargin)))
+		cerr << "Horizontal gutters too wide!" << endl;
+	else
+		this->hgutter=gutter;
+	ReCalc();
+}
   
-  if(((rows-1)*vgutter)>=(pageheight-(topmargin+bottommargin)))
-    cerr << "Horizontal gutters too tall!" << endl;
-  else
-    this->vgutter=vgutter;
-  ReCalc();
+
+void Signature::SetVGutter(int gutter)
+{
+	cerr << "Setting VGutter to :" << gutter << endl;
+	if(((rows-1)*gutter)>=(pageheight-(topmargin+bottommargin)))
+		cerr << "Vertical gutters too wide!" << endl;
+	else
+		this->vgutter=gutter;
+	ReCalc();
 }
   
   
@@ -97,24 +122,46 @@ void Signature::ReCalcByCellSize()
 {
 	int r=(pageheight-(topmargin+bottommargin))/celheight;
 	int c=(pagewidth-(leftmargin+rightmargin))/celwidth;
+	cerr << "Rows: " << r << ", cols: " << c << endl;
+	cerr << "Page width: " << pagewidth << ", margins: " << (topmargin+bottommargin) << ", celwidth:" << celwidth << endl;
 	if(r<1)
+	{
 		celheight=pageheight-(topmargin+bottommargin);
-	if(c<1)
-		celwidth=pagewidth-(leftmargin+rightmargin);
-
-	if(r>1)
+		r=1;
+	}
+	else if(r>1)
 	{
 		vgutter=((pageheight-(topmargin+bottommargin))-r*celheight)/(r-1);
+		cerr << "VGutter = " << vgutter << endl;
 	}
-	if(c>1)
+	else
+	{
+		bottompadding=pageheight-(topmargin+bottommargin+celheight);
+	}
+
+	if(c<1)
+	{
+		celwidth=pagewidth-(leftmargin+rightmargin);
+		c=1;
+	}
+	else if(c>1)
 	{
 		hgutter=((pagewidth-(leftmargin+rightmargin))-c*celwidth)/(c-1);
+		cerr << "HGutter = " << hgutter << endl;
 	}
+	else
+	{
+		rightpadding=pagewidth-(leftmargin+rightmargin+celwidth);
+	}
+
+	rows=r;
+	columns=c;
 }
 
 
 void Signature::SetCellWidth(int width)
 {
+	cerr << "Setting cell width to " << width << endl;
 	celwidth=width;
 	ReCalcByCellSize();
 }
@@ -122,6 +169,7 @@ void Signature::SetCellWidth(int width)
 
 void Signature::SetCellHeight(int height)
 {
+	cerr << "Setting cell height to " << height << endl;
 	celheight=height;
 	ReCalcByCellSize();
 }
@@ -137,7 +185,7 @@ Signature::Signature(int rows,int columns)
 
 Signature::Signature(PageExtent &extent,int rows,int columns)
 	: PageExtent(), hgutter(DEFAULTGUTTER), vgutter(DEFAULTGUTTER),
-	rows(rows), columns(columns)
+	rows(rows), columns(columns), rightpadding(0), bottompadding(0)
 {
 	SetPageExtent(extent);
 }
@@ -167,3 +215,42 @@ LayoutRectangle *Signature::GetLayoutRectangle(int row,int column)
 	int h=int(celheight);
 	return(new LayoutRectangle(x,y,w,h));
 }
+
+
+int Signature::GetCellWidth()
+{
+	cerr << "GetCellWidth - returning: " << celwidth << endl;
+	return(celwidth);
+}
+
+
+int Signature::GetCellHeight()
+{
+	return(celheight);
+}
+
+
+int Signature::GetColumns()
+{
+	return(columns);
+}
+
+
+int Signature::GetRows()
+{
+	return(rows);
+}
+
+
+int Signature::GetHGutter()
+{
+	cerr << "GetHGutter returning: " << hgutter << endl;
+	return(hgutter);
+}
+
+int Signature::GetVGutter()
+{
+	cerr << "GetVGutter returning: " << vgutter << endl;
+	return(vgutter);
+}
+

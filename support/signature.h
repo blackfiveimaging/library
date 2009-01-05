@@ -30,34 +30,18 @@ class Signature : public virtual PageExtent
 	void SetPaperSize(int width,int height);
 	void SetMargins(int left,int right,int top,int bottom);
 	void SetGutters(int hgutter,int vgutter);
+	void SetHGutter(int gutter);
+	void SetVGutter(int gutter);
 	void SetColumns(int columns);
 	void SetRows(int rows);
 	void SetCellWidth(int width);
 	void SetCellHeight(int height);
-	int GetCellWidth()
-	{
-		return(celwidth);
-	}
-	int GetCellHeight()
-	{
-		return(celheight);
-	}
-	int GetColumns()
-	{
-		return(columns);
-	}
-	int GetRows()
-	{
-		return(rows);
-	}
-	int GetHGutter()
-	{
-		return(hgutter);
-	}
-	int GetVGutter()
-	{
-		return(vgutter);
-	}
+	int GetCellWidth();
+	int GetCellHeight();
+	int GetColumns();
+	int GetRows();
+	int GetHGutter();
+	int GetVGutter();
 	LayoutRectangle *GetLayoutRectangle(int row,int column);
 	void EqualiseMargins();
 	void ReCalc();
@@ -68,6 +52,7 @@ class Signature : public virtual PageExtent
 	int hgutter,vgutter;
 	int rows,columns;
 	float celwidth,celheight;
+	int rightpadding,bottompadding;
 };
 
 #endif
