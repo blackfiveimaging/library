@@ -53,6 +53,7 @@ class Signature : public virtual PageExtent
 	int rows,columns;
 	float celwidth,celheight;
 	int rightpadding,bottompadding;
+	bool absolutemode;				// Used to track whether we're recalcing in terms of rows/columns or cell size.
 };
 
 #endif

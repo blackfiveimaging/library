@@ -17,12 +17,16 @@ using namespace std;
 void Signature::EqualiseMargins()
 {
 	PageExtent::EqualiseMargins();
-	ReCalc();
+	if(absolutemode)
+		ReCalcByCellSize();
+	else
+		ReCalc();
 }
 
 
 void Signature::ReCalc()
 {
+	absolutemode=false;
 	int w,h;
 	w=pagewidth-(leftmargin+rightmargin);
 	h=pageheight-(topmargin+bottommargin);
@@ -35,7 +39,10 @@ void Signature::ReCalc()
 void Signature::SetPageExtent(PageExtent &pe)
 {
 	PageExtent::SetPageExtent(pe);
-	ReCalc();
+	if(absolutemode)
+		ReCalcByCellSize();
+	else
+		ReCalc();
 }
 
 
@@ -56,7 +63,10 @@ void Signature::SetPaperSize(int width,int height)
 void Signature::SetMargins(int left,int right,int top,int bottom)
 {
 	PageExtent::SetMargins(left,right,top,bottom);
-	ReCalc();
+	if(absolutemode)
+		ReCalcByCellSize();
+	else
+		ReCalc();
 }
 
 
@@ -120,6 +130,7 @@ void Signature::SetRows(int rows)
 
 void Signature::ReCalcByCellSize()
 {
+	absolutemode=true;
 	int r=(pageheight-(topmargin+bottommargin))/celheight;
 	int c=(pagewidth-(leftmargin+rightmargin))/celwidth;
 	cerr << "Rows: " << r << ", cols: " << c << endl;
@@ -185,7 +196,7 @@ Signature::Signature(int rows,int columns)
 
 Signature::Signature(PageExtent &extent,int rows,int columns)
 	: PageExtent(), hgutter(DEFAULTGUTTER), vgutter(DEFAULTGUTTER),
-	rows(rows), columns(columns), rightpadding(0), bottompadding(0)
+	rows(rows), columns(columns), rightpadding(0), bottompadding(0), absolutemode(false)
 {
 	SetPageExtent(extent);
 }
