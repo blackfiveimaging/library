@@ -304,7 +304,8 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 	uint16 photometric=0,spp=0,bps=0;
 	uint32 width=0,height=0,sl=0;
 	uint32 stripsize=0;
-	float xres,yres;
+	float xres=72.0;
+	float yres=72.0;
 	uint16 resunit=RESUNIT_INCH;
 	uint16 *palettered,*palettegreen,*paletteblue;
 	uint16 inkset;
@@ -444,6 +445,8 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 		xres*=2.54;
 		yres*=2.54;
 	}
+
+	cerr << "Resolution: " << xres << " by " << yres << endl;
 
 	this->width=width;
 	this->height=height;
