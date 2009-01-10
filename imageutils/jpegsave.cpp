@@ -180,8 +180,8 @@ JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression
 
 	cinfo=new jpeg_compress_struct;
 	err=new JPEGSaver_ErrManager;
-	memset(cinfo,sizeof(jpeg_compress_struct),0);
-	memset(err,sizeof(JPEGSaver_ErrManager),0);
+	memset(cinfo,0,sizeof(jpeg_compress_struct));
+	memset(err,0,sizeof(JPEGSaver_ErrManager));
 	cinfo->err = jpeg_std_error(&err->std);
 	err->std.error_exit = isjpeg_error_exit;
 
