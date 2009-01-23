@@ -1,7 +1,6 @@
 /*
  * imagesource_Gamma.h
- * Scales values in an imagesource according to a given value.
- * Scales RGB towards IS_SAMPLEMAX, scales Grey and CMYK towards 0.
+ * Applies Gamma correction to an image.
  *
  * Copyright (c) 2008 by Alastair M. Robinson
  * Distributed under the terms of the GNU General Public License -

@@ -54,9 +54,10 @@ am_libimagesource_la_OBJECTS = imagesource.lo imagesource_bilinear.lo \
 	imagesource_hsweep.lo imagesource_hticks.lo \
 	imagesource_invert.lo imagesource_jpeg.lo \
 	imagesource_lanczossinc.lo imagesource_mask.lo \
-	imagesource_montage.lo imagesource_devicen_preview.lo \
-	imagesource_devicen_remap.lo imagesource_promote.lo \
-	imagesource_pnm.lo imagesource_rotate.lo imagesource_scale.lo \
+	imagesource_modifiedgamma.lo imagesource_montage.lo \
+	imagesource_devicen_preview.lo imagesource_devicen_remap.lo \
+	imagesource_promote.lo imagesource_pnm.lo \
+	imagesource_rotate.lo imagesource_scale.lo \
 	imagesource_scaledensity.lo imagesource_segmentmask.lo \
 	imagesource_solid.lo imagesource_tiff.lo \
 	imagesource_unsharpmask.lo imagesource_util.lo \
@@ -285,6 +286,8 @@ libimagesource_la_SOURCES = \
 	imagesource_lanczossinc.h	\
 	imagesource_mask.cpp	\
 	imagesource_mask.h	\
+	imagesource_modifiedgamma.cpp	\
+	imagesource_modifiedgamma.h	\
 	imagesource_montage.cpp	\
 	imagesource_montage.h	\
 	imagesource_devicen_preview.cpp \
@@ -396,6 +399,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_jpeg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_lanczossinc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_mask.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_modifiedgamma.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_montage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_pnm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_promote.Plo@am__quote@

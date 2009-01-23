@@ -63,6 +63,7 @@ ISDataType *ImageSource_Gamma::GetRow(int row)
 				{
 					int j;
 					for(j=0;j<samplesperpixel-1;++j)
+//						rowbuffer[i*samplesperpixel+j]=IS_INVGAMMA(src[i*samplesperpixel+j],gamma);
 						rowbuffer[i*samplesperpixel+j]=IS_SAMPLEMAX-IS_GAMMA(IS_SAMPLEMAX-src[i*samplesperpixel+j],gamma);
 					rowbuffer[i*samplesperpixel+j]=src[i*samplesperpixel+j];	// Copy alpha unchanged
 				}	
@@ -72,6 +73,7 @@ ISDataType *ImageSource_Gamma::GetRow(int row)
 				for(int i=0;i<width;++i)
 				{
 					for(int j=0;j<samplesperpixel;++j)
+//						rowbuffer[i*samplesperpixel+j]=IS_INVGAMMA(src[i*samplesperpixel+j],gamma);
 						rowbuffer[i*samplesperpixel+j]=IS_SAMPLEMAX-IS_GAMMA(IS_SAMPLEMAX-src[i*samplesperpixel+j],gamma);
 				}	
 			}		

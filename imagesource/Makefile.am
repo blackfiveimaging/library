@@ -52,6 +52,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_lanczossinc.h	\
 	imagesource_mask.cpp	\
 	imagesource_mask.h	\
+	imagesource_modifiedgamma.cpp	\
+	imagesource_modifiedgamma.h	\
 	imagesource_montage.cpp	\
 	imagesource_montage.h	\
 	imagesource_devicen_preview.cpp \
