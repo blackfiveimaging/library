@@ -268,6 +268,7 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 	switch(source->type)
 	{
 		case IS_TYPE_RGB:
+			cerr << "Printing in RGB mode" << endl;
 			stp_set_string_parameter(stpvars, "InputImageType", "RGB");
 #ifdef USE8BITPRINTING
 			stp_set_string_parameter(stpvars, "ChannelBitDepth", "8");
@@ -276,6 +277,7 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 #endif
 			break;
 		case IS_TYPE_CMYK:
+			cerr << "Printing in CMYK mode" << endl;
 			stp_set_string_parameter(stpvars, "InputImageType", "CMYK");
 #ifdef USE8BITPRINTING
 			stp_set_string_parameter(stpvars, "ChannelBitDepth", "8");
@@ -284,6 +286,7 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 #endif
 			break;
 		case IS_TYPE_DEVICEN:
+			cerr << "Printing in DeviceN mode" << endl;
 			stp_set_string_parameter(stpvars, "InputImageType", "Raw");
 			{
 				char nchan[10];

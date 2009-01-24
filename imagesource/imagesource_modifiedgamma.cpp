@@ -136,7 +136,7 @@ ImageSource_ModifiedGamma::ImageSource_ModifiedGamma(ImageSource *source,float g
 	cerr << "Modified gamma - using offset of " << offset << endl;
 	threshold=offset/(gamma + gamma*offset - 1.0);
 	cerr << "Threshold: " << threshold << endl;
-	slope=pow((threshold+offset)/(1.0+offset),gamma);
+	slope=pow((threshold+offset)/(1.0+offset),gamma)/threshold;
 	cerr << "Slope of linear section: " << slope << endl;
 	MakeRowBuffer();
 }
