@@ -134,7 +134,7 @@ ImageSource_ModifiedGamma::ImageSource_ModifiedGamma(ImageSource *source,float g
 	: ImageSource(source), source(source), gamma(gamma), offset(offset)
 {
 	cerr << "Modified gamma - using offset of " << offset << endl;
-	threshold=offset/(gamma + gamma*offset -1);
+	threshold=offset/(gamma + gamma*offset - 1.0);
 	cerr << "Threshold: " << threshold << endl;
 	slope=pow((threshold+offset)/(1.0+offset),gamma);
 	cerr << "Slope of linear section: " << slope << endl;
@@ -144,6 +144,29 @@ ImageSource_ModifiedGamma::ImageSource_ModifiedGamma(ImageSource *source,float g
 
 float ImageSource_ModifiedGamma::FindGamma(float x,float y,float offset)
 {
-	return((1.0+offset)*log(y)/log(x+offset));
+	return(log(y)/(log(x+offset)-log(1.0+offset)));
+}
+
+
+float ImageSource_ModifiedGamma::ModifiedGamma(float x,float gamma,float offset)
+{
+	float threshold=offset/(gamma + gamma*offset - 1.0);
+	float slope=pow((threshold+offset)/(1.0+offset),gamma);
+	if(x<threshold)
+		return(x*slope);
+	else
+		return(pow((x+offset)/(1.0+offset),gamma));
+}
+
+
+float ImageSource_ModifiedGamma::InverseModifiedGamma(float x, float gamma, float offset)
+{
+	float threshold=offset/(gamma + gamma*offset - 1.0);
+	float slope=pow((threshold+offset)/(1.0+offset),gamma);
+	float t2=pow((x+offset)/(1.0+offset),gamma);
+	if(x<t2)
+		return(x/slope);
+	else
+		return((1+offset)*pow(x,1/gamma)-offset);
 }
 

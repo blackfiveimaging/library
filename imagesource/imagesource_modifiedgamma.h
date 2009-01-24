@@ -36,6 +36,8 @@ class ImageSource_ModifiedGamma : public ImageSource
 	virtual ~ImageSource_ModifiedGamma();
 	ISDataType *GetRow(int row);
 	static float FindGamma(float x,float y,float offset=-0.02);
+	static float ModifiedGamma(float x,float gamma,float offset=-0.02);
+	static float InverseModifiedGamma(float x, float gamma, float offset=-0.02);
 	private:
 	ImageSource *source;
 	float gamma;
