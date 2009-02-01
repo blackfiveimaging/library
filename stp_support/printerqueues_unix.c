@@ -431,6 +431,11 @@ static char *buildprintcommand(struct pqinfo *pq)
 		if(strcmp("ps",driver)==0 || strcmp("ps2",driver)==0)
 			rawmode=0;
 	}
+	else
+	{
+		fprintf(stderr,"***\n*** WARNING: driver is null - this shouldn't happen - please report this bug!\n***\n");
+		rawmode=0;
+	}
 
 	char *cmd=(char *)malloc(len+15);
 	sprintf(cmd,"%s %s %s %s",
