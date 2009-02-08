@@ -46,7 +46,7 @@ LabValue::LabValue(XYZValue &xyz,XYZValue &refwhite) : L(0.0), a(0.0), b(0.0)
 }
 
 
-LabValue::LabValue(LabValue &lab)
+LabValue::LabValue(const LabValue &lab)
 {
 	L=lab.L;
 	a=lab.a;
@@ -56,7 +56,8 @@ LabValue::LabValue(LabValue &lab)
 
 float LabValue::Magnitude()
 {
-	return(sqrt(L*L+a*a+b*b));
+	float result=sqrt(L*L+a*a+b*b);
+	return(result);
 }
 
 
@@ -69,10 +70,20 @@ LabValue &LabValue::operator-=(const LabValue &other)
 }
 
 
-LabValue &LabValue::operator-(const LabValue &other)
+LabValue &LabValue::operator=(const LabValue &other)
 {
-	LabValue *result=new LabValue(*this);
-	(*result)-=other;
-	return(*result);
+	L=other.L;
+	a=other.a;
+	b=other.b;
+	return(*this);
+}
+
+
+
+LabValue LabValue::operator-(const LabValue &other)
+{
+	LabValue result(*this);
+	result-=other;
+	return(result);
 }
 

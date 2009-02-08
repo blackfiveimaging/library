@@ -19,10 +19,11 @@ class LabValue
 	public:
 	LabValue();
 	LabValue(XYZValue &xyz,XYZValue &refwhite=D50ReferenceWhite);
-	LabValue(LabValue &lab);
+	LabValue(const LabValue &lab);
 	LabValue(float L, float a, float b);
-	LabValue &operator-(const LabValue &other);
+	LabValue operator-(const LabValue &other);
 	LabValue &operator-=(const LabValue &other);
+	LabValue &operator=(const LabValue &other);
 	float Magnitude();	// sqrt(L*L + a*a + b*b);
 	float L,a,b;
 };
