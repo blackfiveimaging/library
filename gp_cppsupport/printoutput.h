@@ -5,7 +5,7 @@
 #include "support/consumer.h"
 #include "printerqueueswrapper.h"
 
-#define DEFAULT_PRINTER_DRIVER "escp2-600"
+#define DEFAULT_PRINTER_DRIVER "ps2"
 
 class PrintOutput : public ConfigDB, public PrinterQueues
 {

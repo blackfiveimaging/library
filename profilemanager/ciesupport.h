@@ -5,9 +5,9 @@ class XYZValue
 {
 	public:
 	XYZValue() : X(0),Y(0),Z(0) {}
-	XYZValue(float X,float Y,float Z) : X(X),Y(Y),Z(Z) {}
+	XYZValue(double X,double Y,double Z) : X(X),Y(Y),Z(Z) {}
 	~XYZValue() {}
-	float X,Y,Z;
+	double X,Y,Z;
 };
 
 extern XYZValue D50ReferenceWhite;
@@ -20,12 +20,13 @@ class LabValue
 	LabValue();
 	LabValue(XYZValue &xyz,XYZValue &refwhite=D50ReferenceWhite);
 	LabValue(const LabValue &lab);
-	LabValue(float L, float a, float b);
+	LabValue(double L, double a, double b);
 	LabValue operator-(const LabValue &other);
 	LabValue &operator-=(const LabValue &other);
 	LabValue &operator=(const LabValue &other);
-	float Magnitude();	// sqrt(L*L + a*a + b*b);
-	float L,a,b;
+	double Magnitude();	// sqrt(L*L + a*a + b*b);
+	double dE(const LabValue &other);	// Euclidean distance between this and other
+	double L,a,b;
 };
 
 #endif

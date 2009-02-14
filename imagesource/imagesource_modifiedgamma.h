@@ -32,18 +32,18 @@
 class ImageSource_ModifiedGamma : public ImageSource
 {
 	public:
-	ImageSource_ModifiedGamma(ImageSource *source,float gamma,float offset=-0.02);
+	ImageSource_ModifiedGamma(ImageSource *source,double gamma,double offset=-0.02);
 	virtual ~ImageSource_ModifiedGamma();
 	ISDataType *GetRow(int row);
-	static float FindGamma(float x,float y,float offset=-0.02);
-	static float ModifiedGamma(float x,float gamma,float offset=-0.02);
-	static float InverseModifiedGamma(float x, float gamma, float offset=-0.02);
+	static double FindGamma(double x,double y,double offset=-0.02);
+	static double ModifiedGamma(double x,double gamma,double offset=-0.02);
+	static double InverseModifiedGamma(double x, double gamma, double offset=-0.02);
 	private:
 	ImageSource *source;
-	float gamma;
-	float offset;
-	float threshold;
-	float slope;
+	double gamma;
+	double offset;
+	double threshold;
+	double slope;
 };
 
 #endif

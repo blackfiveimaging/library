@@ -13,7 +13,7 @@ LabValue::LabValue() : L(0.0),a(0.0),b(0.0)
 {
 }
 
-LabValue::LabValue(float L, float a, float b) : L(L),a(a),b(b)
+LabValue::LabValue(double L, double a, double b) : L(L),a(a),b(b)
 {
 }
 
@@ -22,11 +22,11 @@ LabValue::LabValue(float L, float a, float b) : L(L),a(a),b(b)
 
 LabValue::LabValue(XYZValue &xyz,XYZValue &refwhite) : L(0.0), a(0.0), b(0.0)
 {
-	float x_r=xyz.X/refwhite.X;
-	float y_r=xyz.Y/refwhite.Y;
-	float z_r=xyz.Z/refwhite.Z;
+	double x_r=xyz.X/refwhite.X;
+	double y_r=xyz.Y/refwhite.Y;
+	double z_r=xyz.Z/refwhite.Z;
 
-	float fx,fy,fz;
+	double fx,fy,fz;
 	if(x_r<=epsilon)
 		fx=(kappa*x_r+16.0)/116.0;
 	else
@@ -54,9 +54,19 @@ LabValue::LabValue(const LabValue &lab)
 }
 
 
-float LabValue::Magnitude()
+double LabValue::Magnitude()
 {
-	float result=sqrt(L*L+a*a+b*b);
+	double result=sqrt(L*L+a*a+b*b);
+	return(result);
+}
+
+
+double LabValue::dE(const LabValue &other)
+{
+	double dL=other.L-L;
+	double da=other.a-a;
+	double db=other.b-b;
+	double result=sqrt(dL*dL+da*da+db*db);
 	return(result);
 }
 

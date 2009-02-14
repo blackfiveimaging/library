@@ -44,9 +44,9 @@ ISDataType *ImageSource_ModifiedGamma::GetRow(int row)
 					int j;
 					for(j=0;j<samplesperpixel-1;++j)
 					{
-						float x=src[i*samplesperpixel+j];
+						double x=src[i*samplesperpixel+j];
 						x/=IS_SAMPLEMAX;
-						float y=0.0;
+						double y=0.0;
 						if(x<threshold)
 							y=x*slope;
 						else
@@ -64,9 +64,9 @@ ISDataType *ImageSource_ModifiedGamma::GetRow(int row)
 				{
 					for(int j=0;j<samplesperpixel;++j)
 					{
-						float x=src[i*samplesperpixel+j];
+						double x=src[i*samplesperpixel+j];
 						x/=IS_SAMPLEMAX;
-						float y=0.0;
+						double y=0.0;
 						if(x<threshold)
 							y=x*slope;
 						else
@@ -87,9 +87,9 @@ ISDataType *ImageSource_ModifiedGamma::GetRow(int row)
 					int j;
 					for(j=0;j<samplesperpixel-1;++j)
 					{
-						float x=IS_SAMPLEMAX-src[i*samplesperpixel+j];
+						double x=IS_SAMPLEMAX-src[i*samplesperpixel+j];
 						x/=IS_SAMPLEMAX;
-						float y=0.0;
+						double y=0.0;
 						if(x<threshold)
 							y=x*slope;
 						else
@@ -108,9 +108,9 @@ ISDataType *ImageSource_ModifiedGamma::GetRow(int row)
 				{
 					for(int j=0;j<samplesperpixel;++j)
 					{
-						float x=IS_SAMPLEMAX-src[i*samplesperpixel+j];
+						double x=IS_SAMPLEMAX-src[i*samplesperpixel+j];
 						x/=IS_SAMPLEMAX;
-						float y=0.0;
+						double y=0.0;
 						if(x<threshold)
 							y=x*slope;
 						else
@@ -130,7 +130,7 @@ ISDataType *ImageSource_ModifiedGamma::GetRow(int row)
 }
 
 
-ImageSource_ModifiedGamma::ImageSource_ModifiedGamma(ImageSource *source,float gamma,float offset)
+ImageSource_ModifiedGamma::ImageSource_ModifiedGamma(ImageSource *source,double gamma,double offset)
 	: ImageSource(source), source(source), gamma(gamma), offset(offset)
 {
 	cerr << "Modified gamma - using offset of " << offset << endl;
@@ -142,16 +142,16 @@ ImageSource_ModifiedGamma::ImageSource_ModifiedGamma(ImageSource *source,float g
 }
 
 
-float ImageSource_ModifiedGamma::FindGamma(float x,float y,float offset)
+double ImageSource_ModifiedGamma::FindGamma(double x,double y,double offset)
 {
 	return(log(y)/(log(x+offset)-log(1.0+offset)));
 }
 
 
-float ImageSource_ModifiedGamma::ModifiedGamma(float x,float gamma,float offset)
+double ImageSource_ModifiedGamma::ModifiedGamma(double x,double gamma,double offset)
 {
-	float threshold=offset/(gamma + gamma*offset - 1.0);
-	float slope=pow((threshold+offset)/(1.0+offset),gamma);
+	double threshold=offset/(gamma + gamma*offset - 1.0);
+	double slope=pow((threshold+offset)/(1.0+offset),gamma);
 	if(x<threshold)
 		return(x*slope);
 	else
@@ -159,11 +159,11 @@ float ImageSource_ModifiedGamma::ModifiedGamma(float x,float gamma,float offset)
 }
 
 
-float ImageSource_ModifiedGamma::InverseModifiedGamma(float x, float gamma, float offset)
+double ImageSource_ModifiedGamma::InverseModifiedGamma(double x, double gamma, double offset)
 {
-	float threshold=offset/(gamma + gamma*offset - 1.0);
-	float slope=pow((threshold+offset)/(1.0+offset),gamma);
-	float t2=pow((x+offset)/(1.0+offset),gamma);
+	double threshold=offset/(gamma + gamma*offset - 1.0);
+	double slope=pow((threshold+offset)/(1.0+offset),gamma);
+	double t2=pow((x+offset)/(1.0+offset),gamma);
 	if(x<t2)
 		return(x/slope);
 	else
