@@ -3,6 +3,8 @@ AM_CXXFLAGS = -Wall -I../imagesource/ -I../ -I../pixbufthumbnail -I../imagesourc
 noinst_LTLIBRARIES = libsupport.la
 
 libsupport_la_SOURCES =	\
+	binarysearch.h \
+	\
 	consumer.cpp	\
 	consumer.h	\
 	configdb.cpp	\
