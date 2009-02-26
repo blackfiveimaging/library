@@ -16,6 +16,11 @@
 #include <math.h>
 #include "dimension.h"
 
+#include "../config.h"
+#include "../gettext.h"
+#define _(x) gettext(x)
+#define N_(x) gettext_noop(x)
+
 enum {
 	CHANGED_SIGNAL,
 	LAST_SIGNAL

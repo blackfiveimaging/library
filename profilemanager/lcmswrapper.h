@@ -14,7 +14,9 @@
 #define LCMSWRAPPER_H
 
 #ifdef HAVE_CONFIG_H
+#ifndef VERSION
 #include "config.h"
+#endif
 #endif
 
 #include <lcms.h>
