@@ -95,6 +95,8 @@ ISDataType *ImageSource_Rotate::GetRow(int row)
 							throw "Rotate: Only 1, 3 or 4 samples per pixel are currently supported";
 							break;
 					}
+					if(TestBreak())
+						i=source->height;
 				}
 			}
 			row-=spanfirstrow;
@@ -156,6 +158,8 @@ ISDataType *ImageSource_Rotate::GetRow(int row)
 							throw "Rotate: Only 1, 3 or 4 samples per pixel are currently supported";
 							break;
 					}
+					if(TestBreak())
+						y=source->height;
 				}
 			}
 			row-=spanfirstrow;
@@ -262,6 +266,8 @@ ISDataType *ImageSource_Rotate::GetRow(int row)
 							throw "Rotate: Only 1, 3 or 4 samples per pixel are currently supported";
 							break;
 					}
+					if(TestBreak())
+						i=source->height;
 				}
 			}
 			row-=spanfirstrow;
@@ -275,7 +281,7 @@ ISDataType *ImageSource_Rotate::GetRow(int row)
 
 
 ImageSource_Rotate::ImageSource_Rotate(ImageSource *source,int rotation,int spanrows)
-	: ImageSource(source), source(source), rotation(rotation), spanfirstrow(0), spanrows(spanrows), spanbuffer(NULL)
+	: ImageSource_Interruptible(source), source(source), rotation(rotation), spanfirstrow(0), spanrows(spanrows), spanbuffer(NULL)
 {
 	rowbuffer=NULL;
 	switch(rotation)

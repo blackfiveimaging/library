@@ -13,10 +13,11 @@
 #define IMAGESOURCE_ROTATE_H
 
 #include "imagesource.h"
+#include "imagesource_interruptible.h"
 
 struct ImageSource *ImageSource_Rotate_New(struct ImageSource *source,int rotation,int spanrows);
 
-class ImageSource_Rotate : public ImageSource
+class ImageSource_Rotate : public ImageSource_Interruptible
 {
 	public:
 	ImageSource_Rotate(ImageSource *source,int rotation,int spanrows=1024);

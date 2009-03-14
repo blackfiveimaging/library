@@ -9,6 +9,7 @@ libimagesource_la_SOURCES =	\
 	convkernel_unsharpmask.h	\
 	imagesource.cpp		\
 	imagesource.h		\
+	imagesource_interruptible.h	\
 	imagesource_types.h	\
 	imagesource_bilinear.cpp	\
 	imagesource_bilinear.h	\
