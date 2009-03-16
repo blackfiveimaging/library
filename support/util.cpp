@@ -291,3 +291,30 @@ int StrcasecmpIgnoreSpaces(const char *str1,const char *str2)
 	return(0);
 }
 
+
+// Dummy class for seeding the random number generator.  Declaring a global instance
+// of this class ensures that the seed is set once and only once for the entire program.
+
+class RandomSeededClass
+{
+	public:
+	RandomSeededClass()
+	{
+		srand(time(NULL));
+	}
+	inline int Random(int max)
+	{
+		return(rand() % max);
+	}
+};
+
+RandomSeededClass globalrandomseeded;
+
+// By deferring the call to the class's function we ensure that the global
+// is instantiated, and thus the seed is set.
+
+int RandomSeeded(int max)
+{
+	return(globalrandomseeded.Random(max));
+}
+

@@ -26,4 +26,6 @@ int TestHostName(char *str,char **hostname,int *port);
 
 bool CompareFiles(const char *fn1,const char *fn2);
 
+int RandomSeeded(int max);
+
 #endif
