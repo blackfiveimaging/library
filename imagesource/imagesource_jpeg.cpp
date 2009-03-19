@@ -49,7 +49,7 @@ static void isjpeg_error_exit (j_common_ptr cinfo)
 	cerr << buffer << endl;
 	jpeg_destroy_compress((jpeg_compress_struct *)cinfo);
 	fclose(myerr->File);
-	exit(1);
+	throw "Error reading JPEG file";
 }
 
 
