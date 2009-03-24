@@ -132,7 +132,7 @@ get_md5 (const unsigned char *string, unsigned int length,unsigned char digest[1
 /*
  * Note: this code is harmless on little-endian machines.
  */
-static void
+static inline void
 byteReverse(unsigned char *buf, unsigned longs)
 {
     unsigned int t;
@@ -276,7 +276,7 @@ md5_final (unsigned char digest[16],
  * reflect the addition of 16 longwords of new data.  Md5Update blocks
  * the data and converts bytes into longwords for this routine.
  */
-static void 
+static inline void 
 md5_transform (unsigned int	   buf[4],
 	       unsigned int const in[16])
 {
