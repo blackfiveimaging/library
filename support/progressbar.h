@@ -7,7 +7,7 @@
 class ProgressBar : public Progress
 {
 	public:
-	ProgressBar(const char *message,bool cancelbutton,GtkWidget *parent=NULL);
+	ProgressBar(const char *message,bool cancelbutton,GtkWidget *parent=NULL,bool modal=false);
 	~ProgressBar();
 	bool DoProgress(int i,int maxi);
 	void SetMessage(const char *msg);

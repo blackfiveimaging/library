@@ -39,7 +39,7 @@ void ProgressBar::cancel_callback(GtkWidget *wid,gpointer *ob)
 }
 
 
-ProgressBar::ProgressBar(const char *message,bool cancel,GtkWidget *parent)
+ProgressBar::ProgressBar(const char *message,bool cancel,GtkWidget *parent,bool modal)
 	: Progress(), message(NULL), label(NULL), cancelled(false)
 {
 	if(message)
@@ -47,6 +47,7 @@ ProgressBar::ProgressBar(const char *message,bool cancel,GtkWidget *parent)
 	window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	if(parent)
 		gtk_window_set_transient_for(GTK_WINDOW(window),GTK_WINDOW(parent));
+	gtk_window_set_modal(GTK_WINDOW(window),modal);
 	gtk_window_set_title(GTK_WINDOW(window),_("Progress..."));
 	gtk_window_set_default_size(GTK_WINDOW(window),150,30);
 	gtk_widget_show(window);
