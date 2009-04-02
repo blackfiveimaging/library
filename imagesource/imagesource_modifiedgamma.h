@@ -4,7 +4,7 @@
  * with a linear segment to avoid problems with infinite gradient at 0.
  *
  * The modified gamma curve is:
- * Y = pow(X,(gamma+offset)/(1.0+offset)) if X > threshold
+ * Y = pow((X+offset)/(1.0+offset),gamma) if X > threshold
  * and Y = K * X otherwise.
  *
  * offset is -0.02 by default

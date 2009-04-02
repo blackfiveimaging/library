@@ -151,9 +151,13 @@ double ImageSource_ModifiedGamma::FindGamma(double x,double y,double offset)
 double ImageSource_ModifiedGamma::ModifiedGamma(double x,double gamma,double offset)
 {
 	double threshold=offset/(gamma + gamma*offset - 1.0);
-	double slope=pow((threshold+offset)/(1.0+offset),gamma);
+//	cerr << "Forward - t1: " << threshold << endl;
 	if(x<threshold)
+	{
+		double slope=pow((threshold+offset)/(1.0+offset),gamma)/threshold;
+//		cerr << "slope: " << slope << endl;
 		return(x*slope);
+	}
 	else
 		return(pow((x+offset)/(1.0+offset),gamma));
 }
@@ -162,10 +166,15 @@ double ImageSource_ModifiedGamma::ModifiedGamma(double x,double gamma,double off
 double ImageSource_ModifiedGamma::InverseModifiedGamma(double x, double gamma, double offset)
 {
 	double threshold=offset/(gamma + gamma*offset - 1.0);
-	double slope=pow((threshold+offset)/(1.0+offset),gamma);
-	double t2=pow((x+offset)/(1.0+offset),gamma);
+	double t2=pow((threshold+offset)/(1.0+offset),gamma);
+//	cerr << "Reverse - t1: " << threshold << endl;
+//	cerr << "t2: " << t2 << endl;
 	if(x<t2)
-		return(x/slope);
+	{
+		double slope=threshold/t2;
+//		cerr << "slope: " << slope << endl;
+		return(x*slope);
+	}
 	else
 		return((1+offset)*pow(x,1/gamma)-offset);
 }

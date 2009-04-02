@@ -13,7 +13,7 @@ int main(int argc,char **argv)
 	{
 		CMSWhitePoint wp(5000);
 		CMSRGBPrimaries prim(0.7347,0.2653 , 0.1596,0.8404 , 0.0366,0.0001);
-		CMSRGBGamma gam(1.1);
+		CMSRGBGamma gam(1.0);
 		CMSProfile p(prim,gam,wp); // RGB Profile
 		p.Save(argv[1]);
 	}

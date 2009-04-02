@@ -264,6 +264,7 @@ void GPrinter::writefunc(void *obj, const char *buf, size_t bytes)
 
 void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 {
+	cerr << "GPrinter: Printing at position: " << xpos << ", " << ypos << endl;
 	source=src;
 	switch(source->type)
 	{
@@ -316,6 +317,8 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 	get_dimensions();
 	stp_set_width(stpvars, ptwidth);
 	stp_set_height(stpvars, ptheight);
+	cerr << "Paperleft: " << paperleft << endl;
+	cerr << "Papertop: " << papertop << endl;
 	stp_set_left(stpvars, paperleft-leftbleed);
 	stp_set_top(stpvars, papertop-topbleed);
 

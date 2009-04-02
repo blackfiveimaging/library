@@ -6,6 +6,8 @@
 #include "imagesource/pixbuf_from_imagesource.h"
 #include "pixbufview.h"
 
+#include "support/progressbar.h"
+
 #include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
@@ -35,6 +37,15 @@ int main(int argc,char**argv)
 			GdkPixbuf *pb=pixbuf_from_imagesource(is);
 			pixbufview_set_pixbuf(PIXBUFVIEW(pview),pb);
 //			g_object_unref(G_OBJECT(pview));
+		}
+		else
+		{
+			ProgressBar pb("Testing",true,win);
+			for(int i=0;i<100000;++i)
+			{
+				if(!pb.DoProgress(0,0))
+					i=100000;
+			}
 		}
 
 		gtk_main();
