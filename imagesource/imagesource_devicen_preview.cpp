@@ -47,6 +47,10 @@ ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const char *longname)
 	{
 		red=EIGHTTOIS(255); green=EIGHTTOIS(0); blue=EIGHTTOIS(190); alias='M';
 	}
+	else if(StrcasecmpIgnoreSpaces(longname,"Vivid Magenta")==0)
+	{
+		red=EIGHTTOIS(255); green=EIGHTTOIS(0); blue=EIGHTTOIS(190); alias='M';
+	}
 	else if(StrcasecmpIgnoreSpaces(longname,"Yellow")==0)
 	{
 		red=EIGHTTOIS(255); green=EIGHTTOIS(255); blue=EIGHTTOIS(0); alias='Y';
@@ -68,6 +72,10 @@ ISDeviceN_Colorant_Preview::ISDeviceN_Colorant_Preview(const char *longname)
 		red=EIGHTTOIS(127); green=EIGHTTOIS(220); blue=EIGHTTOIS(255); alias='c';
 	}
 	else if(StrcasecmpIgnoreSpaces(longname,"Light Magenta")==0)
+	{
+		red=EIGHTTOIS(255); green=EIGHTTOIS(127); blue=EIGHTTOIS(220); alias='m';
+	}
+	else if(StrcasecmpIgnoreSpaces(longname,"Vivid Light Magenta")==0)
 	{
 		red=EIGHTTOIS(255); green=EIGHTTOIS(127); blue=EIGHTTOIS(220); alias='m';
 	}
