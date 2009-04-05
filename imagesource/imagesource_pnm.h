@@ -24,7 +24,11 @@
 
 extern "C"
 {
+#ifdef HAVE_NETPBM_PAM_H
+#include <netpbm/pam.h>
+#else
 #include <pam.h>
+#endif
 }
 
 using namespace std;
