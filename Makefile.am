@@ -12,8 +12,10 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -
 bin_PROGRAMS = profileuitest mkrgbprofile mklabprofile mkgreyprofile \
 				composite imgsrctest \
 				jpegcheck pvtest threadtest \
+				gprintertest \
 				printqueuetest stpuitest mkthumbnail
 
+gprintertest_SOURCES = gprintertest.cpp
 profileuitest_SOURCES = profileuitest.cpp
 mkthumbnail_SOURCES = mkthumbnail.cpp
 mkrgbprofile_SOURCES = mkrgbprofile.cpp
@@ -29,6 +31,7 @@ stpuitest_SOURCES = stpuitest.cpp
 
 LDADD = \
 	imageutils/libimageutils.la	\
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la	\
 	support/libsupport.la	\
 	imagesource/libimagesource.la	\
@@ -36,7 +39,6 @@ LDADD = \
 	profilemanager/libprofilemanager.la	\
 	stpui_widgets/libstpui_widgets.la	\
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la	\
 	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(GP_LIBS) $(GTK2_LIBS)
 

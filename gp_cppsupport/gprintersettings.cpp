@@ -126,6 +126,11 @@ GPrinterSettings::GPrinterSettings(PrintOutput &output,ConfigFile *inf,const cha
 	cerr << "Done" << endl;
 #endif
 	stpvars=stp_vars_create();
+
+	// Set the driver to that of the default queue in case no preset is loaded
+	const char *driver=output.FindString("Driver");
+	if(!SetDriver(driver))
+		output.SetString("Driver",DEFAULT_PRINTER_DRIVER);
 }
 
 
@@ -470,7 +475,13 @@ void GPrinterSettings::Reset()
 	stp_vars_destroy(stpvars);
 	stpvars=stp_vars_create();
 	// FIXME - a bit of a hack this - set the driver so we can compare against it.
-	stp_set_driver(stpvars,"ps");
+	// (We set the queue's own driver here in case the app doesn't over-ride it
+	// Make sure this doesn't break anything...)
+	const char *driver=output.FindString("Driver");
+	if(!SetDriver(driver))
+		output.SetString("Driver",DEFAULT_PRINTER_DRIVER);
+//	stp_set_driver(stpvars,"ps");
+
 	cerr << "Created fresh stp_vars" << endl;
 	initialised=false;
 }

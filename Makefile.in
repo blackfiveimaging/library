@@ -38,8 +38,9 @@ host_triplet = @host@
 bin_PROGRAMS = profileuitest$(EXEEXT) mkrgbprofile$(EXEEXT) \
 	mklabprofile$(EXEEXT) mkgreyprofile$(EXEEXT) \
 	composite$(EXEEXT) imgsrctest$(EXEEXT) jpegcheck$(EXEEXT) \
-	pvtest$(EXEEXT) threadtest$(EXEEXT) printqueuetest$(EXEEXT) \
-	stpuitest$(EXEEXT) mkthumbnail$(EXEEXT)
+	pvtest$(EXEEXT) threadtest$(EXEEXT) gprintertest$(EXEEXT) \
+	printqueuetest$(EXEEXT) stpuitest$(EXEEXT) \
+	mkthumbnail$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -64,12 +65,27 @@ composite_OBJECTS = $(am_composite_OBJECTS)
 composite_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 composite_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
+	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_gprintertest_OBJECTS = gprintertest.$(OBJEXT)
+gprintertest_OBJECTS = $(am_gprintertest_OBJECTS)
+gprintertest_LDADD = $(LDADD)
+gprintertest_DEPENDENCIES = imageutils/libimageutils.la \
 	gp_cppsupport/libgp_cppsupport.la \
+	miscwidgets/libmiscwidgets.la support/libsupport.la \
+	imagesource/libimagesource.la support/libsupport.la \
+	profilemanager/libprofilemanager.la \
+	stpui_widgets/libstpui_widgets.la \
+	stp_support/libstp_support.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -79,12 +95,12 @@ am_imgsrctest_OBJECTS = imgsrctest.$(OBJEXT)
 imgsrctest_OBJECTS = $(am_imgsrctest_OBJECTS)
 imgsrctest_LDADD = $(LDADD)
 imgsrctest_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -94,12 +110,12 @@ am_jpegcheck_OBJECTS = jpegcheck.$(OBJEXT)
 jpegcheck_OBJECTS = $(am_jpegcheck_OBJECTS)
 jpegcheck_LDADD = $(LDADD)
 jpegcheck_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -109,12 +125,12 @@ am_mkgreyprofile_OBJECTS = mkgreyprofile.$(OBJEXT)
 mkgreyprofile_OBJECTS = $(am_mkgreyprofile_OBJECTS)
 mkgreyprofile_LDADD = $(LDADD)
 mkgreyprofile_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -124,12 +140,12 @@ am_mklabprofile_OBJECTS = mklabprofile.$(OBJEXT)
 mklabprofile_OBJECTS = $(am_mklabprofile_OBJECTS)
 mklabprofile_LDADD = $(LDADD)
 mklabprofile_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -139,12 +155,12 @@ am_mkrgbprofile_OBJECTS = mkrgbprofile.$(OBJEXT)
 mkrgbprofile_OBJECTS = $(am_mkrgbprofile_OBJECTS)
 mkrgbprofile_LDADD = $(LDADD)
 mkrgbprofile_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -154,12 +170,12 @@ am_mkthumbnail_OBJECTS = mkthumbnail.$(OBJEXT)
 mkthumbnail_OBJECTS = $(am_mkthumbnail_OBJECTS)
 mkthumbnail_LDADD = $(LDADD)
 mkthumbnail_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -169,12 +185,12 @@ am_printqueuetest_OBJECTS = printqueuetest.$(OBJEXT)
 printqueuetest_OBJECTS = $(am_printqueuetest_OBJECTS)
 printqueuetest_LDADD = $(LDADD)
 printqueuetest_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -184,12 +200,12 @@ am_profileuitest_OBJECTS = profileuitest.$(OBJEXT)
 profileuitest_OBJECTS = $(am_profileuitest_OBJECTS)
 profileuitest_LDADD = $(LDADD)
 profileuitest_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -199,12 +215,12 @@ am_pvtest_OBJECTS = pvtest.$(OBJEXT)
 pvtest_OBJECTS = $(am_pvtest_OBJECTS)
 pvtest_LDADD = $(LDADD)
 pvtest_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -214,12 +230,12 @@ am_stpuitest_OBJECTS = stpuitest.$(OBJEXT)
 stpuitest_OBJECTS = $(am_stpuitest_OBJECTS)
 stpuitest_LDADD = $(LDADD)
 stpuitest_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -229,12 +245,12 @@ am_threadtest_OBJECTS = threadtest.$(OBJEXT)
 threadtest_OBJECTS = $(am_threadtest_OBJECTS)
 threadtest_LDADD = $(LDADD)
 threadtest_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
 	profilemanager/libprofilemanager.la \
 	stpui_widgets/libstpui_widgets.la \
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -252,18 +268,18 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(composite_SOURCES) $(imgsrctest_SOURCES) \
-	$(jpegcheck_SOURCES) $(mkgreyprofile_SOURCES) \
-	$(mklabprofile_SOURCES) $(mkrgbprofile_SOURCES) \
-	$(mkthumbnail_SOURCES) $(printqueuetest_SOURCES) \
-	$(profileuitest_SOURCES) $(pvtest_SOURCES) \
-	$(stpuitest_SOURCES) $(threadtest_SOURCES)
-DIST_SOURCES = $(composite_SOURCES) $(imgsrctest_SOURCES) \
-	$(jpegcheck_SOURCES) $(mkgreyprofile_SOURCES) \
-	$(mklabprofile_SOURCES) $(mkrgbprofile_SOURCES) \
-	$(mkthumbnail_SOURCES) $(printqueuetest_SOURCES) \
-	$(profileuitest_SOURCES) $(pvtest_SOURCES) \
-	$(stpuitest_SOURCES) $(threadtest_SOURCES)
+SOURCES = $(composite_SOURCES) $(gprintertest_SOURCES) \
+	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) \
+	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
+	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
+	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
+	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
+DIST_SOURCES = $(composite_SOURCES) $(gprintertest_SOURCES) \
+	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) \
+	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
+	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
+	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
+	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -434,6 +450,7 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -
 	-I./miscwidgets -I./profilemanager -I./effects \
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
+gprintertest_SOURCES = gprintertest.cpp
 profileuitest_SOURCES = profileuitest.cpp
 mkthumbnail_SOURCES = mkthumbnail.cpp
 mkrgbprofile_SOURCES = mkrgbprofile.cpp
@@ -448,6 +465,7 @@ printqueuetest_SOURCES = printqueuetest.cpp
 stpuitest_SOURCES = stpuitest.cpp
 LDADD = \
 	imageutils/libimageutils.la	\
+	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la	\
 	support/libsupport.la	\
 	imagesource/libimagesource.la	\
@@ -455,7 +473,6 @@ LDADD = \
 	profilemanager/libprofilemanager.la	\
 	stpui_widgets/libstpui_widgets.la	\
 	stp_support/libstp_support.la \
-	gp_cppsupport/libgp_cppsupport.la \
 	pixbufthumbnail/libpixbufthumbnail.la	\
 	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(GP_LIBS) $(GTK2_LIBS)
 
@@ -547,6 +564,9 @@ clean-binPROGRAMS:
 composite$(EXEEXT): $(composite_OBJECTS) $(composite_DEPENDENCIES) 
 	@rm -f composite$(EXEEXT)
 	$(CXXLINK) $(composite_OBJECTS) $(composite_LDADD) $(LIBS)
+gprintertest$(EXEEXT): $(gprintertest_OBJECTS) $(gprintertest_DEPENDENCIES) 
+	@rm -f gprintertest$(EXEEXT)
+	$(CXXLINK) $(gprintertest_OBJECTS) $(gprintertest_LDADD) $(LIBS)
 imgsrctest$(EXEEXT): $(imgsrctest_OBJECTS) $(imgsrctest_DEPENDENCIES) 
 	@rm -f imgsrctest$(EXEEXT)
 	$(CXXLINK) $(imgsrctest_OBJECTS) $(imgsrctest_LDADD) $(LIBS)
@@ -588,6 +608,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/composite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gprintertest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imgsrctest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpegcheck.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkgreyprofile.Po@am__quote@

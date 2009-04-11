@@ -76,6 +76,7 @@ ImageSource_DeviceN_Remap::ImageSource_DeviceN_Remap(struct ImageSource *source,
 
 	if(outchannels)
 		samplesperpixel=outchannels;
+	type=IS_TYPE_DEVICEN;
 	for(int i=0;i<source->samplesperpixel;++i)
 	{
 		table[i]=maptable[i];
