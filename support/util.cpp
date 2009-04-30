@@ -22,25 +22,32 @@
 
 using namespace std;
 
-void CreateDirIfNeeded(const char *path)
+bool CreateDirIfNeeded(const char *path)
 {
 	struct stat s;
-	if(stat(path,&s)!=0)
+	if(stat(path,&s)==0)
+		return(true);
+
+	if(errno==ENOENT)
 	{
-		cerr << "Need to create directory... " << errno << endl;
-		if(errno==ENOENT)
 #ifdef WIN32
-			mkdir(path);
+		return(mkdir(path)==0);
 #else
-			mkdir(path,0755);
+		return(mkdir(path,0755)==0);
 #endif
 	}
 }
 
 
+bool CheckFileExists(const char *file)
+{
+	struct stat s;
+	return(stat(file,&s)==0);
+}
+
+
 bool CheckSettingsDir(const char *dirname)
 {
-//	const char *homedir=getenv("HOME");
 	const char *homedir=get_homedir();
 	if(homedir)
 	{
@@ -161,9 +168,8 @@ int TestNumeric(char *str)
 }
 
 
-int TestHostName(char *str,char **hostname,int *port)
+bool TestHostName(char *str,char **hostname,int *port)
 {
-	int result=0;
 	int c;
 	char *src=str;
 	while((c=*src++))
@@ -177,12 +183,12 @@ int TestHostName(char *str,char **hostname,int *port)
 				*hostname=(char *)malloc(hnl+1);
 				strncpy(*hostname,str,hnl);
 				(*hostname)[hnl-1]=0;
-				result=1;	
+				return(true);
 			}
 		}
 
 	}
-	return(result);
+	return(false);
 }
 
 

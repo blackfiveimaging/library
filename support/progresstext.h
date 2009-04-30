@@ -41,12 +41,12 @@ class ProgressText : public Progress
 //			if(message)
 //				cerr << message << " ";
 			if(maxi)
-				cerr << baton[counter2] << " " << ((i+1)*100)/maxi << "%\r";
+				cout << baton[counter2] << " " << ((i+1)*100)/maxi << "%\r";
 			else
-				cerr << baton[counter2] << " " << "\r";
+				cout << baton[counter2] << " " << "\r";
 			if(i==maxi && maxi>0)
-				cerr << endl;
-			cerr.flush();
+				cout << endl;
+			cout.flush();
 			++counter2;
 			counter2&=3;
 		}
@@ -65,7 +65,7 @@ class ProgressText : public Progress
 		if(msg)
 		{
 			message=strdup(msg);
-			cerr << msg << endl;
+			cout << msg << endl;
 		}
 	}
 	protected:
