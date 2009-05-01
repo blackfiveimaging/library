@@ -41,6 +41,17 @@
 using namespace std;
 
 
+// We use this to ensure that stp_init() has been called once and only once.
+class GPrinter_StaticInitializer
+{
+	public:
+	GPrinter_StaticInitializer()
+	{
+		stp_init();
+	}
+} gpstaticinitializer;
+
+
 /*
 	Get dimensions from the printer driver, and calculate position on page from image size.
 	Image must have been loaded first.
@@ -508,6 +519,7 @@ GPrinter::GPrinter(PrintOutput &output,ConfigFile *ini,const char *section)
 	: GPrinterSettings(output,ini,section), source(NULL), firstrow(0), firstpixel(0), progress(NULL)
 {
 	stpImage.rep=this;
+	staticinitializer=&gpstaticinitializer;
 }
 
 
@@ -613,3 +625,6 @@ stp_image_t GPrinter::stpImage =
   NULL,
   NULL
 };
+
+
+

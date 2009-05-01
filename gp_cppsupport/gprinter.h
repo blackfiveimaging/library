@@ -34,7 +34,7 @@ class GPrinter : public GPrinterSettings
 	void GetSizeLimits(int &minw,int &maxw,int &minh,int &maxh);
 	void SetCustomWidth(int w);
 	void SetCustomHeight(int h);
-	private:
+	protected:
 	stp_image_status_t GetRow(int row,unsigned char *data);
 
 	void get_dimensions();
@@ -79,6 +79,8 @@ class GPrinter : public GPrinterSettings
 	static int Image_width(stp_image_t *img);
 	static int Image_height(stp_image_t *img);
 	static const char *Image_get_appname(struct stp_image *image);
+
+	void *staticinitializer;
 };
 
 
