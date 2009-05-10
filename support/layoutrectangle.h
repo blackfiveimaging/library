@@ -18,11 +18,6 @@ struct RectFit
 	int width,height;
 	int rotation;
 	double scale;
-	void Dump()
-	{
-		printf("RectFit: pos: (%d,%d), offset: (%d, %d)\n",xpos,ypos,xoffset,yoffset);
-		printf(" size: (%d,%d), rotation: %d, scale: %lf\n",width,height,rotation,scale);
-	}
 };
 
 #define LAYOUT_RECTANGLE_PANNING_MAX 100
@@ -40,10 +35,6 @@ class LayoutRectangle
 	virtual RectFit *Fit(LayoutRectangle &r,bool allow_cropping,PP_ROTATION rotation,
 		LayoutRectangle_Alignment halign,LayoutRectangle_Alignment valign);
 	virtual void Scale(double scale);
-	void Dump()
-	{
-		printf("LayoutRectangle at: (%d,%d), size: (%d, %d)\n",x,y,w,h);
-	}
 	int x,y;
 	int w,h;
 };
