@@ -11,9 +11,9 @@ to generate a specific type of temporary file.
 */
 
 #include <iostream>
-
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "tempfile.h"
 
