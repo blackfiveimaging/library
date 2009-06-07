@@ -42,5 +42,7 @@ int main(int argc, char **argv)
 	}
 	gtk_widget_destroy(dialog);
 
+	printer.SetDriver("ps2");
+
 	return(0);
 }

@@ -198,6 +198,12 @@ static char *getppd(struct pqinfo *pq)
 }
 
 
+// Dummy function
+static void setdatatype(struct pqinfo *pq,enum pqinfo_datatype type)
+{
+}
+
+
 static int initialisejob(struct pqinfo *pq)
 {
 	fprintf(stderr,"In initialisejob() - checking mode\n");
@@ -311,6 +317,7 @@ struct pqinfo *pqinfo_create()
 		pq->GetPrinterQueue=getprinterqueue;
 		pq->GetDriver=getdriver;
 		pq->GetPPD=getppd;
+		pq->SetDataType=setdatatype;
 		pq->InitialiseJob=initialisejob;
 		pq->InitialisePage=initialisepage;
 		pq->EndPage=endpage;

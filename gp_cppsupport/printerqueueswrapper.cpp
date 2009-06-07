@@ -126,6 +126,12 @@ void PrinterQueues::SetCustomCommand(const char *cmd)
 }
 
 
+void PrinterQueues::SetDataType(enum pqinfo_datatype type)
+{
+	queues->SetDataType(queues,type);
+}
+
+
 bool PrinterQueues::InitialiseJob()
 {
 	return(queues->InitialiseJob(queues)!=0);

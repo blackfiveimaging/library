@@ -84,6 +84,12 @@ class Consumer_Queue : public Consumer
 Consumer *PrintOutput::GetConsumer()
 {
 	const char *str;
+	str=FindString("Driver");
+	if(str[0]=='p' && str[1]=='s')	// Are we printing in PostScript mode?
+		SetDataType(PQINFO_POSTSCRIPT);
+	else
+		SetDataType(PQINFO_RAW);
+
 	if(strlen(str=FindString("Queue")))
 	{
 		try

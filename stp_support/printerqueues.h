@@ -8,6 +8,8 @@
 #define PRINTERQUEUE_CUSTOMCOMMAND "<Use custom print command>"
 #define PRINTERQUEUE_SAVETOFILE "<Save to file>"
 
+enum pqinfo_datatype {PQINFO_POSTSCRIPT,PQINFO_RAW};
+
 struct pqprivate;
 
 struct pqinfo
@@ -67,7 +69,7 @@ struct pqinfo
 	void (*SetGetFilenameCallback)(struct pqinfo *pq,char *(*getfilename)(void *userdata),void *userdata);
 	
 	/***** Job Handling *****/
-
+	void (*SetDataType)(struct pqinfo *pq,enum pqinfo_datatype type);
 	int (*InitialiseJob)(struct pqinfo *pq);
 	void (*InitialisePage)(struct pqinfo *pq);
 	void (*EndPage)(struct pqinfo *pq);

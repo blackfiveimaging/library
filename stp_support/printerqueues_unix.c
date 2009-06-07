@@ -73,6 +73,7 @@ struct pqprivate
 	char *(*getfilecallback)(void *userdata);
 	void *userdata;
 
+	enum pqinfo_datatype datatype;	// Used to set the raw flag in the print command
 	int pipefd[2];
 	int outputfd;
 	int childpid;	
@@ -239,6 +240,7 @@ static struct pqprivate *pqprivate_create()
 		pp->printcommand=NULL;
 		pp->customcommand=NULL;
 		pp->getfilecallback=NULL;
+		pp->datatype=PQINFO_RAW;
 		pqp_buildqueuelist(pp);
 	}
 	return(pp);
@@ -417,14 +419,23 @@ static void sighandler(int sig)
 }
 
 
+static void setdatatype(struct pqinfo *pq,enum pqinfo_datatype type)
+{
+	pq->priv->datatype=type;
+}
+
+
 static char *buildprintcommand(struct pqinfo *pq)
 {
+#if 0
 	int rawmode=1;
+#endif
 	int len=strlen(printsystems[pq->priv->printsystem].print_command);
 	len+=strlen(printsystems[pq->priv->printsystem].queue_select);
 	len+=strlen(printsystems[pq->priv->printsystem].raw_flag);
 	len+=strlen(pq->priv->currentqueue);
 
+#if 0
 	const char *driver=getdriver(pq);
 	if(driver)
 	{
@@ -436,14 +447,17 @@ static char *buildprintcommand(struct pqinfo *pq)
 		fprintf(stderr,"***\n*** WARNING: driver is null - this shouldn't happen - please report this bug!\n***\n");
 		rawmode=0;
 	}
+#endif
 
 	char *cmd=(char *)malloc(len+15);
 	sprintf(cmd,"%s %s %s %s",
 		printsystems[pq->priv->printsystem].print_command,
 		pq->priv->currentqueue ? printsystems[pq->priv->printsystem].queue_select : "",
 		pq->priv->currentqueue ? pq->priv->currentqueue : "",
-		rawmode ? printsystems[pq->priv->printsystem].raw_flag : "");
+		pq->priv->datatype==PQINFO_RAW ? printsystems[pq->priv->printsystem].raw_flag : "");
+#if 0
 	free((void *)driver);
+#endif
 	fprintf(stderr,"Print command: %s\n",cmd);
 	return(cmd);
 }
@@ -581,6 +595,7 @@ struct pqinfo *pqinfo_create()
 		pq->GetPrinterQueue=getprinterqueue;
 		pq->GetDriver=getdriver;
 		pq->GetPPD=getppd;
+		pq->SetDataType=setdatatype;
 		pq->InitialiseJob=initialisejob;
 		pq->InitialisePage=initialisepage;
 		pq->EndPage=endpage;

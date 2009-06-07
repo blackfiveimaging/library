@@ -375,9 +375,24 @@ void GPrinterSettings::SaveSection(FILE *file)
 bool GPrinterSettings::SetDriver(const char *driver)
 {
 	bool result=true;
+	bool driverchanged=false;
+
+	// FIXME - Not pretty.  We need to strdup() the result of this because it's
+	// not valid after the driver has changed.
+	const char *_oldpagesize=stp_get_string_parameter(stpvars,"PageSize");
+	char *oldpagesize=NULL;
+	if(_oldpagesize)
+	{
+		oldpagesize=strdup(_oldpagesize);
+		cerr << "Old page size is: " << oldpagesize << endl;
+	}
+
 	cerr << "Checking stpvars" << endl;
 	if(stpvars)
 	{
+		// We avoid messing with this stuff as much as possible if the driver didn't change -
+		// that way you can change from a printer's queue to "Save to file" without
+		// messing up the print settings.
 		const char *olddriver=stp_get_driver(stpvars);
 		cerr << "Checking olddriver" << endl;
 		if(!olddriver)
@@ -388,6 +403,7 @@ bool GPrinterSettings::SetDriver(const char *driver)
 		cerr << "Comparing drivers:" << olddriver << " against " << driver << endl;
 		if(strcmp(driver,olddriver))
 		{
+			driverchanged=true;
 			cerr << "SetDriver(): Setting driver to " << driver << endl;
 
 			// Work around the non-defaulting of inactive settings...
@@ -424,14 +440,9 @@ bool GPrinterSettings::SetDriver(const char *driver)
 		stp_parameter_t desc;
 		desc.is_active=false;
 		stp_describe_parameter(stpvars,"PPDFile",&desc);
-		cerr << "PPDFile parameter active? " << (desc.is_active ? "Yes" : "No") << endl;
-//		FIXME!!!
-		cerr << "Checking desc.is_active" << endl;
-//		FIXME - Ugly hack to get around the PPDFile parameter being active
 		if(desc.is_active)
-//		if(0)
 		{
-			// FIXME - why is PPDFile parameter active for escp2-r300 driver?
+			driverchanged=true;
 			cerr << "Getting default PPD..." << endl;
 			char *defppd=output.GetPPD();
 			cerr << "Checking defppd" << endl;
@@ -441,8 +452,6 @@ bool GPrinterSettings::SetDriver(const char *driver)
 				stp_set_file_parameter(stpvars,"PPDFile",defppd);
 				free(defppd);
 				
-				// FIXME - does this break anything?
-
 				cerr << "Checking ppdsizes_workaround_done" << endl;
 				if(!ppdsizes_workaround_done)
 				{
@@ -456,6 +465,37 @@ bool GPrinterSettings::SetDriver(const char *driver)
 			}
 		}
 		stp_parameter_description_destroy(&desc);
+
+		if(driverchanged)
+		{
+			// We attempt to set the previously used pagesize if possible.
+			// We do this by looping through the known papersizes for the
+			// new driver and comparing against the old papersize.
+			if(oldpagesize)
+			{
+				cerr << "Old page size is: " << oldpagesize << endl;
+				stp_describe_parameter(stpvars,"PageSize",&desc);
+				stp_string_list_t *strlist=desc.bounds.str;
+				if(strlist)
+				{
+					int strcount=stp_string_list_count(strlist);
+					for(int j=0;j<strcount;++j)
+					{
+						stp_param_string_t *p=stp_string_list_param(strlist,j);
+						cerr << "Comparing against " << p->text << endl;
+						if(strcmp(p->text,oldpagesize)==0)
+						{
+							stp_set_string_parameter(stpvars,"PageSize",oldpagesize);
+							j=strcount;
+						}
+					}
+				}
+				stp_parameter_description_destroy(&desc);
+				free(oldpagesize);
+			}
+
+			Validate();
+		}
 	}
 	else
 		cerr << "No stp vars!" << endl;
@@ -466,7 +506,6 @@ bool GPrinterSettings::SetDriver(const char *driver)
 void GPrinterSettings::Validate()
 {
 	stputil_validate_parameters(stpvars);
-	cerr << "After stputil_validate_parameters(): " << setlocale(LC_ALL,"") << endl;
 }
 
 

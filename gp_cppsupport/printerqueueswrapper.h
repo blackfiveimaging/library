@@ -23,6 +23,8 @@ class PrinterQueues
 	const char *GetCustomCommand();
 	void SetCustomCommand(const char *cmd);
 
+	void SetDataType(enum pqinfo_datatype type);
+
 	bool InitialiseJob();
 	void InitialisePage();
 	void EndPage();
