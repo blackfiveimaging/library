@@ -47,8 +47,15 @@ class ISHistogram_Channel
 class ISHistogram
 {
 	public:
-	ISHistogram(int channelcount) : channels(NULL), channelcount(channelcount)
+	ISHistogram(int channelcount,IS_TYPE type=IS_TYPE_RGB) : channels(NULL), channelcount(channelcount),type(type)
 	{
+		channels=new ISHistogram_Channel[channelcount];
+		Clear();
+	}
+	ISHistogram(ImageSource *is) : channels(NULL)
+	{
+		channelcount=is->samplesperpixel;
+		type=is->type;
 		channels=new ISHistogram_Channel[channelcount];
 		Clear();
 	}
@@ -82,10 +89,37 @@ class ISHistogram
 		}
 		samplecount+=count;
 	}
+	IS_TYPE GetType()
+	{
+		return(type);
+	}
+	int GetChannelCount()
+	{
+		return(channelcount);
+	}
+	int GetSampleCount()
+	{
+		return(samplecount);
+	}
+	int GetMax()
+	{
+		int max=0;
+		for(int c=0;c<channelcount;++c)
+		{
+			for(int b=0;b<IS_HISTOGRAM_BUCKETS;++b)
+			{
+				int t=channels[c][b];
+				if(t>max)
+					max=t;
+			}
+		}
+		return(max);
+	}
 	protected:
 	ISHistogram_Channel *channels;
 	int channelcount;
 	int samplecount;
+	IS_TYPE type;
 };
 
 
