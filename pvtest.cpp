@@ -4,6 +4,7 @@
 
 #include "imagesource/imagesource_util.h"
 #include "imagesource/pixbuf_from_imagesource.h"
+#include "imagesource/imagesource_histogram.h"
 #include "pixbufview.h"
 
 #include "support/progressbar.h"
@@ -31,24 +32,37 @@ int main(int argc,char**argv)
 		gtk_widget_show(pview);
 		gtk_widget_show(win);
 
+		ISHistogram *hist=NULL;
+		int channels;
+
 		if(argc>1)
 		{
 			ImageSource *is=ISLoadImage(argv[1]);
+			channels=is->samplesperpixel;
+			hist=new ISHistogram(channels);
+			is=new ImageSource_Histogram(is,*hist);
 			GdkPixbuf *pb=pixbuf_from_imagesource(is);
 			pixbufview_set_pixbuf(PIXBUFVIEW(pview),pb);
 //			g_object_unref(G_OBJECT(pview));
 		}
-		else
+
+		if(hist)
 		{
-			ProgressBar pb("Testing",true,win);
-			for(int i=0;i<100000;++i)
+			for(int chan=0;chan<channels;++chan)
 			{
-				if(!pb.DoProgress(0,0))
-					i=100000;
+				cerr << "Channel " << chan << endl;
+				ISHistogram_Channel &hc=(*hist)[chan];
+				for(int i=0;i<IS_HISTOGRAM_BUCKETS;++i)
+				{
+					cerr << "  " << i << " : " << hc[i] << endl;
+				}
 			}
 		}
 
 		gtk_main();
+
+		if(hist)
+			delete hist;
 	}
 	catch(const char *err)
 	{

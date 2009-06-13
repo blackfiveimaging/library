@@ -38,7 +38,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
@@ -51,13 +51,13 @@ am_libimagesource_la_OBJECTS = imagesource.lo imagesource_bilinear.lo \
 	imagesource_flatten.lo imagesource_gamma.lo \
 	imagesource_gaussianblur.lo imagesource_gdkpixbuf.lo \
 	imagesource_greyscale.lo imagesource_gs.lo \
-	imagesource_hsweep.lo imagesource_hticks.lo \
-	imagesource_invert.lo imagesource_jpeg.lo \
-	imagesource_lanczossinc.lo imagesource_mask.lo \
-	imagesource_modifiedgamma.lo imagesource_montage.lo \
-	imagesource_devicen_preview.lo imagesource_devicen_remap.lo \
-	imagesource_promote.lo imagesource_pnm.lo \
-	imagesource_rotate.lo imagesource_scale.lo \
+	imagesource_histogram.lo imagesource_hsweep.lo \
+	imagesource_hticks.lo imagesource_invert.lo \
+	imagesource_jpeg.lo imagesource_lanczossinc.lo \
+	imagesource_mask.lo imagesource_modifiedgamma.lo \
+	imagesource_montage.lo imagesource_devicen_preview.lo \
+	imagesource_devicen_remap.lo imagesource_promote.lo \
+	imagesource_pnm.lo imagesource_rotate.lo imagesource_scale.lo \
 	imagesource_scaledensity.lo imagesource_segmentmask.lo \
 	imagesource_solid.lo imagesource_tiff.lo \
 	imagesource_unsharpmask.lo imagesource_util.lo \
@@ -275,6 +275,8 @@ libimagesource_la_SOURCES = \
 	imagesource_greyscale.h	\
 	imagesource_gs.cpp	\
 	imagesource_gs.h	\
+	imagesource_histogram.cpp \
+	imagesource_histogram.h \
 	imagesource_hsweep.cpp	\
 	imagesource_hsweep.h	\
 	imagesource_hticks.cpp	\
@@ -394,6 +396,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gdkpixbuf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_greyscale.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_gs.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_histogram.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_hsweep.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_hticks.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imagesource_invert.Plo@am__quote@

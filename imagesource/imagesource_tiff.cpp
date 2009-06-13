@@ -78,8 +78,6 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 {
 	int i,j;
 
-	cerr << "In TIFFStrip constructor" << endl;
-
 	if((prev=header->strips))
 	{
 		while(prev->next)
@@ -96,8 +94,6 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 	lastrow=header->filerow+header->stripheight-1;
 	if(lastrow>=header->height)
 		lastrow=header->height-1;
-
-	cerr << "Stripsize = " << header->stripsize << "  -  allocating" << endl;
 
 	imgdata=(unsigned char *)malloc(header->stripsize);
 
@@ -189,7 +185,6 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 			break;
 		case PHOTOMETRIC_RGB:
 		case PHOTOMETRIC_SEPARATED:
-			cerr << "Reading strip" << endl;
 			TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
 			break;
 		default:

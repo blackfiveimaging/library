@@ -41,6 +41,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_greyscale.h	\
 	imagesource_gs.cpp	\
 	imagesource_gs.h	\
+	imagesource_histogram.cpp \
+	imagesource_histogram.h \
 	imagesource_hsweep.cpp	\
 	imagesource_hsweep.h	\
 	imagesource_hticks.cpp	\
