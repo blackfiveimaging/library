@@ -15,6 +15,10 @@
 
 #include "imagesource.h"
 
+
+// An individual channel's histogram.  Access the data using the [] operator.
+// A reference is returned, so the result can be modified as well as read.
+
 class ISHistogram_Channel
 {
 	public:
@@ -47,37 +51,63 @@ class ISHistogram_Channel
 class ISHistogram
 {
 	public:
+	// Three constructors are provided - one takes the channel count and type directly,
+	// one takes an existing imagesource and takes the channel count and type from that,
+	// and the last takes no arguments, but requires the caller to call
+	// SetHistogramType with channels and type before use.
 	ISHistogram(int channelcount,IS_TYPE type=IS_TYPE_RGB) : channels(NULL), channelcount(channelcount),type(type)
 	{
-		channels=new ISHistogram_Channel[channelcount];
-		Clear();
+		SetHistogramType(channelcount,type);
 	}
 	ISHistogram(ImageSource *is) : channels(NULL)
 	{
-		channelcount=is->samplesperpixel;
-		type=is->type;
-		channels=new ISHistogram_Channel[channelcount];
-		Clear();
+		SetHistogramType(is->samplesperpixel,is->type);
+	}
+	ISHistogram() : channels(NULL), channelcount(0), type(IS_TYPE_NULL)
+	{
 	}
 	~ISHistogram()
 	{
 		if(channels)
 			delete[] channels;
 	}
+
+	// Use this to set or change the number of channels and image type.
+	// The type will be used by the histogram display widget to choose
+	// which colorants to use when drawing the histogram.
+	void SetHistogramType(int channelcount,IS_TYPE type=IS_TYPE_RGB)
+	{
+		this->channelcount=channelcount;
+		this->type=type;
+		if(channels)
+			delete[] channels;
+		channels=new ISHistogram_Channel[channelcount];
+		Clear();
+	}
+
+	// Access the histogram channels through the [] operator.
+	// The result is returned as a reference so you can follow it with
+	// another [] to access a specific bucket within a channel.
 	ISHistogram_Channel &operator[](int chan)
 	{
+		if(!channels)
+			throw "ISHistogram: Must set the histogram type before use!";
 		if(chan>=channelcount || chan<0)
 			throw "ISHistogram: Channel out of range";
 		return(channels[chan]);
 	}
 	void Clear()
 	{
+		if(!channels)
+			throw "ISHistogram: Must set the histogram type before use!";
 		for(int i=0;i<channelcount;++i)
 			channels[i].Clear();
 		samplecount=0;
 	}
 	void Record(ISDataType *data,int count=1)
 	{
+		if(!channels)
+			throw "ISHistogram: Must set the histogram type before use!";
 		for(int x=0;x<count;++x)
 		{
 			for(int s=0;s<channelcount;++s)
@@ -122,6 +152,9 @@ class ISHistogram
 	IS_TYPE type;
 };
 
+
+// Wedge this into a chain of imagesources - it will tally the pixels as they're processed, but
+// pass them though unmodified.
 
 class ImageSource_Histogram : public ImageSource
 {

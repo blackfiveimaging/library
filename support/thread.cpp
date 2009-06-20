@@ -14,10 +14,10 @@
 bool Thread::TestBreak()
 {
 	bool result=false;
-	statemutex.ObtainMutex();
+	cond.ObtainMutex();
 	if(state==THREAD_CANCELLED)
 		result=true;
-	statemutex.ReleaseMutex();
+	cond.ReleaseMutex();
 	return(result);
 }
 
@@ -26,14 +26,14 @@ void *Thread::LaunchStub(void *ud)
 {
 	Thread *t=(Thread *)ud;
 	t->threadmutex.ObtainMutex();
-	t->statemutex.ObtainMutex();
+	t->cond.ObtainMutex();
 	t->state=THREAD_RUNNING;
-	t->statemutex.ReleaseMutex();
+	t->cond.ReleaseMutex();
 	if(t->entry)
 		t->returncode=t->entry(t,t->userdata);
-	t->statemutex.ObtainMutex();
+	t->cond.ObtainMutex();
 	t->state=THREAD_IDLE;
-	t->statemutex.ReleaseMutex();
+	t->cond.ReleaseMutex();
 	t->threadmutex.ReleaseMutex();
 	return(NULL);
 }
@@ -49,9 +49,9 @@ void Thread::Start()
 
 void Thread::Stop()
 {
-	statemutex.ObtainMutex();
+	cond.ObtainMutex();
 	state=THREAD_CANCELLED;
-	statemutex.ReleaseMutex();
+	cond.ReleaseMutex();
 //	pthread_join(thread,&discarded);
 //	state=THREAD_IDLE;
 }
@@ -59,22 +59,13 @@ void Thread::Stop()
 
 void Thread::SendSync()
 {
-	statemutex.ObtainMutex();
-	pthread_cond_broadcast(&cond);
-	synced=true;
-	statemutex.ReleaseMutex();
+	cond.Broadcast();
 }
 
 
 void Thread::WaitSync()
 {
-	statemutex.ObtainMutex();
-	if(!synced)
-	{
-		pthread_cond_wait(&cond,&statemutex.mutex);
-	}
-	synced=false;
-	statemutex.ReleaseMutex();
+	cond.Wait();
 }
 
 
@@ -110,13 +101,39 @@ Thread::~Thread()
 }
 
 
+ThreadID Thread::GetThreadID()
+{
+#ifdef WIN32
+	return(pthread_self().p);
+#else
+	return(pthread_self());
+#endif
+}
+
 Thread::Thread(int (*entry)(Thread *t,void *ud),void *userdata)
 	: entry(entry), userdata(userdata), synced(false)
 {
 	pthread_attr_init(&attr);
-//	pthread_attr_setschedpolicy(&tc->attr,SCHED_FIFO);
+}
+
+
+ThreadCondition::ThreadCondition() : PTMutex()
+{
 	pthread_cond_init(&cond,0);
 }
 
-// #endif
+ThreadCondition::~ThreadCondition()
+{
+	pthread_cond_destroy(&cond);
+}
+
+void ThreadCondition::Broadcast()
+{
+	pthread_cond_broadcast(&cond);
+}
+
+void ThreadCondition::Wait()
+{
+	pthread_cond_wait(&cond,&mutex);
+}
 

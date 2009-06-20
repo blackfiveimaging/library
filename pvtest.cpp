@@ -15,6 +15,112 @@
 #define _(x) gettext(x)
 
 
+struct Hist_Shades
+{
+	int r;
+	int g;
+	int b;
+};
+
+
+static Hist_Shades Hist_RGBShades[]=
+{
+	{255,255,255},	// None
+	{255,64,64},	// Red
+	{64,255,64},	// Green
+	{96,144,0},		// Red + Green
+	{64,64,255},	// Blue
+	{96,0,144},		// Red + Blue
+	{0,96,144},		// Green + Blue
+	{64,64,96},		// Red + Green + Blue
+	{128,128,128},	// As above but with Alpha
+	{128,32,32},	// ...
+	{32,128,32},
+	{48,72,0},
+	{32,32,128},
+	{48,0,72},
+	{0,48,72},
+	{32,32,48},
+};
+
+
+static Hist_Shades Hist_CMYKShades[]=
+{
+	{255,255,255},	// None
+	{64,255,255},	// Cyan
+	{255,64,255},	// Magenta
+	{96,96,255},	// Cyan + Magenta
+	{255,255,64},	// Yellow
+	{96,255,96},	// Cyan + Yellow
+	{255,96,96},	// Magenta + Yellow
+	{128,128,64},		// Cyan + Magenta + Yellow
+	{128,128,128},	// As above but with Black
+	{32,128,128},	// ...
+	{128,32,128},
+	{48,48,128},
+	{128,128,32},
+	{48,128,48},
+	{128,48,48},
+	{72,72,48}
+};
+
+
+// DrawHistogram() - renders a GdkPixbuf from a histogram.
+GdkPixbuf *DrawHistogram(ISHistogram &histogram)
+{
+	Hist_Shades *shades;
+	switch(histogram.GetType())
+	{
+		case IS_TYPE_RGB:
+		case IS_TYPE_RGBA:
+			cerr << "Drawing histogram for RGB Image" << endl;
+			shades=Hist_RGBShades;
+			break;
+		case IS_TYPE_CMYK:
+			cerr << "Drawing histogram for CMYK Image" << endl;
+			shades=Hist_CMYKShades;
+			break;
+		default:
+			throw "Unknown histogram type";
+			break;
+	}
+	int channels=histogram.GetChannelCount();
+	int height=256;
+	GdkPixbuf *pb=gdk_pixbuf_new(GDK_COLORSPACE_RGB,FALSE,8,IS_HISTOGRAM_BUCKETS,height);
+
+	if(pb)
+	{
+		int rowstride=gdk_pixbuf_get_rowstride(pb);
+		unsigned char *pixels=gdk_pixbuf_get_pixels(pb);
+		double max=histogram.GetMax();
+
+		for(int x=0;x<IS_HISTOGRAM_BUCKETS;++x)
+		{
+			for(int y=0;y<height;++y)
+			{
+				int bit=1;
+				int ci=0;
+				for(int c=0;c<channels;++c)
+				{
+					double t=histogram[c][x];
+					t/=max;
+					t=sqrt(t);
+					if((height-y)<(255.0*t))
+						ci|=bit;
+					bit<<=1;
+				}
+				int pi=3*x+y*rowstride;
+				pixels[pi]=shades[ci].r;
+				pixels[pi+1]=shades[ci].g;
+				pixels[pi+2]=shades[ci].b;
+			}
+		}
+	}
+	return(pb);
+}
+
+
+
 static struct {double r; double g; double b; double a;} RGBShades[]=
 {
 	{1.0,0,0,1.0},
@@ -94,6 +200,7 @@ static void paint_histogram(GtkWidget *widget,GdkEventExpose *eev,gpointer userd
 			double t=hc[i];
 			t/=max;		// Range is now 0 - 1.0
 			t=sqrt(t);
+
 			cairo_move_to (cr,x,height);
 			cairo_line_to(cr,x,height-height*t);
 			cairo_stroke (cr);
@@ -137,7 +244,7 @@ int main(int argc,char**argv)
 		if(argc>1)
 		{
 			ImageSource *is=ISLoadImage(argv[1]);
-			hist=new ISHistogram(is);
+			hist=new ISHistogram();
 			is=new ImageSource_Histogram(is,*hist);
 			GdkPixbuf *pb=pixbuf_from_imagesource(is);
 			pixbufview_set_pixbuf(PIXBUFVIEW(pview),pb);
@@ -156,6 +263,16 @@ int main(int argc,char**argv)
 		gtk_notebook_append_page(GTK_NOTEBOOK(notebook),GTK_WIDGET(canvas),GTK_WIDGET(label));
 		gtk_widget_show(canvas);
 
+
+		label=gtk_label_new("Histogram 2");
+		gtk_widget_show(label);
+		GtkWidget *pview2=pixbufview_new(NULL,false);
+
+		gtk_notebook_append_page(GTK_NOTEBOOK(notebook),GTK_WIDGET(pview2),GTK_WIDGET(label));
+		gtk_widget_show(pview2);
+
+		GdkPixbuf *pb=DrawHistogram(*hist);
+		pixbufview_set_pixbuf(PIXBUFVIEW(pview2),pb);
 
 		gtk_main();
 

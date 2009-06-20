@@ -8,6 +8,7 @@ ImageSource_Histogram::ImageSource_Histogram(ImageSource *source,ISHistogram &hi
 	: ImageSource(source), source(source), histogram(histogram)
 {
 	currentrow=-1;
+	histogram.SetHistogramType(source->samplesperpixel,source->type);
 }
 
 
