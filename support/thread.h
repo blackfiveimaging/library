@@ -56,10 +56,11 @@ typedef void *ThreadID;
 typedef pthread_t ThreadID;
 #endif
 
+class ThreadFunction;
 class Thread
 {
 	public:
-	Thread(int (*entry)(Thread *t,void *ud),void *UserData);
+	Thread(ThreadFunction *threadfunc);
 	Thread();
 	~Thread();
 	void Stop();
@@ -75,11 +76,11 @@ class Thread
 	ThreadID GetThreadID();
 	protected:
 	static void *LaunchStub(void *ud);
-	int (*entry)(Thread *t,void *ud);
-	void *userdata;
+	ThreadFunction *threadfunc;
 	pthread_t thread;
 	ThreadSync cond;
 	pthread_attr_t attr;
+	// This mutex is held all the time the thread's running.
 	PTMutex threadmutex;
 	bool synced;
 	int returncode;
@@ -92,20 +93,43 @@ class Thread
 class ThreadFunction
 {
 	public:
-	ThreadFunction(Thread &t) : thread(t)
+	ThreadFunction()
 	{
 	}
 	virtual ~ThreadFunction()
 	{
 	}
-	virtual int Entry()
+	virtual int Entry(Thread &t)
 	{
-		thread.SendSync();
+		t.SendSync();
 		return(0);
 	}
 	protected:
-	Thread &thread;
 };
 
 
+// Classic c-style callback function
+class ThreadFunction_Callback : public ThreadFunction
+{
+	public:
+	ThreadFunction_Callback(int (*entry)(Thread &t,void *ud),void *UserData)
+		: ThreadFunction(), entry(entry), userdata(UserData)
+	{
+	}
+	virtual ~ThreadFunction_Callback()
+	{
+	}
+	virtual int Entry(Thread &t)
+	{
+		if(entry)
+			return((*entry)(t,userdata));
+		else
+			return(0);
+	}
+	protected:
+	int (*entry)(Thread &t,void *ud);
+	void *userdata;
+};
+
 #endif
+

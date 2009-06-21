@@ -9,7 +9,7 @@
 
 #include "thread.h"
 
-// #if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
+using namespace std;
 
 bool Thread::TestBreak()
 {
@@ -29,8 +29,8 @@ void *Thread::LaunchStub(void *ud)
 	t->cond.ObtainMutex();
 	t->state=THREAD_RUNNING;
 	t->cond.ReleaseMutex();
-	if(t->entry)
-		t->returncode=t->entry(t,t->userdata);
+	if(t->threadfunc)
+		t->returncode=t->threadfunc->Entry(*t);
 	t->cond.ObtainMutex();
 	t->state=THREAD_IDLE;
 	t->cond.ReleaseMutex();
@@ -97,7 +97,6 @@ Thread::~Thread()
 {
 	if(!TestFinished())
 		WaitFinished();
-//		Stop();
 }
 
 
@@ -110,8 +109,8 @@ ThreadID Thread::GetThreadID()
 #endif
 }
 
-Thread::Thread(int (*entry)(Thread *t,void *ud),void *userdata)
-	: entry(entry), userdata(userdata), synced(false)
+Thread::Thread(ThreadFunction *threadfunc)
+	: threadfunc(threadfunc), synced(false)
 {
 	pthread_attr_init(&attr);
 }

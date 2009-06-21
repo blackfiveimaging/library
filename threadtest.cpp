@@ -8,59 +8,155 @@
 
 using namespace std;
 
-int MyThread(Thread *t,void *ud)
+
+class TestThread_Wait : public ThreadFunction
 {
-	RWMutex *mutex=(RWMutex *)ud;
-
-	cerr << "Subthread attempting write lock" << endl;
-	if(mutex->AttemptMutex())
+	public:
+	TestThread_Wait(ThreadCondition &cond) : ThreadFunction(), cond(cond), thread(this)
 	{
-		cerr << "Obtained write-lock" << endl;
-		mutex->ReleaseMutex();
+		thread.Start();
+//		thread.WaitSync();
 	}
-	else
-		cerr << "Subthread Can't get write lock - read lock held elsewhere?" << endl;
-	mutex->ObtainMutexShared();
-	cerr << "Got shared mutex" << endl;
-
-	cerr << "Sub-thread about to sleep..." << endl;
-	ProgressThread p(*t);
-	t->SendSync();
-	for(int i=0;i<100;++i)
+	virtual ~TestThread_Wait()
 	{
-#ifdef WIN32
-		Sleep(20);
-#else
-		usleep(20000);
-#endif
-		if(!p.DoProgress())
-		{
-			cerr << "Thread cancelled - exiting" << endl;
-			mutex->ReleaseMutex();
-			return(0);
-		}
+		thread.WaitFinished();
 	}
+	virtual int Entry(Thread &t)
+	{
+		cerr << "Thread " << t.GetThreadID() << " initializing" << endl;
+//		t.SendSync();
+		cond.ObtainMutex();
+		cond.Wait();
+		cond.ReleaseMutex();
+		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
+		return(0);
+	}
+	protected:
+	ThreadCondition &cond;
+	Thread thread;
+};
 
-	cerr << "Woken up - attempting exclusive lock (with shared lock still held)" << endl;
-	mutex->ObtainMutex();
-	cerr << "Subthread got exclusive lock" << endl;
-	mutex->ObtainMutexShared();
-	cerr << "Subthread got shared lock (with exclusive lock still held)" << endl;
 
-	mutex->ReleaseMutex();
-	mutex->ReleaseMutex();
+class TestThread_Send : public ThreadFunction
+{
+	public:
+	TestThread_Send(ThreadCondition &cond) : ThreadFunction(), cond(cond), thread(this)
+	{
+		thread.Start();
+//		thread.WaitSync();
+	}
+	virtual ~TestThread_Send()
+	{
+		thread.WaitFinished();
+	}
+	virtual int Entry(Thread &t)
+	{
+//		t.SendSync();
 
-	t->SendSync();
 #ifdef WIN32
-		Sleep(5000);
+			Sleep(5000);
 #else
-		sleep(5);
+			sleep(5);
 #endif
-	mutex->ReleaseMutex();
-	cerr << "Thread finished sleeping - exiting" << endl;
-//	cerr << "Sub-thread ID: " << (long)pthread_self() << endl;
+		cond.ObtainMutex();
+		cond.Broadcast();
+		cond.ReleaseMutex();
+		return(0);
+	}
+	protected:
+	ThreadCondition &cond;
+	Thread thread;
+};
+
+
+int main(int argc, char **argv)
+{
+	ThreadCondition cond;
+
+	TestThread_Wait tt1(cond);
+	TestThread_Wait tt2(cond);
+	TestThread_Wait tt3(cond);
+	TestThread_Wait tt4(cond);
+
+	TestThread_Send tt5(cond);
+
+	cerr << "Main thread waiting..." << endl;
+	cond.ObtainMutex();
+	cond.Wait();
+	cond.ReleaseMutex();
+	cerr << "Main thread woken" << endl;
+
 	return(0);
 }
+
+
+#if 0
+
+class TestThread1 : public ThreadFunction
+{
+	public:
+	TestThread1(RWMutex &mutex) : ThreadFunction(), mutex(mutex)
+	{
+		cerr << "Creating TestThread1" << endl;
+	}
+	virtual ~TestThread1()
+	{
+		cerr << "Disposing of TestThread1" << endl;
+	}
+	virtual int Entry(Thread &t)
+	{
+		cerr << "Subthread attempting write lock" << endl;
+		if(mutex.AttemptMutex())
+		{
+			cerr << "Obtained write-lock" << endl;
+			mutex.ReleaseMutex();
+		}
+		else
+			cerr << "Subthread Can't get write lock - read lock held elsewhere?" << endl;
+		mutex.ObtainMutexShared();
+		cerr << "Got shared mutex" << endl;
+
+		cerr << "Sub-thread about to sleep..." << endl;
+		ProgressThread p(t);
+		t.SendSync();
+		for(int i=0;i<100;++i)
+		{
+#ifdef WIN32
+			Sleep(20);
+#else
+			usleep(20000);
+#endif
+			if(!p.DoProgress())
+			{
+				cerr << "Thread cancelled - exiting" << endl;
+				mutex.ReleaseMutex();
+				return(0);
+			}
+		}
+
+		cerr << "Woken up - attempting exclusive lock (with shared lock still held)" << endl;
+		mutex.ObtainMutex();
+		cerr << "Subthread got exclusive lock" << endl;
+		mutex.ObtainMutexShared();
+		cerr << "Subthread got shared lock (with exclusive lock still held)" << endl;
+
+		mutex.ReleaseMutex();
+		mutex.ReleaseMutex();
+
+		t.SendSync();
+#ifdef WIN32
+			Sleep(5000);
+#else
+			sleep(5);
+#endif
+		mutex.ReleaseMutex();
+		cerr << "Thread finished sleeping - exiting" << endl;
+	//	cerr << "Sub-thread ID: " << (long)pthread_self() << endl;
+		return(0);
+	}
+	protected:
+	RWMutex &mutex;
+};
 
 
 int main(int argc, char **argv)
@@ -71,7 +167,8 @@ int main(int argc, char **argv)
 
 	cerr << "Got shared lock" << endl;
 
-	Thread t(MyThread,&mutex);
+	TestThread1 tt1(mutex);
+	Thread t(&tt1);
 	t.Start();
 	t.WaitSync();
 
@@ -96,3 +193,6 @@ int main(int argc, char **argv)
 
 	return(0);
 }
+
+#endif
+
