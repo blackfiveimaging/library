@@ -1,6 +1,8 @@
 #ifndef CIESUPPORT_H
 #define CIESUPPORT_H
 
+// Base types for handling XYZ and CIEL*ab values.
+
 class XYZValue
 {
 	public:

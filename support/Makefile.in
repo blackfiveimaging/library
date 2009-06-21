@@ -38,15 +38,15 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/scripts/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libsupport_la_LIBADD =
 am_libsupport_la_OBJECTS = consumer.lo configdb.lo layoutrectangle.lo \
 	signature.lo circlemontage.lo pathsupport.lo progressbar.lo \
-	rangeparser.lo thread.lo ptmutex.lo rwmutex.lo searchpath.lo \
-	tempfile.lo util.lo
+	rangeparser.lo thread.lo ptmutex.lo rwmutex.lo threadevent.lo \
+	searchpath.lo tempfile.lo util.lo
 libsupport_la_OBJECTS = $(am_libsupport_la_OBJECTS)
 libsupport_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -254,6 +254,8 @@ libsupport_la_SOURCES = \
 	ptmutex.h \
 	rwmutex.cpp \
 	rwmutex.h \
+	threadevent.cpp \
+	threadevent.h \
 	\
 	searchpath.cpp \
 	searchpath.h \
@@ -330,6 +332,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/signature.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tempfile.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thread.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/threadevent.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Plo@am__quote@
 
 .cpp.o:

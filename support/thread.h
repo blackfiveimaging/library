@@ -73,7 +73,7 @@ class Thread
 	void SendSync();
 	bool TestBreak();
 	// Static function - can be called anywhere
-	ThreadID GetThreadID();
+	static ThreadID GetThreadID();
 	protected:
 	static void *LaunchStub(void *ud);
 	ThreadFunction *threadfunc;

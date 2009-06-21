@@ -35,6 +35,8 @@ libsupport_la_SOURCES =	\
 	ptmutex.h \
 	rwmutex.cpp \
 	rwmutex.h \
+	threadevent.cpp \
+	threadevent.h \
 	\
 	searchpath.cpp \
 	searchpath.h \
