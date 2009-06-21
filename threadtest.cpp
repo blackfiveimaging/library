@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 #include "config.h"
 
@@ -7,6 +8,149 @@
 #include "progressthread.h"
 
 using namespace std;
+
+class ThreadEvent;
+class ThreadEventHandler : public PTMutex
+{
+	public:
+	ThreadEventHandler();
+	~ThreadEventHandler();
+	// If you're going to access this from multiple threads, surround calls to these
+	// functions with an ObtainMutex() / ReleaseMutex() pair.
+	ThreadEvent *FirstEvent();
+	ThreadEvent *FindEvent(const char *eventname);
+	protected:
+	ThreadEvent *firstevent;
+	friend class ThreadEvent;
+};
+
+
+class ThreadEvent : public RWMutex
+{
+	public:
+	ThreadEvent(ThreadEventHandler &header,const char *eventname);
+	~ThreadEvent();
+	ThreadEvent *NextEvent();
+	const char *GetName();
+	void Trigger();
+	void Wait();
+	// Use this if you want to block other threads from responding to the
+	// event.  Simply call ReleaseMutex() on the returned ThreadCondition to
+	// unblock other threads.
+	ThreadCondition &WaitAndHold();
+	protected:
+	ThreadEventHandler &header;
+	ThreadEvent *nextevent,*prevevent;
+	ThreadCondition cond;
+	char *name;
+};
+
+
+ThreadEventHandler::ThreadEventHandler() : PTMutex(), firstevent(NULL)
+{
+}
+
+
+ThreadEventHandler::~ThreadEventHandler()
+{
+	ObtainMutex();
+	while(firstevent)
+		delete firstevent;
+	ReleaseMutex();
+}
+
+
+ThreadEvent *ThreadEventHandler::FirstEvent()
+{
+	return(firstevent);
+}
+
+
+ThreadEvent *ThreadEventHandler::FindEvent(const char *name)
+{
+	ThreadEvent *result=firstevent;
+	while(result)
+	{
+		if(strcmp(name,result->GetName())==0)
+			return(result);
+		result=result->NextEvent();
+	}
+	return(result);
+}
+
+//------------------------------------
+
+
+ThreadEvent::ThreadEvent(ThreadEventHandler &header,const char *eventname)
+	: header(header), nextevent(NULL), prevevent(NULL), name(NULL)
+{
+	header.ObtainMutex();
+	if(eventname)
+		name=strdup(eventname);
+	prevevent=header.FirstEvent();
+
+	while(prevevent && prevevent->nextevent)
+		prevevent=prevevent->NextEvent();
+	if(prevevent)
+		prevevent->nextevent=this;
+	else
+		header.firstevent=this;
+
+	header.ReleaseMutex();
+}
+
+
+ThreadEvent::~ThreadEvent()
+{
+	header.ObtainMutex();
+	if(name)
+		free(name);
+	if(prevevent)
+		prevevent->nextevent=nextevent;
+	else
+		header.firstevent=nextevent;
+	if(nextevent)
+		nextevent->prevevent=prevevent;
+	header.ReleaseMutex();
+}
+
+
+ThreadEvent *ThreadEvent::NextEvent()
+{
+	return(nextevent);
+}
+
+
+const char *ThreadEvent::GetName()
+{
+	return(name);
+}
+
+
+void ThreadEvent::Wait()
+{
+	WaitAndHold().ReleaseMutex();
+}
+
+
+ThreadCondition &ThreadEvent::WaitAndHold()
+{
+	cond.ObtainMutex();
+	cond.Wait();
+	return(cond);
+}
+
+
+void ThreadEvent::Trigger()
+{
+	cond.ObtainMutex();
+	cond.Broadcast();
+	cond.ReleaseMutex();
+}
+
+
+//------------------------------------
+
 
 
 class TestThread_Wait : public ThreadFunction
@@ -27,6 +171,15 @@ class TestThread_Wait : public ThreadFunction
 //		t.SendSync();
 		cond.ObtainMutex();
 		cond.Wait();
+
+		cerr << "Thread " << t.GetThreadID() << " pausing..." << endl;
+
+#ifdef WIN32
+			Sleep(1000);
+#else
+			sleep(1);
+#endif
+
 		cond.ReleaseMutex();
 		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
 		return(0);
@@ -35,6 +188,69 @@ class TestThread_Wait : public ThreadFunction
 	ThreadCondition &cond;
 	Thread thread;
 };
+
+
+class TestThread_WaitTH : public ThreadFunction
+{
+	public:
+	TestThread_WaitTH(ThreadEvent &event) : ThreadFunction(), event(event), thread(this)
+	{
+		thread.Start();
+	}
+	virtual ~TestThread_WaitTH()
+	{
+		thread.WaitFinished();
+	}
+	virtual int Entry(Thread &t)
+	{
+		cerr << "Thread " << t.GetThreadID() << " initializing" << endl;
+
+		ThreadCondition &cond=event.WaitAndHold();
+
+		cerr << "Thread " << t.GetThreadID() << " pausing..." << endl;
+
+#ifdef WIN32
+			Sleep(1000);
+#else
+			sleep(1);
+#endif
+
+		cond.ReleaseMutex();
+		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
+		return(0);
+	}
+	protected:
+	ThreadEvent &event;
+	Thread thread;
+};
+
+
+
+class TestThread_SendTH : public ThreadFunction
+{
+	public:
+	TestThread_SendTH(ThreadEvent &event) : ThreadFunction(), event(event), thread(this)
+	{
+		thread.Start();
+	}
+	virtual ~TestThread_SendTH()
+	{
+		thread.WaitFinished();
+	}
+	virtual int Entry(Thread &t)
+	{
+		cerr << "Thread " << t.GetThreadID() << " initializing" << endl;
+
+		event.Trigger();
+
+		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
+		return(0);
+	}
+	protected:
+	ThreadEvent &event;
+	Thread thread;
+};
+
 
 
 class TestThread_Send : public ThreadFunction
@@ -59,7 +275,9 @@ class TestThread_Send : public ThreadFunction
 			sleep(5);
 #endif
 		cond.ObtainMutex();
+		cerr << "Broadcasting signal..." << endl;
 		cond.Broadcast();
+		cerr << "Broadcast returned." << endl;
 		cond.ReleaseMutex();
 		return(0);
 	}
@@ -71,19 +289,21 @@ class TestThread_Send : public ThreadFunction
 
 int main(int argc, char **argv)
 {
-	ThreadCondition cond;
+	ThreadEventHandler tehandler;
+	new ThreadEvent(tehandler,"Event1");
+	new ThreadEvent(tehandler,"Event2");
 
-	TestThread_Wait tt1(cond);
-	TestThread_Wait tt2(cond);
-	TestThread_Wait tt3(cond);
-	TestThread_Wait tt4(cond);
+	TestThread_WaitTH tt1(*tehandler.FindEvent("Event1"));
+	TestThread_WaitTH tt2(*tehandler.FindEvent("Event1"));
+	TestThread_WaitTH tt3(*tehandler.FindEvent("Event1"));
+	TestThread_WaitTH tt4(*tehandler.FindEvent("Event1"));
 
-	TestThread_Send tt5(cond);
-
+	cerr << "Sending signal..." << endl;
+	TestThread_SendTH tt5(*tehandler.FindEvent("Event1"));
 	cerr << "Main thread waiting..." << endl;
-	cond.ObtainMutex();
-	cond.Wait();
-	cond.ReleaseMutex();
+
+	tehandler.FindEvent("Event1")->Wait();
+
 	cerr << "Main thread woken" << endl;
 
 	return(0);
