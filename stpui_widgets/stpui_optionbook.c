@@ -16,6 +16,11 @@
 #include "stpui_optionbook.h"
 #include "../stp_support/stputil.h"
 
+#include "../config.h"
+#include "../gettext.h"
+
+#define _(x) gettext(x)
+
 enum {
 	CHANGED_SIGNAL,
 	LAST_SIGNAL
@@ -109,19 +114,19 @@ static void init_custompages(stpui_OptionBook *ob)
 
 static void populate(stpui_OptionBook *ob)
 {
-	buildpage(ob,0,"General",STP_PARAMETER_CLASS_FEATURE,
+	buildpage(ob,0,_("General"),STP_PARAMETER_CLASS_FEATURE,
 		STP_PARAMETER_LEVEL_BASIC,STP_PARAMETER_LEVEL_BASIC);
 
-	buildpage(ob,1,"Manual Settings",STP_PARAMETER_CLASS_FEATURE,
+	buildpage(ob,1,_("Manual Settings"),STP_PARAMETER_CLASS_FEATURE,
 		STP_PARAMETER_LEVEL_ADVANCED,STP_PARAMETER_LEVEL_ADVANCED4);
 
-	buildpage(ob,2,"Colour (Basic)",STP_PARAMETER_CLASS_OUTPUT,
+	buildpage(ob,2,_("Colour (Basic)"),STP_PARAMETER_CLASS_OUTPUT,
 		STP_PARAMETER_LEVEL_BASIC,STP_PARAMETER_LEVEL_BASIC);
 
-	buildpage(ob,3,"Colour (Fine-tuning)",STP_PARAMETER_CLASS_OUTPUT,
+	buildpage(ob,3,_("Colour (Fine-tuning)"),STP_PARAMETER_CLASS_OUTPUT,
 		STP_PARAMETER_LEVEL_ADVANCED,STP_PARAMETER_LEVEL_ADVANCED2);
 
-	buildpage(ob,4,"Colour (Extra)",STP_PARAMETER_CLASS_OUTPUT,
+	buildpage(ob,4,_("Colour (Extra)"),STP_PARAMETER_CLASS_OUTPUT,
 		STP_PARAMETER_LEVEL_ADVANCED3,STP_PARAMETER_LEVEL_ADVANCED4);
 }
 
