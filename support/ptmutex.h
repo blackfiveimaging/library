@@ -13,36 +13,14 @@ class PTMutex
 {
 	public:
 	PTMutex();
-	~PTMutex();
-	void ObtainMutex();
-	bool AttemptMutex();
-	void ReleaseMutex();
+	virtual ~PTMutex();
+	virtual void ObtainMutex();
+	virtual bool AttemptMutex();
+	virtual void ReleaseMutex();
 	protected:
 	pthread_mutex_t mutex;
 	friend class Thread;
 };
-
-//#else
-#if 0
-
-// We provide a dummy mutex implemntation for those occasions when no thread
-// implementation is available.  This allows such things as the profilemanager
-// to be mutex-protected against concurrent access, yet still be usable without
-// threads (in which case concurrent access is hardly likely to be problem!
-
-class PTMutex
-{
-	public:
-	PTMutex();
-	~PTMutex();
-	void ObtainMutex();
-	bool AttemptMutex();
-	void ReleaseMutex();
-	protected:
-	friend class Thread;
-};
-
-#endif
 
 #endif
 

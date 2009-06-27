@@ -36,6 +36,7 @@ bool CreateDirIfNeeded(const char *path)
 		return(mkdir(path,0755)==0);
 #endif
 	}
+	return(false);
 }
 
 

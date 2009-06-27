@@ -33,9 +33,10 @@ ISDataType *ImageSource_Crop::GetRow(int row)
 	// If random access is not supported, we must loop through the unwanted rows.
 	if(row==0 && source->randomaccess==false)
 	{
+		ISDataType *junk;
 		for(int i=0;i<yoffset;++i)
 		{
-			ISDataType *junk=source->GetRow(i);
+			junk=source->GetRow(i);
 		}
 	}
 

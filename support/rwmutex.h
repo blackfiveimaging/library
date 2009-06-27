@@ -38,12 +38,12 @@ class RWMutex : public PTMutex
 {
 	public:
 	RWMutex();
-	~RWMutex();
-	void ObtainMutex();
-	void ObtainMutexShared();
-	bool AttemptMutex();
-	bool AttemptMutexShared();
-	void ReleaseMutex();
+	virtual ~RWMutex();
+	virtual void ObtainMutex();
+	virtual void ObtainMutexShared();
+	virtual bool AttemptMutex();
+	virtual bool AttemptMutexShared();
+	virtual void ReleaseMutex();
 	protected:
 	pthread_rwlock_t rwlock;
 	bool CheckExclusive();
@@ -60,29 +60,6 @@ class RWMutex : public PTMutex
 	pthread_cond_t cond;
 };
 
-//#else
-#if 0
-
-// We provide a dummy mutex implemntation for those occasions when no thread
-// implementation is available.  This allows such things as the profilemanager
-// to be mutex-protected against concurrent access, yet still be usable without
-// threads (in which case concurrent access is hardly likely to be problem!
-
-class RWMutex
-{
-	public:
-	RWMutex();
-	~RWMutex();
-	void ObtainMutex();
-	void ObtainMutexShared();
-	bool AttemptMutex();
-	bool AttemptMutexShared();
-	void ReleaseMutex();
-	protected:
-	friend class Thread;
-};
-
-#endif
 
 #endif
 

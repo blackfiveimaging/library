@@ -11,44 +11,6 @@ using namespace std;
 //------------------------------------
 
 
-
-class TestThread_Wait : public ThreadFunction
-{
-	public:
-	TestThread_Wait(ThreadCondition &cond) : ThreadFunction(), cond(cond), thread(this)
-	{
-		thread.Start();
-//		thread.WaitSync();
-	}
-	virtual ~TestThread_Wait()
-	{
-		thread.WaitFinished();
-	}
-	virtual int Entry(Thread &t)
-	{
-		cerr << "Thread " << t.GetThreadID() << " initializing" << endl;
-//		t.SendSync();
-		cond.ObtainMutex();
-		cond.Wait();
-
-		cerr << "Thread " << t.GetThreadID() << " pausing..." << endl;
-
-#ifdef WIN32
-			Sleep(1000);
-#else
-			sleep(1);
-#endif
-
-		cond.ReleaseMutex();
-		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
-		return(0);
-	}
-	protected:
-	ThreadCondition &cond;
-	Thread thread;
-};
-
-
 class TestThread_WaitTH : public ThreadFunction
 {
 	public:
@@ -111,59 +73,25 @@ class TestThread_SendTH : public ThreadFunction
 };
 
 
-
-class TestThread_Send : public ThreadFunction
-{
-	public:
-	TestThread_Send(ThreadCondition &cond) : ThreadFunction(), cond(cond), thread(this)
-	{
-		thread.Start();
-//		thread.WaitSync();
-	}
-	virtual ~TestThread_Send()
-	{
-		thread.WaitFinished();
-	}
-	virtual int Entry(Thread &t)
-	{
-//		t.SendSync();
-
-#ifdef WIN32
-			Sleep(5000);
-#else
-			sleep(5);
-#endif
-		cond.ObtainMutex();
-		cerr << "Broadcasting signal..." << endl;
-		cond.Broadcast();
-		cerr << "Broadcast returned." << endl;
-		cond.ReleaseMutex();
-		return(0);
-	}
-	protected:
-	ThreadCondition &cond;
-	Thread thread;
-};
-
-
 int main(int argc, char **argv)
 {
 	ThreadEventHandler tehandler;
-	new ThreadEvent(tehandler,"Event1");
-	new ThreadEvent(tehandler,"Event2");
+	ThreadEvent e1(tehandler,"Event1");
+	ThreadEvent *e2=new ThreadEvent(tehandler,"Event2");
 
-	tehandler.FindEvent("Event1")->Subscribe();
+	e1.Subscribe();	// Subscribing allows us to keep track of how many times the signal's
+					// been received, and more importantly, whether it was received before we started waiting.
 
-	TestThread_WaitTH tt1(*tehandler.FindEvent("Event1"));
-	TestThread_WaitTH tt2(*tehandler.FindEvent("Event1"));
-	TestThread_WaitTH tt3(*tehandler.FindEvent("Event1"));
-	TestThread_WaitTH tt4(*tehandler.FindEvent("Event1"));
+	TestThread_WaitTH tt1(e1);
+	TestThread_WaitTH tt2(e1);
+	TestThread_WaitTH tt3(e1);
+	TestThread_WaitTH tt4(e1);
 
 	cerr << "Sending signal..." << endl;
-	TestThread_SendTH tt5(*tehandler.FindEvent("Event1"));
+	TestThread_SendTH tt5(e1);
 	cerr << "Main thread waiting..." << endl;
 
-	tehandler.FindEvent("Event1")->QueryAndWait();
+	e1.QueryAndWait();
 
 	cerr << "Main thread woken" << endl;
 

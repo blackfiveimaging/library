@@ -21,7 +21,7 @@ class ThreadEventHandler : public PTMutex
 
 
 class ThreadEvent_Subscriber;
-class ThreadEvent : public RWMutex
+class ThreadEvent
 {
 	public:
 	ThreadEvent(ThreadEventHandler &header,const char *eventname);
@@ -46,6 +46,7 @@ class ThreadEvent : public RWMutex
 
 	ThreadEvent_Subscriber *FindSubscriber();
 	protected:
+ 	RWMutex	mutex;
 	ThreadEventHandler &header;
 	ThreadEvent *nextevent,*prevevent;
 	ThreadCondition cond;
