@@ -44,11 +44,14 @@ class RWMutex : public PTMutex
 	virtual bool AttemptMutex();
 	virtual bool AttemptMutexShared();
 	virtual void ReleaseMutex();
+	virtual void ReleaseMutexShared();	// Not needed unless you find yourself in a situation like this:
+										// AttemptShared()  ->   Obtain()  ->  Release()  ->  Release() and want
+										// the lock to remain exclusive until the second Release.
 	protected:
 	pthread_rwlock_t rwlock;
 	bool CheckExclusive();
 	void Increment();
-	void Decrement();
+	void Decrement(bool shared=false);
 	void Dump();
 	int lockcount;
 	int exclusive;
@@ -57,6 +60,7 @@ class RWMutex : public PTMutex
 #else
 	struct {pthread_t id; int count;} counttable[RWMUTEX_THREADS_MAX];
 #endif
+	int serialno;
 	pthread_cond_t cond;
 };
 

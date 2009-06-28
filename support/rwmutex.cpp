@@ -6,16 +6,17 @@
 #include "config.h"
 #endif
 
+#include "thread.h"
 #include "rwmutex.h"
 
 using namespace std;
-
-// #if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
 
 // pthreads-based implementation
 
 RWMutex::RWMutex() : PTMutex(), lockcount(0), exclusive(0)
 {
+	static int ser=0;
+	serialno=++ser;		// Giving each mutex a serial number makes debugging easier.
 	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
 	{
 		counttable[i].id=0;
@@ -46,17 +47,12 @@ RWMutex::~RWMutex()
 
 void RWMutex::ObtainMutex()
 {
-//	static int id=0;
-//	int tid=id++;
+//	cerr << "RWMutex " << serialno << ": ObtainMutex from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
-//	cerr << tid << ": Obtaining exclusive" << endl;
 	while(!CheckExclusive())
 	{
-//		cerr << tid << ": Obtain exclusive failed - waiting..." << endl;
-//		cerr << "Exclusive count: " << exclusive << endl;
 		pthread_cond_wait(&cond,&mutex);
 	}
-//	cerr << tid << ": Obtain exclusive succeeded - incrementing..." << endl;
 	Increment();
 	if(exclusive==0)
 		++exclusive;
@@ -77,19 +73,15 @@ void RWMutex::ObtainMutex()
 
 void RWMutex::ObtainMutexShared()
 {
-//	static int id=0;
-//	int tid=id++;
+//	cerr << "RWMutex " << serialno << ": ObtainMutexShared from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
-//	cerr << tid << ": Obtaining shared" << endl;
 	while((exclusive!=0) && !CheckExclusive())
 	{
-//		cerr << tid << ": Obtain shared failed - waiting..." << endl;
 //		Dump();
 
 		// We must wait until the exclusive flag is clear;
 		pthread_cond_wait(&cond,&mutex);
 	}
-//	cerr << tid << ": Obtain shared succeeded - incrementing..." << endl;
 	Increment();
 //	Dump();
 	PTMutex::ReleaseMutex();
@@ -98,6 +90,7 @@ void RWMutex::ObtainMutexShared()
 
 bool RWMutex::AttemptMutex()
 {
+	cerr << "RWMutex " << serialno << ": AttemptMutex from " << long(Thread::GetThreadID()) << endl;
 	bool result=false;
 	PTMutex::ObtainMutex();
 	if(CheckExclusive())
@@ -116,6 +109,7 @@ bool RWMutex::AttemptMutex()
 
 bool RWMutex::AttemptMutexShared()
 {
+	cerr << "RWMutex " << serialno << ": AttemptMutexShared from " << long(Thread::GetThreadID()) << endl;
 	bool result=false;
 	PTMutex::ObtainMutex();
 	if((exclusive==0) || (CheckExclusive()))
@@ -131,8 +125,20 @@ bool RWMutex::AttemptMutexShared()
 
 void RWMutex::ReleaseMutex()
 {
+	cerr << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
 	Decrement();
+//	Dump();
+	pthread_cond_broadcast(&cond);
+	PTMutex::ReleaseMutex();
+}
+
+
+void RWMutex::ReleaseMutexShared()
+{
+	cerr << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
+	PTMutex::ObtainMutex();
+	Decrement(true);
 //	Dump();
 	pthread_cond_broadcast(&cond);
 	PTMutex::ReleaseMutex();
@@ -165,7 +171,7 @@ bool RWMutex::CheckExclusive()
 	}
 	// If we reached here, then the global lockcount is greater than zero, but
 	// the thread table is inconsistent.  Succeed grudgingly.
-	cerr << "RWMutex: inconsistent locking data." << endl;
+	cerr << "RWMutex " << serialno << ": inconsistent locking data." << endl;
 	return(true);
 }
 
@@ -213,10 +219,10 @@ void RWMutex::Increment()
 }
 
 
-void RWMutex::Decrement()
+void RWMutex::Decrement(bool shared)
 {
 	--lockcount;
-	if(exclusive)
+	if(exclusive && !shared)
 		--exclusive;
 #ifdef WIN32
 	void *current=pthread_self().p;
@@ -249,40 +255,4 @@ void RWMutex::Dump()
 			cerr << "Thread: " << counttable[i].id << ", count: " << counttable[i].count << endl;
 	}
 }
-
-// #else
-#if 0
-// Dummy implementation.  Obtaining the rwlock always succeeds.
-
-RWMutex::RWMutex()
-{
-	cerr << "Warning - building a dummy rwlock" << endl;
-}
-
-
-RWMutex::~RWMutex()
-{
-}
-
-
-void RWMutex::ObtainMutex()
-{
-	cerr << "Warning - obtaining a dummy rwlock" << endl;
-}
-
-
-bool RWMutex::AttemptMutex()
-{
-	cerr << "Warning - attempting a dummy rwlock" << endl;
-	return(true);
-}
-
-
-void RWMutex::ReleaseMutex()
-{
-	cerr << "Warning - releasing a dummy rwlock" << endl;
-}
-
-
-#endif
 
