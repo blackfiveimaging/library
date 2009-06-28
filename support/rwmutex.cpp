@@ -90,7 +90,7 @@ void RWMutex::ObtainMutexShared()
 
 bool RWMutex::AttemptMutex()
 {
-	cerr << "RWMutex " << serialno << ": AttemptMutex from " << long(Thread::GetThreadID()) << endl;
+//	cerr << "RWMutex " << serialno << ": AttemptMutex from " << long(Thread::GetThreadID()) << endl;
 	bool result=false;
 	PTMutex::ObtainMutex();
 	if(CheckExclusive())
@@ -109,7 +109,7 @@ bool RWMutex::AttemptMutex()
 
 bool RWMutex::AttemptMutexShared()
 {
-	cerr << "RWMutex " << serialno << ": AttemptMutexShared from " << long(Thread::GetThreadID()) << endl;
+//	cerr << "RWMutex " << serialno << ": AttemptMutexShared from " << long(Thread::GetThreadID()) << endl;
 	bool result=false;
 	PTMutex::ObtainMutex();
 	if((exclusive==0) || (CheckExclusive()))
@@ -125,7 +125,7 @@ bool RWMutex::AttemptMutexShared()
 
 void RWMutex::ReleaseMutex()
 {
-	cerr << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
+//	cerr << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
 	Decrement();
 //	Dump();
@@ -136,7 +136,7 @@ void RWMutex::ReleaseMutex()
 
 void RWMutex::ReleaseMutexShared()
 {
-	cerr << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
+//	cerr << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
 	Decrement(true);
 //	Dump();
