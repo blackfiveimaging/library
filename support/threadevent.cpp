@@ -231,9 +231,12 @@ ThreadCondition &ThreadEvent::QueryWaitAndHold()
 
 void ThreadEvent::Subscribe()
 {
+	cerr << "ThreadEvent - obtaining mutex" << endl;
 	mutex.ObtainMutex();
+	cerr << "ThreadEvent - searching for existing subscriber..." << endl;
 	if(!FindSubscriber())
 		new ThreadEvent_Subscriber(*this);
+	cerr << "ThreadEvent - Releasing mutex" << endl;
 	mutex.ReleaseMutex();
 }
 
@@ -260,6 +263,7 @@ ThreadEvent_Subscriber *ThreadEvent::FindSubscriber()
 			mutex.ReleaseMutex();
 			return(sub);
 		}
+		sub=sub->NextSubscriber();
 	}
 	mutex.ReleaseMutex();
 	return(NULL);
