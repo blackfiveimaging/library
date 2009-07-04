@@ -108,28 +108,5 @@ class ThreadFunction
 };
 
 
-// Classic c-style callback function
-class ThreadFunction_Callback : public ThreadFunction
-{
-	public:
-	ThreadFunction_Callback(int (*entry)(Thread &t,void *ud),void *UserData)
-		: ThreadFunction(), entry(entry), userdata(UserData)
-	{
-	}
-	virtual ~ThreadFunction_Callback()
-	{
-	}
-	virtual int Entry(Thread &t)
-	{
-		if(entry)
-			return((*entry)(t,userdata));
-		else
-			return(0);
-	}
-	protected:
-	int (*entry)(Thread &t,void *ud);
-	void *userdata;
-};
-
 #endif
 
