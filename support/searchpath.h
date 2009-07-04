@@ -24,8 +24,8 @@
 		
 	void AddPath(const char *path)
 		Adds a new search path to the list.  UNIX-style multiple paths are supported
-		with ':' as the separator character.  $HOME at the start of a path will be replaced
-		by the contents of the HOME environment variable.
+		with ':' as the separator character (Use ; on Windows).
+		$HOME at the start of a path will be replaced by the contents of the HOME environment variable.
 		
 	void RemovePath(const char *path);
 		Attempts to remove the specified path from the list.  Fails silently if

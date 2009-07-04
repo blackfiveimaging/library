@@ -23,6 +23,7 @@ using namespace std;
 TempFile::TempFile(TempFileTracker *header,const char *pfix,const char *skey)
 	: filename(NULL), searchkey(NULL), header(header), nexttempfile(NULL), prevtempfile(NULL)
 {
+	header->mutex.ObtainMutex();
 	if((nexttempfile=header->firsttempfile))
 		nexttempfile->prevtempfile=this;
 	header->firsttempfile=this;
@@ -31,13 +32,17 @@ TempFile::TempFile(TempFileTracker *header,const char *pfix,const char *skey)
 		searchkey=strdup(skey);
 	if(pfix)
 		prefix=strdup(pfix);
+	header->mutex.ReleaseMutex();
 }
 
 
 TempFile::~TempFile()
 {
+	cerr << "In TempFile destructor" << endl;
+	header->mutex.ObtainMutex();
 	if(filename)
 	{
+		cerr << "Removing " << filename << endl;
 		remove(filename);
 		free(filename);
 	}
@@ -51,6 +56,7 @@ TempFile::~TempFile()
 		prevtempfile->nexttempfile=nexttempfile;
 	else
 		header->firsttempfile=nexttempfile;
+	header->mutex.ReleaseMutex();
 }
 
 
@@ -78,7 +84,7 @@ bool TempFile::MatchTempFile(const char *skey)
 // TempFileTracker
 
 
-TempFileTracker::TempFileTracker() : firsttempfile(NULL)
+TempFileTracker::TempFileTracker() : mutex(), firsttempfile(NULL)
 {
 
 }
@@ -86,38 +92,50 @@ TempFileTracker::TempFileTracker() : firsttempfile(NULL)
 
 TempFileTracker::~TempFileTracker()
 {
+	mutex.ObtainMutex();
 	while(firsttempfile)
 		delete firsttempfile;
+	mutex.ReleaseMutex();
 }
 
 
 TempFile *TempFileTracker::GetTempFile(const char *prefix,const char *searchkey)
 {
+	mutex.ObtainMutexShared();
+	TempFile *result=NULL;
 	if(searchkey)
-	{
-		TempFile *result=NULL;
-		if((result==FindTempFile(searchkey)))
-			return(result);
-	}
-	return(new TempFile(this,prefix,searchkey));
+		result=FindTempFile(searchkey);
+	if(!result)
+		result=new TempFile(this,prefix,searchkey);
+	mutex.ReleaseMutexShared();
+	return(result);
 }
 
 
 TempFile *TempFileTracker::FindTempFile(const char *searchkey)
 {
+	mutex.ObtainMutexShared();
+	TempFile *result=NULL;
 	TempFile *t=FirstTempFile();
 	while(t)
 	{
 		t=t->NextTempFile();
 		if(t->MatchTempFile(searchkey))
-			return(t);
+		{
+			result=t;
+			t=NULL;
+		}
 	}
-	return(NULL);
+	mutex.ReleaseMutexShared();
+	return(result);
 }
 
 
 TempFile *TempFileTracker::FirstTempFile()
 {
-	return(firsttempfile);
+	mutex.ObtainMutexShared();
+	TempFile *result=firsttempfile;
+	mutex.ReleaseMutexShared();
+	return(result);
 }
 
