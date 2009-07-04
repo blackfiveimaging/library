@@ -21,7 +21,7 @@ using namespace std;
 
 
 TempFile::TempFile(TempFileTracker *header,const char *pfix,const char *skey)
-	: filename(NULL), searchkey(NULL), header(header), nexttempfile(NULL), prevtempfile(NULL)
+	: filename(NULL), prefix(NULL), searchkey(NULL), header(header), nexttempfile(NULL), prevtempfile(NULL)
 {
 	header->mutex.ObtainMutex();
 	if((nexttempfile=header->firsttempfile))

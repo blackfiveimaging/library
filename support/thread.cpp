@@ -32,7 +32,7 @@ void *Thread::LaunchStub(void *ud)
 	if(t->threadfunc)
 		t->returncode=t->threadfunc->Entry(*t);
 	t->cond.ObtainMutex();
-	t->state=THREAD_IDLE;
+	t->state=THREAD_FINISHED;
 	t->cond.ReleaseMutex();
 	t->threadmutex.ReleaseMutex();
 	return(NULL);
@@ -88,7 +88,15 @@ bool Thread::TestFinished()
 {
 	bool result=threadmutex.AttemptMutex();
 	if(result)
+	{
+		if(state!=THREAD_IDLE)
+		{
+			void *discarded;
+			pthread_join(thread,&discarded);
+			state=THREAD_IDLE;
+		}
 		threadmutex.ReleaseMutex();
+	}
 	return(result);
 }
 
