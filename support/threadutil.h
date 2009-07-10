@@ -2,6 +2,7 @@
 #define THREADUTIL_H
 
 #include <iostream>
+#include <cstring>
 
 #include "thread.h"
 
@@ -19,20 +20,25 @@
 class Thread_SystemCommand : public ThreadFunction, public Thread
 {
 	public:
-	Thread_SystemCommand(const char *cmd) : ThreadFunction(), Thread(this), cmd(cmd)
+	Thread_SystemCommand(const char *cmd) : ThreadFunction(), Thread(this), command(NULL)
 	{
+		command=strdup(cmd);
 		Start();
 		WaitSync();
 	}
 	virtual ~Thread_SystemCommand()
 	{
+		std::cerr << "Freeing command" << std::endl;
+		if(command)
+			free(command);
+		std::cerr << "Done" << std::endl;
 	}
 	virtual int Entry(Thread &t)
 	{
 		SendSync();
 		try
 		{
-			if(system(cmd))
+			if(system(command))
 				throw "Command failed";
 		}
 		catch(const char *err)
@@ -43,7 +49,7 @@ class Thread_SystemCommand : public ThreadFunction, public Thread
 		return(returncode);
 	}
 	protected:
-	const char *cmd;
+	char *command;
 };
 
 

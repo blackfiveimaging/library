@@ -13,7 +13,7 @@
 #define IMAGESOURCE_JPEG_H
 
 #include "imagesource.h"
-#include <stdio.h>
+#include <cstdio>
 
 using namespace std;
 
@@ -21,9 +21,11 @@ class ImageSource_JPEG : public ImageSource
 {
 	public:
 	ImageSource_JPEG(const char *filename);
+	ImageSource_JPEG(FILE *file);	// Use this variant if you want to provide an open file handle
 	~ImageSource_JPEG();
 	ISDataType *GetRow(int row);
 	private:
+	void Init();
 	FILE *file;
 	struct jpeg_decompress_struct *cinfo;
 	unsigned char *tmprow;

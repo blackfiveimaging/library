@@ -40,7 +40,7 @@ bin_PROGRAMS = profileuitest$(EXEEXT) mkrgbprofile$(EXEEXT) \
 	composite$(EXEEXT) imgsrctest$(EXEEXT) jpegcheck$(EXEEXT) \
 	pvtest$(EXEEXT) threadtest$(EXEEXT) gprintertest$(EXEEXT) \
 	printqueuetest$(EXEEXT) stpuitest$(EXEEXT) \
-	mkthumbnail$(EXEEXT)
+	mkthumbnail$(EXEEXT) jpegscan$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -110,6 +110,21 @@ am_jpegcheck_OBJECTS = jpegcheck.$(OBJEXT)
 jpegcheck_OBJECTS = $(am_jpegcheck_OBJECTS)
 jpegcheck_LDADD = $(LDADD)
 jpegcheck_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
+	miscwidgets/libmiscwidgets.la support/libsupport.la \
+	imagesource/libimagesource.la support/libsupport.la \
+	profilemanager/libprofilemanager.la \
+	stpui_widgets/libstpui_widgets.la \
+	stp_support/libstp_support.la \
+	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_jpegscan_OBJECTS = jpegscan.$(OBJEXT)
+jpegscan_OBJECTS = $(am_jpegscan_OBJECTS)
+jpegscan_LDADD = $(LDADD)
+jpegscan_DEPENDENCIES = imageutils/libimageutils.la \
 	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
@@ -269,13 +284,13 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(composite_SOURCES) $(gprintertest_SOURCES) \
-	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) \
+	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
 	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
 DIST_SOURCES = $(composite_SOURCES) $(gprintertest_SOURCES) \
-	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) \
+	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
@@ -463,6 +478,7 @@ pvtest_SOURCES = pvtest.cpp
 threadtest_SOURCES = threadtest.cpp
 printqueuetest_SOURCES = printqueuetest.cpp
 stpuitest_SOURCES = stpuitest.cpp
+jpegscan_SOURCES = jpegscan.cpp
 LDADD = \
 	imageutils/libimageutils.la	\
 	gp_cppsupport/libgp_cppsupport.la \
@@ -573,6 +589,9 @@ imgsrctest$(EXEEXT): $(imgsrctest_OBJECTS) $(imgsrctest_DEPENDENCIES)
 jpegcheck$(EXEEXT): $(jpegcheck_OBJECTS) $(jpegcheck_DEPENDENCIES) 
 	@rm -f jpegcheck$(EXEEXT)
 	$(CXXLINK) $(jpegcheck_OBJECTS) $(jpegcheck_LDADD) $(LIBS)
+jpegscan$(EXEEXT): $(jpegscan_OBJECTS) $(jpegscan_DEPENDENCIES) 
+	@rm -f jpegscan$(EXEEXT)
+	$(CXXLINK) $(jpegscan_OBJECTS) $(jpegscan_LDADD) $(LIBS)
 mkgreyprofile$(EXEEXT): $(mkgreyprofile_OBJECTS) $(mkgreyprofile_DEPENDENCIES) 
 	@rm -f mkgreyprofile$(EXEEXT)
 	$(CXXLINK) $(mkgreyprofile_OBJECTS) $(mkgreyprofile_LDADD) $(LIBS)
@@ -611,6 +630,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gprintertest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imgsrctest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpegcheck.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpegscan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkgreyprofile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mklabprofile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkrgbprofile.Po@am__quote@

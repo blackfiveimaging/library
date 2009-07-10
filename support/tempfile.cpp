@@ -24,9 +24,17 @@ TempFile::TempFile(TempFileTracker *header,const char *pfix,const char *skey)
 	: filename(NULL), prefix(NULL), searchkey(NULL), header(header), nexttempfile(NULL), prevtempfile(NULL)
 {
 	header->mutex.ObtainMutex();
-	if((nexttempfile=header->firsttempfile))
-		nexttempfile->prevtempfile=this;
-	header->firsttempfile=this;
+	if((prevtempfile=header->firsttempfile))
+	{
+		while(prevtempfile->nexttempfile)
+			prevtempfile=prevtempfile->nexttempfile;
+		prevtempfile->nexttempfile=this;
+	}
+	else
+		header->firsttempfile=this;
+//	if((nexttempfile=header->firsttempfile))
+//		nexttempfile->prevtempfile=this;
+//	header->firsttempfile=this;
 
 	if(skey)
 		searchkey=strdup(skey);
@@ -38,11 +46,11 @@ TempFile::TempFile(TempFileTracker *header,const char *pfix,const char *skey)
 
 TempFile::~TempFile()
 {
-	cerr << "In TempFile destructor" << endl;
+//	cerr << "In TempFile destructor" << endl;
 	header->mutex.ObtainMutex();
 	if(filename)
 	{
-		cerr << "Removing " << filename << endl;
+//		cerr << "Removing " << filename << endl;
 		remove(filename);
 		free(filename);
 	}

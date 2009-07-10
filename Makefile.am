@@ -13,7 +13,7 @@ bin_PROGRAMS = profileuitest mkrgbprofile mklabprofile mkgreyprofile \
 				composite imgsrctest \
 				jpegcheck pvtest threadtest \
 				gprintertest \
-				printqueuetest stpuitest mkthumbnail
+				printqueuetest stpuitest mkthumbnail jpegscan
 
 gprintertest_SOURCES = gprintertest.cpp
 profileuitest_SOURCES = profileuitest.cpp
@@ -28,6 +28,7 @@ pvtest_SOURCES = pvtest.cpp
 threadtest_SOURCES = threadtest.cpp
 printqueuetest_SOURCES = printqueuetest.cpp
 stpuitest_SOURCES = stpuitest.cpp
+jpegscan_SOURCES = jpegscan.cpp
 
 LDADD = \
 	imageutils/libimageutils.la	\

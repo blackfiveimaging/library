@@ -197,6 +197,7 @@ int ThreadEvent::Query()
 	if(sub)
 	{
 		result=sub->GetCount();
+		cerr << "Subscriber count is " << result << endl;
 		sub->Clear();
 	}
 	mutex.ReleaseMutex();

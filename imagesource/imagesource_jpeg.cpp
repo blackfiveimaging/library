@@ -38,6 +38,7 @@ struct ImageSource_JPEG_ErrManager
 {
 	struct jpeg_error_mgr std;
 	FILE *File;
+	bool FileOwned;
 };
 
 static void isjpeg_error_exit (j_common_ptr cinfo)
@@ -48,7 +49,8 @@ static void isjpeg_error_exit (j_common_ptr cinfo)
 	cinfo->err->format_message(cinfo,buffer);
 	cerr << buffer << endl;
 	jpeg_destroy_compress((jpeg_compress_struct *)cinfo);
-	fclose(myerr->File);
+	if(myerr->FileOwned)
+		fclose(myerr->File);
 	throw "Error reading JPEG file";
 }
 
@@ -56,18 +58,34 @@ static void isjpeg_error_exit (j_common_ptr cinfo)
 ImageSource_JPEG::ImageSource_JPEG(const char *filename)
 	: ImageSource(), cinfo(NULL), tmprow(NULL), err(NULL), iccprofbuffer(NULL), started(false)
 {
+	err=new ImageSource_JPEG_ErrManager;
+	if ((err->File = fopen(filename,"rb")) == NULL)
+    	throw "Unable to open file";
+	err->FileOwned=true;
+	Init();
+}
+
+
+ImageSource_JPEG::ImageSource_JPEG(FILE *file)
+	: ImageSource(), cinfo(NULL), tmprow(NULL), err(NULL), iccprofbuffer(NULL), started(false)
+{
+	err=new ImageSource_JPEG_ErrManager;
+	err->File = file;
+	err->FileOwned=false;
+	Init();
+}
+
+
+void ImageSource_JPEG::Init()
+{
 	cinfo=new jpeg_decompress_struct;
 
 	/* Initialize the JPEG compression object with default error handling. */
 	memset(cinfo,0,sizeof(jpeg_decompress_struct));
 	memset(cinfo,0,sizeof(ImageSource_JPEG_ErrManager));
 
-	err=new ImageSource_JPEG_ErrManager;
 	cinfo->err = jpeg_std_error(&err->std);
 	err->std.error_exit = isjpeg_error_exit;
-
-	if ((err->File = fopen(filename,"rb")) == NULL)
-    	throw "Unable to open file";
 
 	jpeg_create_decompress(cinfo);
 	jpeg_stdio_src(cinfo, err->File);
@@ -200,7 +218,7 @@ ImageSource_JPEG::~ImageSource_JPEG()
 
 	if(err)
 	{
-		if(err->File)
+		if(err->File && err->FileOwned)
 			fclose(err->File);
 		delete err;
 	}

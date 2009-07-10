@@ -278,8 +278,6 @@ static void selection_changed(GtkTreeSelection *select,gpointer user_data)
 		GdkPixbuf *pb;
 
 		gtk_tree_model_get (model, &iter, 0, &pb, -1);
-		if(pb)
-			cerr << "User data received" << endl;
 		ImageEntry *ii=find_pixbuf(pe,pb);
 		if(ii)
 		{
@@ -497,6 +495,14 @@ gboolean imageselector_refresh(ImageSelector *c)
 const char *imageselector_get_filename(ImageSelector *c)
 {
 	return(c->filename);
+}
+
+
+void imageselector_add_filename(ImageSelector *c,const char *filename)
+{
+	ImageEntry *ii=find_filename(c,filename);
+	if(!ii)
+		ii=add_node(c,filename);
 }
 
 
