@@ -558,6 +558,7 @@ static void endjob(struct pqinfo *pq)
 		fprintf(stderr,"In endjob()\n");
 		if(pq->priv->cancelled)
 		{
+			fprintf(stderr,"Job cancelled - sending term signal");
 			kill(pq->priv->childpid,SIGTERM);
 		}
 		close(pq->priv->pipefd[0]);

@@ -173,19 +173,24 @@ ThreadCondition &ThreadEvent::WaitAndHold()
 
 void ThreadEvent::Trigger()
 {
+	cerr << "Triggering event..." << endl;
 	mutex.ObtainMutex();
-
+	cerr << "Got event mutex" << endl;
 	ThreadEvent_Subscriber *sub=firstsubscriber;
 	while(sub)
 	{
+		cerr << "Incrementing subscriber trigger count" << endl;
 		sub->Increment();
 		sub=sub->NextSubscriber();
 	}
-	mutex.ReleaseMutex();
 
 	cond.ObtainMutex();
+	cerr << "Obtained trigger Mutex" << endl;
 	cond.Broadcast();
+	cerr << "Sent signal - releasing" << endl;
 	cond.ReleaseMutex();
+	mutex.ReleaseMutex();
+	cerr << "Released event Mutex" << endl;
 }
 
 
@@ -207,26 +212,76 @@ int ThreadEvent::Query()
 
 int ThreadEvent::QueryAndWait()
 {
-	int result=Query();
-	if(!result)
+	int result=0;
+
+	// Must keep mutex held between query and wait.
+
+	mutex.ObtainMutex();
+
+	// Do we have a subscriber for this thread?
+	ThreadEvent_Subscriber *sub=FindSubscriber();
+	if(sub)
 	{
-		Wait();
-		++result;
+		result=sub->GetCount();
+		cerr << "QueryAndWait: Subscriber count is " << result << endl;
+		sub->Clear();
 	}
-	return(result);
+
+	// If the subscriber's event count is non-zery we release the mutex and return the count
+	if(result)
+	{
+		mutex.ReleaseMutex();
+		return(result);
+	}
+
+	// If there is no subscriber, or if it received no events, we wait.
+	cond.ObtainMutex();
+	mutex.ReleaseMutex();
+	cond.Wait();
+	cond.ReleaseMutex();
+
+	// The event which woke us up should have incremented the subscriber's count, so clear it.
+	if((sub=FindSubscriber()))
+		sub->Clear();
+
+	return(1);
 }
 
 
 ThreadCondition &ThreadEvent::QueryWaitAndHold()
 {
-	int result=Query();
+	// Must keep mutex held between query and wait.
+	int result;
+	mutex.ObtainMutex();
+
+	cond.ObtainMutex();
+
+	// Do we have a subscriber for this thread?
+	ThreadEvent_Subscriber *sub=FindSubscriber();
+	if(sub)
+	{
+		result=sub->GetCount();
+		cerr << "QueryAndWait: Subscriber count is " << result << endl;
+		sub->Clear();
+	}
+
+	// If the subscriber's event count is non-zery we release the mutex and return the count
 	if(result)
 	{
-		cond.ObtainMutex();
+		mutex.ReleaseMutex();
 		return(cond);
 	}
-	else
-		return(WaitAndHold());
+
+	mutex.ReleaseMutex();
+
+	// If there is no subscriber, or if it received no events, we wait.
+	cond.Wait();
+
+	// The event which woke us up should have incremented the subscriber's count, so clear it.
+	if((sub=FindSubscriber()))
+		sub->Clear();
+
+	return(cond);
 }
 
 
