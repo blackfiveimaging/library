@@ -38,6 +38,7 @@ static guint simplecombo_signals[LAST_SIGNAL] = { 0 };
 
 static void simplecombo_class_init (SimpleComboClass *klass);
 static void simplecombo_init (SimpleCombo *stpuicombo);
+static void simplecombo_destroy(GtkObject *object);
 
 
 static void simplecombo_build_options(SimpleCombo *c)
@@ -46,17 +47,13 @@ static void simplecombo_build_options(SimpleCombo *c)
 		gtk_option_menu_remove_menu(GTK_OPTION_MENU(c->optionmenu));
 	c->menu=gtk_menu_new();
 
-	int i=0;
-	while(c->opts[i].option)
+	SimpleComboOption *o=c->opts->FirstOption();
+	while(o)
 	{
-		const char *name=gettext(c->opts[i].displayname);
-		if(name)
-		{
-			GtkWidget *menu_item = gtk_menu_item_new_with_label (name);
-			gtk_menu_shell_append (GTK_MENU_SHELL (c->menu), menu_item);
-			gtk_widget_show (menu_item);
-		}
-		++i;
+		GtkWidget *menu_item = gtk_menu_item_new_with_label (o->displayname);
+		gtk_menu_shell_append (GTK_MENU_SHELL (c->menu), menu_item);
+		gtk_widget_show (menu_item);
+		o=o->NextOption();
 	}
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(c->optionmenu),c->menu);
 }
@@ -71,16 +68,28 @@ static void	simplecombo_entry_changed(GtkEntry *entry,gpointer user_data)
 		return;
 
 	c->previdx=index;
-	
+
+	SimpleComboOption *o=(*c->opts)[index];
+	if(o && o->tooltip && (strlen(o->tooltip)>0))
+	{
+		gtk_tooltips_set_tip(c->tips,c->optionmenu,o->tooltip,o->tooltip);
+		gtk_tooltips_enable(c->tips);
+	}
+	else
+	{
+		gtk_tooltips_set_tip(c->tips,c->optionmenu,"","");
+		gtk_tooltips_disable(c->tips);
+	}
+
 	g_signal_emit(G_OBJECT (c),simplecombo_signals[CHANGED_SIGNAL], 0);
 }
 
 
-GtkWidget *simplecombo_new (SimpleComboOption *opts)
+GtkWidget *simplecombo_new (SimpleComboOptions &opts)
 {
 	SimpleCombo *c=SIMPLECOMBO(g_object_new (simplecombo_get_type (), NULL));
 
-	c->opts=opts;
+	c->opts=new SimpleComboOptions(opts);
 	c->tips=gtk_tooltips_new();
 	c->optionmenu=gtk_option_menu_new();
 	c->menu=NULL;  // Built on demand...
@@ -122,11 +131,19 @@ simplecombo_get_type (void)
 
 
 static void
-simplecombo_class_init (SimpleComboClass *klass)
+simplecombo_class_init (SimpleComboClass *cl)
 {
+	GtkObjectClass *object_class;
+	GtkWidgetClass *widget_class;
+	
+	object_class = (GtkObjectClass*) cl;
+	widget_class = (GtkWidgetClass*) cl;
+	
+	object_class->destroy = simplecombo_destroy;	
+
 	simplecombo_signals[CHANGED_SIGNAL] =
 	g_signal_new ("changed",
-		G_TYPE_FROM_CLASS (klass),
+		G_TYPE_FROM_CLASS (cl),
 		GSignalFlags(G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION),
 		G_STRUCT_OFFSET (SimpleComboClass, changed),
 		NULL, NULL,
@@ -134,9 +151,27 @@ simplecombo_class_init (SimpleComboClass *klass)
 }
 
 
+static void *parent_class=NULL;
+
+static void simplecombo_destroy(GtkObject *object)
+{
+	if(object && IS_SIMPLECOMBO(object))
+	{
+		if (GTK_OBJECT_CLASS (parent_class)->destroy)
+			(* GTK_OBJECT_CLASS (parent_class)->destroy) (object);
+	// FIXME - cleanup?  Memory leak here?
+		SimpleCombo *c=SIMPLECOMBO(object);
+		if(c->opts)
+			delete c->opts;
+		c->opts=NULL;
+	}
+}
+
+
 static void
 simplecombo_init (SimpleCombo *c)
 {
+	parent_class = gtk_type_class (gtk_widget_get_type ());
 	c->optionmenu=NULL;
 	c->menu=NULL;
 	c->previdx=-1;
@@ -146,32 +181,148 @@ simplecombo_init (SimpleCombo *c)
 const char *simplecombo_get(SimpleCombo *c)
 {
 	gint index=gtk_option_menu_get_history(GTK_OPTION_MENU(c->optionmenu));
-	int i=0;
-	while(i<index)
-	{
-		if(!c->opts[i].option)
-			return(NULL);
-		++i;
-	}
-	return(c->opts[index].option);
+	SimpleComboOption *o=(*c->opts)[index];
+	if(o)
+		return(o->key);
+	else
+		return(NULL);
 }
 
 
-bool simplecombo_set(SimpleCombo *c,const char *value)
+bool simplecombo_set(SimpleCombo *c,const char *key)
 {
 	int i=0;
-	if(value)
+	if(key)
 	{
-		while(c->opts[i].option)
+		SimpleComboOption *o=c->opts->FirstOption();
+		while(o)
 		{
-			if(strcmp(value,c->opts[i].option)==0)
+			if(strcmp(key,o->key)==0)
 			{
 				gtk_option_menu_set_history(GTK_OPTION_MENU(c->optionmenu),i);
 				return(true);
 			}	
 			++i;
+			o=o->NextOption();
 		}
 	}
 	return(false);
+}
+
+
+//  Class definitions for SimpleComboOpt(s)
+
+
+SimpleComboOption::SimpleComboOption(SimpleComboOptions &header,const char *key,const char *displayname,const char *tooltip)
+	:	key(NULL),displayname(NULL),tooltip(NULL),header(header),prevopt(NULL),nextopt(NULL)
+{
+	if((prevopt=header.firstopt))
+	{
+		while(prevopt->nextopt)
+			prevopt=prevopt->nextopt;
+		prevopt->nextopt=this;
+	}
+	else
+		header.firstopt=this;
+
+	this->key=strdup(key);
+	this->displayname=strdup(displayname);
+	if(tooltip)
+		this->tooltip=strdup(tooltip);
+}
+
+
+SimpleComboOption::SimpleComboOption(SimpleComboOptions &header,SimpleComboOption &other)
+	: key(NULL),displayname(NULL),tooltip(NULL),header(header),prevopt(NULL),nextopt(NULL)
+{
+	if((prevopt=header.firstopt))
+	{
+		while(prevopt->nextopt)
+			prevopt=prevopt->nextopt;
+		prevopt->nextopt=this;
+	}
+	else
+		header.firstopt=this;
+
+	key=strdup(other.key);
+	displayname=strdup(other.displayname);
+	if(other.tooltip)
+		tooltip=strdup(other.tooltip);
+}
+
+
+SimpleComboOption::~SimpleComboOption()
+{
+	if(prevopt)
+		prevopt->nextopt=nextopt;
+	else
+		header.firstopt=nextopt;
+	if(nextopt)
+		nextopt->prevopt=prevopt;
+
+	if(tooltip)
+		free(tooltip);
+	if(displayname)
+		free(displayname);
+	if(key)
+		free(key);
+}
+
+
+SimpleComboOption *SimpleComboOption::NextOption()
+{
+	return(nextopt);
+}
+
+
+SimpleComboOption *SimpleComboOption::PrevOption()
+{
+	return(prevopt);
+}
+
+
+
+
+SimpleComboOptions::SimpleComboOptions() : firstopt(NULL)
+{
+}
+
+SimpleComboOptions::SimpleComboOptions(SimpleComboOptions &other) : firstopt(NULL)
+{
+	SimpleComboOption *opt=other.FirstOption();
+	while(opt)
+	{
+		new SimpleComboOption(*this,*opt);
+		opt=opt->NextOption();
+	}
+}
+
+SimpleComboOptions::~SimpleComboOptions()
+{
+	while(firstopt)
+		delete firstopt;
+}
+
+SimpleComboOption *SimpleComboOptions::Add(const char *key,const char *displayname,const char *tooltip)
+{
+	return(new SimpleComboOption(*this,key,displayname,tooltip));
+}
+
+SimpleComboOption *SimpleComboOptions::FirstOption()
+{
+	return(firstopt);
+}
+
+SimpleComboOption *SimpleComboOptions::operator[](int idx)
+{
+	SimpleComboOption *opt=FirstOption();
+	while(opt)
+	{
+		if(idx==0)
+			return(opt);
+		opt=opt->NextOption();
+		--idx;
+	}
+	return(opt);
 }
 

@@ -39,7 +39,7 @@ bin_PROGRAMS = profileuitest$(EXEEXT) mkrgbprofile$(EXEEXT) \
 	mklabprofile$(EXEEXT) mkgreyprofile$(EXEEXT) \
 	composite$(EXEEXT) imgsrctest$(EXEEXT) jpegcheck$(EXEEXT) \
 	pvtest$(EXEEXT) threadtest$(EXEEXT) gprintertest$(EXEEXT) \
-	printqueuetest$(EXEEXT) stpuitest$(EXEEXT) \
+	combotest$(EXEEXT) printqueuetest$(EXEEXT) stpuitest$(EXEEXT) \
 	mkthumbnail$(EXEEXT) jpegscan$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
@@ -60,10 +60,25 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+am_combotest_OBJECTS = combotest.$(OBJEXT)
+combotest_OBJECTS = $(am_combotest_OBJECTS)
+combotest_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+combotest_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
+	miscwidgets/libmiscwidgets.la support/libsupport.la \
+	imagesource/libimagesource.la support/libsupport.la \
+	profilemanager/libprofilemanager.la \
+	stpui_widgets/libstpui_widgets.la \
+	stp_support/libstp_support.la \
+	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_composite_OBJECTS = composite.$(OBJEXT)
 composite_OBJECTS = $(am_composite_OBJECTS)
 composite_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
 composite_DEPENDENCIES = imageutils/libimageutils.la \
 	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
@@ -283,14 +298,16 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(composite_SOURCES) $(gprintertest_SOURCES) \
-	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
+SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
+	$(gprintertest_SOURCES) $(imgsrctest_SOURCES) \
+	$(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
 	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
-DIST_SOURCES = $(composite_SOURCES) $(gprintertest_SOURCES) \
-	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
+DIST_SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
+	$(gprintertest_SOURCES) $(imgsrctest_SOURCES) \
+	$(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
@@ -466,6 +483,7 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
 gprintertest_SOURCES = gprintertest.cpp
+combotest_SOURCES = combotest.cpp
 profileuitest_SOURCES = profileuitest.cpp
 mkthumbnail_SOURCES = mkthumbnail.cpp
 mkrgbprofile_SOURCES = mkrgbprofile.cpp
@@ -577,6 +595,9 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+combotest$(EXEEXT): $(combotest_OBJECTS) $(combotest_DEPENDENCIES) 
+	@rm -f combotest$(EXEEXT)
+	$(CXXLINK) $(combotest_OBJECTS) $(combotest_LDADD) $(LIBS)
 composite$(EXEEXT): $(composite_OBJECTS) $(composite_DEPENDENCIES) 
 	@rm -f composite$(EXEEXT)
 	$(CXXLINK) $(composite_OBJECTS) $(composite_LDADD) $(LIBS)
@@ -626,6 +647,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/combotest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/composite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gprintertest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imgsrctest.Po@am__quote@

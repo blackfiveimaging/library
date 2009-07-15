@@ -430,12 +430,16 @@ static void *parent_class=NULL;
 
 static void pixbufview_destroy(GtkObject *object)
 {
-	if (GTK_OBJECT_CLASS (parent_class)->destroy)
-		(* GTK_OBJECT_CLASS (parent_class)->destroy) (object);
-// FIXME - cleanup?  Memory leak here?
-//	PixbufView *pv=(PixbufView *)object;
-//	if(pv->pb)
-//		g_object_unref(G_OBJECT(pv->pb));
+	if(object && IS_PIXBUFVIEW(object))
+	{
+		if (GTK_OBJECT_CLASS (parent_class)->destroy)
+			(* GTK_OBJECT_CLASS (parent_class)->destroy) (object);
+	// FIXME - cleanup?  Memory leak here?
+		PixbufView *pv=(PixbufView *)object;
+		if(pv->pb)
+			g_object_unref(G_OBJECT(pv->pb));
+		pv->pb=NULL;
+	}
 }
 
 

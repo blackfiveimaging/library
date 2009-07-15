@@ -247,8 +247,10 @@ int main(int argc,char**argv)
 			hist=new ISHistogram();
 			is=new ImageSource_Histogram(is,*hist);
 			GdkPixbuf *pb=pixbuf_from_imagesource(is);
+			delete is;
+
 			pixbufview_set_pixbuf(PIXBUFVIEW(pview),pb);
-//			g_object_unref(G_OBJECT(pview));
+			g_object_unref(G_OBJECT(pb));
 		}
 
 		// Histogram view widget

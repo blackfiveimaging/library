@@ -19,14 +19,56 @@ G_BEGIN_DECLS
 typedef struct _SimpleCombo SimpleCombo;
 typedef struct _SimpleComboClass SimpleComboClass;
 
+
+// Define your options like so:
+// SimpleComboOptions opts;
+// opts.Add("Key1 ",_("Displayed text 1"),_("Optional tooltip"));
+// opts.Add("Key2 ",_("Displayed text 2"),_("Optional tooltip"));
+//
+// The options list will be copied, so can be safely constructed in local storage.
+
+
+class SimpleComboOption;
+class SimpleComboOptions
+{
+	public:
+	SimpleComboOptions();
+	SimpleComboOptions(SimpleComboOptions &other);
+	~SimpleComboOptions();
+	SimpleComboOption *Add(const char *key,const char *displayname,const char *tooltip=NULL);
+	SimpleComboOption *FirstOption();
+	SimpleComboOption *operator[](int idx);
+	protected:
+	SimpleComboOption *firstopt;
+	friend class SimpleComboOption;
+};
+
+
+class SimpleComboOption
+{
+	public:
+	SimpleComboOption(SimpleComboOptions &header,const char *key,const char *displayname,const char *tooltip=NULL);
+	SimpleComboOption(SimpleComboOptions &header,SimpleComboOption &other);
+	~SimpleComboOption();
+	SimpleComboOption *NextOption();
+	SimpleComboOption *PrevOption();
+	char *key;
+	char *displayname;
+	char *tooltip;
+	protected:
+	SimpleComboOptions &header;
+	SimpleComboOption *prevopt,*nextopt;
+};
+
+
 // When declaring your array of SimpleComboOptions, you should mark the displayname members
 // with N_() - the widget will call gettext() to translate them when building the combo.
 
-struct SimpleComboOption
-{
-	const char *option;
-	const char *displayname;
-};
+//struct SimpleComboOption
+//{
+//	const char *option;
+//	const char *displayname;
+//};
 
 
 struct _SimpleCombo
@@ -35,7 +77,7 @@ struct _SimpleCombo
 	GtkWidget *optionmenu;
 	GtkWidget *menu;
 	GtkTooltips *tips;
-	struct SimpleComboOption *opts;
+	SimpleComboOptions *opts;
 	int previdx;
 };
 
@@ -48,9 +90,9 @@ struct _SimpleComboClass
 };
 
 GType simplecombo_get_type (void);
-GtkWidget* simplecombo_new (SimpleComboOption *opts);  // Null-terminated array.  Must last the lifetime of the widget
+GtkWidget* simplecombo_new (SimpleComboOptions &opts);
 const char *simplecombo_get(SimpleCombo *c);
-bool simplecombo_set(SimpleCombo *c,const char *cond);
+bool simplecombo_set(SimpleCombo *c,const char *key);
 G_END_DECLS
 
 #endif /* __SIMPLECOMBO_H__ */
