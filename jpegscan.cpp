@@ -64,6 +64,7 @@ int main(int argc,char**argv)
 							{
 								GdkPixbuf *pb=pixbuf_from_imagesource(is);
 								pixbufview_set_pixbuf(PIXBUFVIEW(pview),pb);
+								g_object_unref(G_OBJECT(pb));
 							}
 							catch(const char *err)
 							{

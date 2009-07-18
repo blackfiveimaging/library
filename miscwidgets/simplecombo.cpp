@@ -77,7 +77,7 @@ static void	simplecombo_entry_changed(GtkEntry *entry,gpointer user_data)
 	}
 	else
 	{
-		gtk_tooltips_set_tip(c->tips,c->optionmenu,"","");
+//		gtk_tooltips_set_tip(c->tips,c->optionmenu,"","");
 		gtk_tooltips_disable(c->tips);
 	}
 
