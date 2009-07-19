@@ -189,6 +189,12 @@ const char *simplecombo_get(SimpleCombo *c)
 }
 
 
+int simplecombo_get_index(SimpleCombo *c)
+{
+	return(gtk_option_menu_get_history(GTK_OPTION_MENU(c->optionmenu)));
+}
+
+
 bool simplecombo_set(SimpleCombo *c,const char *key)
 {
 	int i=0;
@@ -207,6 +213,12 @@ bool simplecombo_set(SimpleCombo *c,const char *key)
 		}
 	}
 	return(false);
+}
+
+
+void simplecombo_set_index(SimpleCombo *c,int index)
+{
+	gtk_option_menu_set_history(GTK_OPTION_MENU(c->optionmenu),index);
 }
 
 
