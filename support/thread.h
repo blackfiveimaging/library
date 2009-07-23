@@ -65,12 +65,12 @@ class Thread
 	~Thread();
 	void Stop();
 	void Start();
-	void WaitSync();
+	void WaitSync();	// Safe to use bi-directionally.
 	int WaitFinished();
 	int GetReturnCode();
 	bool TestFinished();
 	// Methods to be used from within threads
-	void SendSync();
+	void SendSync();	// Safe to use bi-directionally.
 	bool TestBreak();
 	// Static function - can be called anywhere
 	static ThreadID GetThreadID();
@@ -78,14 +78,14 @@ class Thread
 	static void *LaunchStub(void *ud);
 	ThreadFunction *threadfunc;
 	pthread_t thread;
-	ThreadSync cond;
+	ThreadSync cond1;	// We use one cond for main thread -> subthread signalling...
+	ThreadSync cond2;	// ...and another for subthread -> main thread signalling.
 	pthread_attr_t attr;
 	// This mutex is held all the time the thread's running.
 	PTMutex threadmutex;
-	bool synced;
 	int returncode;
 	enum ThreadState state;
-	int error;
+	ThreadID owner;
 };
 
 

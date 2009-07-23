@@ -229,7 +229,7 @@ int ThreadEvent::QueryAndWait()
 		sub->Clear();
 	}
 
-	// If the subscriber's event count is non-zery we release the mutex and return the count
+	// If the subscriber's event count is non-zero we release the mutex and return the count
 	if(result)
 	{
 		mutex.ReleaseMutex();

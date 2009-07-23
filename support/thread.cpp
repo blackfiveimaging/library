@@ -14,10 +14,10 @@ using namespace std;
 bool Thread::TestBreak()
 {
 	bool result=false;
-	cond.ObtainMutex();
+	cond1.ObtainMutex();
 	if(state==THREAD_CANCELLED)
 		result=true;
-	cond.ReleaseMutex();
+	cond1.ReleaseMutex();
 	return(result);
 }
 
@@ -26,14 +26,14 @@ void *Thread::LaunchStub(void *ud)
 {
 	Thread *t=(Thread *)ud;
 	t->threadmutex.ObtainMutex();
-	t->cond.ObtainMutex();
+	t->cond1.ObtainMutex();
 	t->state=THREAD_RUNNING;
-	t->cond.ReleaseMutex();
+	t->cond1.ReleaseMutex();
 	if(t->threadfunc)
 		t->returncode=t->threadfunc->Entry(*t);
-	t->cond.ObtainMutex();
+	t->cond1.ObtainMutex();
 	t->state=THREAD_FINISHED;
-	t->cond.ReleaseMutex();
+	t->cond1.ReleaseMutex();
 	t->threadmutex.ReleaseMutex();
 	return(NULL);
 }
@@ -49,9 +49,9 @@ void Thread::Start()
 
 void Thread::Stop()
 {
-	cond.ObtainMutex();
+	cond1.ObtainMutex();
 	state=THREAD_CANCELLED;
-	cond.ReleaseMutex();
+	cond1.ReleaseMutex();
 //	pthread_join(thread,&discarded);
 //	state=THREAD_IDLE;
 }
@@ -59,13 +59,19 @@ void Thread::Stop()
 
 void Thread::SendSync()
 {
-	cond.Broadcast();
+	if(GetThreadID()==owner)
+		cond2.Broadcast();
+	else
+		cond1.Broadcast();
 }
 
 
 void Thread::WaitSync()
 {
-	cond.Wait();
+	if(GetThreadID()==owner)
+		cond1.Wait();
+	else
+		cond2.Wait();
 }
 
 
@@ -118,9 +124,10 @@ ThreadID Thread::GetThreadID()
 }
 
 Thread::Thread(ThreadFunction *threadfunc)
-	: threadfunc(threadfunc), synced(false)
+	: threadfunc(threadfunc)
 {
 	pthread_attr_init(&attr);
+	owner=GetThreadID();
 }
 
 
