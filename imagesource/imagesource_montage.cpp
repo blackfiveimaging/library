@@ -71,7 +71,19 @@ ISMontage_Component::ISMontage_Component(ImageSource_Montage *header,ImageSource
 	if((next=header->first))
 		next->prev=this;
 	header->first=this;
-	
+
+	if(xpos<0)
+	{
+		cerr << "ISMontage - Warning: xpos < 0 - clamping." << endl;
+		xpos=0;
+	}
+
+	if(ypos<0)
+	{
+		cerr << "ISMontage - Warning: ypos < 0 - clamping." << endl;
+		ypos=0;
+	}
+
 	if(header->height<(ypos+source->height))
 		header->height=ypos+source->height;
 

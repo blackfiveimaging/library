@@ -85,7 +85,7 @@ class Thread
 	PTMutex threadmutex;
 	int returncode;
 	enum ThreadState state;
-	ThreadID owner;
+	ThreadID subthreadid;
 };
 
 

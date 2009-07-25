@@ -38,7 +38,7 @@ ISDataType *ImageSource_GdkPixbuf::GetRow(int row)
 
 	if(row>=height)
 	{
-		cerr << "ImageSource_GdkPixbuf - Warning: row " << row+1 << "of " << height << "requested." << endl;
+		cerr << "ImageSource_GdkPixbuf - Warning: row " << row+1 << " of " << height << " requested." << endl;
 		return(rowbuffer);
 	}
 

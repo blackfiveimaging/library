@@ -219,7 +219,22 @@ int main(int argc,char**argv)
 
 	try
 	{
+
+		gtk_rc_parse_string("style \"default\" {"
+"  bg[NORMAL]			= \"#4be2d2\""
+"  bg[PRELIGHT]			= \"#4be2d2\""
+"  bg[ACTIVE]				= \"#4be2d2\""
+"  bg[SELECTED]			= \"#2cace8\""
+"  bg[INSENSITIVE]		= \"#4be2d2\" }"
+"  widget \"PrintPreview.*.*\" style \"default\""
+"  widget \"PrintPreview\" style \"default\"");
+//"  class \"GtkWidget\" style \"default\"");
+
+//		gtk_rc_reset_styles(gtk_settings_get_for_screen(gdk_screen_get_default()));
+
+
 		GtkWidget *win=gtk_window_new(GTK_WINDOW_TOPLEVEL);
+		gtk_widget_set_name(GTK_WIDGET(win),"PrintPreview");
 		gtk_window_set_title (GTK_WINDOW (win), _("PixBufView Test"));
 		gtk_signal_connect (GTK_OBJECT (win), "delete_event",
 			(GtkSignalFunc) gtk_main_quit, NULL);
@@ -252,6 +267,7 @@ int main(int argc,char**argv)
 			pixbufview_set_pixbuf(PIXBUFVIEW(pview),pb);
 			g_object_unref(G_OBJECT(pb));
 		}
+
 
 		// Histogram view widget
 

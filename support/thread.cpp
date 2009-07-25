@@ -25,6 +25,7 @@ bool Thread::TestBreak()
 void *Thread::LaunchStub(void *ud)
 {
 	Thread *t=(Thread *)ud;
+	t->subthreadid=GetThreadID();
 	t->threadmutex.ObtainMutex();
 	t->cond1.ObtainMutex();
 	t->state=THREAD_RUNNING;
@@ -59,7 +60,7 @@ void Thread::Stop()
 
 void Thread::SendSync()
 {
-	if(GetThreadID()==owner)
+	if(GetThreadID()==subthreadid)
 		cond2.Broadcast();
 	else
 		cond1.Broadcast();
@@ -68,7 +69,7 @@ void Thread::SendSync()
 
 void Thread::WaitSync()
 {
-	if(GetThreadID()==owner)
+	if(GetThreadID()==subthreadid)
 		cond1.Wait();
 	else
 		cond2.Wait();
@@ -127,7 +128,6 @@ Thread::Thread(ThreadFunction *threadfunc)
 	: threadfunc(threadfunc)
 {
 	pthread_attr_init(&attr);
-	owner=GetThreadID();
 }
 
 

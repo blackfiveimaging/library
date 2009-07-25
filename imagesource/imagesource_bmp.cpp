@@ -129,6 +129,12 @@ ISDataType *ImageSource_BMP::GetRow(int row)
 	if(currentrow==row)
 		return(rowbuffer);
 
+	if(row>=height)
+	{
+		cerr << "ImageSource_BMP - Warning: row " << row+1 << " of " << height << " requested." << endl;
+		return(rowbuffer);
+	}
+
 	if(!(strip=GetStrip(realrow)))
 	{
 		while(strips)
