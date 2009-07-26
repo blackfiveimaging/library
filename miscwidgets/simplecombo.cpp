@@ -10,8 +10,8 @@
  */
 
 #include <iostream>
-
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
