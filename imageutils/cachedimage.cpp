@@ -4,12 +4,9 @@
 
 using namespace std;
 
-CachedImage_Deferred::CachedImage_Deferred(ImageSource *source) : source(source)
+CachedImage_Deferred::CachedImage_Deferred(ImageSource *source)
+	: source(source), width(source->width), height(source->height), samplesperpixel(source->samplesperpixel), type(source->type)
 {
-	width=source->width;
-	height=source->height;
-	samplesperpixel=source->samplesperpixel;
-
 	imagedata=new ISDataType[width*height*samplesperpixel];
 }
 

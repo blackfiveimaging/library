@@ -34,6 +34,79 @@ int DeviceNColorantList::GetColorantCount()
 }
 
 
+// Create a string representation of which colorants are active,
+// suitable for storing in a config file.
+
+char *DeviceNColorantList::GetEnabledColorants()
+{
+	char *result=NULL;
+	DeviceNColorant *col=FirstColorant();
+	int len=2;  // Initial ":" and null-terminator
+	while(col)
+	{
+		if(col->GetEnabled())
+		{
+			const char *name=col->GetName();
+			if(name)
+				len+=strlen(name)+2;
+		}
+		col=col->NextColorant();
+	}
+	result=(char *)malloc(len);
+	result[0]=':';
+	result[1]=0;
+	col=FirstColorant();
+	while(col)
+	{
+		if(col->GetEnabled())
+		{
+			const char *name=col->GetName();
+			if(name)
+			{
+				strcat(result,name);
+				strcat(result,":");
+			}
+		}
+		col=col->NextColorant();
+	}
+	if(!result)
+		result=strdup("");
+	return(result);
+}
+
+
+// Given a string respresention as produced by GetEnabledColorants()
+// sets the "enabled" flag in the colorants
+
+void DeviceNColorantList::SetEnabledColorants(const char *colstr)
+{
+	if(colstr && strlen(colstr))
+	{
+		DeviceNColorant *col=FirstColorant();
+		while(col)
+		{
+			col->Disable();
+			const char *name=col->GetName();
+			if(name && strlen(name))
+			{
+				const char *tmp=strstr(colstr,name);
+				while(tmp)
+				{
+					if(tmp[-1]==':' && tmp[strlen(name)]==':')
+					{
+						col->Enable();
+						tmp=NULL;
+					}
+					else
+						tmp=strstr(tmp+1,name);
+				}
+			}
+			col=col->NextColorant();
+		}
+	}
+}
+
+
 DeviceNColorant *DeviceNColorantList::FirstColorant()
 {
 	return(first);
@@ -105,8 +178,8 @@ static struct colorantdefinition colorantdefinitions[]=
 };
 
 
-DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name)
-	: red(0), green(0), blue(0), header(header), name(NULL), next(NULL), prev(NULL)
+DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name,const char *displayname)
+	: red(0), green(0), blue(0), header(header), enabled(true), name(NULL), displayname(NULL), next(NULL), prev(NULL)
 {
 	struct colorantdefinition *c=colorantdefinitions;
 	while(c->name)
@@ -115,6 +188,12 @@ DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name)
 		{
 			if(name)
 				this->name=strdup(name);
+
+			if(displayname)
+				this->displayname=strdup(displayname);
+			else
+				this->displayname=strdup(gettext(name));
+
 			red=c->red;
 			green=c->green;
 			blue=c->blue;
@@ -138,7 +217,7 @@ DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name)
 }
 
 
-DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name,int r,int g, int b)
+DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name,const char *displayname,int r,int g, int b)
 	: red(r), green(g), blue(b), header(header), name(NULL), next(NULL), prev(NULL)
 {
 	if(name)
@@ -171,6 +250,30 @@ DeviceNColorant::~DeviceNColorant()
 const char *DeviceNColorant::GetName()
 {
 	return(name);
+}
+
+
+const char *DeviceNColorant::GetDisplayName()
+{
+	return(displayname);
+}
+
+
+void DeviceNColorant::Enable()
+{
+	enabled=true;
+}
+
+
+void DeviceNColorant::Disable()
+{
+	enabled=false;
+}
+
+
+bool DeviceNColorant::GetEnabled()
+{
+	return(enabled);
 }
 
 

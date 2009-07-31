@@ -8,6 +8,9 @@ libmiscwidgets_la_SOURCES =	\
 	simplecombo.cpp	\
 	simplecombo.h	\
 	\
+	colorantselector.cpp	\
+	colorantselector.h	\
+	\
 	pixbufview.cpp \
 	pixbufview.h \
 	\
@@ -18,4 +21,6 @@ libmiscwidgets_la_SOURCES =	\
 	imageselector_noborder_image.h
 
 libmiscwidgets_la_LDFLAGS = -static
+
+EXTRA_DIST = squiggledata.cpp
 
