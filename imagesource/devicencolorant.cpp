@@ -14,6 +14,34 @@ DeviceNColorantList::DeviceNColorantList() : first(NULL)
 }
 
 
+DeviceNColorantList::DeviceNColorantList(IS_TYPE type) : first(NULL)
+{
+	switch(STRIP_ALPHA(type))
+	{
+		case IS_TYPE_GREY:
+		case IS_TYPE_BW:
+			new DeviceNColorant(*this,"Black");
+			break;			
+		case IS_TYPE_RGB:
+			new DeviceNColorant(*this,"Red");
+			new DeviceNColorant(*this,"Green");
+			new DeviceNColorant(*this,"Blue");
+			break;
+		case IS_TYPE_CMYK:
+			new DeviceNColorant(*this,"Cyan");
+			new DeviceNColorant(*this,"Magenta");
+			new DeviceNColorant(*this,"Yellow");
+			new DeviceNColorant(*this,"Black");
+			break;
+		default:
+			throw "Can't yet automatically construct a DeviceNColorantList for non-standard colourspaces";
+			break;
+	}
+	if(HAS_ALPHA(type))
+		new DeviceNColorant(*this,"Alpha");
+}
+
+
 DeviceNColorantList::~DeviceNColorantList()
 {
 	while(first)

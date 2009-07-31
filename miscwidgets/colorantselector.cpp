@@ -76,42 +76,44 @@ enum
 
 static void populate_list(ColorantSelector *es)
 {
-	GtkTreeIter iter;
-
-	GdkPixbuf *icon=NULL;
-	GdkPixdata pd;
-	GError *err;
-	if(!gdk_pixdata_deserialize(&pd,sizeof(my_pixbuf),my_pixbuf,&err))
-		throw(err->message);
-
-	if(!(icon=gdk_pixbuf_from_pixdata(&pd,false,&err)))
-		throw(err->message);
-
-	
-	DeviceNColorant *col=es->list->FirstColorant();
-	int i=0;
-	while(col)
+	if(es->list)
 	{
-		if(col->GetName())
-		{
-			// Colorize the icon here
-			ImageSource *is=new ImageSource_GdkPixbuf(icon);
-			is=new ImageSource_Greyscale(is);
-			is=new ImageSource_DeviceN_Preview(is,es->list,i);
-			GdkPixbuf *colicon=pixbuf_from_imagesource(is);
+		GtkTreeIter iter;
 
-			gtk_tree_store_append (GTK_TREE_STORE(es->treestore), &iter, NULL);
-			gtk_tree_store_set (GTK_TREE_STORE(es->treestore), &iter,
-				ACTIVE_COLUMN, col->GetEnabled(),
-				LABEL_COLUMN, strdup(col->GetName()),
-				ICON_COLUMN, colicon,
-				COLORANT_COLUMN,col,
-				-1);
-		}
-		++i;
-		col=col->NextColorant();
-    }
-	g_object_unref(icon);
+		GdkPixbuf *icon=NULL;
+		GdkPixdata pd;
+		GError *err;
+		if(!gdk_pixdata_deserialize(&pd,sizeof(my_pixbuf),my_pixbuf,&err))
+			throw(err->message);
+
+		if(!(icon=gdk_pixbuf_from_pixdata(&pd,false,&err)))
+			throw(err->message);
+
+		DeviceNColorant *col=es->list->FirstColorant();
+		int i=0;
+		while(col)
+		{
+			if(col->GetName())
+			{
+				// Colorize the icon here
+				ImageSource *is=new ImageSource_GdkPixbuf(icon);
+				is=new ImageSource_Greyscale(is);
+				is=new ImageSource_DeviceN_Preview(is,es->list,i);
+				GdkPixbuf *colicon=pixbuf_from_imagesource(is);
+
+				gtk_tree_store_append (GTK_TREE_STORE(es->treestore), &iter, NULL);
+				gtk_tree_store_set (GTK_TREE_STORE(es->treestore), &iter,
+					ACTIVE_COLUMN, col->GetEnabled(),
+					LABEL_COLUMN, strdup(col->GetName()),
+					ICON_COLUMN, colicon,
+					COLORANT_COLUMN,col,
+					-1);
+			}
+			++i;
+			col=col->NextColorant();
+	    }
+		g_object_unref(icon);
+	}
 }
 
 

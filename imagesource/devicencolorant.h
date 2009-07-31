@@ -1,11 +1,14 @@
 #ifndef DEVICENCOLORANT_H
 #define DEVICENCOLORANT_H
 
+#include "imagesource.h"
+
 class DeviceNColorant;
 class DeviceNColorantList
 {
 	public:
 	DeviceNColorantList();
+	DeviceNColorantList(IS_TYPE type);
 	virtual ~DeviceNColorantList();
 	virtual int GetColorantCount();
 	virtual int GetColorantIndex(const char *name);
