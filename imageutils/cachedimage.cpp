@@ -7,6 +7,9 @@ using namespace std;
 CachedImage_Deferred::CachedImage_Deferred(ImageSource *source)
 	: source(source), width(source->width), height(source->height), samplesperpixel(source->samplesperpixel), type(source->type)
 {
+	cerr << "In CachedImage_Deferred constructor" << endl;
+	cerr << "Image type: " << type << endl;
+	cerr << "(" << source->type << ")" << endl;
 	imagedata=new ISDataType[width*height*samplesperpixel];
 }
 
@@ -61,6 +64,9 @@ ImageSource_CachedImage::ImageSource_CachedImage(CachedImage_Deferred *img) : Im
 	width=img->width;
 	height=img->height;
 	samplesperpixel=img->samplesperpixel;
+	type=img->type;
+	cerr << "Image type: " << type << endl;
+	randomaccess=true;
 }
 
 

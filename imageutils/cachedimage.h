@@ -1,6 +1,8 @@
 #ifndef CACHEDIMAGE_H
 #define CACHEDIMAGE_H
 
+#include <iostream>
+
 #include "imagesource/imagesource.h"
 
 // CachedImage_Deferred - the base class for cached images.  Sets up the width, height, type, etc.
@@ -36,6 +38,8 @@ class CachedImage : public CachedImage_Deferred
 	public:
 	CachedImage(ImageSource *source) : CachedImage_Deferred(source)
 	{
+		std::cerr << "In CachedImage constructor" << std::endl;
+		std::cerr << "width: " << width << ", height: " << height << std::endl;
 		ReadImage();
 	}
 	~CachedImage()
