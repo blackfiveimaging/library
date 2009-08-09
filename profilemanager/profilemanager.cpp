@@ -773,7 +773,7 @@ int ProfileManager::GetIntentCount()
 const char *ProfileManager::GetIntentName(LCMSWrapper_Intent intent)
 {
 	if(intent==LCMSWRAPPER_INTENT_DEFAULT)
-		return("Default");
+		return(_("Default"));
 	else
 		return(CMS_GetIntentName(intent));
 }
@@ -781,7 +781,7 @@ const char *ProfileManager::GetIntentName(LCMSWrapper_Intent intent)
 const char *ProfileManager::GetIntentDescription(LCMSWrapper_Intent intent)
 {
 	if(intent==LCMSWRAPPER_INTENT_DEFAULT)
-		return("");
+		return(_("Default rendering intent"));
 	else
 		return(CMS_GetIntentDescription(intent));
 }

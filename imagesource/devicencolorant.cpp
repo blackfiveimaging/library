@@ -5,6 +5,8 @@
 #include "../support/util.h"
 #include "devicencolorant.h"
 
+#include "../config.h"
+#include "../gettext.h"
 
 using namespace std;
 
@@ -202,6 +204,7 @@ static struct colorantdefinition colorantdefinitions[]=
 	{"Blue",0,0,255},
 	{"Green",0,255,0},
 	{"Orange",255,128,0},
+	{"Alpha",192,192,192},
 	{NULL,0,0,0}
 };
 
