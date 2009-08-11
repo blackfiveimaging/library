@@ -43,6 +43,7 @@ struct _ImageSelectorClass
 	GtkVBoxClass parent_class;
 
 	void (*changed)(ImageSelector *combo);
+	void (*doubleclicked)(ImageSelector *combo);
 };
 
 GType imageselector_get_type (void);

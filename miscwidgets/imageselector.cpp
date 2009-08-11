@@ -41,6 +41,7 @@ using namespace std;
 
 enum {
 	CHANGED_SIGNAL,
+	DOUBLECLICKED_SIGNAL,
 	LAST_SIGNAL
 };
 
@@ -298,6 +299,14 @@ static void selection_changed(GtkTreeSelection *select,gpointer user_data)
 }
 
 
+static void row_activated(GtkTreeView *tree_view,GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
+{
+	ImageSelector *pe=IMAGESELECTOR(user_data);
+	cerr << "Got row-activated signal" << endl;
+	g_signal_emit(G_OBJECT (pe),imageselector_signals[DOUBLECLICKED_SIGNAL], 0);
+}
+
+
 static void imageselector_other(GtkTreeSelection *select,gpointer user_data)
 {
 	ImageSelector *is=IMAGESELECTOR(user_data);
@@ -381,8 +390,12 @@ imageselector_new (SearchPathHandler *sp,bool allowselection,bool allowother)
 	GtkTreeViewColumn *column;
 	
 	renderer=gtk_cell_renderer_pixbuf_new();
+	g_object_set(G_OBJECT(renderer),"xpad",4,NULL);
+	g_object_set(G_OBJECT(renderer),"ypad",4,NULL);
 	column=gtk_tree_view_column_new_with_attributes(_("Image"),renderer,"pixbuf",0,NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(c->treeview),column);
+	g_signal_connect (G_OBJECT (c->treeview), "row-activated",
+		G_CALLBACK (row_activated),c);
 
 	GtkTreeSelection *select;
 	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (c->treeview));
@@ -468,6 +481,13 @@ imageselector_class_init (ImageSelectorClass *cls)
 		G_TYPE_FROM_CLASS (cls),
 		GSignalFlags(G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION),
 		G_STRUCT_OFFSET (ImageSelectorClass, changed),
+		NULL, NULL,
+		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	imageselector_signals[DOUBLECLICKED_SIGNAL] =
+	g_signal_new ("double-clicked",
+		G_TYPE_FROM_CLASS (cls),
+		GSignalFlags(G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION),
+		G_STRUCT_OFFSET (ImageSelectorClass, doubleclicked),
 		NULL, NULL,
 		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }

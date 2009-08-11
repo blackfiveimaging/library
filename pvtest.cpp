@@ -226,6 +226,7 @@ int main(int argc,char**argv)
 "  bg[ACTIVE]				= \"#4be2d2\""
 "  bg[SELECTED]			= \"#2cace8\""
 "  bg[INSENSITIVE]		= \"#4be2d2\" }"
+"  widget \"PrintPreview.*.*.*\" style \"default\""
 "  widget \"PrintPreview.*.*\" style \"default\""
 "  widget \"PrintPreview\" style \"default\"");
 //"  class \"GtkWidget\" style \"default\"");
