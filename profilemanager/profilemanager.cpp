@@ -313,7 +313,7 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,ImageS
 	if(srcprofile)
 		return(GetTransform(target,srcprofile,intent));
 	else
-		return(GetTransform(target,src->type,intent));
+		return(GetTransform(target,IS_TYPE(STRIP_ALPHA(src->type)),intent));
 }
 
 
