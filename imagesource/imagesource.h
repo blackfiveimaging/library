@@ -26,7 +26,10 @@ class ImageSource
 	virtual ISDataType *GetRow(int row)=0;
 	void MakeRowBuffer();
 	void SetResolution(double xr,double yr);
-	CMSProfile *GetEmbeddedProfile();
+	inline CMSProfile *GetEmbeddedProfile()	// Inlined to avoid link order problems
+	{
+		return(embeddedprofile);
+	}
 	void SetEmbeddedProfile(CMSProfile *profile,bool assumeownership=false);
 	int width,height;
 	enum IS_TYPE type;

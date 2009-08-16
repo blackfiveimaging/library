@@ -53,12 +53,6 @@ void ImageSource::SetResolution(double xr,double yr)
 }
 
 
-CMSProfile *ImageSource::GetEmbeddedProfile()
-{
-	return(embeddedprofile);
-}
-
-
 void ImageSource::SetEmbeddedProfile(CMSProfile *profile,bool owned)
 {
 	if(embeddedprofile && embprofowned)
