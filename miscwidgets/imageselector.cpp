@@ -70,7 +70,6 @@ static ImageEntry *find_filename(ImageSelector *il,const char *filename)
 			return(ii);
 		iter=g_list_next(iter);
 	}
-	cerr << filename << " Not found" << endl;
 	return(NULL);
 }
 
@@ -139,8 +138,6 @@ static ImageEntry *add_node(ImageSelector *il,const char *filename)
 		pb=egg_pixbuf_get_thumbnail_for_file(filename,EGG_PIXBUF_THUMBNAIL_NORMAL,&err);
 	if(pb)
 	{
-		if(filename)
-			cerr << "Loaded filename: " << filename << endl; 
 		ii=new ImageEntry;
 		if(il->searchpath)
 			ii->filename=il->searchpath->MakeRelative(filename);
@@ -213,8 +210,6 @@ static void populate_list(ImageSelector *il)
 			pb=ii->pixbuf;
 		if(pb)
 		{
-			if(ii->filename)
-				cerr << "Loaded filename: " << ii->filename << endl; 
 			ii->pixbuf=pb;
 
 			gtk_list_store_append(il->liststore,&iter1);

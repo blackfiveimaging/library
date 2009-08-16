@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "cachedimage.h"
 #include "imagesource_util.h"
 #include "imagesource_dither.h"
 #include "imagesource_solid.h"
@@ -24,9 +25,38 @@
 #include "imagesource_hticks.h"
 #include "convkernel_gaussian.h"
 #include "convkernel_unsharpmask.h"
+#include "jpegsave.h"
 #include "tiffsave.h"
 #include "progresstext.h"
 
+int main(int argc,char **argv)
+{
+	try
+	{
+		if(argc<2)
+			return(0);
+		ProgressText prog;
+		for(int i=1;i<argc;++i)
+		{
+			ImageSource *is=ISLoadImage(argv[i]);
+			CachedImage img(is);
+			delete is;
+			is=new ImageSource_CachedImage(&img);
+			is=ISScaleImageBySize(is,is->width/2,is->height/2,IS_SCALING_DOWNSAMPLE);
+			prog.DoProgress(i,argc);
+			JPEGSaver js(argv[i],is);
+			js.Save();
+//			delete is;
+		}
+	}
+	catch(const char *err)
+	{
+		cerr << "Error: " << err << endl;
+	}
+	return(0);
+}
+
+#if 0
 
 // Render a sweep pattern for approximate gamma determination.
 // This doesn't need to be accurate (which is just as well, because it isn't!)
@@ -157,6 +187,7 @@ int main(int argc,char **argv)
 			ts.SetProgress(&p);
 			ts.Save();
 		}
+#endif
 #if 0
 		if(argc==3)
 		{
@@ -354,7 +385,6 @@ int main(int argc,char **argv)
 			}
 			delete is;	
 		}
-#endif
 	}
 	catch(const char *err)
 	{
@@ -362,3 +392,5 @@ int main(int argc,char **argv)
 	}
 	return(0);
 }
+#endif
+
