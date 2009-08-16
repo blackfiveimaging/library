@@ -26,6 +26,7 @@ class CachedImage_Deferred
 	int samplesperpixel;
 	IS_TYPE type;
 	ISDataType *imagedata;
+	CMSProfile *embeddedprofile;
 	friend class ImageSource_CachedImage;
 	friend class ImageSource_Tee;
 };

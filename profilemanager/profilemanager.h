@@ -102,6 +102,7 @@ class CMTransformFactory
 	~CMTransformFactory();
 	CMSTransform *GetTransform(enum CMColourDevice target,CMSProfile *srcprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
 	CMSTransform *GetTransform(CMSProfile *targetprofile,CMSProfile *srcprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
+	CMSTransform *GetTransform(enum CMColourDevice target,ImageSource *src,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
 	CMSTransform *GetTransform(enum CMColourDevice target,IS_TYPE type,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
 	CMSTransform *GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT,int displayintent=LCMSWRAPPER_INTENT_DEFAULT);
 	CMSTransform *Search(MD5Digest *srcdigest,MD5Digest *dstdigest,LCMSWrapper_Intent intent,bool proof=0);

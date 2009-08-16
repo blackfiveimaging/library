@@ -117,11 +117,10 @@ static void clear_list(ImageSelector *il)
 }
 
 
-static ImageEntry *add_node(ImageSelector *il,const char *filename)
+static ImageEntry *add_node(ImageSelector *il,const char *filename,GdkPixbuf *pb=NULL)
 {
 	ImageEntry *ii=NULL;
 	GError *err=NULL;
-	GdkPixbuf *pb=NULL;
 
 	if(il->searchpath)
 	{
@@ -134,7 +133,7 @@ static ImageEntry *add_node(ImageSelector *il,const char *filename)
 		free(rel);
 	}
 
-	if(filename)
+	if(filename && !pb)
 		pb=egg_pixbuf_get_thumbnail_for_file(filename,EGG_PIXBUF_THUMBNAIL_NORMAL,&err);
 	if(pb)
 	{
@@ -151,6 +150,8 @@ static ImageEntry *add_node(ImageSelector *il,const char *filename)
 		gtk_list_store_append(il->liststore,&iter1);
 		gtk_list_store_set(il->liststore,&iter1,0,ii->pixbuf,-1);
 	}
+	else
+		cerr << "Thumbnail loading failed" << endl;
 	return(ii);
 }
 
@@ -513,11 +514,12 @@ const char *imageselector_get_filename(ImageSelector *c)
 }
 
 
-void imageselector_add_filename(ImageSelector *c,const char *filename)
+bool imageselector_add_filename(ImageSelector *c,const char *filename,GdkPixbuf *pb)
 {
 	ImageEntry *ii=find_filename(c,filename);
 	if(!ii)
-		ii=add_node(c,filename);
+		ii=add_node(c,filename,pb);
+	return(ii!=NULL);
 }
 
 

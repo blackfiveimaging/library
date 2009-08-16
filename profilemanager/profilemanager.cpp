@@ -307,6 +307,16 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,IS_TYP
 }
 
 
+CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,ImageSource *src,LCMSWrapper_Intent intent)
+{
+	CMSProfile *srcprofile=src->GetEmbeddedProfile();
+	if(srcprofile)
+		return(GetTransform(target,srcprofile,intent));
+	else
+		return(GetTransform(target,src->type,intent));
+}
+
+
 CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,CMSProfile *srcprofile,LCMSWrapper_Intent intent)
 {
 	CMSTransform *result=NULL;

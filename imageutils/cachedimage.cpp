@@ -1,16 +1,22 @@
 #include <iostream>
 
+#include "profilemanager/lcmswrapper.h"
+
 #include "cachedimage.h"
 
 using namespace std;
 
 CachedImage_Deferred::CachedImage_Deferred(ImageSource *source)
-	: source(source), width(source->width), height(source->height), samplesperpixel(source->samplesperpixel), type(source->type)
+	: source(source), width(source->width), height(source->height),
+	samplesperpixel(source->samplesperpixel), type(source->type), embeddedprofile(NULL)
 {
 	cerr << "In CachedImage_Deferred constructor" << endl;
 	cerr << "Image type: " << type << endl;
 	cerr << "(" << source->type << ")" << endl;
 	imagedata=new ISDataType[width*height*samplesperpixel];
+	CMSProfile *prof=source->GetEmbeddedProfile();
+	if(prof)
+		embeddedprofile=new CMSProfile(*prof);
 }
 
 
@@ -20,6 +26,8 @@ CachedImage_Deferred::~CachedImage_Deferred()
 		delete[] imagedata;
 	if(source);
 		delete source;
+	if(embeddedprofile)
+		delete embeddedprofile;
 }
 
 
@@ -67,6 +75,11 @@ ImageSource_CachedImage::ImageSource_CachedImage(CachedImage_Deferred *img) : Im
 	type=img->type;
 	cerr << "Image type: " << type << endl;
 	randomaccess=true;
+	if(img->embeddedprofile)
+	{
+		CMSProfile *prof=new CMSProfile(*img->embeddedprofile);
+		SetEmbeddedProfile(prof,true);
+	}
 }
 
 

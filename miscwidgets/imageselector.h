@@ -53,7 +53,7 @@ GtkWidget* imageselector_new (SearchPathHandler *pm,bool allowselection=true,boo
 gboolean imageselector_refresh(ImageSelector *c);
 const char *imageselector_get_filename(ImageSelector *c);
 void imageselector_set_filename(ImageSelector *c,const char *filename);
-void imageselector_add_filename(ImageSelector *c,const char *filename);
+bool imageselector_add_filename(ImageSelector *c,const char *filename,GdkPixbuf *pb=NULL);
 
 G_END_DECLS
 
