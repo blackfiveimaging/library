@@ -41,6 +41,9 @@ CMSRGBPrimaries CMSPrimaries_CIE(0.7355,0.2645,0.2658,0.7243,0.1669,0.0085);
 
 CMSProfile::CMSProfile(const char *fn) : md5(NULL), generated(false), filename(NULL), buffer(NULL), buflen(0)
 {
+	if(!fn)
+		throw "NULL profile filename provided";
+
 	cmsErrorAction(LCMS_ERROR_SHOW);
 
 	filename=strdup(fn);
@@ -91,7 +94,8 @@ void CMSProfile::CalcMD5()
 }
 
 
-CMSProfile::CMSProfile(CMSRGBPrimaries &primaries,CMSRGBGamma &gamma,CMSWhitePoint &whitepoint) : md5(NULL), generated(true), filename(NULL)
+CMSProfile::CMSProfile(CMSRGBPrimaries &primaries,CMSRGBGamma &gamma,CMSWhitePoint &whitepoint)
+	: md5(NULL), generated(true), filename(NULL), buffer(NULL), buflen(0)
 {
 	if(!(prof=cmsCreateRGBProfile(&whitepoint.whitepoint,&primaries,gamma.gammatables)))
 		throw "Can't create virtual RGB profile";
@@ -99,7 +103,8 @@ CMSProfile::CMSProfile(CMSRGBPrimaries &primaries,CMSRGBGamma &gamma,CMSWhitePoi
 }
 
 
-CMSProfile::CMSProfile(CMSGamma &gamma,CMSWhitePoint &whitepoint) : md5(NULL), generated(true), filename(NULL)
+CMSProfile::CMSProfile(CMSGamma &gamma,CMSWhitePoint &whitepoint)
+	: md5(NULL), generated(true), filename(NULL), buffer(NULL), buflen(0)
 {
 	if(!(prof=cmsCreateGrayProfile(&whitepoint.whitepoint,gamma.GetGammaTable())))
 		throw "Can't create virtual Grey profile";
@@ -107,7 +112,8 @@ CMSProfile::CMSProfile(CMSGamma &gamma,CMSWhitePoint &whitepoint) : md5(NULL), g
 }
 
 
-CMSProfile::CMSProfile(CMSWhitePoint &whitepoint) : md5(NULL), generated(true), filename(NULL)
+CMSProfile::CMSProfile(CMSWhitePoint &whitepoint)
+	: md5(NULL), generated(true), filename(NULL), buffer(NULL), buflen(0)
 {
 	if(!(prof=cmsCreateLabProfile(&whitepoint.whitepoint)))
 		throw "Can't create virtual LAB profile";
@@ -115,7 +121,8 @@ CMSProfile::CMSProfile(CMSWhitePoint &whitepoint) : md5(NULL), generated(true), 
 }
 
 
-CMSProfile::CMSProfile(char *srcbuf,int length) : md5(NULL), generated(false), filename(NULL)
+CMSProfile::CMSProfile(char *srcbuf,int length)
+	: md5(NULL), generated(false), filename(NULL), buffer(NULL), buflen(0)
 {
 	buffer=(char *)malloc(length);
 	buflen=length;
@@ -126,7 +133,8 @@ CMSProfile::CMSProfile(char *srcbuf,int length) : md5(NULL), generated(false), f
 }
 
 
-CMSProfile::CMSProfile() : md5(NULL), generated(true), filename(NULL)
+CMSProfile::CMSProfile()
+	: md5(NULL), generated(true), filename(NULL), buffer(NULL), buflen(0)
 {
 	if(!(prof=cmsCreate_sRGBProfile()))
 		throw "Can't create virtual sRGB profile";
@@ -134,7 +142,8 @@ CMSProfile::CMSProfile() : md5(NULL), generated(true), filename(NULL)
 }
 
 
-CMSProfile::CMSProfile(const CMSProfile &src) : md5(NULL), generated(src.generated), filename(NULL)
+CMSProfile::CMSProfile(const CMSProfile &src)
+	: md5(NULL), generated(src.generated), filename(NULL), buffer(NULL), buflen(0)
 {
 	cerr << "In CMSProfile Copy Constructor" << endl;
 	if(src.filename)

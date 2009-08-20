@@ -131,6 +131,7 @@ void ImageSource_CMS::Init()
 
 	if(transform->GetInputColourSpace()!=STRIP_ALPHA(source->type))
 	{
+		cerr << "Error - transform's input colorspace is " << transform->GetInputColourSpace() << ", but image's type is " << source->type << endl;
 		throw "Source image must match source profile!";
 	}
 
