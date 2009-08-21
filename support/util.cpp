@@ -278,7 +278,7 @@ char *SafeStrcat(const char *str1,const char *str2)
 // due to spaces.
 int StrcasecmpIgnoreSpaces(const char *str1,const char *str2)
 {
-	while(*str1 && *str2)
+	while((*str1!=0) && (*str2!=0))
 	{
 		while(*str1==32)
 			++str1;

@@ -213,38 +213,41 @@ DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name,co
 	: red(0), green(0), blue(0), header(header), enabled(true), name(NULL), displayname(NULL), next(NULL), prev(NULL)
 {
 	struct colorantdefinition *c=colorantdefinitions;
-	while(c->name)
+	if(name)
 	{
-		if(StrcasecmpIgnoreSpaces(name,c->name)==0)
+		while(c->name)
 		{
-			if(name)
-				this->name=strdup(name);
-
-			if(displayname)
-				this->displayname=strdup(displayname);
-			else
-				this->displayname=strdup(gettext(name));
-
-			red=c->red;
-			green=c->green;
-			blue=c->blue;
-
-			prev=header.first;
-			if(prev)
+			if(StrcasecmpIgnoreSpaces(name,c->name)==0)
 			{
-				while(prev->next)
-					prev=prev->next;
-				prev->next=this;
-			}
-			else
-				header.first=this;
+				if(name)
+					this->name=strdup(name);
 
-			return;
+				if(displayname)
+					this->displayname=strdup(displayname);
+				else
+					this->displayname=strdup(gettext(name));
+
+				red=c->red;
+				green=c->green;
+				blue=c->blue;
+
+				linknode();
+
+				return;
+			}
+			++c;
 		}
-		++c;
+		cerr << "Can't find colorant: " << name << endl;
+		throw "Colorant not recognised";
 	}
-	cerr << "Can't find colorant: " << name << endl;
-	throw "Colorant not recognised";
+	else
+	{
+		red=c->red;
+		green=c->green;
+		blue=c->blue;
+
+		linknode();
+	}
 }
 
 
@@ -275,6 +278,20 @@ DeviceNColorant::~DeviceNColorant()
 		header.first=next;
 	if(next)
 		next->prev=prev;
+}
+
+
+void DeviceNColorant::linknode()
+{
+	prev=header.first;
+	if(prev)
+	{
+		while(prev->next)
+			prev=prev->next;
+		prev->next=this;
+	}
+	else
+		header.first=this;
 }
 
 

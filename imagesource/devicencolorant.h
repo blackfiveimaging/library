@@ -39,6 +39,7 @@ class DeviceNColorant
 	virtual const char *GetName();
 	int red,green,blue;
 	protected:
+	void linknode();
 	DeviceNColorantList &header;
 	bool enabled;
 	char *name;
