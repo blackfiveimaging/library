@@ -97,3 +97,10 @@ LabValue LabValue::operator-(const LabValue &other)
 	return(result);
 }
 
+
+std::ostream& operator<<(std::ostream &s,LabValue &l)
+{
+	s << "(" << l.L << ", " << l.a << ", " << l.b << ")";
+}
+
+

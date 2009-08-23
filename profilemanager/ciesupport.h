@@ -1,6 +1,8 @@
 #ifndef CIESUPPORT_H
 #define CIESUPPORT_H
 
+#include <iostream>
+
 // Base types for handling XYZ and CIEL*ab values.
 
 class XYZValue
@@ -29,6 +31,7 @@ class LabValue
 	double Magnitude();	// sqrt(L*L + a*a + b*b);
 	double dE(const LabValue &other);	// Euclidean distance between this and other
 	double L,a,b;
+	friend std::ostream& operator<<(std::ostream &s,LabValue &l);
 };
 
 #endif
