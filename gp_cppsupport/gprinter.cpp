@@ -261,14 +261,19 @@ void GPrinter::Help()
 
 void GPrinter::writefunc(void *obj, const char *buf, size_t bytes)
 {
-	Consumer *cons=(Consumer *)obj;
-	bool result=false;
-	if(cons)
-		result=cons->Write(buf,bytes);
-	if(!result)
+	if(bytes)	// Have seen requests to write zero bytes - catch them
+				// otherwise cons->Write() will quite correctly report that
+				// it's written zero byes and result in job termination!
 	{
-		writeerror=true;
-		cerr << "cons->Write() returned " << result << endl;
+		Consumer *cons=(Consumer *)obj;
+		bool result=false;
+		if(cons)
+			result=cons->Write(buf,bytes);
+		if(!result)
+		{
+			writeerror=true;
+			cerr << "cons->Write() returned " << result << endl;
+		}
 	}
 }
 
