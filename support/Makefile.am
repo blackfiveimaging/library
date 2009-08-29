@@ -42,6 +42,8 @@ libsupport_la_SOURCES =	\
 	searchpath.cpp \
 	searchpath.h \
 	searchpathdbhandler.h \
+	dirtreewalker.cpp \
+	dirtreewalker.h \
 	\
 	tempfile.cpp	\
 	tempfile.h	\

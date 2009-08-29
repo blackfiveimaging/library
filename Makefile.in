@@ -35,12 +35,14 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+check_PROGRAMS = dirtreetest$(EXEEXT) jpegscan$(EXEEXT) \
+	jpegcheck$(EXEEXT)
 bin_PROGRAMS = profileuitest$(EXEEXT) mkrgbprofile$(EXEEXT) \
 	mklabprofile$(EXEEXT) mkgreyprofile$(EXEEXT) \
-	composite$(EXEEXT) imgsrctest$(EXEEXT) jpegcheck$(EXEEXT) \
-	pvtest$(EXEEXT) threadtest$(EXEEXT) gprintertest$(EXEEXT) \
-	combotest$(EXEEXT) printqueuetest$(EXEEXT) stpuitest$(EXEEXT) \
-	mkthumbnail$(EXEEXT) jpegscan$(EXEEXT)
+	composite$(EXEEXT) imgsrctest$(EXEEXT) pvtest$(EXEEXT) \
+	threadtest$(EXEEXT) gprintertest$(EXEEXT) combotest$(EXEEXT) \
+	printqueuetest$(EXEEXT) stpuitest$(EXEEXT) \
+	mkthumbnail$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -80,6 +82,21 @@ am_composite_OBJECTS = composite.$(OBJEXT)
 composite_OBJECTS = $(am_composite_OBJECTS)
 composite_LDADD = $(LDADD)
 composite_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
+	miscwidgets/libmiscwidgets.la support/libsupport.la \
+	imagesource/libimagesource.la support/libsupport.la \
+	profilemanager/libprofilemanager.la \
+	stpui_widgets/libstpui_widgets.la \
+	stp_support/libstp_support.la \
+	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_dirtreetest_OBJECTS = dirtreetest.$(OBJEXT)
+dirtreetest_OBJECTS = $(am_dirtreetest_OBJECTS)
+dirtreetest_LDADD = $(LDADD)
+dirtreetest_DEPENDENCIES = imageutils/libimageutils.la \
 	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la support/libsupport.la \
 	imagesource/libimagesource.la support/libsupport.la \
@@ -299,15 +316,15 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
-	$(gprintertest_SOURCES) $(imgsrctest_SOURCES) \
-	$(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
+	$(dirtreetest_SOURCES) $(gprintertest_SOURCES) \
+	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
 	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
 DIST_SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
-	$(gprintertest_SOURCES) $(imgsrctest_SOURCES) \
-	$(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
+	$(dirtreetest_SOURCES) $(gprintertest_SOURCES) \
+	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
@@ -497,6 +514,7 @@ threadtest_SOURCES = threadtest.cpp
 printqueuetest_SOURCES = printqueuetest.cpp
 stpuitest_SOURCES = stpuitest.cpp
 jpegscan_SOURCES = jpegscan.cpp
+dirtreetest_SOURCES = dirtreetest.cpp
 LDADD = \
 	imageutils/libimageutils.la	\
 	gp_cppsupport/libgp_cppsupport.la \
@@ -595,12 +613,22 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+
+clean-checkPROGRAMS:
+	@list='$(check_PROGRAMS)'; for p in $$list; do \
+	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  echo " rm -f $$p $$f"; \
+	  rm -f $$p $$f ; \
+	done
 combotest$(EXEEXT): $(combotest_OBJECTS) $(combotest_DEPENDENCIES) 
 	@rm -f combotest$(EXEEXT)
 	$(CXXLINK) $(combotest_OBJECTS) $(combotest_LDADD) $(LIBS)
 composite$(EXEEXT): $(composite_OBJECTS) $(composite_DEPENDENCIES) 
 	@rm -f composite$(EXEEXT)
 	$(CXXLINK) $(composite_OBJECTS) $(composite_LDADD) $(LIBS)
+dirtreetest$(EXEEXT): $(dirtreetest_OBJECTS) $(dirtreetest_DEPENDENCIES) 
+	@rm -f dirtreetest$(EXEEXT)
+	$(CXXLINK) $(dirtreetest_OBJECTS) $(dirtreetest_LDADD) $(LIBS)
 gprintertest$(EXEEXT): $(gprintertest_OBJECTS) $(gprintertest_DEPENDENCIES) 
 	@rm -f gprintertest$(EXEEXT)
 	$(CXXLINK) $(gprintertest_OBJECTS) $(gprintertest_LDADD) $(LIBS)
@@ -649,6 +677,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/combotest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/composite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirtreetest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gprintertest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imgsrctest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpegcheck.Po@am__quote@
@@ -972,6 +1001,7 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 check: check-recursive
 all-am: Makefile $(PROGRAMS) config.h
 installdirs: installdirs-recursive
@@ -1005,7 +1035,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -1069,21 +1100,22 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool ctags ctags-recursive dist \
-	dist-all dist-bzip2 dist-gzip dist-lzma dist-shar dist-tarZ \
-	dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am uninstall-binPROGRAMS
+	clean-checkPROGRAMS clean-generic clean-libtool ctags \
+	ctags-recursive dist dist-all dist-bzip2 dist-gzip dist-lzma \
+	dist-shar dist-tarZ dist-zip distcheck distclean \
+	distclean-compile distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-recursive uninstall uninstall-am \
+	uninstall-binPROGRAMS
 
 
 imagesource/libimagesource.la:

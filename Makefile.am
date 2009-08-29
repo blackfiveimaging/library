@@ -9,11 +9,13 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -
 	-I./miscwidgets -I./profilemanager -I./effects \
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
+check_PROGRAMS = dirtreetest jpegscan jpegcheck 
+
 bin_PROGRAMS = profileuitest mkrgbprofile mklabprofile mkgreyprofile \
 				composite imgsrctest \
-				jpegcheck pvtest threadtest \
+				pvtest threadtest \
 				gprintertest combotest \
-				printqueuetest stpuitest mkthumbnail jpegscan
+				printqueuetest stpuitest mkthumbnail
 
 gprintertest_SOURCES = gprintertest.cpp
 combotest_SOURCES = combotest.cpp
@@ -30,6 +32,7 @@ threadtest_SOURCES = threadtest.cpp
 printqueuetest_SOURCES = printqueuetest.cpp
 stpuitest_SOURCES = stpuitest.cpp
 jpegscan_SOURCES = jpegscan.cpp
+dirtreetest_SOURCES = dirtreetest.cpp
 
 LDADD = \
 	imageutils/libimageutils.la	\
