@@ -9,10 +9,21 @@
 
 using namespace std;
 
+
 const char *get_homedir()
 {
 //	return(getenv("HOME"));
+#ifdef WIN32
+	static char homedir[MAX_PATH]={0};
+	static bool init=false;
+	if(!init)
+	{
+		SHGetFolderPath(NULL,CSIDL_APPDATA,NULL,SHGFP_TYPE_CURRENT,homedir);
+	}
+	return(homedir);
+#else
 	return(g_get_home_dir());
+#endif
 }
 
 
@@ -35,7 +46,7 @@ char *substitute_homedir(const char *path)
 
 		// If we get this far, then we need to substitute - and path now points
 		// to the beginning of the path proper...
-		const char *hd=g_get_home_dir();
+		const char *hd=get_homedir();
 
 		result=(char *)malloc(strlen(path)+strlen(hd)+2);	
 
