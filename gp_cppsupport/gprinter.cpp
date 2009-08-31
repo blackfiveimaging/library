@@ -47,7 +47,11 @@ class GPrinter_StaticInitializer
 	public:
 	GPrinter_StaticInitializer()
 	{
-		stp_init();
+		if(stp_init())
+		{
+			cerr << "Couldn't initialize Gutenprint - check STP_DATA_PATH variable" << endl;
+//			throw "Couldn't initialize Gutenprint - check STP_DATA_PATH variable";
+		}
 	}
 } gpstaticinitializer;
 
@@ -287,20 +291,10 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 		case IS_TYPE_RGB:
 			cerr << "Printing in RGB mode" << endl;
 			stp_set_string_parameter(stpvars, "InputImageType", "RGB");
-#ifdef USE8BITPRINTING
-			stp_set_string_parameter(stpvars, "ChannelBitDepth", "8");
-#else
-			stp_set_string_parameter(stpvars, "ChannelBitDepth", "16");
-#endif
 			break;
 		case IS_TYPE_CMYK:
 			cerr << "Printing in CMYK mode" << endl;
 			stp_set_string_parameter(stpvars, "InputImageType", "CMYK");
-#ifdef USE8BITPRINTING
-			stp_set_string_parameter(stpvars, "ChannelBitDepth", "8");
-#else
-			stp_set_string_parameter(stpvars, "ChannelBitDepth", "16");
-#endif
 			break;
 		case IS_TYPE_DEVICEN:
 			cerr << "Printing in DeviceN mode" << endl;
@@ -310,16 +304,18 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 				sprintf(nchan,"%d",src->samplesperpixel);
 				stp_set_string_parameter(stpvars, "RawChannels", nchan);
 			}
-#ifdef USE8BITPRINTING
-			stp_set_string_parameter(stpvars, "ChannelBitDepth", "8");
-#else
-			stp_set_string_parameter(stpvars, "ChannelBitDepth", "16");
-#endif
 			break;
 		default:
 			throw "Only RGB and CMYK images are currently supported!";
 			break;
 	}
+
+#ifdef USE8BITPRINTING
+			stp_set_string_parameter(stpvars, "ChannelBitDepth", "8");
+#else
+			stp_set_string_parameter(stpvars, "ChannelBitDepth", "16");
+#endif
+
 	cerr << "Checking PrintingMode:" << endl;
 	const char *pm=stp_get_string_parameter(stpvars,"PrintingMode");
 	if(pm)

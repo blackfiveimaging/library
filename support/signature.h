@@ -42,13 +42,14 @@ class Signature : public virtual PageExtent
 	int GetRows();
 	int GetHGutter();
 	int GetVGutter();
+	bool GetAbsolute();
 	LayoutRectangle *GetLayoutRectangle(int row,int column);
 	void EqualiseMargins();
 	void ReCalc();
 	void ReCalcByCellSize();
 	int ColumnAt(int xpos);
 	int RowAt(int ypos);
-	private:
+	protected:
 	int hgutter,vgutter;
 	int rows,columns;
 	float celwidth,celheight;

@@ -21,6 +21,13 @@
 
 #include "../miscwidgets/generaldialogs.h"
 
+#include "../config.h"
+#include "../gettext.h"
+
+#define _(x) gettext(x)
+#define N_(x) gettext_noop(x)
+
+
 #define DEFAULT_PPD_STRING "<Default Queue PPD>"
 
 using namespace std;
@@ -120,11 +127,6 @@ GPrinterSettings::GPrinterSettings(PrintOutput &output,ConfigFile *inf,const cha
 	: ConfigSectionHandler(inf,section), PageExtent(), stpvars(NULL), output(output),
 	initialised(false), ppdsizes_workaround_done(false)
 {
-#if 0
-	cerr << "In GPrinterSetting constructor - about to call stp_init()" << endl;
-	stp_init();
-	cerr << "Done" << endl;
-#endif
 	stpvars=stp_vars_create();
 
 	// Set the driver to that of the default queue in case no preset is loaded
@@ -401,7 +403,13 @@ bool GPrinterSettings::SetDriver(const char *driver)
 		if(!driver)
 			driver=DEFAULT_PRINTER_DRIVER;
 		cerr << "Comparing drivers:" << olddriver << " against " << driver << endl;
-		if(strcmp(driver,olddriver))
+		if(strcmp(driver,olddriver)==0) // If the driver hasn't changed...
+		{
+			// We ensure we can get the printer.  If we can't, chances are the Gutenprint
+			// data files weren't loaded correctly.
+			if(!stp_get_printer(stpvars))
+				throw _("Can't obtain printer from Gutenprint\nCheck STP_DATA_PATH and Gutenprint version!");
+		}
 		{
 			driverchanged=true;
 			cerr << "SetDriver(): Setting driver to " << driver << endl;

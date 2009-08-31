@@ -265,3 +265,8 @@ int Signature::GetVGutter()
 	return(vgutter);
 }
 
+bool Signature::GetAbsolute()
+{
+	return(absolutemode);
+}
+
