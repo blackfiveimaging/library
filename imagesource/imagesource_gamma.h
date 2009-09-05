@@ -14,8 +14,6 @@
 #include "imagesource.h"
 #include "lcmswrapper.h"
 
-#include <lcms.h>
-
 
 #define IS_GAMMA(x,g) ISDataType(IS_SAMPLEMAX*pow((double(x)/IS_SAMPLEMAX),(g)))
 #define IS_INVGAMMA(x,g) ISDataType(IS_SAMPLEMAX*pow((double(x)/IS_SAMPLEMAX),1.0/(g)))

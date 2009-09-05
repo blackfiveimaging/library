@@ -1,7 +1,7 @@
 /*
- * imageselector.c - provides a custom widget for selecting a border image.
+ * imageselector.cpp - provides a custom widget for selecting a border image.
  *
- * Copyright (c) 2006 by Alastair M. Robinson
+ * Copyright (c) 2006-2009 by Alastair M. Robinson
  * Distributed under the terms of the GNU General Public License -
  * see the file named "COPYING" for more details.
  *
@@ -9,6 +9,8 @@
 
 
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include <string.h>
 #include <stdlib.h>
@@ -18,6 +20,7 @@
 #include <gtk/gtklist.h>
 #include <gtk/gtkfilesel.h>
 #include <gtk/gtktreeselection.h>
+#include <gtk/gtktreemodel.h>
 #include <gtk/gtkscrolledwindow.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixdata.h>
@@ -263,34 +266,86 @@ static void rebuild_liststore(ImageSelector *c)
 }
 
 
+class multiselectdata
+{
+	public:
+	multiselectdata(ImageSelector *sel,GtkTreeModel *model) : sel(sel), model(model)
+	{
+	}
+	~multiselectdata()
+	{
+	}
+	static void add_name(gpointer data,gpointer userdata)
+	{
+		multiselectdata *msd=(multiselectdata *)userdata;
+		GtkTreePath *treepath=(GtkTreePath *)data;
+		GtkTreeIter iter;
+
+		if(msd->sel->selectionlist)
+			delete msd->sel->selectionlist;
+		msd->sel->selectionlist=new vector<string>;
+
+		GdkPixbuf *pb;
+		if(gtk_tree_model_get_iter(msd->model,&iter,treepath))
+		{
+			gtk_tree_model_get(msd->model,&iter,0,&pb,-1);
+			ImageEntry *ii=find_pixbuf(msd->sel,pb);
+			if(ii && ii->filename && msd->sel->selectionlist)
+			{
+				msd->sel->selectionlist->push_back(string(ii->filename));
+//				cerr << "Found: " << ii->filename << endl;
+			}
+		}
+		else
+			cerr << "Unable to select path" << endl;
+	}
+	protected:
+	ImageSelector *sel;
+	GtkTreeModel *model;
+};
+
 static void selection_changed(GtkTreeSelection *select,gpointer user_data)
 {
 	ImageSelector *pe=IMAGESELECTOR(user_data);
-
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	
-	if (gtk_tree_selection_get_selected (select,&model, &iter))
+	if(pe->selmode==GTK_SELECTION_MULTIPLE)
 	{
-		GdkPixbuf *pb;
+		GtkTreeModel *model;
+		GList *list=gtk_tree_selection_get_selected_rows(select,&model);
 
-		gtk_tree_model_get (model, &iter, 0, &pb, -1);
-		ImageEntry *ii=find_pixbuf(pe,pb);
-		if(ii)
+		multiselectdata msd(pe,model);
+
+		g_list_foreach (list, multiselectdata::add_name,&msd);
+
+		g_list_foreach (list, (GFunc)gtk_tree_path_free, NULL);
+		g_list_free (list);
+	}
+	else
+	{
+		GtkTreeIter iter;
+		GtkTreeModel *model;
+		
+		if (gtk_tree_selection_get_selected (select,&model, &iter))
 		{
-			if(pe->filename)
-				free(pe->filename);
-			pe->filename=NULL;
+			GdkPixbuf *pb;
 
-			if(ii->filename)
+			gtk_tree_model_get (model, &iter, 0, &pb, -1);
+			ImageEntry *ii=find_pixbuf(pe,pb);
+			if(ii)
 			{
-				if(pe->searchpath)
-					pe->filename=pe->searchpath->SearchPaths(ii->filename);
-				else
-					pe->filename=strdup(ii->filename);
+				if(pe->filename)
+					free(pe->filename);
+				pe->filename=NULL;
+
+				if(ii->filename)
+				{
+					if(pe->searchpath)
+						pe->filename=pe->searchpath->SearchPaths(ii->filename);
+					else
+						pe->filename=strdup(ii->filename);
+				}
 			}
+			g_signal_emit(G_OBJECT (pe),imageselector_signals[CHANGED_SIGNAL], 0);
 		}
-		g_signal_emit(G_OBJECT (pe),imageselector_signals[CHANGED_SIGNAL], 0);
 	}
 }
 
@@ -361,12 +416,13 @@ static void get_dnd_data(GtkWidget *widget, GdkDragContext *context,
 
 
 GtkWidget*
-imageselector_new (SearchPathHandler *sp,bool allowselection,bool allowother)
+imageselector_new (SearchPathHandler *sp,GtkSelectionMode selmode,bool allowother)
 {
 	ImageSelector *c=IMAGESELECTOR(g_object_new (imageselector_get_type (), NULL));
 
 	c->liststore=gtk_list_store_new(1,GDK_TYPE_PIXBUF);
 	c->searchpath=sp;
+	c->selmode=selmode;
 
 	gtk_drag_dest_set(GTK_WIDGET(c),
 			  GtkDestDefaults(GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP),
@@ -395,10 +451,7 @@ imageselector_new (SearchPathHandler *sp,bool allowselection,bool allowother)
 
 	GtkTreeSelection *select;
 	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (c->treeview));
-	if(allowselection)
-		gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
-	else
-		gtk_tree_selection_set_mode (select, GTK_SELECTION_NONE);
+	gtk_tree_selection_set_mode (select, c->selmode);
 	g_signal_connect (G_OBJECT (select), "changed",
 		G_CALLBACK (selection_changed),c);
 
@@ -409,7 +462,7 @@ imageselector_new (SearchPathHandler *sp,bool allowselection,bool allowother)
 	gtk_box_pack_start(GTK_BOX(c),hbox,FALSE,FALSE,0);
 	gtk_widget_show(hbox);
 
-	if(allowselection && allowother)
+	if((c->selmode!=GTK_SELECTION_SINGLE) && allowother)
 	{
 		GtkWidget *addbutton=gtk_button_new_with_label(_("Other..."));	
 		gtk_box_pack_start(GTK_BOX(c),addbutton,FALSE,FALSE,0);
@@ -495,6 +548,7 @@ imageselector_init (ImageSelector *c)
 	c->searchpath=NULL;
 	c->imagelist=NULL;
 	c->filename=NULL;
+	c->selectionlist=NULL;
 }
 
 
@@ -508,9 +562,16 @@ gboolean imageselector_refresh(ImageSelector *c)
 }
 
 
-const char *imageselector_get_filename(ImageSelector *c)
+const char *imageselector_get_filename(ImageSelector *c,unsigned int idx)
 {
-	return(c->filename);
+	if(c->selectionlist)
+	{
+		if(idx<c->selectionlist->size())
+			return((*c->selectionlist)[idx].c_str());
+		return(NULL);
+	}
+	else
+		return(c->filename);
 }
 
 

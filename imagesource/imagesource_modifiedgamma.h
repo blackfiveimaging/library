@@ -26,8 +26,6 @@
 #include "imagesource.h"
 #include "lcmswrapper.h"
 
-#include <lcms.h>
-
 
 class ImageSource_ModifiedGamma : public ImageSource
 {

@@ -1,6 +1,8 @@
 #ifndef __IMAGESELECTOR_H__
 #define __IMAGESELECTOR_H__
 
+#include <string>
+#include <vector>
 
 #include <glib.h>
 #include <glib-object.h>
@@ -14,8 +16,6 @@
 #include <gtk/gtkcellrendererpixbuf.h>
 
 #include "searchpath.h"
-
-G_BEGIN_DECLS
 
 #define IMAGESELECTOR_TYPE			(imageselector_get_type())
 #define IMAGESELECTOR(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), IMAGESELECTOR_TYPE, ImageSelector))
@@ -35,6 +35,8 @@ struct _ImageSelector
 	SearchPathHandler *searchpath;
 	GtkWidgetClass *parent_class;
 	char *filename;
+	GtkSelectionMode selmode;
+	std::vector<std::string> *selectionlist;
 };
 
 
@@ -48,13 +50,11 @@ struct _ImageSelectorClass
 
 GType imageselector_get_type (void);
 
-GtkWidget* imageselector_new (SearchPathHandler *pm,bool allowselection=true,bool allowother=true);
+GtkWidget* imageselector_new (SearchPathHandler *pm,GtkSelectionMode sel=GTK_SELECTION_SINGLE,bool allowother=true);
 
 gboolean imageselector_refresh(ImageSelector *c);
-const char *imageselector_get_filename(ImageSelector *c);
+const char *imageselector_get_filename(ImageSelector *c, unsigned int idx=0);
 void imageselector_set_filename(ImageSelector *c,const char *filename);
 bool imageselector_add_filename(ImageSelector *c,const char *filename,GdkPixbuf *pb=NULL);
-
-G_END_DECLS
 
 #endif /* __IMAGESELECTOR_H__ */
