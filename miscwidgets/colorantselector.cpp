@@ -104,7 +104,7 @@ static void populate_list(ColorantSelector *es)
 				gtk_tree_store_append (GTK_TREE_STORE(es->treestore), &iter, NULL);
 				gtk_tree_store_set (GTK_TREE_STORE(es->treestore), &iter,
 					ACTIVE_COLUMN, col->GetEnabled(),
-					LABEL_COLUMN, strdup(col->GetName()),
+					LABEL_COLUMN, strdup(col->GetDisplayName()),
 					ICON_COLUMN, colicon,
 					COLORANT_COLUMN,col,
 					-1);
