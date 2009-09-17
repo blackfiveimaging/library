@@ -4,6 +4,13 @@
 #include <string.h>
 #include <glib.h>
 
+#ifdef WIN32
+#include <w32api.h>
+#define _WIN32_IE IE5
+#define _WIN32_WINNT Windows2000
+#include <shlobj.h>
+#endif
+
 #include "searchpath.h"
 #include "pathsupport.h"
 
@@ -18,7 +25,7 @@ const char *get_homedir()
 	static bool init=false;
 	if(!init)
 	{
-		SHGetFolderPath(NULL,CSIDL_APPDATA,NULL,SHGFP_TYPE_CURRENT,homedir);
+		SHGetFolderPath(NULL,CSIDL_APPDATA,NULL,SHGFP_TYPE(SHGFP_TYPE_CURRENT),homedir);
 	}
 	return(homedir);
 #else
