@@ -18,6 +18,7 @@ libsupport_la_SOURCES =	\
 	circlemontage.cpp \
 	circlemontage.h \
 	\
+	jobqueue.h \
 	pathsupport.cpp \
 	pathsupport.h \
 	progress.h	\
@@ -35,6 +36,8 @@ libsupport_la_SOURCES =	\
 	ptmutex.h \
 	rwmutex.cpp \
 	rwmutex.h \
+	multex.cpp \
+	multex.h \
 	threadutil.h \
 	threadevent.cpp \
 	threadevent.h \

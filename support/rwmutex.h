@@ -49,7 +49,6 @@ class RWMutex : public PTMutex
 										// the lock to remain exclusive until the second Release.
 	bool CheckExclusive();
 	protected:
-	pthread_rwlock_t rwlock;
 	void Increment();
 	void Decrement(bool shared=false);
 	void Dump();
