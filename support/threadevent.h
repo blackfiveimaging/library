@@ -29,7 +29,7 @@ class ThreadEvent
 	ThreadEvent *NextEvent();
 	const char *GetName();
 	void Trigger();
-	void Wait();
+	void WaitEvent();
 	// Use this if you want to block other threads from responding to the
 	// event.  Simply call ReleaseMutex() on the returned ThreadCondition to
 	// unblock other threads.

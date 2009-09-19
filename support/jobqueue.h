@@ -4,6 +4,7 @@
 #include <iostream>
 #include <queue>
 
+#include "support/thread.h"
 #include "support/ptmutex.h"
 
 class Job
@@ -25,20 +26,20 @@ class Job
 };
 
 
-class JobQueue : public PTMutex
+class JobQueue : public ThreadCondition
 {
 	public:
-	JobQueue() : PTMutex()
+	JobQueue() : ThreadCondition()
 	{
 	}
 	~JobQueue()
 	{
 		ObtainMutex();
 		Job *j;
-		while((j=Pop()))
+		while((j=PopJob()))
 			delete j;
 	}
-	Job *Pop()
+	Job *PopJob()
 	{
 		ObtainMutex();
 		if(myqueue.empty())
@@ -53,7 +54,7 @@ class JobQueue : public PTMutex
 	}
 	bool Dispatch()
 	{
-		Job *j=Pop();
+		Job *j=PopJob();
 		if(j)
 		{
 			j->Run();
@@ -62,16 +63,24 @@ class JobQueue : public PTMutex
 		}
 		return(false);
 	}
-	void Push(Job *job)
+	virtual void PushJob(Job *job)
 	{
 		ObtainMutex();
 		myqueue.push(job);
+		Broadcast();
 		ReleaseMutex();
 	}
+
 	// NOTE - Must hold the mutex while using this function.
-	bool IsEmpty()
+	virtual bool IsEmpty()
 	{
 		return(myqueue.empty());
+	}
+
+	// NOTE - Must hold the mutex while using this function.
+	virtual int JobCount()
+	{
+		return(myqueue.size());
 	}
 	protected:
 	std::queue<Job *> myqueue;

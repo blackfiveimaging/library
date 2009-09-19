@@ -70,9 +70,9 @@ void Thread::SendSync()
 void Thread::WaitSync()
 {
 	if(GetThreadID()==subthreadid)
-		cond1.Wait();
+		cond1.WaitCondition();
 	else
-		cond2.Wait();
+		cond2.WaitCondition();
 }
 
 
@@ -146,7 +146,7 @@ void ThreadCondition::Broadcast()
 	pthread_cond_broadcast(&cond);
 }
 
-void ThreadCondition::Wait()
+void ThreadCondition::WaitCondition()
 {
 	pthread_cond_wait(&cond,&mutex);
 }

@@ -159,7 +159,7 @@ const char *ThreadEvent::GetName()
 }
 
 
-void ThreadEvent::Wait()
+void ThreadEvent::WaitEvent()
 {
 	WaitAndHold().ReleaseMutex();
 }
@@ -168,7 +168,7 @@ void ThreadEvent::Wait()
 ThreadCondition &ThreadEvent::WaitAndHold()
 {
 	cond.ObtainMutex();
-	cond.Wait();
+	cond.WaitCondition();
 	return(cond);
 }
 
@@ -239,7 +239,7 @@ int ThreadEvent::QueryAndWait()
 	// If there is no subscriber, or if it received no events, we wait.
 	cond.ObtainMutex();
 	mutex.ReleaseMutex();
-	cond.Wait();
+	cond.WaitCondition();
 	cond.ReleaseMutex();
 
 	// The event which woke us up should have incremented the subscriber's count, so clear it.
@@ -277,7 +277,7 @@ ThreadCondition &ThreadEvent::QueryWaitAndHold()
 	mutex.ReleaseMutex();
 
 	// If there is no subscriber, or if it received no events, we wait.
-	cond.Wait();
+	cond.WaitCondition();
 
 	// The event which woke us up should have incremented the subscriber's count, so clear it.
 	if((sub=FindSubscriber()))

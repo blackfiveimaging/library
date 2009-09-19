@@ -12,8 +12,8 @@ class ThreadCondition : public PTMutex
 	public:
 	ThreadCondition();
 	~ThreadCondition();
-	virtual void Broadcast();	// Sends the signal - Mutex should be obtained first and released afterwards
-	virtual void Wait();		// Waits for the signal - mutex should be obtained first and released afterwards
+	virtual void Broadcast();		// Sends the signal - Mutex should be obtained first and released afterwards
+	virtual void WaitCondition();	// Waits for the signal - mutex should be obtained first and released afterwards
 	protected:
 	pthread_cond_t cond;
 };
@@ -40,7 +40,7 @@ class ThreadSync : public ThreadCondition
 	{
 		ObtainMutex();
 		if(!received)
-			ThreadCondition::Wait();
+			ThreadCondition::WaitCondition();
 		received=false;
 		ReleaseMutex();
 	}
