@@ -410,6 +410,7 @@ bool GPrinterSettings::SetDriver(const char *driver)
 			if(!stp_get_printer(stpvars))
 				throw _("Can't obtain printer from Gutenprint\nCheck STP_DATA_PATH and Gutenprint version!");
 		}
+		else
 		{
 			driverchanged=true;
 			cerr << "SetDriver(): Setting driver to " << driver << endl;
