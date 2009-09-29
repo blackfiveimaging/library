@@ -8,6 +8,8 @@
 #include "support/thread.h"
 #include "support/ptmutex.h"
 
+class Worker;
+
 class Job
 {
 	public:
@@ -20,7 +22,7 @@ class Job
 	virtual ~Job()
 	{
 	}
-	virtual void Run()
+	virtual void Run(Worker *worker=NULL)
 	{
 	}
 	protected:
@@ -53,12 +55,12 @@ class JobQueue : public ThreadCondition
 		ReleaseMutex();
 		return(result);
 	}
-	bool Dispatch()
+	bool Dispatch(Worker *worker=NULL)
 	{
 		Job *j=PopJob();
 		if(j)
 		{
-			j->Run();
+			j->Run(worker);
 //			delete j;		// Safer to let the job handle its own demise...
 			return(true);
 		}
@@ -136,7 +138,7 @@ class Worker : public ThreadFunction, public PTMutex
 
 			// Obtain a per-thread mutex while running the job, so the destructor can avoid a busy-wait.
 			ObtainMutex();
-			queue.Dispatch();
+			queue.Dispatch(this);
 			ReleaseMutex();
 
 			// Send a pulse to say the thread's adopting a new job
@@ -160,7 +162,7 @@ class JobDispatcher : public JobQueue
 	JobDispatcher(int threads) : JobQueue()
 	{
 		for(int i=0;i<threads;++i)
-			threadlist.push_back(new Worker(*this));
+			AddWorker(new Worker(*this));
 	}
 	virtual ~JobDispatcher()
 	{
@@ -185,6 +187,10 @@ class JobDispatcher : public JobQueue
 			++it;
 		}
 		ReleaseMutex();
+	}
+	void AddWorker(Worker *worker)
+	{
+		threadlist.push_back(worker);
 	}
 	protected:
 	std::list<Worker *> threadlist;
