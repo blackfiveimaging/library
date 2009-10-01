@@ -14,45 +14,30 @@ using namespace std;
 class SearchPathInstance
 {
 	public:
-	SearchPathInstance(SearchPathHandler *header,const char *path);
+	SearchPathInstance(const char *path);
 	~SearchPathInstance();
 	char *Simplify(const char *file);
 	char *MakeAbsolute(const char *file);
 	SearchPathInstance *Next();
 	protected:
 	char *path;
-	SearchPathInstance *next,*prev;
-	SearchPathHandler *header;
 	friend class SearchPathHandler;
+	friend class SearchPathIterator;
 	friend std::ostream& operator<<(std::ostream &s,SearchPathInstance &sp);
 };
 
 
-SearchPathInstance::SearchPathInstance(SearchPathHandler *header,const char *path)
-	: path(NULL), next(NULL), prev(NULL), header(header)
+SearchPathInstance::SearchPathInstance(const char *path)
+	: path(NULL)
 {
 	this->path=substitute_homedir(path);
-	prev=header->first;
-	if(prev)
-	{
-		while(prev->next)
-			prev=prev->next;
-		prev->next=this;
-	}
-	else
-		header->first=this;
 }
 
 
 SearchPathInstance::~SearchPathInstance()
 {
-	if(next)
-		next->prev=prev;
-	if(prev)
-		prev->next=next;
-	else
-		header->first=next;
-	free(path);
+	if(path)
+		free(path);
 }
 
 
@@ -90,12 +75,6 @@ char *SearchPathInstance::MakeAbsolute(const char *file)
 }
 
 
-SearchPathInstance *SearchPathInstance::Next()
-{
-	return(next);
-}
-
-
 std::ostream& operator<<(std::ostream &s,SearchPathInstance &spi)
 {
 	const char *homedir=get_homedir();
@@ -110,21 +89,17 @@ std::ostream& operator<<(std::ostream &s,SearchPathInstance &spi)
 	return(s);
 }
 
+// SearchPathIterator
 
-// SearchPathHandler
-
-
-SearchPathHandler::SearchPathHandler()
-	:	first(NULL), searchdirectory(NULL), searchfilename(NULL), searchiterator(NULL)
+SearchPathIterator::SearchPathIterator(SearchPathHandler &header)
+	: header(header), searchdirectory(NULL), searchfilename(NULL)
 {
+
 }
 
 
-SearchPathHandler::~SearchPathHandler()
+SearchPathIterator::~SearchPathIterator()
 {
-	while(first)
-		delete first;
-
 	if(searchdirectory)
 		closedir(searchdirectory);
 
@@ -132,21 +107,42 @@ SearchPathHandler::~SearchPathHandler()
 		free(searchfilename);
 }
 
+// SearchPathHandler
+
+
+SearchPathHandler::SearchPathHandler()
+	:	searchiterator(NULL)
+{
+}
+
+
+SearchPathHandler::~SearchPathHandler()
+{
+	list<SearchPathInstance *>::iterator it=paths.begin();
+	while(it!=paths.end())
+	{
+		delete (*it);
+		++it;
+	}
+
+}
+
 
 char *SearchPathHandler::SearchPaths(const char *file)
 {
 	struct stat statbuf;
-	SearchPathInstance*spi=first;
-	while(spi)
+
+	list<SearchPathInstance *>::iterator it=paths.begin();
+	while(it!=paths.end())
 	{
-		char *p=spi->MakeAbsolute(file);
+		char *p=(*it)->MakeAbsolute(file);
 //		cerr << file << " -> " << p << endl;
 
 		if(stat(p,&statbuf)==0)
 			return(p);
 		free(p);
 
-		spi=spi->Next();
+		++it;
 	}
 
 	if(stat(file,&statbuf)==0)
@@ -170,12 +166,12 @@ void SearchPathHandler::AddPath(const char *path)
 				if(*p3==SEARCHPATH_DELIMITER_C)
 				{
 					*p3=0;
-					new SearchPathInstance(this,p2);
+					paths.push_back(new SearchPathInstance(p2));
 					p2=p3+1;
 				}
 				++p3;
 			}
-			new SearchPathInstance(this,p2);
+			paths.push_back(new SearchPathInstance(p2));
 			free(p);
 		}
 		catch(const char *err)
@@ -204,12 +200,12 @@ SearchPathInstance *SearchPathHandler::FindPath(const char *path)
 		else
 			p=strdup(path);
 
-		SearchPathInstance *iter=first;
-		while(iter)
+		list<SearchPathInstance *>::iterator it=paths.begin();
+		while(it!=paths.end())
 		{
-			if(strcmp(iter->path,p)==0)
-				result=iter;
-			iter=iter->Next();
+			if(strcmp((*it)->path,p)==0)
+				result=(*it);
+			++it;
 		}
 		free(p);
 	}
@@ -227,8 +223,13 @@ void SearchPathHandler::RemovePath(const char *path)
 
 void SearchPathHandler::ClearPaths()
 {
-	while(first)
-		delete first;
+	list<SearchPathInstance *>::iterator it=paths.begin();
+	while(it!=paths.end())
+	{
+		delete (*it);
+		++it;
+	}
+	paths.clear();
 }
 
 
@@ -240,10 +241,10 @@ char *SearchPathHandler::MakeRelative(const char *path)
 	if(!path)
 		return(NULL);
 
-	SearchPathInstance *spi=first;
-	while(spi)
+	list<SearchPathInstance *>::iterator it=paths.begin();
+	while(it!=paths.end())
 	{
-		char *rel=spi->Simplify(path);
+		char *rel=(*it)->Simplify(path);
 		if(strlen(rel)<bestlen)
 		{
 			if(best)
@@ -253,7 +254,7 @@ char *SearchPathHandler::MakeRelative(const char *path)
 		}
 		else
 			free(rel);
-		spi=spi->Next();
+		++it;
 	}
 	if(!best)
 		best=strdup(path);
@@ -261,7 +262,7 @@ char *SearchPathHandler::MakeRelative(const char *path)
 }
 
 
-const char *SearchPathHandler::GetNextFilename(const char *last)
+const char *SearchPathIterator::GetNextFilename(const char *last)
 {
 	if(searchfilename)
 		free(searchfilename);
@@ -276,13 +277,14 @@ const char *SearchPathHandler::GetNextFilename(const char *last)
 			closedir(searchdirectory);
 		searchdirectory=NULL;
 
-		if((searchiterator=first))
+		spiterator=header.paths.begin();
+		if(spiterator!=header.paths.end())
 		{
 			while(!searchdirectory)
 			{
-				if(!(searchdirectory=opendir(searchiterator->path)))
-					searchiterator=searchiterator->Next();
-				if(!searchiterator)
+				if(!(searchdirectory=opendir((*spiterator)->path)))
+					++spiterator;
+				if(spiterator==header.paths.end())
 					return(NULL);
 			}
 		}
@@ -297,10 +299,9 @@ const char *SearchPathHandler::GetNextFilename(const char *last)
 		{
 			closedir(searchdirectory);
 			searchdirectory=NULL;
-			while(!searchdirectory && searchiterator->Next())
+			while(!searchdirectory && (++spiterator!=header.paths.end()))
 			{
-				searchiterator=searchiterator->Next();
-				searchdirectory=opendir(searchiterator->path);
+				searchdirectory=opendir((*spiterator)->path);
 			}
 			if(searchdirectory)
 				de=readdir(searchdirectory);
@@ -321,17 +322,17 @@ const char *SearchPathHandler::GetNextFilename(const char *last)
 }
 
 
-const char *SearchPathHandler::GetNextPath(const char *last)
+const char *SearchPathIterator::GetNextPath(const char *last)
 {
 	const char *result=NULL;
 
 	if(!last)
-		searchiterator=first;
+		spiterator=header.paths.begin();
 
-	if(searchiterator)
+	if(spiterator!=header.paths.end())
 	{
-		result=searchiterator->path;
-		searchiterator=searchiterator->Next();
+		result=(*spiterator)->path;
+		++spiterator;
 	}
 	return(result);
 }
@@ -339,12 +340,12 @@ const char *SearchPathHandler::GetNextPath(const char *last)
 
 std::ostream& operator<<(std::ostream &s,SearchPathHandler &sp)
 {
-	SearchPathInstance *spi=sp.first;
-	while(spi)
+	list<SearchPathInstance *>::iterator it=sp.paths.begin();
+	while(it!=sp.paths.end())
 	{
-		s << *spi;
-		spi=spi->Next();
-		if(spi)
+		s << (*it);
+		++it;
+		if(it!=sp.paths.end())
 			s << SEARCHPATH_DELIMITER_S;
 	}
 	return(s);
@@ -360,35 +361,35 @@ char *SearchPathHandler::GetPaths()
 	if(homedir)
 		homedirlen=strlen(homedir);
 
-	SearchPathInstance *spi=first;
-	while(spi)
+	list<SearchPathInstance *>::iterator spi=paths.begin();
+	while(spi!=paths.end())
 	{
-		if(homedir && strncmp(homedir,spi->path,homedirlen)==0)
-			sl+=strlen(spi->path)+strlen("$HOME/")+1-homedirlen;
+		if(homedir && strncmp(homedir,(*spi)->path,homedirlen)==0)
+			sl+=strlen((*spi)->path)+strlen("$HOME/")+1-homedirlen;
 		else
-			sl+=strlen(spi->path)+1;
-		spi=spi->Next();
+			sl+=strlen((*spi)->path)+1;
+		++spi;
 	}
 
 	char *result=(char *)malloc(sl+1);
 	result[0]=0;
 
-	spi=first;
-	while(spi)
+	spi=paths.begin();
+	while(spi!=paths.end())
 	{
-		if(homedir && strncmp(homedir,spi->path,homedirlen)==0)
+		if(homedir && strncmp(homedir,(*spi)->path,homedirlen)==0)
 		{
 			strcat(result,"$HOME");
-			strcat(result,spi->path+homedirlen);
-			spi=spi->Next();
-			if(spi)
+			strcat(result,(*spi)->path+homedirlen);
+			++spi;
+			if(spi!=paths.end())
 				strcat(result,SEARCHPATH_DELIMITER_S);
 		}
 		else
 		{
-			strcat(result,spi->path);
-			spi=spi->Next();
-			if(spi)
+			strcat(result,(*spi)->path);
+			++spi;
+			if(spi!=paths.end())
 				strcat(result,SEARCHPATH_DELIMITER_S);
 		}
 	}

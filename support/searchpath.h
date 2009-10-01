@@ -1,6 +1,8 @@
 #ifndef SEARCHPATH_H
 #define SEARCHPATH_H
 
+#include <list>
+
 #include <sys/types.h>
 #include <dirent.h>
 #include <ostream>
@@ -69,6 +71,22 @@
 
 
 class SearchPathInstance;
+class SearchPathHandler;
+
+class SearchPathIterator
+{
+	public:
+	SearchPathIterator(SearchPathHandler &header);
+	~SearchPathIterator();
+	virtual const char *GetNextFilename(const char *last);
+	const char *GetNextPath(const char *last);
+	protected:
+	SearchPathHandler &header;
+	std::list<SearchPathInstance *>::iterator spiterator;
+	DIR *searchdirectory;
+	char *searchfilename;
+};
+
 
 class SearchPathHandler
 {
@@ -80,17 +98,16 @@ class SearchPathHandler
 	virtual void AddPath(const char *path);
 	virtual void RemovePath(const char *path);
 	virtual void ClearPaths();
-	virtual const char *GetNextFilename(const char *last);
-	const char *GetNextPath(const char *last);
 	char *GetPaths();
 	protected:
 	SearchPathInstance *FindPath(const char *path);
-	SearchPathInstance *first;
+	std::list<SearchPathInstance *> paths;
 	// Used by GetNextFilename();
-	DIR *searchdirectory;
-	char *searchfilename;
-	SearchPathInstance *searchiterator;
+//	DIR *searchdirectory;
+//	char *searchfilename;
+	SearchPathIterator *searchiterator;
 	friend class SearchPathInstance;
+	friend class SearchPathIterator;
 	friend std::ostream& operator<<(std::ostream &s,SearchPathHandler &sp);
 };
 

@@ -164,12 +164,13 @@ static void populate_list(ImageSelector *il)
 	if(!il->searchpath)
 		return;
 
-	SearchPathHandler *sp=il->searchpath;
 	GtkTreeIter iter1;
 
 	cerr << "Fetching filenames..." << endl;
 
-	const char *path=sp->GetNextFilename(NULL);
+	SearchPathIterator spi(*il->searchpath);
+
+	const char *path=spi.GetNextFilename(NULL);
 	while(path)
 	{
 		if(!find_filename(il,path))
@@ -179,7 +180,7 @@ static void populate_list(ImageSelector *il)
 			ii->pixbuf=NULL;
 			il->imagelist=g_list_append(il->imagelist,ii);
 		}
-		path=sp->GetNextFilename(path);
+		path=spi.GetNextFilename(path);
 	}
 
 	cerr << "Sorting list..." << endl;
@@ -209,7 +210,7 @@ static void populate_list(ImageSelector *il)
 
 		GdkPixbuf *pb=NULL;
 		if(ii->filename)
-			pb=egg_pixbuf_get_thumbnail_for_file(sp->SearchPaths(ii->filename),EGG_PIXBUF_THUMBNAIL_NORMAL,&err);
+			pb=egg_pixbuf_get_thumbnail_for_file(il->searchpath->SearchPaths(ii->filename),EGG_PIXBUF_THUMBNAIL_NORMAL,&err);
 		else
 			pb=ii->pixbuf;
 		if(pb)
@@ -462,7 +463,7 @@ imageselector_new (SearchPathHandler *sp,GtkSelectionMode selmode,bool allowothe
 	gtk_box_pack_start(GTK_BOX(c),hbox,FALSE,FALSE,0);
 	gtk_widget_show(hbox);
 
-	if((c->selmode!=GTK_SELECTION_SINGLE) && allowother)
+	if((c->selmode==GTK_SELECTION_SINGLE) && allowother)
 	{
 		GtkWidget *addbutton=gtk_button_new_with_label(_("Other..."));	
 		gtk_box_pack_start(GTK_BOX(c),addbutton,FALSE,FALSE,0);

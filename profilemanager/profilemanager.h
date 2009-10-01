@@ -74,6 +74,7 @@ class ProfileManager : public ConfigDB, public SearchPathHandler
 	unsigned char *proffromdisplay;
 	#endif
 	long proffromdisplay_size;
+	SearchPathIterator spiter;
 	friend class ProfileInfo;
 };
 

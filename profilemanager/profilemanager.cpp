@@ -50,7 +50,7 @@ ConfigTemplate ProfileManager::Template[]=
 
 
 ProfileManager::ProfileManager(ConfigFile *inifile,const char *section) :
-	ConfigDB(Template), SearchPathHandler(), first(NULL), proffromdisplay_size(0)
+	ConfigDB(Template), SearchPathHandler(), first(NULL), proffromdisplay_size(0), spiter(*this)
 {
 #ifndef WIN32
 	xdisplay = XOpenDisplay(NULL);
@@ -585,7 +585,7 @@ static const char *findextension(const char *filename)
 const char *ProfileManager::GetNextFilename(const char *prev)
 {
 	const char *result=prev;
-	while((result=SearchPathHandler::GetNextFilename(result)))
+	while((result=spiter.GetNextFilename(result)))
 	{
 		const char *ext=findextension(result);
 		if(strncasecmp(ext,".ICM",4)==0)

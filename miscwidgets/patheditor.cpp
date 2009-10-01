@@ -202,12 +202,13 @@ void patheditor_set_paths(PathEditor *p,SearchPathHandler *sp)
 
 	GtkTreeIter iter1;
 
-	const char *path=sp->GetNextPath(NULL);
+	SearchPathIterator spi(*sp);
+	const char *path=spi.GetNextPath(NULL);
 	while(path)
 	{
 		gtk_list_store_append(p->liststore,&iter1);
 		gtk_list_store_set(p->liststore,&iter1,0,path,-1);
-		path=sp->GetNextPath(path);
+		path=spi.GetNextPath(path);
 	}
 }
 

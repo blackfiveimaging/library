@@ -90,19 +90,29 @@ class JobQueue : public ThreadCondition
 };
 
 
+enum WorkerThreadStatus {WORKERTHREAD_RUN,WORKERTHREAD_CANCEL,WORKERTHREAD_TERMINATE};
+
 class Worker : public ThreadFunction, public PTMutex
 {
 	public:
 	Worker(JobQueue &queue)
-		: ThreadFunction(), PTMutex(), queue(queue), thread(this), cancelled(false)
+		: ThreadFunction(), PTMutex(), queue(queue), thread(this), status(WORKERTHREAD_RUN)
 	{
 //		std::cerr << "Starting worker thread..." << std::endl;
 		thread.Start();
 	}
 	virtual ~Worker()
 	{
-//		std::cerr << "Destructing worker thread..." << std::endl;
-		cancelled=true;
+		WaitCompletion();
+	}
+	virtual void Cancel()
+	{
+		status=WORKERTHREAD_CANCEL;
+	}
+	virtual void WaitCompletion()
+	{
+		if(status==WORKERTHREAD_RUN)
+			status=WORKERTHREAD_TERMINATE;
 		while(!thread.TestFinished())
 		{
 			// We obtain this mutex to avoid a busy wait - the subthread holds it while processing a job.
@@ -125,7 +135,7 @@ class Worker : public ThreadFunction, public PTMutex
 //				std::cerr << "Waiting for a job" << std::endl;
 				queue.WaitCondition();
 //				std::cerr << "Signal received" << std::endl;
-				if(cancelled)
+				if(status!=WORKERTHREAD_RUN)
 				{
 //					std::cerr << "Received cancellation signal" << std::endl;
 					queue.ReleaseMutex();
@@ -145,14 +155,14 @@ class Worker : public ThreadFunction, public PTMutex
 			queue.ObtainMutex();
 			queue.Broadcast();
 			queue.ReleaseMutex();
-		} while(!cancelled);
+		} while(status==WORKERTHREAD_RUN);
 //		std::cerr << "Cancelled" << std::endl;
 		return(0);
 	}
 	protected:
 	JobQueue &queue;
 	Thread thread;
-	bool cancelled;
+	WorkerThreadStatus status;
 };
 
 
@@ -176,17 +186,20 @@ class JobDispatcher : public JobQueue
 	virtual void WaitCompletion()
 	{
 		ObtainMutex();
+
+		while(JobCount())
+		{
+//				std::cerr << "(" << JobCount() << " jobs remaining...)" << std::endl;
+			WaitCondition();
+		}
+		ReleaseMutex();
+
 		std::list<Worker *>::iterator it=threadlist.begin();
 		while(it!=threadlist.end())
 		{
-			while(JobCount())
-			{
-//				std::cerr << "(" << JobCount() << " jobs remaining...)" << std::endl;
-				WaitCondition();
-			}
+			(*it)->WaitCompletion();
 			++it;
 		}
-		ReleaseMutex();
 	}
 	void AddWorker(Worker *worker)
 	{
