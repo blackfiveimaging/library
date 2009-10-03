@@ -69,18 +69,21 @@ static double sinc(double x)
 
 // The row cache is just a simplistic ring-buffer type cache which handles
 // the details of tracking several rows of "support" data.
+// The temporary data does have to be float - or at least wider than ISDataType
+// and must be clamped since the ringing artifiacts inherent in Lanczos Sinc
+// can push values out of range.
 
 class ISLanczosSinc_RowCache
 {
 	public:
 	ISLanczosSinc_RowCache(ImageSource_VLanczosSinc *source);
 	~ISLanczosSinc_RowCache();
-	ISDataType *GetRow(int row);
-	ISDataType *GetCacheRow(int row);
+	double *GetRow(int row);
+	double *GetCacheRow(int row);
 	private:
 	ImageSource_VLanczosSinc *source;
-	ISDataType *cache;
-	ISDataType *rowbuffer;
+	double *cache;
+	double *rowbuffer;
 	int currentrow;
 };
 
@@ -97,12 +100,12 @@ ISLanczosSinc_RowCache::~ISLanczosSinc_RowCache()
 ISLanczosSinc_RowCache::ISLanczosSinc_RowCache(ImageSource_VLanczosSinc *source)
 	: source(source), cache(NULL), rowbuffer(NULL), currentrow(-1)
 {
-	cache=(ISDataType *)malloc(sizeof(double)*source->samplesperpixel*source->width*source->support);
-	rowbuffer=(ISDataType *)malloc(sizeof(double)*source->samplesperpixel*source->width);
+	cache=(double *)malloc(sizeof(double)*source->samplesperpixel*source->width*source->support);
+	rowbuffer=(double *)malloc(sizeof(double)*source->samplesperpixel*source->width);
 }
 
 
-ISDataType *ISLanczosSinc_RowCache::GetRow(int row)
+double *ISLanczosSinc_RowCache::GetRow(int row)
 {
 	for(int i=0;i<source->width*source->samplesperpixel;++i)
 		rowbuffer[i]=0.0;
@@ -111,18 +114,18 @@ ISDataType *ISLanczosSinc_RowCache::GetRow(int row)
 	{
 		int p=i-source->windowsize;
 		int sr=(row*source->source->height)/source->height;
-		ISDataType *src=GetCacheRow(sr+p);
-		int f=256*source->coeff[row*source->support+i];
+		double *src=GetCacheRow(sr+p);
+		double f=source->coeff[row*source->support+i];
 		for(int x=0;x<source->width*source->samplesperpixel;++x)
 		{
-			rowbuffer[x]+=(f*src[x])>>8;
+			rowbuffer[x]+=f*src[x];
 		}
 	}
 	return(rowbuffer);
 }
 
 
-ISDataType *ISLanczosSinc_RowCache::GetCacheRow(int row)
+double *ISLanczosSinc_RowCache::GetCacheRow(int row)
 {
 	if(row<0)
 		row=0;
@@ -130,7 +133,7 @@ ISDataType *ISLanczosSinc_RowCache::GetCacheRow(int row)
 		row=source->source->height-1;
 	int crow=row%source->support;
 	{
-		ISDataType *rowptr=cache+crow*source->samplesperpixel*source->width;
+		double *rowptr=cache+crow*source->samplesperpixel*source->width;
 		if(row>currentrow)
 		{
 			currentrow=row;
@@ -166,13 +169,13 @@ ISDataType *ImageSource_VLanczosSinc::GetRow(int row)
 	if(row==currentrow)
 		return(rowbuffer);
 
-	ISDataType *srcdata=cache->GetRow(row);
+	double *srcdata=cache->GetRow(row);
 
 	for(i=0;i<width*samplesperpixel;++i)
 	{
-		ISDataType s=srcdata[i];
-//		if(s<0.0) s=0.0;
-//		if(s>IS_SAMPLEMAX) s=IS_SAMPLEMAX;
+		double s=srcdata[i];
+		if(s<0.0) s=0.0;
+		if(s>IS_SAMPLEMAX) s=IS_SAMPLEMAX;
 		rowbuffer[i]=int(s);
 	}
 
