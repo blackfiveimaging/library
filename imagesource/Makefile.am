@@ -67,6 +67,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_promote.h \
 	imagesource_pnm.cpp \
 	imagesource_pnm.h \
+	imagesource_rainbowsweep.cpp \
+	imagesource_rainbowsweep.h \
 	imagesource_rotate.cpp	\
 	imagesource_rotate.h	\
 	imagesource_scale.cpp	\

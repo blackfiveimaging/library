@@ -1,5 +1,5 @@
 /* 
- * imagesource_hsweep.cpp - renders a chequerboard pattern.
+ * imagesource_hsweep.cpp - renders a horizontal gradient pattern.
  * Supports Random Access
  *
  * Copyright (c) 2008 by Alastair M. Robinson

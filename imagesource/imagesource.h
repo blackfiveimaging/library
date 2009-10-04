@@ -21,6 +21,7 @@ class ImageSource
 {
 	public:
 	ImageSource();
+	ImageSource(int width, int height, IS_TYPE type=IS_TYPE_RGB);
 	ImageSource(ImageSource *src);
 	virtual ~ImageSource();
 	virtual ISDataType *GetRow(int row)=0;

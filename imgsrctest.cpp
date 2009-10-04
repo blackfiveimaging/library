@@ -23,12 +23,34 @@
 #include "imagesource_chequerboard.h"
 #include "imagesource_hsweep.h"
 #include "imagesource_hticks.h"
-#include "convkernel_gaussian.h"
-#include "convkernel_unsharpmask.h"
+#include "imagesource_rainbowsweep.h"
 #include "jpegsave.h"
 #include "tiffsave.h"
 #include "progresstext.h"
 
+
+int main(int argc,char **argv)
+{
+	try
+	{
+		if(argc>1)
+		{
+			ProgressText prog;
+
+			ImageSource *is=new ImageSource_RainbowSweep(1024,300);
+			JPEGSaver js(argv[1],is);
+			js.Save();
+		}
+	}
+	catch(const char *err)
+	{
+		cerr << "Error: " << err << endl;
+	}
+	return(0);
+}
+
+
+#if 0
 int main(int argc,char **argv)
 {
 	try
@@ -55,7 +77,7 @@ int main(int argc,char **argv)
 	}
 	return(0);
 }
-
+#endif
 #if 0
 
 // Render a sweep pattern for approximate gamma determination.
