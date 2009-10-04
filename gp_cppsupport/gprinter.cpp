@@ -282,7 +282,7 @@ void GPrinter::writefunc(void *obj, const char *buf, size_t bytes)
 }
 
 
-void GPrinter::Print(ImageSource *src,int xpos,int ypos)
+void GPrinter::Print(ImageSource *src,int xpos,int ypos,Consumer *cons)
 {
 	cerr << "*** GPrinter: Printing at position: " << xpos << ", " << ypos << endl;
 	source=src;
@@ -334,7 +334,8 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 	stp_set_left(stpvars, paperleft-leftbleed);
 	stp_set_top(stpvars, papertop-topbleed);
 
-	consumer=output.GetConsumer();
+	if(!(consumer=cons))
+		consumer=output.GetConsumer();
 
 	if(!consumer)
 		return;
@@ -360,7 +361,8 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos)
 
 	stp_vars_destroy(tmpvars);
 
-	delete consumer;
+	if(!cons)
+		delete consumer;
 	
 	if(result==0 && error)
 		throw error;

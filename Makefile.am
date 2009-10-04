@@ -38,10 +38,9 @@ LDADD = \
 	imageutils/libimageutils.la	\
 	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la	\
-	support/libsupport.la	\
 	imagesource/libimagesource.la	\
-	support/libsupport.la	\
 	profilemanager/libprofilemanager.la	\
+	support/libsupport.la	\
 	stpui_widgets/libstpui_widgets.la	\
 	stp_support/libstp_support.la \
 	pixbufthumbnail/libpixbufthumbnail.la	\

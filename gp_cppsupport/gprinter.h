@@ -27,7 +27,7 @@ class GPrinter : public GPrinterSettings
 	public:
 	GPrinter(PrintOutput &output,ConfigFile *inf,const char *section);
 	~GPrinter();
-	void Print(ImageSource *source,int xpos,int ypos);
+	void Print(ImageSource *source,int xpos,int ypos,Consumer *consumer=NULL);
 	void Help();
 	void SetProgress(Progress *p);
 	void GetImageableArea();
