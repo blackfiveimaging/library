@@ -8,8 +8,6 @@ noinst_LTLIBRARIES = libprofilemanager.la
 libprofilemanager_la_SOURCES =	\
 	lcmswrapper.cpp	\
 	lcmswrapper.h	\
-	md5.cpp	\
-	md5.h	\
 	profilemanager.cpp	\
 	profilemanager.h	\
 	profileselector.cpp	\

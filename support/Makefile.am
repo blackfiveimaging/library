@@ -51,6 +51,8 @@ libsupport_la_SOURCES =	\
 	tempfile.cpp	\
 	tempfile.h	\
 	\
+	md5.cpp \
+	md5.h \
 	util.cpp \
 	util.h
 
