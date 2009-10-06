@@ -92,7 +92,15 @@ ISDataType *ImageSource_Rotate::GetRow(int row)
 							}
 							break;
 						default:
-							throw "Rotate: Only 1, 3 or 4 samples per pixel are currently supported";
+							for(x=firstrow;x<lastrow;++x)
+							{
+								int sx=(source->width-1)-x;
+								for(int s=0;s<samplesperpixel;++s)
+								{
+									c=src[sx*samplesperpixel+s];
+									dst[(x-firstrow)*samplesperrow+s]=c;
+								}
+							}
 							break;
 					}
 					if(TestBreak())
@@ -155,7 +163,15 @@ ISDataType *ImageSource_Rotate::GetRow(int row)
 							}
 							break;
 						default:
-							throw "Rotate: Only 1, 3 or 4 samples per pixel are currently supported";
+							for(x=firstrow;x<lastrow;++x)
+							{
+								int sx=(width-1)-x;
+								for(int s=0;s<samplesperpixel;++s)
+								{
+									c=src[sx*samplesperpixel+s];
+									dst[x*samplesperrow+s]=c;
+								}
+							}
 							break;
 					}
 					if(TestBreak())
@@ -164,53 +180,6 @@ ISDataType *ImageSource_Rotate::GetRow(int row)
 			}
 			row-=spanfirstrow;
 			return(spanbuffer+row*samplesperrow);		
-			break;
-			
-#if 0
-			src=source->GetRow((height-1)-row);
-			dst=rowbuffer;
-
-			switch(samplesperpixel)
-			{
-				case 1:
-					for(x=0;x<width;++x)
-					{
-						int sx=(width-1)-x;
-						c=src[sx];
-						dst[x]=c;
-					}
-					break;
-				case 3:
-					for(x=0;x<width;++x)
-					{
-						int sx=(width-1)-x;
-						c=src[sx*3];
-						dst[x*3]=c;
-						c=src[sx*3+1];
-						dst[x*3+1]=c;
-						c=src[sx*3+2];
-						dst[x*3+2]=c;
-					}
-					break;
-				case 4:
-					for(x=0;x<width;++x)
-					{
-						int sx=(width-1)-x;
-						c=src[sx*4];
-						dst[x*4]=c;
-						c=src[sx*4+1];
-						dst[x*4+1]=c;
-						c=src[sx*4+2];
-						dst[x*4+2]=c;
-						c=src[sx*4+3];
-						dst[x*4+3]=c;
-					}
-					break;
-				default:
-					throw "Rotate: Only 1, 3 or 4 samples per pixel are currently supported";
-					break;
-			}
-#endif
 			break;
 		case 270:
 			if((row<spanfirstrow) || (row>=(spanfirstrow+spanrows)))
@@ -263,7 +232,15 @@ ISDataType *ImageSource_Rotate::GetRow(int row)
 							}
 							break;
 						default:
-							throw "Rotate: Only 1, 3 or 4 samples per pixel are currently supported";
+							for(x=firstrow;x<lastrow;++x)
+							{
+								int sx=x;
+								for(int s=0;s<samplesperpixel;++s)
+								{
+									c=src[sx*samplesperpixel+s];
+									dst[(x-firstrow)*samplesperrow+s]=c;
+								}
+							}
 							break;
 					}
 					if(TestBreak())
