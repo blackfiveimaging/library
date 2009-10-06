@@ -9,15 +9,15 @@ class MD5Context
 	public:
 	MD5Context()
 	{
-		Init();
+		InitMD5Context();
 	}
 	~MD5Context()
 	{
 	}
-	void Init();
-	void Update(unsigned char const *buf,unsigned int len);
-	void Finalize(unsigned char digest[16]);
-	protected:
+	void InitMD5Context();
+	void UpdateMD5Context(unsigned char const *buf,unsigned int len);
+	void FinalizeMD5Context(unsigned char digest[16]);
+	private:
 	unsigned int buf[4];
 	int bits[2];
 	unsigned char in[64];
@@ -25,7 +25,7 @@ class MD5Context
 };
 
 
-class MD5Digest
+class MD5Digest : public MD5Context
 {
 	public:
 	MD5Digest();
@@ -44,7 +44,6 @@ class MD5Digest
 	private:
 	unsigned char digest[16];
 	char digestprintable[33];
-	MD5Context context;
 	friend std::ostream& operator<<(std::ostream &s,MD5Digest &c);
 };
 

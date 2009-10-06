@@ -35,26 +35,26 @@ MD5Digest::MD5Digest(const MD5Digest &other)
 
 void MD5Digest::Update(const char *message,long length)
 {
-	context.Update((const unsigned char *)message,length);
+	UpdateMD5Context((const unsigned char *)message,length);
 }
 
 
 void MD5Digest::Finalize()
 {
-	context.Finalize(digest);
+	FinalizeMD5Context(digest);
 }
 
 
 const unsigned char *MD5Digest::GetDigest()
 {
-	context.Finalize(digest);
+	FinalizeMD5Context(digest);
 	return(digest);
 }
 
 
 const char *MD5Digest::GetPrintableDigest()
 {
-	context.Finalize(digest);
+	FinalizeMD5Context(digest);
 
 	for(int i=0;i<16;++i)
 	{
@@ -137,8 +137,8 @@ get_md5 (const unsigned char *string, unsigned int length,unsigned char digest[1
 {
   MD5Context ctx;
   
-  ctx.Update(string, length);
-  ctx.Finalize(digest);
+  ctx.UpdateMD5Context(string, length);
+  ctx.FinalizeMD5Context(digest);
 }
 
 
@@ -161,7 +161,7 @@ byteReverse(unsigned char *buf, unsigned longs)
  * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
  * initialization constants.
  */
-void MD5Context::Init ()
+void MD5Context::InitMD5Context()
 {
     buf[0] = 0x67452301;
     buf[1] = 0xefcdab89;
@@ -178,7 +178,7 @@ void MD5Context::Init ()
  * Update context to reflect the concatenation of another buffer full
  * of bytes.
  */
-void MD5Context::Update(unsigned char const *inbuf, unsigned len)
+void MD5Context::UpdateMD5Context(unsigned char const *inbuf, unsigned len)
 {
     unsigned int t;
 
@@ -228,7 +228,7 @@ void MD5Context::Update(unsigned char const *inbuf, unsigned len)
  * Final wrapup - pad to 64-byte boundary with the bit pattern 
  * 1 0* (64-bit count of bits processed, MSB-first)
  */
-void MD5Context::Finalize(unsigned char digest[16])
+void MD5Context::FinalizeMD5Context(unsigned char digest[16])
 {
 	if(finalized)
 		return;
@@ -269,7 +269,7 @@ void MD5Context::Finalize(unsigned char digest[16])
     md5_transform (buf, (unsigned int *) in);
     byteReverse ((unsigned char *) buf, 4);
     memcpy (digest, buf, 16);
-    Init();
+    InitMD5Context();
 	finalized=true;
 }
 

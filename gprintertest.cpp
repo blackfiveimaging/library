@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 #include "imagesource/imagesource.h"
 
@@ -34,23 +35,23 @@ class ImageSource_RainbowSweep : public ImageSource
 
 		for(int x=0;x<width;++x)
 		{
-			int c=(x*1024)/width;
-			int r=c-128;
-			if(r>512) r-=1024;
+			int c=(x*1536)/width;
+			int r=c;
+			if(r>768) r-=1536;
 			if(r<0) r=-r;
-			r=384-r;
+			r=512-r;
 			if(r<0) r=0;
 			if(r>255) r=255;
 
-			int g=c-384;
+			int g=c-512;
 			if(g<0) g=-g;
-			g=384-g;
+			g=512-g;
 			if(g<0) g=0;
 			if(g>255) g=255;
 
-			int b=c-768;
+			int b=c-1024;
 			if(b<0) b=-b;
-			b=384-b;
+			b=512-b;
 			if(b<0) b=0;
 			if(b>255) b=255;
 
@@ -81,6 +82,12 @@ class MD5Consumer : public Consumer, public MD5Digest
 	virtual bool Write(const char *buffer,int length)
 	{
 		Update(buffer,length);
+
+		// There's an issue with the PostScript drive in that it includes the creation date
+		// so the MD5 hash will be different every time.  To get around this we reset the MD5 if we
+		// encounter a CreationDate comment.
+		if(length>14 && strncmp(buffer,"%%CreationDate",14)==0)
+			InitMD5Context();
 		return(true);
 	}
 	virtual void Cancel()

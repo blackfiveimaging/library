@@ -28,6 +28,83 @@
 #include "progresstext.h"
 
 
+class ImageSource_RainbowSweep : public ImageSource
+{
+	public:
+	ImageSource_RainbowSweep(int width,int height)
+		: ImageSource(width,height,IS_TYPE_RGB)
+	{
+		randomaccess=true;
+		MakeRowBuffer();
+	}
+	~ImageSource_RainbowSweep()
+	{
+	}
+
+	ISDataType *GetRow(int row)
+	{
+		if(currentrow==row)
+			return(rowbuffer);
+		double a=row;
+		a/=height;
+
+		for(int x=0;x<width;++x)
+		{
+			int c=(x*1536)/width;
+			int r=c;
+			if(r>768) r-=1536;
+			if(r<0) r=-r;
+			r=512-r;
+			if(r<0) r=0;
+			if(r>255) r=255;
+
+			int g=c-512;
+			if(g<0) g=-g;
+			g=512-g;
+			if(g<0) g=0;
+			if(g>255) g=255;
+
+			int b=c-1024;
+			if(b<0) b=-b;
+			b=512-b;
+			if(b<0) b=0;
+			if(b>255) b=255;
+
+			r=128*a+r*(1-a);
+			g=128*a+g*(1-a);
+			b=128*a+b*(1-a);
+
+			rowbuffer[x*3]=EIGHTTOIS(r);
+			rowbuffer[x*3+1]=EIGHTTOIS(g);
+			rowbuffer[x*3+2]=EIGHTTOIS(b);
+		}
+		
+		currentrow=row;
+		return(rowbuffer);
+	}
+};
+
+
+int main(int argc,char **argv)
+{
+	try
+	{
+		if(argc<2)
+			return(0);
+		ImageSource *is=new ImageSource_RainbowSweep(1024,300);
+		JPEGSaver js(argv[1],is);
+		js.Save();
+		delete is;
+	}
+	catch(const char *err)
+	{
+		cerr << "Error: " << err << endl;
+	}
+	return(0);
+}
+
+
+#if 0
 int main(int argc,char **argv)
 {
 	try
@@ -54,7 +131,7 @@ int main(int argc,char **argv)
 	}
 	return(0);
 }
-
+#endif
 #if 0
 
 // Render a sweep pattern for approximate gamma determination.
