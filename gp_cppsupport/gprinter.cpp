@@ -25,7 +25,7 @@
 #include <glib/gprintf.h>
 
 #include "../imagesource/imagesource.h"
-
+#include "../support/md5.h"
 #include "../miscwidgets/generaldialogs.h"
 
 #include "gprinter.h"
@@ -630,4 +630,127 @@ stp_image_t GPrinter::stpImage =
 };
 
 
+// ----------- ResponseHash ----------------
+// Prints a known test image at a known position on the page, and instead of printing
+// the result, generates an MD5 Hash.  This can be used as an indicator of whether
+// anything's changed with the printer driver or settings.
+
+
+// Simple rainbow testpattern.  Fades from full saturation RGB testpattern at the head
+// to solid black at the foot.
+
+class ImageSource_RainbowSweep : public ImageSource
+{
+	public:
+	ImageSource_RainbowSweep(int width,int height)
+		: ImageSource(width,height,IS_TYPE_RGB)
+	{
+		randomaccess=true;
+		MakeRowBuffer();
+	}
+	~ImageSource_RainbowSweep()
+	{
+	}
+
+	ISDataType *GetRow(int row)
+	{
+		if(currentrow==row)
+			return(rowbuffer);
+		double a=row;
+		a/=height;
+
+		for(int x=0;x<width;++x)
+		{
+			int c=(x*1536)/width;
+			int r=c;
+			if(r>768) r-=1536;
+			if(r<0) r=-r;
+			r=512-r;
+			if(r<0) r=0;
+			if(r>255) r=255;
+
+			int g=c-512;
+			if(g<0) g=-g;
+			g=512-g;
+			if(g<0) g=0;
+			if(g>255) g=255;
+
+			int b=c-1024;
+			if(b<0) b=-b;
+			b=512-b;
+			if(b<0) b=0;
+			if(b>255) b=255;
+
+			r=r*(1-a);
+			g=g*(1-a);
+			b=b*(1-a);
+
+			rowbuffer[x*3]=EIGHTTOIS(r);
+			rowbuffer[x*3+1]=EIGHTTOIS(g);
+			rowbuffer[x*3+2]=EIGHTTOIS(b);
+		}
+		
+		currentrow=row;
+		return(rowbuffer);
+	}
+};
+
+
+// A variation on the consumer class which maintains an MD5 hash instead of sending the data anywhere.
+
+class MD5Consumer : public Consumer, public MD5Digest
+{
+	public:
+	MD5Consumer() : Consumer(), MD5Digest()
+	{
+	}
+	virtual ~MD5Consumer()
+	{
+	}
+	virtual bool Write(const char *buffer,int length)
+	{
+		Update(buffer,length);
+
+		// There's an issue with the PostScript driver in that it includes the creation date
+		// so the MD5 hash will be different every time.  To get around this we reset the MD5 if we
+		// encounter a CreationDate comment.
+		if(length>14 && strncmp(buffer,"%%CreationDate",14)==0)
+			InitMD5Context();
+		return(true);
+	}
+	virtual void Cancel()
+	{
+	}
+};
+
+
+std::string GPrinter::GetResponseHash()
+{
+	ImageSource *is=new ImageSource_RainbowSweep(360,200);
+	is->SetResolution(180,180);
+
+	MD5Consumer cons;
+
+	// Disable borderless mode...
+	bool prevborderless=false;
+	stp_parameter_t desc;
+	stp_describe_parameter(stpvars,"FullBleed",&desc);
+	if(desc.is_active)
+	{
+		prevborderless=stp_get_boolean_parameter(stpvars,"FullBleed");
+		stp_set_boolean_parameter(stpvars,"FullBleed",false);
+	}
+
+	Print(is,72,72,&cons);
+
+	if(desc.is_active)
+	{
+		stp_set_boolean_parameter(stpvars,"FullBleed",prevborderless);
+		GetImageableArea();
+	};
+
+	delete is;
+
+	return(std::string(cons.GetPrintableDigest()));
+}
 

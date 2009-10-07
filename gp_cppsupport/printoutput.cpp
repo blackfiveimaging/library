@@ -138,6 +138,7 @@ ConfigTemplate PrintOutput::Template[]=
 	ConfigTemplate("Queue",""),
 	ConfigTemplate("Driver",""),
 	ConfigTemplate("Command",""),
+	ConfigTemplate("ResponseHash",""),
 	ConfigTemplate()
 };
 

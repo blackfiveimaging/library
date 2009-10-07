@@ -10,6 +10,8 @@
 #ifndef PRINT_H
 #define PRINT_H
 
+#include <string>
+
 #include "support/configdb.h"
 #include "support/pageextent.h"
 #include "support/consumer.h"
@@ -34,6 +36,7 @@ class GPrinter : public GPrinterSettings
 	void GetSizeLimits(int &minw,int &maxw,int &minh,int &maxh);
 	void SetCustomWidth(int w);
 	void SetCustomHeight(int h);
+	std::string GetResponseHash();
 	protected:
 	stp_image_status_t GetRow(int row,unsigned char *data);
 
