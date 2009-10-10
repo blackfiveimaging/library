@@ -8,6 +8,43 @@
 
 using namespace std;
 
+#if 0
+class TestThread : public ThreadFunction
+{
+	public:
+	TestThread() : ThreadFunction(), thread(this)
+	{
+		cerr << "Starting thread" << endl;
+		thread.Start();
+		cerr << "Started" << endl;
+	}
+	virtual ~TestThread()
+	{
+		cerr << "Waiting for thread to finish" << endl;
+		thread.WaitFinished();
+		cerr << "Thread finished" << endl;
+	}
+	virtual int Entry(Thread &t)
+	{
+#ifdef WIN32
+			Sleep(1000);
+#else
+			sleep(1);
+#endif
+		return(0);
+	}
+	protected:
+	Thread thread;
+};
+
+
+int main(int argc, char **argv)
+{
+	TestThread t;
+	return(0);
+}
+#endif
+
 
 #if 1
 

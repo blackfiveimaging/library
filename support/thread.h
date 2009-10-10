@@ -36,7 +36,7 @@ class ThreadSync : public ThreadCondition
 		received=true;
 		ReleaseMutex();
 	}
-	virtual void Wait()
+	virtual void WaitCondition()
 	{
 		ObtainMutex();
 		if(!received)

@@ -47,8 +47,8 @@ static const char *findextension(const char *filename)
 	return(filename);
 }
 
- 
-ImageSource *ISLoadImage(const char *filename)
+
+static ImageSource *ISLoadImage_core(const char *filename)
 {
 	const char *ext=findextension(filename);
 	try
@@ -89,6 +89,22 @@ ImageSource *ISLoadImage(const char *filename)
 		cerr << "- falling back to GdkPixbuf loader" << endl;
 	}
 	return(new ImageSource_GdkPixbuf(filename));
+}
+
+
+// Enforce sane defaults for resolution if the loader leaves it at zero.
+
+ImageSource *ISLoadImage(const char *filename)
+{
+	ImageSource *result=ISLoadImage_core(filename);
+	if(result)
+	{
+		if(result->xres==0)
+			result->xres=72;
+		if(result->yres==0)
+			result->yres=72;
+	}
+	return(result);
 }
 
 

@@ -731,14 +731,20 @@ std::string GPrinter::GetResponseHash()
 
 	MD5Consumer cons;
 
-	// Disable borderless mode...
+	// Disable borderless mode and set a standard papersize...
 	bool prevborderless=false;
+	const char *prevpaper=NULL;
+	char *paper=NULL;
 	stp_parameter_t desc;
 	stp_describe_parameter(stpvars,"FullBleed",&desc);
 	if(desc.is_active)
 	{
 		prevborderless=stp_get_boolean_parameter(stpvars,"FullBleed");
+		prevpaper=stp_get_string_parameter(stpvars,"PageSize");
+		if(prevpaper)
+			paper=strdup(prevpaper);
 		stp_set_boolean_parameter(stpvars,"FullBleed",false);
+		stp_set_string_parameter(stpvars,"PageSize","A4");
 	}
 
 	Print(is,72,72,&cons);
@@ -746,6 +752,11 @@ std::string GPrinter::GetResponseHash()
 	if(desc.is_active)
 	{
 		stp_set_boolean_parameter(stpvars,"FullBleed",prevborderless);
+		if(paper)
+		{
+			stp_set_string_parameter(stpvars,"PageSize","a4");
+			free(paper);
+		}
 		GetImageableArea();
 	};
 

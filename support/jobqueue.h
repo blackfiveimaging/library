@@ -41,6 +41,7 @@ class JobQueue : public ThreadCondition
 		Job *j;
 		while((j=PopJob()))
 			delete j;
+		ReleaseMutex();
 	}
 	Job *PopJob()
 	{

@@ -9,13 +9,13 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -
 	-I./miscwidgets -I./profilemanager -I./effects \
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
-check_PROGRAMS = dirtreetest jpegscan jpegcheck 
-
-bin_PROGRAMS = profileuitest mkrgbprofile mklabprofile mkgreyprofile \
+check_PROGRAMS = dirtreetest jpegscan jpegcheck \
+				mkrgbprofile mklabprofile mkgreyprofile \
 				composite imgsrctest \
-				pvtest threadtest \
-				gprintertest combotest \
-				printqueuetest stpuitest mkthumbnail
+				combotest \
+				printqueuetest stpuitest 
+
+bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest
 
 gprintertest_SOURCES = gprintertest.cpp
 combotest_SOURCES = combotest.cpp
@@ -76,7 +76,7 @@ pixbufthumbnail/libpixbufthumbnail.la:
 	$(MAKE) libpixbufthumbnail.la
 
 
-EXTRA_DIST = m4/ChangeLog  COPYING README TODO
+EXTRA_DIST = COPYING README TODO
 
 
 ACLOCAL_AMFLAGS = -I m4

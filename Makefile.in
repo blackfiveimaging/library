@@ -36,17 +36,15 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 check_PROGRAMS = dirtreetest$(EXEEXT) jpegscan$(EXEEXT) \
-	jpegcheck$(EXEEXT)
-bin_PROGRAMS = profileuitest$(EXEEXT) mkrgbprofile$(EXEEXT) \
-	mklabprofile$(EXEEXT) mkgreyprofile$(EXEEXT) \
-	composite$(EXEEXT) imgsrctest$(EXEEXT) pvtest$(EXEEXT) \
-	threadtest$(EXEEXT) gprintertest$(EXEEXT) combotest$(EXEEXT) \
-	printqueuetest$(EXEEXT) stpuitest$(EXEEXT) \
-	mkthumbnail$(EXEEXT)
+	jpegcheck$(EXEEXT) mkrgbprofile$(EXEEXT) mklabprofile$(EXEEXT) \
+	mkgreyprofile$(EXEEXT) composite$(EXEEXT) imgsrctest$(EXEEXT) \
+	combotest$(EXEEXT) printqueuetest$(EXEEXT) stpuitest$(EXEEXT)
+bin_PROGRAMS = threadtest$(EXEEXT) gprintertest$(EXEEXT) \
+	mkthumbnail$(EXEEXT) profileuitest$(EXEEXT) pvtest$(EXEEXT)
 subdir = .
-DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
+DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure ABOUT-NLS ChangeLog \
+	$(top_srcdir)/configure ABOUT-NLS COPYING ChangeLog TODO \
 	scripts/config.guess scripts/config.rpath scripts/config.sub \
 	scripts/depcomp scripts/install-sh scripts/ltmain.sh \
 	scripts/missing
@@ -511,7 +509,7 @@ LDADD = \
 	pixbufthumbnail/libpixbufthumbnail.la	\
 	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(GP_LIBS) $(GTK2_LIBS)
 
-EXTRA_DIST = m4/ChangeLog  COPYING README TODO
+EXTRA_DIST = COPYING README TODO
 ACLOCAL_AMFLAGS = -I m4
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

@@ -77,7 +77,7 @@ class SearchPathIterator
 {
 	public:
 	SearchPathIterator(SearchPathHandler &header);
-	~SearchPathIterator();
+	virtual ~SearchPathIterator();
 	virtual const char *GetNextFilename(const char *last);
 	const char *GetNextPath(const char *last);
 	protected:
