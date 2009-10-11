@@ -756,7 +756,7 @@ std::string GPrinter::GetResponseHash(Progress *p)
 		stp_set_boolean_parameter(stpvars,"FullBleed",prevborderless);
 		if(paper)
 		{
-			stp_set_string_parameter(stpvars,"PageSize","a4");
+			stp_set_string_parameter(stpvars,"PageSize",paper);
 			free(paper);
 		}
 		GetImageableArea();
