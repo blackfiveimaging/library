@@ -724,7 +724,7 @@ class MD5Consumer : public Consumer, public MD5Digest
 };
 
 
-std::string GPrinter::GetResponseHash()
+std::string GPrinter::GetResponseHash(Progress *p)
 {
 	ImageSource *is=new ImageSource_RainbowSweep(360,200);
 	is->SetResolution(180,180);
@@ -747,7 +747,9 @@ std::string GPrinter::GetResponseHash()
 		stp_set_string_parameter(stpvars,"PageSize","A4");
 	}
 
+	SetProgress(p);
 	Print(is,72,72,&cons);
+	SetProgress(NULL);
 
 	if(desc.is_active)
 	{

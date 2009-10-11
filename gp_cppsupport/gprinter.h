@@ -36,7 +36,7 @@ class GPrinter : public GPrinterSettings
 	void GetSizeLimits(int &minw,int &maxw,int &minh,int &maxh);
 	void SetCustomWidth(int w);
 	void SetCustomHeight(int h);
-	std::string GetResponseHash();
+	std::string GetResponseHash(Progress *p=NULL);
 	protected:
 	stp_image_status_t GetRow(int row,unsigned char *data);
 
