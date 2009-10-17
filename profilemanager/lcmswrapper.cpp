@@ -18,6 +18,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "../support/debug.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -59,17 +61,17 @@ void CMSProfile::CalcMD5()
 {
 	if(generated)
 	{
-		cerr << "Saving profile to RAM for MD5 calculation." << endl;
+		Debug[TRACE] << "Saving profile to RAM for MD5 calculation." << endl;
 		size_t plen=0;
 		_cmsSaveProfileToMem(prof,NULL,&plen);
 		if(plen>0)
 		{
-			cerr << "Plen = " << plen << endl;
+			Debug[TRACE] << "Plen = " << plen << endl;
 			buflen=plen;
 			buffer=(char *)malloc(buflen);
 			if(_cmsSaveProfileToMem(prof,buffer,&plen))
 			{
-				cerr << "Saved successfully" << endl;
+				Debug[TRACE] << "Saved successfully" << endl;
 				md5=new MD5Digest(buffer+sizeof(icHeader),buflen-sizeof(icHeader));
 			}
 		}
@@ -145,7 +147,7 @@ CMSProfile::CMSProfile()
 CMSProfile::CMSProfile(const CMSProfile &src)
 	: md5(NULL), generated(src.generated), filename(NULL), buffer(NULL), buflen(0)
 {
-	cerr << "In CMSProfile Copy Constructor" << endl;
+	Debug[TRACE] << "In CMSProfile Copy Constructor" << endl;
 	if(src.filename)
 	{
 		filename=strdup(src.filename);
@@ -197,7 +199,7 @@ bool CMSProfile::IsDeviceLink()
 
 bool CMSProfile::IsV4()
 {
-	cerr << "Profile version: " << cmsGetProfileICCversion(prof) << endl;
+	Debug[TRACE] << "Profile version: " << cmsGetProfileICCversion(prof) << endl;
 	return(cmsGetProfileICCversion(prof) >= 0x04000000L);
 }
 
@@ -344,7 +346,7 @@ bool CMSProfile::Save(const char *outfn)
 			}
 			if(outfn)
 			{
-				cerr << "Saving buffer: " << long(buffer) << ", length: " << buflen << endl;
+				Debug[TRACE] << "Saving buffer: " << long(buffer) << ", length: " << buflen << endl;
 				ofstream f(outfn,ios::out|ios::binary);
 				f.write(buffer,buflen);
 				f.close();
@@ -646,20 +648,20 @@ CMSProofingTransform::CMSProofingTransform(CMSProfile *in,CMSProfile *out,CMSPro
 	}
 
 //	if(in->GetFilename())
-//		cerr << "In: " << in->GetFilename() << endl;
-//	cerr << "In: " << in->GetDescription() << endl;
+//		Debug[TRACE] << "In: " << in->GetFilename() << endl;
+//	Debug[TRACE] << "In: " << in->GetDescription() << endl;
 	if(out)
 	{
 //		if(out->GetFilename())
-//			cerr << "Out: " << out->GetFilename() << endl;
-//		cerr << "Out: " << out->GetDescription() << endl;
+//			Debug[TRACE] << "Out: " << out->GetFilename() << endl;
+//		Debug[TRACE] << "Out: " << out->GetDescription() << endl;
 	}
 //	if(proof->GetFilename())
-//		cerr << "Proof: " << proof->GetFilename() << endl;
-//	cerr << "Proof: " << proof->GetDescription() << endl;
+//		Debug[TRACE] << "Proof: " << proof->GetFilename() << endl;
+//	Debug[TRACE] << "Proof: " << proof->GetDescription() << endl;
 
-//	cerr << "Viewing intent: " << viewintent << endl;
-//	cerr << "Rendering intent: " << proofintent << endl;
+//	Debug[TRACE] << "Viewing intent: " << viewintent << endl;
+//	Debug[TRACE] << "Rendering intent: " << proofintent << endl;
 
 	transform = cmsCreateProofingTransform(in->prof,
 		it,
@@ -709,14 +711,14 @@ CMSProofingTransform::CMSProofingTransform(CMSProfile *devicelink,CMSProfile *pr
 	}
 
 //	if(devicelink->GetFilename())
-//		cerr << "DeviceLink: " << devicelink->GetFilename() << endl;
-//	cerr << "DeviceLink: " << devicelink->GetDescription() << endl;
+//		Debug[TRACE] << "DeviceLink: " << devicelink->GetFilename() << endl;
+//	Debug[TRACE] << "DeviceLink: " << devicelink->GetDescription() << endl;
 //	if(proof->GetFilename())
-//		cerr << "Proof: " << proof->GetFilename() << endl;
-//	cerr << "Proof: " << proof->GetDescription() << endl;
+//		Debug[TRACE] << "Proof: " << proof->GetFilename() << endl;
+//	Debug[TRACE] << "Proof: " << proof->GetDescription() << endl;
 
-//	cerr << "Viewing intent: " << viewintent << endl;
-//	cerr << "Rendering intent: " << proofintent << endl;
+//	Debug[TRACE] << "Viewing intent: " << viewintent << endl;
+//	Debug[TRACE] << "Rendering intent: " << proofintent << endl;
 
 	transform = cmsCreateProofingTransform(devicelink->prof,
 		it,

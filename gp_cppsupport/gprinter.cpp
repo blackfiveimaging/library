@@ -25,6 +25,7 @@
 #include <glib/gprintf.h>
 
 #include "../imagesource/imagesource.h"
+#include "../support/debug.h"
 #include "../support/md5.h"
 #include "../miscwidgets/generaldialogs.h"
 
@@ -49,6 +50,7 @@ class GPrinter_StaticInitializer
 	{
 		if(stp_init())
 		{
+			// Don't use Debug object here - can't guarantee it will be initialised by this point!
 			cerr << "Couldn't initialize Gutenprint - check STP_DATA_PATH variable" << endl;
 //			throw "Couldn't initialize Gutenprint - check STP_DATA_PATH variable";
 		}
@@ -93,7 +95,7 @@ void GPrinter::get_dimensions()
 		else
 		{
 			int clipped;
-			cerr << "Warning: Image is taller than usable page - clipping." << endl;
+			Debug[WARN] << "Warning: Image is taller than usable page - clipping." << endl;
 			papertop=topmargin;
 			clipped=(ptheight-imageableheight)/2;
 			clipped*=yres;
@@ -109,7 +111,7 @@ void GPrinter::get_dimensions()
 		papertop=ypos;
 		if(ypos<topmargin)
 		{
-			cerr << "Warning: Image is clipped by top margin." << endl;
+			Debug[WARN] << "Warning: Image is clipped by top margin." << endl;
 			papertop=topmargin;
 			clipped=topmargin-ypos;
 			ptheight-=clipped;
@@ -120,7 +122,7 @@ void GPrinter::get_dimensions()
 		}
 		if((papertop+ptheight)>(pageheight-bottommargin))
 		{
-			cerr << "Warning: Image is clipped by bottom margin." << endl;
+			Debug[WARN] << "Warning: Image is clipped by bottom margin." << endl;
 			clipped=(papertop+ptheight)-(pageheight-bottommargin);
 			ptheight-=clipped;
 			clipped*=yres;
@@ -139,7 +141,7 @@ void GPrinter::get_dimensions()
 		else
 		{
 			int clipped;
-			fprintf(stderr,"Warning: Image is wider than usable page - clipping.\n");
+			Debug[WARN] << "Warning: Image is wider than usable page - clipping." << endl;
 			paperleft=leftmargin;
 			clipped=(ptwidth-imageablewidth)/2;
 			clipped*=xres;
@@ -155,7 +157,7 @@ void GPrinter::get_dimensions()
 		paperleft=xpos;
 		if(xpos<leftmargin)
 		{
-			cerr << "Warning: Image is clipped by left margin." << endl;
+			Debug[WARN] << "Warning: Image is clipped by left margin." << endl;
 			paperleft=leftmargin;
 			clipped=leftmargin-xpos;
 			ptwidth-=clipped;
@@ -166,7 +168,7 @@ void GPrinter::get_dimensions()
 		}
 		if((paperleft+ptwidth)>(pagewidth-rightmargin))
 		{
-			cerr << "Warning: Image is clipped by right margin." << endl;
+			Debug[WARN] << "Warning: Image is clipped by right margin." << endl;
 			clipped=(paperleft+ptwidth)-(pagewidth-rightmargin);
 			ptwidth-=clipped;
 			clipped*=xres;
@@ -276,7 +278,7 @@ void GPrinter::writefunc(void *obj, const char *buf, size_t bytes)
 		if(!result)
 		{
 			writeerror=true;
-			cerr << "cons->Write() returned " << result << endl;
+			Debug[TRACE] << "cons->Write() returned " << result << endl;
 		}
 	}
 }
@@ -284,20 +286,20 @@ void GPrinter::writefunc(void *obj, const char *buf, size_t bytes)
 
 void GPrinter::Print(ImageSource *src,int xpos,int ypos,Consumer *cons)
 {
-	cerr << "*** GPrinter: Printing at position: " << xpos << ", " << ypos << endl;
+	Debug[TRACE] << "*** GPrinter: Printing at position: " << xpos << ", " << ypos << endl;
 	source=src;
 	switch(source->type)
 	{
 		case IS_TYPE_RGB:
-			cerr << "Printing in RGB mode" << endl;
+			Debug[TRACE] << "Printing in RGB mode" << endl;
 			stp_set_string_parameter(stpvars, "InputImageType", "RGB");
 			break;
 		case IS_TYPE_CMYK:
-			cerr << "Printing in CMYK mode" << endl;
+			Debug[TRACE] << "Printing in CMYK mode" << endl;
 			stp_set_string_parameter(stpvars, "InputImageType", "CMYK");
 			break;
 		case IS_TYPE_DEVICEN:
-			cerr << "Printing in DeviceN mode" << endl;
+			Debug[TRACE] << "Printing in DeviceN mode" << endl;
 			stp_set_string_parameter(stpvars, "InputImageType", "Raw");
 			{
 				char nchan[10];
@@ -316,12 +318,12 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos,Consumer *cons)
 			stp_set_string_parameter(stpvars, "ChannelBitDepth", "16");
 #endif
 
-	cerr << "Checking PrintingMode:" << endl;
+	Debug[TRACE] << "Checking PrintingMode:" << endl;
 	const char *pm=stp_get_string_parameter(stpvars,"PrintingMode");
 	if(pm)
-		cerr << "PrintingMode currently set to:" << pm << endl;
+		Debug[TRACE] << "PrintingMode currently set to:" << pm << endl;
 	else
-		cerr << "PrintingMode currently not set." << endl;
+		Debug[TRACE] << "PrintingMode currently not set." << endl;
 //	stp_set_string_parameter(stpvars, "PrintingMode", "Color");
 
 	this->xpos=xpos;
@@ -329,8 +331,8 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos,Consumer *cons)
 	get_dimensions();
 	stp_set_width(stpvars, ptwidth);
 	stp_set_height(stpvars, ptheight);
-	cerr << "Paperleft: " << paperleft << endl;
-	cerr << "Papertop: " << papertop << endl;
+	Debug[TRACE] << "Paperleft: " << paperleft << endl;
+	Debug[TRACE] << "Papertop: " << papertop << endl;
 	stp_set_left(stpvars, paperleft-leftbleed);
 	stp_set_top(stpvars, papertop-topbleed);
 
@@ -388,7 +390,7 @@ void GPrinter::GetImageableArea()
 //	pagewidth=pageheight=0;
 //	stp_get_media_size(stpvars, &pagewidth, &pageheight);
 
-//	cerr << "Media size returned: " << pagewidth << " by " << pageheight << endl;
+//	Debug[TRACE] << "Media size returned: " << pagewidth << " by " << pageheight << endl;
 
 	const char *papersize=stp_get_string_parameter(stpvars,"PageSize");
 	bool gotpapersize=false;
@@ -402,7 +404,7 @@ void GPrinter::GetImageableArea()
 			{
 				pagewidth=minwidth=maxwidth=paper->width;
 				stp_set_page_width(stpvars,pagewidth);
-				cerr << "Width: " << pagewidth << endl;
+				Debug[TRACE] << "Width: " << pagewidth << endl;
 			}
 			else
 			{
@@ -411,13 +413,13 @@ void GPrinter::GetImageableArea()
 				stp_get_size_limit(stpvars,&mw,&mh,&nw,&nh);
 				minwidth=nw;
 				maxwidth=mw;
-				cerr << "Custom width..." << endl;
+				Debug[TRACE] << "Custom width..." << endl;
 			}
 			if(paper->height)
 			{
 				pageheight=minheight=maxheight=paper->height;
 				stp_set_page_height(stpvars,pageheight);
-				cerr << "Height: " << pageheight << endl;
+				Debug[TRACE] << "Height: " << pageheight << endl;
 			}
 			else
 			{
@@ -426,7 +428,7 @@ void GPrinter::GetImageableArea()
 				stp_get_size_limit(stpvars,&mw,&mh,&nw,&nh);
 				minheight=nh;
 				maxheight=mh;
-				cerr << "Custom height..." << endl;
+				Debug[TRACE] << "Custom height..." << endl;
 			}
 		}
 	}
@@ -439,7 +441,7 @@ void GPrinter::GetImageableArea()
 	int l,r,t,b;
 	stp_get_imageable_area(stpvars, &l, &r, &b, &t);
 
-	cerr << "Imageable area from GP: L: " << l << ", R: " << r << ", T: " << t << ", B: " << b << endl;
+	Debug[TRACE] << "Imageable area from GP: L: " << l << ", R: " << r << ", T: " << t << ", B: " << b << endl;
 
 	leftbleed=rightbleed=topbleed=bottombleed=0;
 
@@ -472,22 +474,22 @@ void GPrinter::GetImageableArea()
 	rightmargin=pagewidth-r;
 	bottommargin=pageheight-b;
 
-	cerr << "Pagewidth: " << pagewidth << endl;
-	cerr << "Pageheight: " << pageheight << endl;
+	Debug[TRACE] << "Pagewidth: " << pagewidth << endl;
+	Debug[TRACE] << "Pageheight: " << pageheight << endl;
 
 	PageExtent::GetImageableArea();
 
-	cerr << "Imageable width: " << imageablewidth << endl;
-	cerr << "Imageable height: " << imageableheight << endl;
+	Debug[TRACE] << "Imageable width: " << imageablewidth << endl;
+	Debug[TRACE] << "Imageable height: " << imageableheight << endl;
 
-	cerr << "Left bleed: " << leftbleed << endl;
-	cerr << "Right bleed: " << rightbleed << endl;
-	cerr << "Top bleed: " << topbleed << endl;
-	cerr << "Bottom bleed: " << bottombleed << endl;
+	Debug[TRACE] << "Left bleed: " << leftbleed << endl;
+	Debug[TRACE] << "Right bleed: " << rightbleed << endl;
+	Debug[TRACE] << "Top bleed: " << topbleed << endl;
+	Debug[TRACE] << "Bottom bleed: " << bottombleed << endl;
 
 	// HACK
 	// There seems to be a problem with GutenPrint's setlocale() calls.
-	cerr << "After reading papersize and margins: " << setlocale(LC_ALL,"") << endl;
+	Debug[TRACE] << "After reading papersize and margins: " << setlocale(LC_ALL,"") << endl;
 }
 
 
@@ -502,8 +504,8 @@ void GPrinter::GetSizeLimits(int &minw,int &maxw,int &minh,int &maxh)
 
 void GPrinter::SetCustomWidth(int w)
 {
-	cerr << "New width = " << w << endl;
-	cerr << "New width without bleed = " << w-(leftbleed+rightbleed) << endl;
+	Debug[TRACE] << "New width = " << w << endl;
+	Debug[TRACE] << "New width without bleed = " << w-(leftbleed+rightbleed) << endl;
 	stp_set_page_width(stpvars,w-(leftbleed+rightbleed));
 	pagewidth=w-(leftbleed+rightbleed);
 }
@@ -511,8 +513,8 @@ void GPrinter::SetCustomWidth(int w)
 
 void GPrinter::SetCustomHeight(int h)
 {
-	cerr << "New height = " << h << endl;
-	cerr << "New height without bleed = " << h-(topbleed+bottombleed) << endl;
+	Debug[TRACE] << "New height = " << h << endl;
+	Debug[TRACE] << "New height without bleed = " << h-(topbleed+bottombleed) << endl;
 	stp_set_page_height(stpvars,h-(topbleed+bottombleed));
 	pageheight=h-(topbleed+bottombleed);
 }

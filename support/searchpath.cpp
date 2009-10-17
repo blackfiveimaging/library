@@ -9,6 +9,8 @@
 
 #include "searchpath.h"
 
+#include "debug.h"
+
 using namespace std;
 
 class SearchPathInstance
@@ -136,7 +138,7 @@ char *SearchPathHandler::SearchPaths(const char *file)
 	while(it!=paths.end())
 	{
 		char *p=(*it)->MakeAbsolute(file);
-//		cerr << file << " -> " << p << endl;
+//		Debug[TRACE] << file << " -> " << p << endl;
 
 		if(stat(p,&statbuf)==0)
 			return(p);
@@ -176,7 +178,7 @@ void SearchPathHandler::AddPath(const char *path)
 		}
 		catch(const char *err)
 		{
-			cerr << "Error: " << err << endl;
+			Debug[ERROR] << "Error: " << err << endl;
 		}
 	}
 }

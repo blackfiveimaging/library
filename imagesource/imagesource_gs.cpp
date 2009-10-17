@@ -61,7 +61,8 @@ ImageSource_GS::ImageSource_GS(const char *filename,int resolution) : ImageSourc
 	snprintf(cmd,l,gscmd,resolution,resolution,tiffname,filename);
 	
 	// Execute command
-	system(cmd);
+	if(system(cmd)!=0)
+		throw "Ghostscript call failed";
 	
 	// Free command
 	free(cmd);

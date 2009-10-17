@@ -6,6 +6,8 @@
 #include "config.h"
 #endif
 
+#include "debug.h"
+
 #include "thread.h"
 #include "multex.h"
 
@@ -36,7 +38,7 @@ Multex::~Multex()
 
 void Multex::ObtainMultex()
 {
-//	cerr << "Multex " << serialno << ": Obtaining from " << long(Thread::GetThreadID()) << endl;
+//	Debug[TRACE] << "Multex " << serialno << ": Obtaining from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
 	while(lockcount>=limit)
 	{
@@ -50,12 +52,12 @@ void Multex::ObtainMultex()
 
 bool Multex::AttemptMultex()
 {
-//	cerr << "Multex " << serialno << ": AttemptMutex from " << long(Thread::GetThreadID()) << endl;
+//	Debug[TRACE] << "Multex " << serialno << ": AttemptMutex from " << long(Thread::GetThreadID()) << endl;
 	bool result=false;
 	PTMutex::ObtainMutex();
 	if(lockcount<limit)
 	{
-//		cerr << "Obtained multex lock - lock count: " << lockcount << endl;
+//		Debug[TRACE] << "Obtained multex lock - lock count: " << lockcount << endl;
 		Increment();
 //		Dump();
 		result=true;
@@ -67,7 +69,7 @@ bool Multex::AttemptMultex()
 
 void Multex::ReleaseMultex()
 {
-//	cerr << "Multex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
+//	Debug[TRACE] << "Multex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
 	Decrement();
 //	Dump();
@@ -91,34 +93,34 @@ void Multex::Increment()
 #else
 	pthread_t current=pthread_self();
 #endif
-//	cerr << "Increment - searching for thread: " << current << endl;
+//	Debug[TRACE] << "Increment - searching for thread: " << current << endl;
 	for(int i=0;i<MULTEX_THREADS_MAX;++i)
 	{
 		if(counttable[i].id==current)
 		{
-//			cerr << "found" << endl;
+//			Debug[TRACE] << "found" << endl;
 			++counttable[i].count;
 			return;
 		}
 	}
 	// If none found, add a new entry, and set the count to 1;
-//	cerr << "Increment - searching for free slot" << endl;
+//	Debug[TRACE] << "Increment - searching for free slot" << endl;
 	while(1)
 	{
 		for(int i=0;i<MULTEX_THREADS_MAX;++i)
 		{
 			if(counttable[i].id==0)
 			{
-//				cerr << "found" << endl;
+//				Debug[TRACE] << "found" << endl;
 				counttable[i].id=current;
 				counttable[i].count=1;
 				return;
 			}
 		}
 		// If there were no free slots, complain.
-		cerr << "Multex: thread table full - waiting..." << endl;
+		Debug[WARN] << "Multex: thread table full - waiting..." << endl;
 		pthread_cond_wait(&cond,&mutex);
-		cerr << "Multex - trying again to find a free slot... " << endl;
+		Debug[WARN] << "Multex - trying again to find a free slot... " << endl;
 	}
 }
 
@@ -131,7 +133,7 @@ void Multex::Decrement(bool shared)
 #else
 	pthread_t current=pthread_self();
 #endif
-//	cerr << "Decrement - searching for thread: " << current << endl;
+//	Debug[TRACE] << "Decrement - searching for thread: " << current << endl;
 	for(int i=0;i<MULTEX_THREADS_MAX;++i)
 	{
 		if(counttable[i].id==current)
@@ -143,17 +145,17 @@ void Multex::Decrement(bool shared)
 		}
 	}
 	// If thread was not found, complain.
-//	cerr << "Multex: thread not found in table." << endl;
+//	Debug[TRACE] << "Multex: thread not found in table." << endl;
 }
 
 
 void Multex::Dump()
 {
-	cerr << "Locks held: " << lockcount << endl;
+	Debug[TRACE] << "Locks held: " << lockcount << endl;
 	for(int i=0;i<MULTEX_THREADS_MAX;++i)
 	{
 		if(counttable[i].id)
-			cerr << "Thread: " << counttable[i].id << ", count: " << counttable[i].count << endl;
+			Debug[TRACE] << "Thread: " << counttable[i].id << ", count: " << counttable[i].count << endl;
 	}
 }
 

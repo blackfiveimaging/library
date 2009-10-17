@@ -15,7 +15,6 @@
 @SET_MAKE@
 
 # Makefile.am
-# RL 28/11/04
 
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
@@ -38,7 +37,8 @@ host_triplet = @host@
 check_PROGRAMS = dirtreetest$(EXEEXT) jpegscan$(EXEEXT) \
 	jpegcheck$(EXEEXT) mkrgbprofile$(EXEEXT) mklabprofile$(EXEEXT) \
 	mkgreyprofile$(EXEEXT) composite$(EXEEXT) imgsrctest$(EXEEXT) \
-	combotest$(EXEEXT) printqueuetest$(EXEEXT) stpuitest$(EXEEXT)
+	combotest$(EXEEXT) printqueuetest$(EXEEXT) stpuitest$(EXEEXT) \
+	debugtest$(EXEEXT)
 bin_PROGRAMS = threadtest$(EXEEXT) gprintertest$(EXEEXT) \
 	mkthumbnail$(EXEEXT) profileuitest$(EXEEXT) pvtest$(EXEEXT)
 subdir = .
@@ -79,6 +79,20 @@ am_composite_OBJECTS = composite.$(OBJEXT)
 composite_OBJECTS = $(am_composite_OBJECTS)
 composite_LDADD = $(LDADD)
 composite_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
+	miscwidgets/libmiscwidgets.la imagesource/libimagesource.la \
+	profilemanager/libprofilemanager.la support/libsupport.la \
+	stpui_widgets/libstpui_widgets.la \
+	stp_support/libstp_support.la \
+	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_debugtest_OBJECTS = debugtest.$(OBJEXT)
+debugtest_OBJECTS = $(am_debugtest_OBJECTS)
+debugtest_LDADD = $(LDADD)
+debugtest_DEPENDENCIES = imageutils/libimageutils.la \
 	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la imagesource/libimagesource.la \
 	profilemanager/libprofilemanager.la support/libsupport.la \
@@ -298,15 +312,17 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
-	$(dirtreetest_SOURCES) $(gprintertest_SOURCES) \
-	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
+	$(debugtest_SOURCES) $(dirtreetest_SOURCES) \
+	$(gprintertest_SOURCES) $(imgsrctest_SOURCES) \
+	$(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
 	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
 DIST_SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
-	$(dirtreetest_SOURCES) $(gprintertest_SOURCES) \
-	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
+	$(debugtest_SOURCES) $(dirtreetest_SOURCES) \
+	$(gprintertest_SOURCES) $(imgsrctest_SOURCES) \
+	$(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
@@ -481,6 +497,7 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -
 	-I./miscwidgets -I./profilemanager -I./effects \
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
+debugtest_SOURCES = debugtest.cpp
 gprintertest_SOURCES = gprintertest.cpp
 combotest_SOURCES = combotest.cpp
 profileuitest_SOURCES = profileuitest.cpp
@@ -607,6 +624,9 @@ combotest$(EXEEXT): $(combotest_OBJECTS) $(combotest_DEPENDENCIES)
 composite$(EXEEXT): $(composite_OBJECTS) $(composite_DEPENDENCIES) 
 	@rm -f composite$(EXEEXT)
 	$(CXXLINK) $(composite_OBJECTS) $(composite_LDADD) $(LIBS)
+debugtest$(EXEEXT): $(debugtest_OBJECTS) $(debugtest_DEPENDENCIES) 
+	@rm -f debugtest$(EXEEXT)
+	$(CXXLINK) $(debugtest_OBJECTS) $(debugtest_LDADD) $(LIBS)
 dirtreetest$(EXEEXT): $(dirtreetest_OBJECTS) $(dirtreetest_DEPENDENCIES) 
 	@rm -f dirtreetest$(EXEEXT)
 	$(CXXLINK) $(dirtreetest_OBJECTS) $(dirtreetest_LDADD) $(LIBS)
@@ -658,6 +678,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/combotest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/composite.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debugtest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirtreetest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gprintertest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imgsrctest.Po@am__quote@

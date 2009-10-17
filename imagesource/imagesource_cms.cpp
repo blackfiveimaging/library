@@ -14,6 +14,8 @@
 
 #include <math.h>
 
+#include "../support/debug.h"
+
 #include "imagesource_cms.h"
 
 using namespace std;
@@ -110,7 +112,7 @@ ImageSource_CMS::ImageSource_CMS(ImageSource *source,CMSTransform *transform)
 
 void ImageSource_CMS::Init()
 {
-//	cerr << "Initialsing CMS transform" << endl;
+//	Debug[TRACE] << "Initialsing CMS transform" << endl;
 	switch(type=transform->GetOutputColourSpace())
 	{
 		case IS_TYPE_GREY:
@@ -127,11 +129,11 @@ void ImageSource_CMS::Init()
 			break;
 	}
 
-//	cerr << "Type: " << type << endl;
+//	Debug[TRACE] << "Type: " << type << endl;
 
 	if(transform->GetInputColourSpace()!=STRIP_ALPHA(source->type))
 	{
-		cerr << "Error - transform's input colorspace is " << transform->GetInputColourSpace() << ", but image's type is " << source->type << endl;
+		Debug[ERROR] << "Error - transform's input colorspace is " << transform->GetInputColourSpace() << ", but image's type is " << source->type << endl;
 		throw "Source image must match source profile!";
 	}
 
@@ -147,9 +149,9 @@ void ImageSource_CMS::Init()
 	tmp1=(unsigned short *)malloc(sizeof(unsigned short)*width*source->samplesperpixel);
 	tmp2=(unsigned short *)malloc(sizeof(unsigned short)*width*samplesperpixel);
 
-//	cerr << "tmpsourcespp: " << tmpsourcespp << endl;
-//	cerr << "tmpdestspp: " << tmpdestspp << endl;
-//	cerr << "samplesperpixel: " << samplesperpixel << endl;
+//	Debug[TRACE] << "tmpsourcespp: " << tmpsourcespp << endl;
+//	Debug[TRACE] << "tmpdestspp: " << tmpdestspp << endl;
+//	Debug[TRACE] << "samplesperpixel: " << samplesperpixel << endl;
 
 	MakeRowBuffer();
 }

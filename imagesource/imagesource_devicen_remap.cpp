@@ -15,6 +15,8 @@
 #include <string.h>
 #include <math.h>
 
+#include "../support/debug.h"
+
 #include "imagesource_devicen_remap.h"
 
 using namespace std;
@@ -94,7 +96,7 @@ ImageSource_ToDeviceN::ImageSource_ToDeviceN(ImageSource *source) : ImageSource(
 {
 	if(STRIP_ALPHA(source->type)==IS_TYPE_RGB)
 	{
-		cerr << "Original image is RGB - inverting as well as re-interpreting..." << endl;
+		Debug[COMMENT] << "Original image is RGB - inverting as well as re-interpreting..." << endl;
 		MakeRowBuffer();
 	}
 	type=IS_TYPE_DEVICEN;

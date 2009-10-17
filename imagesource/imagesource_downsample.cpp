@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../support/debug.h"
+
 #include "imagesource_downsample.h"
 
 using namespace std;
@@ -128,7 +130,7 @@ ISDataType *ImageSource_HDownsample::GetRow(int row)
 ImageSource_HDownsample::ImageSource_HDownsample(struct ImageSource *source,int width)
 	: ImageSource(source), source(source)
 {
-	cerr << "Using hdownsample filter" << endl;
+	Debug[COMMENT] << "Using hdownsample filter" << endl;
 	this->width=width;
 	xres=(source->xres*width); xres/=source->width;
 
@@ -201,7 +203,7 @@ ISDataType *ImageSource_VDownsample::GetRow(int row)
 ImageSource_VDownsample::ImageSource_VDownsample(struct ImageSource *source,int height)
 	: ImageSource(source), source(source), tmp(NULL), srcrow(0), acc(0)
 {
-	cerr << "Using vdownsample filter" << endl;
+	Debug[COMMENT] << "Using vdownsample filter" << endl;
 	this->height=height;
 	yres=(source->yres*height); yres/=source->height;
 	randomaccess=false;

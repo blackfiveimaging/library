@@ -1,5 +1,6 @@
 
 #include "consumer.h"
+#include "debug.h"
 
 using namespace std;
 
@@ -41,7 +42,7 @@ Consumer_Pipe::Consumer_Pipe(const char *command) : canceled(false)
 	childpid=fork();
 	if(childpid==0)
 	{
-		cerr << "Child process: " << childpid << endl;
+		Debug[TRACE] << "Child process: " << childpid << endl;
 		dup2(pipefd[0],0);
 		close(pipefd[0]);
 		close(pipefd[1]);
@@ -57,7 +58,7 @@ Consumer_Pipe::~Consumer_Pipe()
 #else
 	if(canceled)
 	{
-		cerr << "Killing child process (" << childpid << ")..." << endl;
+		Debug[TRACE] << "Killing child process (" << childpid << ")..." << endl;
 		kill(childpid,SIGTERM);
 	}
 	close(pipefd[0]);
@@ -87,7 +88,7 @@ void Consumer_Pipe::sighandler(int sig)
 	switch(sig)
 	{
 		case SIGPIPE:
-			cerr << "Received SIGPIPE - aborting" << endl;
+			Debug[WARN] << "Received SIGPIPE - aborting" << endl;
 			aborted=true;
 			break;
 		default:

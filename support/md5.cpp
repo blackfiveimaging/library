@@ -8,8 +8,6 @@
 
 using namespace std;
 
-static void get_md5	  (const unsigned char *str, unsigned int length,
-			   unsigned char digest[16]);
 
 static void md5_transform(unsigned int buf[4], unsigned int const in[16]);
 
@@ -131,15 +129,6 @@ std::ostream& operator<<(std::ostream &o, MD5Digest &d)
  *
  * Converted to C++ semantics by Alastair M. Robinson
  */
-
-static void
-get_md5 (const unsigned char *string, unsigned int length,unsigned char digest[16])
-{
-  MD5Context ctx;
-  
-  ctx.UpdateMD5Context(string, length);
-  ctx.FinalizeMD5Context(digest);
-}
 
 
 /*

@@ -11,6 +11,7 @@
 #include <shlobj.h>
 #endif
 
+#include "debug.h"
 #include "searchpath.h"
 #include "pathsupport.h"
 
@@ -86,13 +87,13 @@ char *substitute_xdgconfighome(const char *path)
 		const char *hd=NULL;
 		if((hd=getenv(envvar+1)))
 		{
-//			cerr << "Got XDG_CONFIG_HOME: " << hd << endl;
+//			Debug[TRACE] << "Got XDG_CONFIG_HOME: " << hd << endl;
 			result=(char *)malloc(strlen(path)+strlen(hd)+2);
 			sprintf(result,"%s%c%s",hd,SEARCHPATH_SEPARATOR,path);
 		}
 		else
 		{
-//			cerr << "No XDG_CONFIG_HOME set - using $HOME/.config instead" << endl;
+//			Debug[TRACE] << "No XDG_CONFIG_HOME set - using $HOME/.config instead" << endl;
 			const char *hd=g_get_home_dir();
 			result=(char *)malloc(strlen(hd)+strlen("/.config/")+strlen(path)+strlen(hd)+2);
 			sprintf(result,"%s%c.config%c%s",hd,SEARCHPATH_SEPARATOR,SEARCHPATH_SEPARATOR,path);

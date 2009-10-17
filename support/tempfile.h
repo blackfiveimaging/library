@@ -13,8 +13,8 @@ class TempFile
 	virtual TempFile *NextTempFile();
 	virtual bool MatchTempFile(const char *searchkey);
 	protected:
-	char *prefix;
 	char *filename;
+	char *prefix;
 	char *searchkey;
 	TempFileTracker *header;
 	TempFile *nexttempfile,*prevtempfile;

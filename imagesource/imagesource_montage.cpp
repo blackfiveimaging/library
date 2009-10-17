@@ -21,6 +21,8 @@
 
 #include <iostream>
 
+#include "../support/debug.h"
+
 #include "imagesource_montage.h"
 
 using namespace std;
@@ -74,13 +76,13 @@ ISMontage_Component::ISMontage_Component(ImageSource_Montage *header,ImageSource
 
 	if(xpos<0)
 	{
-		cerr << "ISMontage - Warning: xpos < 0 - clamping." << endl;
+		Debug[WARN] << "ISMontage - Warning: xpos < 0 - clamping." << endl;
 		xpos=0;
 	}
 
 	if(ypos<0)
 	{
-		cerr << "ISMontage - Warning: ypos < 0 - clamping." << endl;
+		Debug[WARN] << "ISMontage - Warning: ypos < 0 - clamping." << endl;
 		ypos=0;
 	}
 
@@ -236,7 +238,7 @@ ISDataType *ImageSource_Montage::GetRow(int row)
 					for(int i=0;i<mc->source->width;++i)
 					{
 						int a=src[(i+1)*mc->source->samplesperpixel-1];
-//						cerr << "Alpha: " << a << endl;
+//						Debug[TRACE] << "Alpha: " << a << endl;
 						int ia=IS_SAMPLEMAX-a;
 						int xp=(mc->xpos+i)*samplesperpixel;
 						int sp=i*mc->source->samplesperpixel;

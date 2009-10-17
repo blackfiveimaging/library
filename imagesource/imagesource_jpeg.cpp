@@ -25,6 +25,8 @@ typedef unsigned char boolean;
 #include <jerror.h>
 }
 
+#include "../support/debug.h"
+
 #include "lcmswrapper.h"
 
 #include "iccjpeg.h"
@@ -47,7 +49,7 @@ static void isjpeg_error_exit (j_common_ptr cinfo)
 	ImageSource_JPEG_ErrManager *myerr = (ImageSource_JPEG_ErrManager *) cinfo->err;
 	cinfo->err->output_message(cinfo);
 	cinfo->err->format_message(cinfo,buffer);
-	cerr << buffer << endl;
+	Debug[TRACE] << buffer << endl;
 	jpeg_destroy_compress((jpeg_compress_struct *)cinfo);
 	if(myerr->FileOwned)
 		fclose(myerr->File);
@@ -162,7 +164,7 @@ ISDataType *ImageSource_JPEG::GetRow(int row)
 		
 	if(row<currentrow)
 	{
-		cerr << "JPEG error - can't support random access.  Row " << row << " requested after row " << currentrow << endl;
+		Debug[TRACE] << "JPEG error - can't support random access.  Row " << row << " requested after row " << currentrow << endl;
 		throw "Random access not supported for JPEG files";
 	}
 	

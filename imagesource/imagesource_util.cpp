@@ -16,6 +16,8 @@
 
 #include "imagesource_util.h"
 
+#include "../support/debug.h"
+
 #include "../config.h"
 
 #include "gettext.h"
@@ -53,8 +55,8 @@ static ImageSource *ISLoadImage_core(const char *filename)
 	const char *ext=findextension(filename);
 	try
 	{
-		cerr << "Loading filename: " << filename << endl;
-		cerr << "Extension: " << ext << endl; 
+		Debug[COMMENT] << "Loading filename: " << filename << endl;
+		Debug[COMMENT] << "Extension: " << ext << endl; 
 		if(strncasecmp(ext,".JPG",4)==0)
 			return(new ImageSource_JPEG(filename));
 		else if(strncasecmp(ext,".JPEG",5)==0)
@@ -84,9 +86,9 @@ static ImageSource *ISLoadImage_core(const char *filename)
 	}
 	catch(const char *err)
 	{
-		cerr << "Attempt to load " << filename << " failed" << endl;
-		cerr << "(" << err << ")" << endl;
-		cerr << "- falling back to GdkPixbuf loader" << endl;
+		Debug[WARN] << "Attempt to load " << filename << " failed" << endl;
+		Debug[WARN] << "(" << err << ")" << endl;
+		Debug[WARN] << "- falling back to GdkPixbuf loader" << endl;
 	}
 	return(new ImageSource_GdkPixbuf(filename));
 }
@@ -203,11 +205,11 @@ ImageSource *ISScaleImageBySize(ImageSource *source,int width,int height,IS_Scal
 		switch(quality)
 		{
 			case IS_SCALING_NEARESTNEIGHBOUR:
-				cerr << "Image is being shrunk - using Nearest Neighbour scaling" << endl;
+				Debug[TRACE] << "Image is being shrunk - using Nearest Neighbour scaling" << endl;
 				quality=IS_SCALING_NEARESTNEIGHBOUR;
 				break;
 			default:
-				cerr << "Using Downsample filter..." << endl;
+				Debug[TRACE] << "Using Downsample filter..." << endl;
 				quality=IS_SCALING_DOWNSAMPLE;
 				break;
 		}

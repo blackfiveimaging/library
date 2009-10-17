@@ -53,6 +53,8 @@ libsupport_la_SOURCES =	\
 	\
 	md5.cpp \
 	md5.h \
+	debug.cpp	\
+	debug.h	\
 	util.cpp \
 	util.h
 

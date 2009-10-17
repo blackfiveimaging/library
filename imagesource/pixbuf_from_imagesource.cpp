@@ -10,6 +10,7 @@
 
 #include <iostream>
 
+#include "../support/debug.h"
 #include "pixbuf_from_imagesource.h"
 
 using namespace std;
@@ -22,7 +23,7 @@ GdkPixbuf *pixbuf_from_imagesource(ImageSource *is,
 
 	GdkPixbuf *pb;
 
-	cerr << "Converting image of type " << is->type << endl;
+	Debug[COMMENT] << "pixbuf_from_imagesource: Converting image of type " << is->type << endl;
 
 	switch(is->type)
 	{
@@ -105,7 +106,7 @@ GdkPixbuf *pixbuf_from_imagesource(ImageSource *is,
 					}		
 					break;
 				default:
-					cerr << "pixbuf_from_imagesource: Huh?  IS type of " << is->type << " should have been rejected already." << endl;
+					Debug[WARN] << "pixbuf_from_imagesource: Huh?  IS type of " << is->type << " should have been rejected already." << endl;
 					g_object_unref(G_OBJECT(pb));
 					return(NULL);
 					break;

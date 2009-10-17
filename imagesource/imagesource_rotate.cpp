@@ -13,6 +13,8 @@
 
 #include <stdlib.h>
 
+#include "../support/debug.h"
+
 #include "imagesource_rotate.h"
 
 using namespace std;
@@ -282,14 +284,14 @@ ImageSource_Rotate::ImageSource_Rotate(ImageSource *source,int rotation,int span
 	{
 		case 0:
 		case 180:
-			cerr << "Rotate: caching entire image for 180 degree rotation" << endl;
+			Debug[COMMENT] << "Rotate: caching entire image for 180 degree rotation" << endl;
 			this->spanrows=source->height+1;
 			break;
 		case 90:
 		case 270:
 			if(!source->randomaccess)
 			{
-				cerr << "Rotate: source doesn't support random access - caching entire image" << endl;
+				Debug[COMMENT] << "Rotate: source doesn't support random access - caching entire image" << endl;
 				this->spanrows=source->width+1;
 			}
 			break;
@@ -298,7 +300,7 @@ ImageSource_Rotate::ImageSource_Rotate(ImageSource *source,int rotation,int span
 	spanfirstrow=-this->spanrows-1;
 	samplesperrow=width*samplesperpixel;
 
-	cerr << "Span buffer will be " << this->spanrows << " high" << endl;
+	Debug[TRACE] << "Span buffer will be " << this->spanrows << " high" << endl;
 
 	if((rotation==90) || (rotation==270) || (rotation==180))
 		spanbuffer=(ISDataType *)malloc(this->spanrows*(sizeof(ISDataType)*samplesperrow));

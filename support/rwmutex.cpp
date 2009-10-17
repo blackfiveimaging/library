@@ -6,6 +6,8 @@
 #include "config.h"
 #endif
 
+#include "debug.h"
+
 #include "thread.h"
 #include "rwmutex.h"
 
@@ -47,7 +49,7 @@ RWMutex::~RWMutex()
 
 void RWMutex::ObtainMutex()
 {
-//	cerr << "RWMutex " << serialno << ": ObtainMutex from " << long(Thread::GetThreadID()) << endl;
+//	Debug[TRACE] << "RWMutex " << serialno << ": ObtainMutex from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
 	while(!CheckExclusive())
 	{
@@ -73,7 +75,7 @@ void RWMutex::ObtainMutex()
 
 void RWMutex::ObtainMutexShared()
 {
-//	cerr << "RWMutex " << serialno << ": ObtainMutexShared from " << long(Thread::GetThreadID()) << endl;
+//	Debug[TRACE] << "RWMutex " << serialno << ": ObtainMutexShared from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
 	while((exclusive!=0) && !CheckExclusive())
 	{
@@ -90,12 +92,12 @@ void RWMutex::ObtainMutexShared()
 
 bool RWMutex::AttemptMutex()
 {
-//	cerr << "RWMutex " << serialno << ": AttemptMutex from " << long(Thread::GetThreadID()) << endl;
+//	Debug[TRACE] << "RWMutex " << serialno << ": AttemptMutex from " << long(Thread::GetThreadID()) << endl;
 	bool result=false;
 	PTMutex::ObtainMutex();
 	if(CheckExclusive())
 	{
-//		cerr << "Obtained exclusive lock - lock count: " << lockcount << endl;
+//		Debug[TRACE] << "Obtained exclusive lock - lock count: " << lockcount << endl;
 		Increment();
 		if(exclusive==0)
 			++exclusive;
@@ -109,7 +111,7 @@ bool RWMutex::AttemptMutex()
 
 bool RWMutex::AttemptMutexShared()
 {
-//	cerr << "RWMutex " << serialno << ": AttemptMutexShared from " << long(Thread::GetThreadID()) << endl;
+//	Debug[TRACE] << "RWMutex " << serialno << ": AttemptMutexShared from " << long(Thread::GetThreadID()) << endl;
 	bool result=false;
 	PTMutex::ObtainMutex();
 	if((exclusive==0) || (CheckExclusive()))
@@ -125,7 +127,7 @@ bool RWMutex::AttemptMutexShared()
 
 void RWMutex::ReleaseMutex()
 {
-//	cerr << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
+//	Debug[TRACE] << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
 	Decrement();
 //	Dump();
@@ -136,7 +138,7 @@ void RWMutex::ReleaseMutex()
 
 void RWMutex::ReleaseMutexShared()
 {
-//	cerr << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
+//	Debug[TRACE] << "RWMutex " << serialno << ": ReleaseMutex from " << long(Thread::GetThreadID()) << endl;
 	PTMutex::ObtainMutex();
 	Decrement(true);
 //	Dump();
@@ -159,7 +161,7 @@ bool RWMutex::CheckExclusive()
 #else
 	pthread_t current=pthread_self();
 #endif
-//	cerr << "Current thread: " << current << endl;
+//	Debug[TRACE] << "Current thread: " << current << endl;
 	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
 	{
 		// If any thread other than this one has count>0 return false;
@@ -171,7 +173,7 @@ bool RWMutex::CheckExclusive()
 	}
 	// If we reached here, then the global lockcount is greater than zero, but
 	// the thread table is inconsistent.  Succeed grudgingly.
-	cerr << "RWMutex " << serialno << ": inconsistent locking data." << endl;
+	Debug[TRACE] << "RWMutex " << serialno << ": inconsistent locking data." << endl;
 	return(true);
 }
 
@@ -187,34 +189,34 @@ void RWMutex::Increment()
 #else
 	pthread_t current=pthread_self();
 #endif
-//	cerr << "Increment - searching for thread: " << current << endl;
+//	Debug[TRACE] << "Increment - searching for thread: " << current << endl;
 	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
 	{
 		if(counttable[i].id==current)
 		{
-//			cerr << "found" << endl;
+//			Debug[TRACE] << "found" << endl;
 			++counttable[i].count;
 			return;
 		}
 	}
 	// If none found, add a new entry, and set the count to 1;
-//	cerr << "Increment - searching for free slot" << endl;
+//	Debug[TRACE] << "Increment - searching for free slot" << endl;
 	while(1)
 	{
 		for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
 		{
 			if(counttable[i].id==0)
 			{
-//				cerr << "found" << endl;
+//				Debug[TRACE] << "found" << endl;
 				counttable[i].id=current;
 				counttable[i].count=1;
 				return;
 			}
 		}
 		// If there were no free slots, complain.
-		cerr << "RWMutex: thread table full - waiting..." << endl;
+		Debug[WARN] << "RWMutex: thread table full - waiting..." << endl;
 		pthread_cond_wait(&cond,&mutex);
-		cerr << "RWMutex - trying again to find a free slot... " << endl;
+		Debug[WARN] << "RWMutex - trying again to find a free slot... " << endl;
 	}
 }
 
@@ -229,7 +231,7 @@ void RWMutex::Decrement(bool shared)
 #else
 	pthread_t current=pthread_self();
 #endif
-//	cerr << "Decrement - searching for thread: " << current << endl;
+//	Debug[TRACE] << "Decrement - searching for thread: " << current << endl;
 	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
 	{
 		if(counttable[i].id==current)
@@ -241,18 +243,18 @@ void RWMutex::Decrement(bool shared)
 		}
 	}
 	// If thread was not found, complain.
-//	cerr << "RWMutex: thread not found in table." << endl;
+//	Debug[TRACE] << "RWMutex: thread not found in table." << endl;
 }
 
 
 void RWMutex::Dump()
 {
-	cerr << "Locks held: " << lockcount << endl;
-	cerr << "Exclusive count: " << exclusive << endl;
+	Debug[WARN] << "Locks held: " << lockcount << endl;
+	Debug[WARN] << "Exclusive count: " << exclusive << endl;
 	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
 	{
 		if(counttable[i].id)
-			cerr << "Thread: " << counttable[i].id << ", count: " << counttable[i].count << endl;
+			Debug[WARN] << "Thread: " << counttable[i].id << ", count: " << counttable[i].count << endl;
 	}
 }
 

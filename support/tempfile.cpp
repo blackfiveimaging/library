@@ -17,6 +17,8 @@ to generate a specific type of temporary file.
 
 #include "tempfile.h"
 
+#include "debug.h"
+
 using namespace std;
 
 
@@ -46,11 +48,11 @@ TempFile::TempFile(TempFileTracker *header,const char *pfix,const char *skey)
 
 TempFile::~TempFile()
 {
-//	cerr << "In TempFile destructor" << endl;
+//	Debug[TRACE] << "In TempFile destructor" << endl;
 	header->mutex.ObtainMutex();
 	if(filename)
 	{
-//		cerr << "Removing " << filename << endl;
+//		Debug[TRACE] << "Removing " << filename << endl;
 		remove(filename);
 		free(filename);
 	}

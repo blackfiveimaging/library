@@ -1,5 +1,4 @@
 # Makefile.am
-# RL 28/11/04
 
 SUBDIRS = po support imagesource imageutils miscwidgets stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
 
@@ -13,10 +12,11 @@ check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				mkrgbprofile mklabprofile mkgreyprofile \
 				composite imgsrctest \
 				combotest \
-				printqueuetest stpuitest 
+				printqueuetest stpuitest debugtest
 
 bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest
 
+debugtest_SOURCES = debugtest.cpp
 gprintertest_SOURCES = gprintertest.cpp
 combotest_SOURCES = combotest.cpp
 profileuitest_SOURCES = profileuitest.cpp

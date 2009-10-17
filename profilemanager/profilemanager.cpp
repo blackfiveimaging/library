@@ -6,6 +6,8 @@
 #include <X11/Xatom.h>
 #endif
 
+#include "../support/debug.h"
+
 #include "profilemanager.h"
 #include "searchpathdbhandler.h"
 
@@ -92,7 +94,7 @@ CMSProfile *ProfileManager::GetProfile(const char *name)
 #endif
 			if(!result)
 			{
-				cerr << "Couldn't open monitor profile - falling back to builtin sRGB" << endl;
+				Debug[TRACE] << "Couldn't open monitor profile - falling back to builtin sRGB" << endl;
 				result=new CMSProfile();
 			}
 		}
@@ -336,17 +338,17 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,CMSPro
 		switch(manager.FindInt("ProofMode"))
 		{
 			case CM_PROOFMODE_NONE:
-//				cerr << "Proofmode: None - using normal transform" << endl;
+//				Debug[TRACE] << "Proofmode: None - using normal transform" << endl;
 				result=GetTransform(destprofile,srcprofile,intent);
 				break;
 			case CM_PROOFMODE_SIMULATEPRINT:
-//				cerr << "Proofmode: Simulate Printer - using abs.col. proof transform" << endl;
+//				Debug[TRACE] << "Proofmode: Simulate Printer - using abs.col. proof transform" << endl;
 				proofprofile=manager.GetProfile(CM_COLOURDEVICE_PRINTER);
 				if(proofprofile)
 					result=GetTransform(destprofile,srcprofile,proofprofile,intent,LCMSWRAPPER_INTENT_ABSOLUTE_COLORIMETRIC);
 				break;
 			case CM_PROOFMODE_SIMULATEPRINTADAPTWHITE:
-//				cerr << "Proofmode: Simulate Printer, Adapt White - using rel.col. proof transform" << endl;
+//				Debug[TRACE] << "Proofmode: Simulate Printer, Adapt White - using rel.col. proof transform" << endl;
 				proofprofile=manager.GetProfile(CM_COLOURDEVICE_PRINTER);
 				if(proofprofile)
 					result=GetTransform(destprofile,srcprofile,proofprofile,intent,LCMSWRAPPER_INTENT_RELATIVE_COLORIMETRIC);
@@ -378,7 +380,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 	if(intent==LCMSWRAPPER_INTENT_DEFAULT)
 		intent=LCMSWRAPPER_INTENT_PERCEPTUAL;
 
-//	cerr << "Using intent: " << intent << endl;
+//	Debug[TRACE] << "Using intent: " << intent << endl;
 
 	// We use MD5 digests to compare profiles for equality.
 	MD5Digest *d1,*d2;
@@ -386,7 +388,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 
 	if(destprofile->IsDeviceLink())
 	{
-//		cerr << "Device link profile detected" << endl;
+//		Debug[TRACE] << "Device link profile detected" << endl;
 		// Device link profiles make life awkward if we have to use a source profile
 		// (which we must do in the case of an image having an embedded profile).
 		// What we do here is convert from the source profile to the appropriate
@@ -400,7 +402,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 		// create a multi-profile transform: src -> default -> devicelink.
 		if((srcprofile)&&(defprofile)&&(*srcprofile->GetMD5()!=*defprofile->GetMD5()))
 		{
-//			cerr << "Source and default profiles don't match - building transform chain..." << endl;
+//			Debug[TRACE] << "Source and default profiles don't match - building transform chain..." << endl;
 			CMSProfile *profiles[3];
 			profiles[0]=srcprofile;
 			profiles[1]=defprofile;
@@ -411,21 +413,21 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 			transform=Search(d1,d2,intent);
 			if(!transform)
 			{
-//				cerr << "No suitable cached transform found - creating a new one..." << endl;
+//				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
 				transform=new CMSTransform(profiles,3,intent);
 				new CMTransformFactoryNode(this,transform,*d1,*d2,intent);
 			}
 		}
 		else
 		{
-//			cerr << "Source and default profiles match - using devicelink in isolation..." << endl;
+//			Debug[TRACE] << "Source and default profiles match - using devicelink in isolation..." << endl;
 			// If there's no default profile, or the source and default profiles match
 			// then we can just use the devicelink profile in isolation.
 			d1=d2;
 			transform=Search(d1,d2,intent);
 			if(!transform)
 			{
-//				cerr << "No suitable cached transform found - creating a new one..." << endl;
+//				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
 				transform=new CMSTransform(destprofile,intent);
 				new CMTransformFactoryNode(this,transform,*d1,*d2,intent);
 			}
@@ -441,14 +443,14 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 		// Don't bother transforming if src/dest are the same profile...
 		if(*d1==*d2)
 		{
-			cerr << "Source and target profiles are identical - no need to transform" << endl;
+			Debug[TRACE] << "Source and target profiles are identical - no need to transform" << endl;
 			return(NULL);
 		}
 
 		transform=Search(d1,d2,intent);
 		if(!transform)
 		{
-//			cerr << "No suitable cached transform found - creating a new one..." << endl;
+//			Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
 			transform=new CMSTransform(srcprofile,destprofile,intent);
 			new CMTransformFactoryNode(this,transform,*d1,*d2,intent);
 		}
@@ -459,7 +461,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 
 CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,LCMSWrapper_Intent intent,int displayintent)
 {
-//	cerr << "Getting proofing transform - Using intent: " << intent << endl;
+//	Debug[TRACE] << "Getting proofing transform - Using intent: " << intent << endl;
 
 	// No point whatever in continuing without an output device profile...
 	if(!destprofile)
@@ -477,7 +479,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 	if(displayintent==LCMSWRAPPER_INTENT_DEFAULT)
 		displayintent=LCMSWRAPPER_INTENT_ABSOLUTE_COLORIMETRIC;
 
-//	cerr << "Using intent: " << intent << endl;
+//	Debug[TRACE] << "Using intent: " << intent << endl;
 
 	// We use MD5 digests to compare profiles for equality.
 	MD5Digest *d1,*d2;
@@ -485,7 +487,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 
 	if(destprofile->IsDeviceLink())
 	{
-//		cerr << "Device link profile detected" << endl;
+//		Debug[TRACE] << "Device link profile detected" << endl;
 		// Device link profiles make life awkward if we have to use a source profile
 		// (which we must do in the case of an image having an embedded profile).
 		// What we do here is convert from the source profile to the appropriate
@@ -499,7 +501,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 		// create a multi-profile transform: src -> default -> devicelink.
 		if((srcprofile)&&(defprofile)&&(*srcprofile->GetMD5()!=*defprofile->GetMD5()))
 		{
-//			cerr << "Source and default profiles don't match - building transform chain..." << endl;
+//			Debug[TRACE] << "Source and default profiles don't match - building transform chain..." << endl;
 			CMSProfile *profiles[3];
 			profiles[0]=srcprofile;
 			profiles[1]=defprofile;
@@ -510,8 +512,8 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 			transform=Search(d1,d2,intent,true);
 			if(!transform)
 			{
-//				cerr << "No suitable cached transform found - creating a new one..." << endl;
-//				cerr << "But can't (yet?) create embedded->default->devicelink->proof transform!" << endl;
+//				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
+//				Debug[TRACE] << "But can't (yet?) create embedded->default->devicelink->proof transform!" << endl;
 				// FIXME - need a version of CMSProofingTransform that can cope with
 				// multiple profiles!
 				transform=new CMSTransform(profiles,3,intent);
@@ -520,14 +522,14 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 		}
 		else
 		{
-//			cerr << "Source and default profiles match - using devicelink in isolation..." << endl;
+//			Debug[TRACE] << "Source and default profiles match - using devicelink in isolation..." << endl;
 			// If there's no default profile, or the source and default profiles match
 			// then we can just use the devicelink profile in isolation.
 			d1=d2;
 			transform=Search(d1,d2,intent,true);
 			if(!transform)
 			{
-//				cerr << "No suitable cached transform found - creating a new one..." << endl;
+//				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
 				// FIXME - need a version of CMSProofingTransform that can cope with
 				// devicelink profiles
 				transform=new CMSProofingTransform(destprofile,proofprofile,intent,displayintent);
@@ -550,7 +552,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 		transform=Search(d1,d2,intent,true);
 		if(!transform)
 		{
-//			cerr << "No suitable cached transform found - creating a new proofing transform..." << endl;
+//			Debug[TRACE] << "No suitable cached transform found - creating a new proofing transform..." << endl;
 			transform=new CMSProofingTransform(srcprofile,destprofile,proofprofile,intent,displayintent);
 			new CMTransformFactoryNode(this,transform,*d1,*d2,intent,true);
 		}
@@ -632,7 +634,7 @@ ProfileInfo *ProfileManager::GetFirstProfileInfo()
 
 void ProfileManager::BuildProfileInfoList()
 {
-//	cerr << "Building ProfileInfo List:" << endl;
+//	Debug[TRACE] << "Building ProfileInfo List:" << endl;
 	const char *f=NULL;
 	FlushProfileInfoList();
 	new ProfileInfo(*this,BUILTINSRGB_ESCAPESTRING);
@@ -662,7 +664,7 @@ ProfileInfo *ProfileManager::FindProfileInfo(const char *filename)
 		const char *fn=pi->filename;
 		if(strcmp(fn,filename)==0)
 		{
-			cerr << "Found " << filename << endl;
+			Debug[TRACE] << "Found " << filename << endl;
 			return(pi);
 		}
 		pi=pi->Next();
@@ -808,10 +810,10 @@ void ProfileManager::GetProfileFromDisplay()
 	if(GetICMProfile(handle,&dpsize,displayprofilename))
 	{
 		proffromdisplay_size=dpsize;
-		cerr << "Got profile: " << displayprofilename << ", " << displayprofilename << " characters" << endl;
+		Debug[TRACE] << "Got profile: " << displayprofilename << ", " << displayprofilename << " characters" << endl;
 	}
 	else
-		cerr << "No profile associated with default display." << endl;
+		Debug[TRACE] << "No profile associated with default display." << endl;
 #else
 	if(proffromdisplay)
 		XFree(proffromdisplay);
@@ -819,16 +821,16 @@ void ProfileManager::GetProfileFromDisplay()
 
 	if(xdisplay)
 	{
-//		cerr << "Got display" << endl;
+//		Debug[TRACE] << "Got display" << endl;
 		Atom icc_atom;
 		icc_atom = XInternAtom (xdisplay, "_ICC_PROFILE", False);
 		if (icc_atom != None)
 		{
-//			cerr << "Got atom" << endl;
+//			Debug[TRACE] << "Got atom" << endl;
 			Window w=DefaultRootWindow(xdisplay);
 			if(w)
 			{
-//				cerr << "Got window" << endl;
+//				Debug[TRACE] << "Got window" << endl;
 				Atom type;
 				int format=0;
 				unsigned long nitems=0;
@@ -843,7 +845,7 @@ void ProfileManager::GetProfileFromDisplay()
 
 				if(result!=Success)
 				{
-					cerr <<"Failed to retrieve ICC Profile from display..." << endl;
+					Debug[WARN] <<"Failed to retrieve ICC Profile from display..." << endl;
 					proffromdisplay=NULL;
 					proffromdisplay_size=0;
 				}

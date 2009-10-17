@@ -15,6 +15,8 @@
 #include <string.h>
 #include <math.h>
 
+#include "../support/debug.h"
+
 #include "imagesource_dither.h"
 
 using namespace std;
@@ -99,11 +101,11 @@ ImageSource_Dither::ImageSource_Dither(ImageSource *source,int bitdepth)
 	while(bitdepth--)
 		mask=mask<<1;
 	mask-=1;
-	cerr << "Mask: " << mask << endl;
+	Debug[TRACE] << "Mask: " << mask << endl;
 	// mask now equals (2^bitdepth)-1 - now left-align it...
 	while(mask<(IS_SAMPLEMAX/2))
 		mask=mask<<1;
-	cerr << "Mask: " << mask << endl;
+	Debug[TRACE] << "Mask: " << mask << endl;
 
 	err1=(int *)malloc(sizeof(int)*samplesperpixel*(width+2));
 	err2=(int *)malloc(sizeof(int)*samplesperpixel*(width+2));

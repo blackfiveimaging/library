@@ -12,6 +12,8 @@
 #include "layoutrectangle.h"
 #include "signature.h"
 
+#include "debug.h"
+
 using namespace std;
 
 void Signature::EqualiseMargins()
@@ -49,12 +51,12 @@ void Signature::SetPageExtent(PageExtent &pe)
 void Signature::SetPaperSize(int width,int height)
 {
   if(((columns-1)*hgutter)>=(width-(leftmargin+rightmargin)))
-    cerr << "New papersize too narrow!" << endl;
+    Debug[WARN] << "New papersize too narrow!" << endl;
   else
     pagewidth=width;
   
   if(((rows-1)*vgutter)>=(height-(topmargin+bottommargin)))
-    cerr << "New papersize too short!" << endl;
+    Debug[WARN] << "New papersize too short!" << endl;
   else
     pageheight=height;
 }
@@ -72,26 +74,26 @@ void Signature::SetMargins(int left,int right,int top,int bottom)
 
 void Signature::SetGutters(int hgutter,int vgutter)
 {
-	cerr << "Setting gutters to :" << hgutter << ", " << vgutter << endl;
+	Debug[TRACE] << "Setting gutters to :" << hgutter << ", " << vgutter << endl;
 	if(((columns-1)*hgutter)>=(pagewidth-(leftmargin+rightmargin)))
-		cerr << "Horizontal gutters too wide!" << endl;
+		Debug[WARN] << "Horizontal gutters too wide!" << endl;
 	else
 		this->hgutter=hgutter;
 
 	if(((rows-1)*vgutter)>=(pageheight-(topmargin+bottommargin)))
-		cerr << "Horizontal gutters too tall!" << endl;
+		Debug[WARN] << "Horizontal gutters too tall!" << endl;
 	else
 		this->vgutter=vgutter;
 	ReCalc();
-	cerr << "After recalc: " << hgutter << ", " << vgutter << endl;
+	Debug[TRACE] << "After recalc: " << hgutter << ", " << vgutter << endl;
 }
 
 
 void Signature::SetHGutter(int gutter)
 {
-	cerr << "Setting HGutter to :" << gutter << endl;
+	Debug[TRACE] << "Setting HGutter to :" << gutter << endl;
 	if(((columns-1)*gutter)>=(pagewidth-(leftmargin+rightmargin)))
-		cerr << "Horizontal gutters too wide!" << endl;
+		Debug[WARN] << "Horizontal gutters too wide!" << endl;
 	else
 		this->hgutter=gutter;
 	ReCalc();
@@ -100,9 +102,9 @@ void Signature::SetHGutter(int gutter)
 
 void Signature::SetVGutter(int gutter)
 {
-	cerr << "Setting VGutter to :" << gutter << endl;
+	Debug[TRACE] << "Setting VGutter to :" << gutter << endl;
 	if(((rows-1)*gutter)>=(pageheight-(topmargin+bottommargin)))
-		cerr << "Vertical gutters too wide!" << endl;
+		Debug[WARN] << "Vertical gutters too wide!" << endl;
 	else
 		this->vgutter=gutter;
 	ReCalc();
@@ -112,7 +114,7 @@ void Signature::SetVGutter(int gutter)
 void Signature::SetColumns(int columns)
 {
   if(((columns-1)*hgutter)>=(pagewidth-(leftmargin+rightmargin)))
-    cerr << "Too many columns!" << endl;
+    Debug[WARN] << "Too many columns!" << endl;
   else
     this->columns=columns;
   ReCalc();
@@ -122,7 +124,7 @@ void Signature::SetColumns(int columns)
 void Signature::SetRows(int rows)
 {
   if(((rows-1)*vgutter)>=(pageheight-(topmargin+bottommargin)))
-    cerr << "Too many rows!" << endl;
+    Debug[WARN] << "Too many rows!" << endl;
   else
     this->rows=rows;
   ReCalc();
@@ -133,8 +135,8 @@ void Signature::ReCalcByCellSize()
 	absolutemode=true;
 	int r=(pageheight-(topmargin+bottommargin))/celheight;
 	int c=(pagewidth-(leftmargin+rightmargin))/celwidth;
-	cerr << "Rows: " << r << ", cols: " << c << endl;
-	cerr << "Page width: " << pagewidth << ", margins: " << (topmargin+bottommargin) << ", celwidth:" << celwidth << endl;
+	Debug[TRACE] << "Rows: " << r << ", cols: " << c << endl;
+	Debug[TRACE] << "Page width: " << pagewidth << ", margins: " << (topmargin+bottommargin) << ", celwidth:" << celwidth << endl;
 	if(r<1)
 	{
 		celheight=pageheight-(topmargin+bottommargin);
@@ -143,7 +145,7 @@ void Signature::ReCalcByCellSize()
 	else if(r>1)
 	{
 		vgutter=((pageheight-(topmargin+bottommargin))-r*celheight)/(r-1);
-		cerr << "VGutter = " << vgutter << endl;
+		Debug[TRACE] << "VGutter = " << vgutter << endl;
 	}
 	else
 	{
@@ -158,7 +160,7 @@ void Signature::ReCalcByCellSize()
 	else if(c>1)
 	{
 		hgutter=((pagewidth-(leftmargin+rightmargin))-c*celwidth)/(c-1);
-		cerr << "HGutter = " << hgutter << endl;
+		Debug[TRACE] << "HGutter = " << hgutter << endl;
 	}
 	else
 	{
@@ -172,7 +174,7 @@ void Signature::ReCalcByCellSize()
 
 void Signature::SetCellWidth(int width)
 {
-	cerr << "Setting cell width to " << width << endl;
+	Debug[TRACE] << "Setting cell width to " << width << endl;
 	celwidth=width;
 	ReCalcByCellSize();
 }
@@ -180,7 +182,7 @@ void Signature::SetCellWidth(int width)
 
 void Signature::SetCellHeight(int height)
 {
-	cerr << "Setting cell height to " << height << endl;
+	Debug[TRACE] << "Setting cell height to " << height << endl;
 	celheight=height;
 	ReCalcByCellSize();
 }
@@ -230,7 +232,7 @@ LayoutRectangle *Signature::GetLayoutRectangle(int row,int column)
 
 int Signature::GetCellWidth()
 {
-	cerr << "GetCellWidth - returning: " << celwidth << endl;
+	Debug[TRACE] << "GetCellWidth - returning: " << celwidth << endl;
 	return(celwidth);
 }
 
@@ -255,13 +257,13 @@ int Signature::GetRows()
 
 int Signature::GetHGutter()
 {
-	cerr << "GetHGutter returning: " << hgutter << endl;
+	Debug[TRACE] << "GetHGutter returning: " << hgutter << endl;
 	return(hgutter);
 }
 
 int Signature::GetVGutter()
 {
-	cerr << "GetVGutter returning: " << vgutter << endl;
+	Debug[TRACE] << "GetVGutter returning: " << vgutter << endl;
 	return(vgutter);
 }
 

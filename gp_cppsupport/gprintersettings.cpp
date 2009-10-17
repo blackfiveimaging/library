@@ -17,6 +17,8 @@
 
 #include "stp_support/stputil.h"
 #include "gprintersettings.h"
+
+#include "../support/debug.h"
 #include "../support/util.h"
 
 #include "../miscwidgets/generaldialogs.h"
@@ -189,12 +191,12 @@ void GPrinterSettings::ParseString(const char *string)
 				{
 					if(strcmp("CustomWidth",token)==0)
 					{
-						cerr << "Setting custom width to: " << value << endl;
+						Debug[TRACE] << "Setting custom width to: " << value << endl;
 						stp_set_page_width(stpvars,pagewidth=atoi(value));
 					}
 					else if(strcmp("CustomHeight",token)==0)
 					{
-						cerr << "Setting custom height to: " << value << endl;
+						Debug[TRACE] << "Setting custom height to: " << value << endl;
 						stp_set_page_height(stpvars,pageheight=atoi(value));
 					}					
 					else
@@ -205,7 +207,7 @@ void GPrinterSettings::ParseString(const char *string)
 						{
 							case STP_PARAMETER_TYPE_STRING_LIST:
 								if(strcmp("PageSize",token)==0)
-									cerr << "Setting PageSize to: " << value << endl;
+									Debug[TRACE] << "Setting PageSize to: " << value << endl;
 								stp_set_string_parameter(stpvars,token,value);
 								break;
 		
@@ -216,40 +218,40 @@ void GPrinterSettings::ParseString(const char *string)
 								// filename at preset loading time.
 								if(strcmp(value,DEFAULT_PPD_STRING)==0)
 								{
-									cerr << "*** Fetching default PPD filename" << endl;
+									Debug[TRACE] << "*** Fetching default PPD filename" << endl;
 									char *defppd=output.GetPPD();
 									if(defppd)
 									{
-										cerr << "Got default PPD filename: " << defppd << endl;
+										Debug[TRACE] << "Got default PPD filename: " << defppd << endl;
 										stp_set_file_parameter(stpvars,token,defppd);
 										free(defppd);
 
 										stp_parameter_t desc2;
 										stp_describe_parameter(stpvars,"PageSize",&desc2);
-										cerr << "After setting PPD Default page size is now: " << desc2.deflt.str << endl;
+										Debug[TRACE] << "After setting PPD Default page size is now: " << desc2.deflt.str << endl;
 										stp_set_string_parameter(stpvars,"PageSize",desc2.deflt.str);
 										stp_parameter_description_destroy(&desc2);
 										ppdsizes_workaround_done=true;
 									}
 									else
-										cerr << "Couldn't get default PPD." << endl;
+										Debug[TRACE] << "Couldn't get default PPD." << endl;
 								}
 								else
 									stp_set_file_parameter(stpvars,token,value);
 								break;
 
 							case STP_PARAMETER_TYPE_INT:
-	//							cerr << "Setting " << token << " to " << value << endl;
+	//							Debug[TRACE] << "Setting " << token << " to " << value << endl;
 								stp_set_int_parameter(stpvars,token,atoi(value));
 								break;
 		
 							case STP_PARAMETER_TYPE_BOOLEAN:
-	//							cerr << "Setting " << token << " to " << value << endl;
+	//							Debug[TRACE] << "Setting " << token << " to " << value << endl;
 								stp_set_boolean_parameter(stpvars,token,atoi(value));
 								break;
 		
 							case STP_PARAMETER_TYPE_DOUBLE:
-	//							cerr << "Setting " << token << " to " << value << endl;
+	//							Debug[TRACE] << "Setting " << token << " to " << value << endl;
 								stp_set_float_parameter(stpvars,token,atof(value));
 								break;
 		
@@ -285,13 +287,13 @@ void GPrinterSettings::SaveSection(FILE *file)
 	stp_describe_parameter(stpvars,"PPDFile",&desc);
 	if(desc.is_active)
 	{
-		cerr << "Saving PPDFile parameter..." << endl;
+		Debug[TRACE] << "Saving PPDFile parameter..." << endl;
 		const char *ppd=stp_get_file_parameter(stpvars,"PPDFile");
 		char *defppd=output.GetPPD();
 		if(ppd)
-			cerr << "Current PPD: " << ppd << endl;
+			Debug[TRACE] << "Current PPD: " << ppd << endl;
 		if(defppd)
-			cerr << "Default PPD: " << defppd << endl;
+			Debug[TRACE] << "Default PPD: " << defppd << endl;
 		if(defppd && ppd && CompareFiles(defppd,ppd))
 			ppd=DEFAULT_PPD_STRING;
 		if(!ppd)
@@ -386,23 +388,23 @@ bool GPrinterSettings::SetDriver(const char *driver)
 	if(_oldpagesize)
 	{
 		oldpagesize=strdup(_oldpagesize);
-		cerr << "Old page size is: " << oldpagesize << endl;
+		Debug[TRACE] << "Old page size is: " << oldpagesize << endl;
 	}
 
-	cerr << "Checking stpvars" << endl;
+	Debug[TRACE] << "Checking stpvars" << endl;
 	if(stpvars)
 	{
 		// We avoid messing with this stuff as much as possible if the driver didn't change -
 		// that way you can change from a printer's queue to "Save to file" without
 		// messing up the print settings.
 		const char *olddriver=stp_get_driver(stpvars);
-		cerr << "Checking olddriver" << endl;
+		Debug[TRACE] << "Checking olddriver" << endl;
 		if(!olddriver)
 			olddriver="None";
-		cerr << "Checking driver" << endl;
+		Debug[TRACE] << "Checking driver" << endl;
 		if(!driver)
 			driver=DEFAULT_PRINTER_DRIVER;
-		cerr << "Comparing drivers:" << olddriver << " against " << driver << endl;
+		Debug[TRACE] << "Comparing drivers:" << olddriver << " against " << driver << endl;
 		if(strcmp(driver,olddriver)==0) // If the driver hasn't changed...
 		{
 			// We ensure we can get the printer.  If we can't, chances are the Gutenprint
@@ -413,7 +415,7 @@ bool GPrinterSettings::SetDriver(const char *driver)
 		else
 		{
 			driverchanged=true;
-			cerr << "SetDriver(): Setting driver to " << driver << endl;
+			Debug[TRACE] << "SetDriver(): Setting driver to " << driver << endl;
 
 			// Work around the non-defaulting of inactive settings...
 			const stp_vars_t *defaults=stp_default_settings();
@@ -423,22 +425,22 @@ bool GPrinterSettings::SetDriver(const char *driver)
 			output.SetString("Driver",driver);
 
 			const stp_printer_t *printer=stp_get_printer(stpvars);
-			cerr << "Checking printer" << endl;
+			Debug[TRACE] << "Checking printer" << endl;
 			if(printer)
 			{
-				cerr << "Setting defaults" << endl;
+				Debug[TRACE] << "Setting defaults" << endl;
 				stp_set_printer_defaults(stpvars,printer);
 			}
 			else
 			{
-				cerr << "Unable to get printer - reverting to default driver" << endl;
+				Debug[TRACE] << "Unable to get printer - reverting to default driver" << endl;
 				output.SetString("Driver",DEFAULT_PRINTER_DRIVER);
 				stp_set_driver(stpvars,DEFAULT_PRINTER_DRIVER);
-				cerr << "Checking printer again" << endl;
+				Debug[TRACE] << "Checking printer again" << endl;
 				if((printer=stp_get_printer(stpvars)))
 					stp_set_printer_defaults(stpvars,printer);
 				else
-					cerr << "Still can't get printer!" << endl;
+					Debug[TRACE] << "Still can't get printer!" << endl;
 				result=false;
 			}
 		}
@@ -452,21 +454,21 @@ bool GPrinterSettings::SetDriver(const char *driver)
 		if(desc.is_active)
 		{
 			driverchanged=true;
-			cerr << "Getting default PPD..." << endl;
+			Debug[TRACE] << "Getting default PPD..." << endl;
 			char *defppd=output.GetPPD();
-			cerr << "Checking defppd" << endl;
+			Debug[TRACE] << "Checking defppd" << endl;
 			if(defppd)
 			{
-				cerr << "Setting PPDFile to " << defppd << endl;
+				Debug[TRACE] << "Setting PPDFile to " << defppd << endl;
 				stp_set_file_parameter(stpvars,"PPDFile",defppd);
 				free(defppd);
 				
-				cerr << "Checking ppdsizes_workaround_done" << endl;
+				Debug[TRACE] << "Checking ppdsizes_workaround_done" << endl;
 				if(!ppdsizes_workaround_done)
 				{
 					stp_parameter_t desc2;
 					stp_describe_parameter(stpvars,"PageSize",&desc2);
-					cerr << "After setting PPD Default page size is now: " << desc2.deflt.str << endl;
+					Debug[TRACE] << "After setting PPD Default page size is now: " << desc2.deflt.str << endl;
 					stp_set_string_parameter(stpvars,"PageSize",desc2.deflt.str);
 					stp_parameter_description_destroy(&desc2);
 					ppdsizes_workaround_done=true;
@@ -482,7 +484,7 @@ bool GPrinterSettings::SetDriver(const char *driver)
 			// new driver and comparing against the old papersize.
 			if(oldpagesize)
 			{
-				cerr << "Old page size is: " << oldpagesize << endl;
+				Debug[TRACE] << "Old page size is: " << oldpagesize << endl;
 				stp_describe_parameter(stpvars,"PageSize",&desc);
 				stp_string_list_t *strlist=desc.bounds.str;
 				if(strlist)
@@ -491,7 +493,7 @@ bool GPrinterSettings::SetDriver(const char *driver)
 					for(int j=0;j<strcount;++j)
 					{
 						stp_param_string_t *p=stp_string_list_param(strlist,j);
-						cerr << "Comparing against " << p->text << endl;
+						Debug[TRACE] << "Comparing against " << p->text << endl;
 						if(strcmp(p->text,oldpagesize)==0)
 						{
 							stp_set_string_parameter(stpvars,"PageSize",oldpagesize);
@@ -507,7 +509,7 @@ bool GPrinterSettings::SetDriver(const char *driver)
 		}
 	}
 	else
-		cerr << "No stp vars!" << endl;
+		Debug[TRACE] << "No stp vars!" << endl;
 	return(result);
 }
 
@@ -530,6 +532,6 @@ void GPrinterSettings::Reset()
 		output.SetString("Driver",DEFAULT_PRINTER_DRIVER);
 //	stp_set_driver(stpvars,"ps");
 
-	cerr << "Created fresh stp_vars" << endl;
+	Debug[TRACE] << "Created fresh stp_vars" << endl;
 	initialised=false;
 }

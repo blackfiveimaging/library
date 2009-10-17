@@ -15,6 +15,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "debug.h"
+
 #include "progress.h"
 
 using namespace std;
@@ -39,7 +41,7 @@ class ProgressText : public Progress
 			if(i>maxi)
 				i=maxi;
 //			if(message)
-//				cerr << message << " ";
+//				Debug[TRACE] << message << " ";
 			if(maxi)
 				cout << baton[counter2] << " " << ((i+1)*100)/maxi << "%\r";
 			else

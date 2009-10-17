@@ -14,6 +14,8 @@
 #include "stpui_widgets/stpui_queue.h"
 #include "stpui_widgets/stpui_printerselector.h"
 
+#include "../support/debug.h"
+
 #include "printoutputselector.h"
 
 #include "config.h"
@@ -35,7 +37,7 @@ static void printoutputselector_init (PrintOutputSelector *stpuicombo);
 
 static void printersel_changed(GtkWidget *wid,gpointer *ob)
 {
-	cerr << "In printersel_changed()" << endl;
+	Debug[TRACE] << "In printersel_changed()" << endl;
 	PrintOutputSelector *lo=(PrintOutputSelector *)ob;
 
 	const char *driver=stpui_printerselector_get_driver(STPUI_PRINTERSELECTOR(wid));
@@ -50,21 +52,21 @@ static void printersel_changed(GtkWidget *wid,gpointer *ob)
 
 static void printoutputselector_queue_changed(GtkEntry *entry,gpointer *ud)
 {
-	cerr << "In printoutputselectorqueue_changed()" << endl;
+	Debug[TRACE] << "In printoutputselectorqueue_changed()" << endl;
 
 	PrintOutputSelector *ob=PRINTOUTPUTSELECTOR(ud);
 	PrintOutput *po=ob->po;
 
-	cerr << "Getting printer queue..." << endl;
+	Debug[TRACE] << "Getting printer queue..." << endl;
 
 	const char *val=po->GetPrinterQueue();
 	if(val && strlen(val))
 	{
-		cerr << "Got printer queue: " << val << endl;
+		Debug[TRACE] << "Got printer queue: " << val << endl;
 		char *driver=po->GetPrinterDriver();
 		if(driver)
 		{
-			cerr << "Got driver: " << driver << " from Queue" << endl;
+			Debug[TRACE] << "Got driver: " << driver << " from Queue" << endl;
 			po->SetString("Driver",driver);
 			stpui_printerselector_set_driver(STPUI_PRINTERSELECTOR(ob->printersel),driver);
 			free(driver);
@@ -77,13 +79,13 @@ static void printoutputselector_queue_changed(GtkEntry *entry,gpointer *ud)
 
 void printoutputselector_refresh(PrintOutputSelector *ob)
 {
-	cerr << "In printoutputselectorrefresh()" << endl;
+	Debug[TRACE] << "In printoutputselectorrefresh()" << endl;
 	PrintOutput *po=ob->po;
 
 	const char *driver=po->FindString("Driver");
 	if(driver)
 	{
-		cerr << "Setting driver to " << driver << endl;
+		Debug[TRACE] << "Setting driver to " << driver << endl;
 		stpui_printerselector_set_driver(STPUI_PRINTERSELECTOR(ob->printersel),driver);
 	}
 	const char *command=po->FindString("Command");
@@ -113,15 +115,15 @@ printoutputselector_new (PrintOutput *po)
 	gtk_table_attach_defaults(GTK_TABLE(table),label,0,1,0,1);
 	gtk_widget_show(label);
 
-	cerr << "Calling DBToQueues()" << endl;
+	Debug[TRACE] << "Calling DBToQueues()" << endl;
 
 	po->DBToQueues();
 
-	cerr << "Getting PQInfo" << endl;
+	Debug[TRACE] << "Getting PQInfo" << endl;
 	struct pqinfo *pq=po->GetPQInfo();
-	cerr << "Building stpui_queue" << endl;
+	Debug[TRACE] << "Building stpui_queue" << endl;
 	ob->combo=stpui_queue_new(pq);
-	cerr << "Done" << endl;
+	Debug[TRACE] << "Done" << endl;
 	gtk_table_attach_defaults(GTK_TABLE(table),ob->combo,1,2,0,1);
 	gtk_widget_show(ob->combo);
 
@@ -205,9 +207,9 @@ void printoutput_queue_dialog(PrintOutput *po)
 	gtk_widget_show(label);
 	gtk_box_pack_start(GTK_BOX(vbox),label,TRUE,TRUE,0);
 
-	cerr << "Getting PQInfo" << endl;
+	Debug[TRACE] << "Getting PQInfo" << endl;
 	struct pqinfo *pq=po->GetPQInfo();
-	cerr << "Building stpui_queue" << endl;
+	Debug[TRACE] << "Building stpui_queue" << endl;
 	GtkWidget *combo=stpui_queue_new(pq);
 	gtk_widget_show(combo);
 	gtk_box_pack_start(GTK_BOX(vbox),combo,FALSE,FALSE,8);

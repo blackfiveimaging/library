@@ -5,6 +5,8 @@
 #include "../support/util.h"
 #include "devicencolorant.h"
 
+#include "../support/debug.h"
+
 #include "../config.h"
 #include "../gettext.h"
 
@@ -237,7 +239,7 @@ DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name,co
 			}
 			++c;
 		}
-		cerr << "Can't find colorant: " << name << endl;
+		Debug[WARN] << "Can't find colorant: " << name << endl;
 		throw "Colorant not recognised";
 	}
 	else
@@ -352,17 +354,17 @@ int main(int argc,char **argv)
 	}
 	catch(const char *err)
 	{
-		cerr << "Caught error: " << err << endl;
+		Debug[ERROR] << "Caught error: " << err << endl;
 	}
-	cerr << "Have " << list.GetColorantCount() << " colorants" << endl;
+	Debug[COMMENT] << "Have " << list.GetColorantCount() << " colorants" << endl;
 
-	cerr << "Name of colorant 2: " << list[2]->GetName() << endl;
+	Debug[COMMENT] << "Name of colorant 2: " << list[2]->GetName() << endl;
 
 
 	DeviceNColorant *c=list.FirstColorant();
 	while(c)
 	{
-		cerr << c->GetName() << endl;
+		Debug[COMMENT] << c->GetName() << endl;
 		c=c->NextColorant();
 	}
 

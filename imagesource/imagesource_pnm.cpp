@@ -19,6 +19,8 @@
 #endif
 #if defined HAVE_LIBPNM || defined HAVE_LIBNETPBM
 
+#include "../support/debug.h"
+
 #include "imagesource_pnm.h"
 
 using namespace std;
@@ -92,7 +94,7 @@ ImageSource_PNM::ImageSource_PNM(const char *filename)
 	if(!(file=fopen(filename,"rb")))
 		throw "Can't open file";
 
-	cerr << "Attempting to read PNM file..." << endl;
+	Debug[TRACE] << "Attempting to read PNM file..." << endl;
 
 	pnm_readpaminit(file, &header, sizeof(struct pam));
 

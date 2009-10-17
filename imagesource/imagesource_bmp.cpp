@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../support/debug.h"
+
 #include "imagesource_bmp.h"
 
 using namespace std;
@@ -87,7 +89,7 @@ IS_BMPStrip::IS_BMPStrip(ImageSource_BMP *header,int row) : next(NULL), prev(NUL
 	header->file.seekg(filepos,ios::beg);
 	header->file.read((char *)imgdata,bufsize);
 	if(!(header->file.good()))
-		cerr << "Read from position " << filepos << " failed" << endl;
+		Debug[ERROR] << "Read from position " << filepos << " failed" << endl;
 }
 
 
@@ -131,7 +133,7 @@ ISDataType *ImageSource_BMP::GetRow(int row)
 
 	if(row>=height)
 	{
-		cerr << "ImageSource_BMP - Warning: row " << row+1 << " of " << height << " requested." << endl;
+		Debug[WARN] << "ImageSource_BMP - Warning: row " << row+1 << " of " << height << " requested." << endl;
 		return(rowbuffer);
 	}
 
@@ -292,7 +294,7 @@ ImageSource_BMP::ImageSource_BMP(const char *filename) : ImageSource(), strips(N
 
 	embeddedprofile=NULL;
 
-	cerr << "BMP type: " << type << endl;
+	Debug[TRACE] << "BMP type: " << type << endl;
 
 	MakeRowBuffer();
 	randomaccess=true;

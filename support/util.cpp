@@ -17,8 +17,9 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#include "support/searchpath.h"
-#include "support/pathsupport.h"
+#include "debug.h"
+#include "searchpath.h"
+#include "pathsupport.h"
 
 using namespace std;
 
@@ -55,7 +56,7 @@ bool CheckSettingsDir(const char *dirname)
 		char *path=(char *)malloc(strlen(homedir)+strlen(dirname)+2);
 		sprintf(path,"%s%c%s",homedir,SEARCHPATH_SEPARATOR,dirname);
 
-		cerr << "Settings directory: " << path << endl;
+		Debug[TRACE] << "Settings directory: " << path << endl;
 		CreateDirIfNeeded(path);
 
 		free(path);
@@ -72,7 +73,8 @@ char *BuildAbsoluteFilename(const char *fname)
 	char cwdbuf[1024];
 	int l;
 
-	getcwd(cwdbuf,1023);
+	if(!(getcwd(cwdbuf,1023)))
+		throw "Can't get curent working directory";
 
 	l=strlen(fname)+strlen(cwdbuf)+3;	
 	result=(char *)malloc(l);

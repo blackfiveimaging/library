@@ -13,6 +13,8 @@
 
 #include <math.h>
 
+#include "../support/debug.h"
+
 #include "imagesource_modifiedgamma.h"
 
 
@@ -133,11 +135,11 @@ ISDataType *ImageSource_ModifiedGamma::GetRow(int row)
 ImageSource_ModifiedGamma::ImageSource_ModifiedGamma(ImageSource *source,double gamma,double offset)
 	: ImageSource(source), source(source), gamma(gamma), offset(offset)
 {
-	cerr << "Modified gamma - using offset of " << offset << endl;
+	Debug[TRACE] << "Modified gamma - using offset of " << offset << endl;
 	threshold=offset/(gamma + gamma*offset - 1.0);
-	cerr << "Threshold: " << threshold << endl;
+	Debug[TRACE] << "Threshold: " << threshold << endl;
 	slope=pow((threshold+offset)/(1.0+offset),gamma)/threshold;
-	cerr << "Slope of linear section: " << slope << endl;
+	Debug[TRACE] << "Slope of linear section: " << slope << endl;
 	MakeRowBuffer();
 }
 
@@ -151,11 +153,11 @@ double ImageSource_ModifiedGamma::FindGamma(double x,double y,double offset)
 double ImageSource_ModifiedGamma::ModifiedGamma(double x,double gamma,double offset)
 {
 	double threshold=offset/(gamma + gamma*offset - 1.0);
-//	cerr << "Forward - t1: " << threshold << endl;
+//	Debug[TRACE] << "Forward - t1: " << threshold << endl;
 	if(x<threshold)
 	{
 		double slope=pow((threshold+offset)/(1.0+offset),gamma)/threshold;
-//		cerr << "slope: " << slope << endl;
+//		Debug[TRACE] << "slope: " << slope << endl;
 		return(x*slope);
 	}
 	else
@@ -167,12 +169,12 @@ double ImageSource_ModifiedGamma::InverseModifiedGamma(double x, double gamma, d
 {
 	double threshold=offset/(gamma + gamma*offset - 1.0);
 	double t2=pow((threshold+offset)/(1.0+offset),gamma);
-//	cerr << "Reverse - t1: " << threshold << endl;
-//	cerr << "t2: " << t2 << endl;
+//	Debug[TRACE] << "Reverse - t1: " << threshold << endl;
+//	Debug[TRACE] << "t2: " << t2 << endl;
 	if(x<t2)
 	{
 		double slope=threshold/t2;
-//		cerr << "slope: " << slope << endl;
+//		Debug[TRACE] << "slope: " << slope << endl;
 		return(x*slope);
 	}
 	else

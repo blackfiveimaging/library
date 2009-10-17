@@ -7,6 +7,8 @@ using namespace std;
 
 #include "../miscwidgets/generaldialogs.h"
 
+#include "../support/debug.h"
+
 #include "printoutput.h"
 #include "printoutputselector.h"
 
@@ -23,7 +25,7 @@ class PODBHandler : public ConfigDBHandler
 	}
 	void LeaveSection()
 	{
-		cerr << "*** Leaving PrintOutput section" << endl;
+		Debug[TRACE] << "*** Leaving PrintOutput section" << endl;
 		printoutput->DBToQueues();
 	}
 	private:
@@ -32,7 +34,7 @@ class PODBHandler : public ConfigDBHandler
 
 PrintOutput::PrintOutput(ConfigFile *inif,const char *section) : ConfigDB(Template), PrinterQueues()
 {
-	cerr << "In PrintOutput constructor..." << endl;
+	Debug[TRACE] << "In PrintOutput constructor..." << endl;
 	new PODBHandler(inif,section,this);
 	const char *defaultqueue=FindString("Queue");
 	if(strlen(defaultqueue)==0 && GetPrinterCount()>0)
@@ -50,7 +52,7 @@ PrintOutput::PrintOutput(ConfigFile *inif,const char *section) : ConfigDB(Templa
 		else
 			SetString("Driver",DEFAULT_PRINTER_DRIVER);
 	}
-	cerr << "Done..." << endl;
+	Debug[TRACE] << "Done..." << endl;
 }
 
 class Consumer_Queue : public Consumer
@@ -111,10 +113,10 @@ void PrintOutput::DBToQueues()
 {
 	const char *tmp=FindString("Queue");
 	if(PrinterQueueExists(tmp))
-		cerr << "Printer queue exists" << endl;
+		Debug[TRACE] << "Printer queue exists" << endl;
 	else
 	{
-		cerr << "Warning - printer queue not found" << endl;
+		Debug[TRACE] << "Warning - printer queue not found" << endl;
 		printoutput_queue_dialog(this);
 		tmp=FindString("Queue");
 	}

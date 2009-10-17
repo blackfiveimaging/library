@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cstring>
 
+#include "debug.h"
+
 #include "thread.h"
 
 // SystemCommand_Thread - an autonomous ThreadFunction for executing a command on
@@ -28,10 +30,10 @@ class Thread_SystemCommand : public ThreadFunction, public Thread
 	}
 	virtual ~Thread_SystemCommand()
 	{
-		std::cerr << "Freeing command" << std::endl;
+		Debug[TRACE] << "Freeing command" << std::endl;
 		if(command)
 			free(command);
-		std::cerr << "Done" << std::endl;
+		Debug[TRACE] << "Done" << std::endl;
 	}
 	virtual int Entry(Thread &t)
 	{
@@ -43,7 +45,7 @@ class Thread_SystemCommand : public ThreadFunction, public Thread
 		}
 		catch(const char *err)
 		{
-			std::cerr << "Subthread error: " << err << std::endl;
+			Debug[TRACE] << "Subthread error: " << err << std::endl;
 			returncode=-1;
 		}
 		return(returncode);

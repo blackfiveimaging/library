@@ -2,6 +2,8 @@
 #include <cstring>
 #include <cstdlib>
 
+#include "debug.h"
+
 #include "threadevent.h"
 
 using namespace std;
@@ -175,24 +177,24 @@ ThreadCondition &ThreadEvent::WaitAndHold()
 
 void ThreadEvent::Trigger()
 {
-	cerr << "Triggering event..." << endl;
+	Debug[TRACE] << "Triggering event..." << endl;
 	mutex.ObtainMutex();
-	cerr << "Got event mutex" << endl;
+	Debug[TRACE] << "Got event mutex" << endl;
 	ThreadEvent_Subscriber *sub=firstsubscriber;
 	while(sub)
 	{
-		cerr << "Incrementing subscriber trigger count" << endl;
+		Debug[TRACE] << "Incrementing subscriber trigger count" << endl;
 		sub->Increment();
 		sub=sub->NextSubscriber();
 	}
 
 	cond.ObtainMutex();
-	cerr << "Obtained trigger Mutex" << endl;
+	Debug[TRACE] << "Obtained trigger Mutex" << endl;
 	cond.Broadcast();
-	cerr << "Sent signal - releasing" << endl;
+	Debug[TRACE] << "Sent signal - releasing" << endl;
 	cond.ReleaseMutex();
 	mutex.ReleaseMutex();
-	cerr << "Released event Mutex" << endl;
+	Debug[TRACE] << "Released event Mutex" << endl;
 }
 
 
@@ -204,7 +206,7 @@ int ThreadEvent::Query()
 	if(sub)
 	{
 		result=sub->GetCount();
-		cerr << "Subscriber count is " << result << endl;
+		Debug[TRACE] << "Subscriber count is " << result << endl;
 		sub->Clear();
 	}
 	mutex.ReleaseMutex();
@@ -225,7 +227,7 @@ int ThreadEvent::QueryAndWait()
 	if(sub)
 	{
 		result=sub->GetCount();
-		cerr << "QueryAndWait: Subscriber count is " << result << endl;
+		Debug[TRACE] << "QueryAndWait: Subscriber count is " << result << endl;
 		sub->Clear();
 	}
 
@@ -253,7 +255,7 @@ int ThreadEvent::QueryAndWait()
 ThreadCondition &ThreadEvent::QueryWaitAndHold()
 {
 	// Must keep mutex held between query and wait.
-	int result;
+	int result=0;
 	mutex.ObtainMutex();
 
 	cond.ObtainMutex();
@@ -263,11 +265,11 @@ ThreadCondition &ThreadEvent::QueryWaitAndHold()
 	if(sub)
 	{
 		result=sub->GetCount();
-		cerr << "QueryAndWait: Subscriber count is " << result << endl;
+		Debug[TRACE] << "QueryAndWait: Subscriber count is " << result << endl;
 		sub->Clear();
 	}
 
-	// If the subscriber's event count is non-zery we release the mutex and return the count
+	// If the subscriber's event count is non-zero we release the mutex and return the count
 	if(result)
 	{
 		mutex.ReleaseMutex();
@@ -289,12 +291,12 @@ ThreadCondition &ThreadEvent::QueryWaitAndHold()
 
 void ThreadEvent::Subscribe()
 {
-	cerr << "ThreadEvent - obtaining mutex" << endl;
+	Debug[TRACE] << "ThreadEvent - obtaining mutex" << endl;
 	mutex.ObtainMutex();
-	cerr << "ThreadEvent - searching for existing subscriber..." << endl;
+	Debug[TRACE] << "ThreadEvent - searching for existing subscriber..." << endl;
 	if(!FindSubscriber())
 		new ThreadEvent_Subscriber(*this);
-	cerr << "ThreadEvent - Releasing mutex" << endl;
+	Debug[TRACE] << "ThreadEvent - Releasing mutex" << endl;
 	mutex.ReleaseMutex();
 }
 

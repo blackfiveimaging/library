@@ -29,6 +29,8 @@
 
 #include <tiffio.h>
 
+#include "../support/debug.h"
+
 #include "imagesource_tiff.h"#include "../profilemanager/lcmswrapper.h"
 
 using namespace std;
@@ -127,7 +129,7 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
 							break;
 						default:
-							cerr << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
+							Debug[ERROR] << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
 							break;
 					}
 					break;
@@ -163,18 +165,15 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 					{
 						case 1:
 							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
-							{	// New scope for srcrow declaration
-								unsigned short *srcrow16=(unsigned short *)imgdata;
+							{
 								for(j=0;j<(header->stripsize/2);++j)
 									imgdata[j]=imgdata[j]^65535;
 							}
 							break;
 						default:
-							cerr << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
+							Debug[ERROR] << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
 							break;
 					}
-					break;
-					// FIXME - handle 16-bit data!
 					break;
 			}
 			break;
@@ -277,7 +276,7 @@ int ImageSource_TIFF::CountTIFFDirs(const char *filename,int &largestdir)
 		++count;	
 		uint32 width,height;
 		TIFFGetField(file, TIFFTAG_IMAGEWIDTH, &width);
-		TIFFGetField(file, TIFFTAG_IMAGELENGTH, &height);		cerr << "Got image with dimensions " << width << " x " << height << endl;
+		TIFFGetField(file, TIFFTAG_IMAGELENGTH, &height);		Debug[TRACE] << "Got image with dimensions " << width << " x " << height << endl;
 		if((width*height)>largestarea)
 		{
 			largestarea=width*height;
@@ -288,7 +287,7 @@ int ImageSource_TIFF::CountTIFFDirs(const char *filename,int &largestdir)
 		TIFFClose(file);
 	file=NULL;
 
-	cerr << "A total of " << count << "sub-images, the largest being " << largestdir << endl;
+	Debug[TRACE] << "A total of " << count << "sub-images, the largest being " << largestdir << endl;
 
 	return(count);
 }
@@ -441,7 +440,7 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 		yres*=2.54;
 	}
 
-	cerr << "Resolution: " << xres << " by " << yres << endl;
+	Debug[TRACE] << "Resolution: " << xres << " by " << yres << endl;
 
 	this->width=width;
 	this->height=height;
@@ -471,8 +470,8 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 //		this->spr/=2;
 //	}
 	
-	cerr << "TIFF Samples per pixel: " << samplesperpixel << endl;
-	cerr << "Samples per row: " << this->spr << endl;
+	Debug[TRACE] << "TIFF Samples per pixel: " << samplesperpixel << endl;
+	Debug[TRACE] << "Samples per row: " << this->spr << endl;
 	
 	MakeRowBuffer();
 }

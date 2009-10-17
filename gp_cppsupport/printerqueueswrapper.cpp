@@ -6,6 +6,8 @@
 #include "printerqueueswrapper.h"
 #include "../miscwidgets/generaldialogs.h"
 
+#include "../support/debug.h"
+
 using namespace std;
 
 static char *getfilename(void *userdata)
@@ -23,10 +25,9 @@ PrinterQueues::PrinterQueues()
 
 PrinterQueues::~PrinterQueues()
 {
-	cerr << "Disposing of printer queues\n" << endl;
 	if(queues)
 		queues->Dispose(queues);
-	cerr << "Done" << endl;
+	Debug[TRACE] << "Done" << endl;
 }
 
 
@@ -98,12 +99,12 @@ char *PrinterQueues::GetDriver()
 
 char *PrinterQueues::GetPPD()
 {
-	cerr << "Current queue: " << GetPrinterQueue() << endl;
+	Debug[TRACE] << "Current queue: " << GetPrinterQueue() << endl;
 	char *ppd=queues->GetPPD(queues);
 	if(ppd)
-		cerr << "PPD: " << ppd << endl;
+		Debug[TRACE] << "PPD: " << ppd << endl;
 	else
-		cerr << "No PPD found" << endl;
+		Debug[TRACE] << "No PPD found" << endl;
 	return(ppd);
 }
 

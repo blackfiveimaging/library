@@ -44,7 +44,7 @@ void stputil_validate_parameters(stp_vars_t *v)
 						}
 						if(idx<0 && desc.is_mandatory)
 						{
-							fprintf(stderr,"Setting %s to default value %s\n",desc.name,desc.deflt.str);
+//							fprintf(stderr,"Setting %s to default value %s\n",desc.name,desc.deflt.str);
 							stp_set_string_parameter(v,desc.name,desc.deflt.str);
 						}
 					}

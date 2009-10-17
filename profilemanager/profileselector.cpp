@@ -24,6 +24,7 @@
 #include <gtk/gtkmenuitem.h>
 
 #include "../miscwidgets/generaldialogs.h"
+#include "../support/debug.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -113,7 +114,7 @@ static bool verifyprofile(ProfileSelector *c,ProfileInfo *pi)
 	}
 	catch(const char *err)
 	{
-//		cerr << "Profile Selector: " << err << endl;
+//		Debug[TRACE] << "Profile Selector: " << err << endl;
 	}
 	return(false);
 }
@@ -155,7 +156,7 @@ static void profileselector_build_options(ProfileSelector *c)
 		c->optionlist=NULL;
 	}
 
-	cerr << "Building profile option list" << endl;
+	Debug[TRACE] << "Building profile option list" << endl;
 	ProfileInfo *pi=c->pm->GetFirstProfileInfo();
 	while(pi)
 	{
@@ -176,11 +177,11 @@ static void profileselector_build_options(ProfileSelector *c)
 		}
 		catch (const char *err)
 		{
-			cerr << "Error opening profile: " << err << endl;
+			Debug[ERROR] << "Error opening profile: " << err << endl;
 		}
 		pi=pi->Next();
 	}
-	cerr << "Done" << endl;
+	Debug[TRACE] << "Done" << endl;
 
 	c->optionlist=g_list_sort(c->optionlist,mycmp_desc);
 
@@ -399,7 +400,7 @@ void profileselector_set_filename(ProfileSelector *c,const char *filename)
 	}
 	catch(const char *err)
 	{
-		cerr << "Profile Selector: " << err << endl;
+		Debug[TRACE] << "Profile Selector: " << err << endl;
 	}
 }
 

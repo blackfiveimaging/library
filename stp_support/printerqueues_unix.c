@@ -169,7 +169,6 @@ static void pqp_buildqueuelist(struct pqprivate *pp)
 #ifdef HAVE_LIBCUPS
 	cups_dest_t *dests;
 	int c,i;
-	fprintf(stderr,"Using libcups to identify print queues\n");
 	pqp_identifyprintsystem(pp);
 
 	c=cupsGetDests(&dests);
@@ -274,13 +273,10 @@ static int getprintercount(struct pqinfo *pq)
 static char *getprintername(struct pqinfo *pq,int index)
 {
 	struct printernode *p=pq->priv->first;
-	fprintf(stderr,"Getting name for queue %d\n",index);
 	while(--index>=0 && p)
 	{
 		p=p->next;
 	}
-	if(p)
-		fprintf(stderr,"Queue: %s\n",p->name);
 	if(p)
 		return(strdup(p->name));
 	return(NULL);
@@ -341,7 +337,6 @@ static char *getdriver(struct pqinfo *pq)
 	if(strcmp(pq->priv->currentqueue,PRINTERQUEUE_CUSTOMCOMMAND)==0)
 		return(NULL);
 #ifdef HAVE_LIBCUPS
-	fprintf(stderr,"Querying cups for printer driver...\n");
 	char *result=NULL;
 	const char *ppdname=cupsGetPPD(pq->priv->currentqueue);
 	if(ppdname)
@@ -372,8 +367,6 @@ static char *getdriver(struct pqinfo *pq)
 			pclose(pfile);
 		}
 		free(cmd2);
-		if(result)
-			fprintf(stderr,"Got driver: %s\n",result);
 	}
 	if(!result)
 		result=strdup("ps2");
@@ -388,12 +381,7 @@ static char *getppd(struct pqinfo *pq)
 {
 	char *result=NULL;
 #ifdef HAVE_LIBCUPS
-	fprintf(stderr,"Current queue: %s\n",pq->priv->currentqueue);
 	const char *ppdname=cupsGetPPD(pq->priv->currentqueue);
-	if(ppdname)
-		fprintf(stderr,"CUPS returned: %s\n",ppdname);
-	else
-		fprintf(stderr,"No PPD returned for %s\n",pq->priv->currentqueue);
 	if(ppdname)
 		result=strdup(ppdname);
 #endif
@@ -458,7 +446,6 @@ static char *buildprintcommand(struct pqinfo *pq)
 #if 0
 	free((void *)driver);
 #endif
-	fprintf(stderr,"Print command: %s\n",cmd);
 	return(cmd);
 }
 
@@ -498,7 +485,6 @@ static int initialisejob(struct pqinfo *pq)
 	else
 		pq->priv->printcommand=buildprintcommand(pq);
 	
-	fprintf(stderr,"In initialisejob()\n");
 	signal(SIGPIPE,&sighandler);
 	aborted=0;
 	pq->priv->cancelled=0;
@@ -507,7 +493,7 @@ static int initialisejob(struct pqinfo *pq)
 	// Workaroud for now - clear aborted and cancelled flags in the InitialisePage function.
 	// Race condition, though - not a permanent fix. 
 
-	fprintf(stderr,"Print command: %s\n",pq->priv->printcommand);
+//	fprintf(stderr,"Print command: %s\n",pq->priv->printcommand);
 
 	if(pipe(pq->priv->pipefd))
 		return(0);
@@ -516,12 +502,12 @@ static int initialisejob(struct pqinfo *pq)
 	pq->priv->childpid=fork();
 	if(pq->priv->childpid==-1)
 	{
-		fprintf(stderr,"PrinterQueue: Failed to create child process\n");
+//		fprintf(stderr,"PrinterQueue: Failed to create child process\n");
 		return(0);
 	}
 	if(pq->priv->childpid==0)
 	{
-		printf("Child process: %d\n",pq->priv->childpid);
+//		printf("Child process: %d\n",pq->priv->childpid);
 		dup2(pq->priv->pipefd[0],0);
 		close(pq->priv->pipefd[0]);
 		close(pq->priv->pipefd[1]);
@@ -534,7 +520,6 @@ static int initialisejob(struct pqinfo *pq)
 
 static void initialisepage(struct pqinfo *pq)
 {
-	fprintf(stderr,"In initialisepage()\n");
 	// FIXME - ugly workaround to the phantom SIGPIPE signals being received...
 	aborted=0;
 	pq->priv->cancelled=0;
@@ -543,7 +528,6 @@ static void initialisepage(struct pqinfo *pq)
 
 static void endpage(struct pqinfo *pq)
 {
-	fprintf(stderr,"In endpage()\n");
 }
 
 
@@ -555,10 +539,10 @@ static void endjob(struct pqinfo *pq)
 	}
 	else
 	{
-		fprintf(stderr,"In endjob()\n");
+//		fprintf(stderr,"In endjob()\n");
 		if(pq->priv->cancelled)
 		{
-			fprintf(stderr,"Job cancelled - sending term signal");
+//			fprintf(stderr,"Job cancelled - sending term signal");
 			kill(pq->priv->childpid,SIGTERM);
 		}
 		close(pq->priv->pipefd[0]);
@@ -579,7 +563,9 @@ static void canceljob(struct pqinfo *pq)
 
 static int writedata(struct pqinfo *pq,const char *data,int bytecount)
 {
-	write(pq->priv->outputfd,data,bytecount);
+	int written=write(pq->priv->outputfd,data,bytecount);
+	if(written<bytecount)
+		aborted=1;
 	return(1-aborted);
 }
 

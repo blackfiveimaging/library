@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "debug.h"
+
 #include "configdb.h"
 
 using namespace std;
@@ -132,7 +134,7 @@ int ConfigDB::ParseString(const char *string)
 								opt->Value.floatnumber=atof(in);
 								break;
 							default:
-								cerr << "Error: Unknown type for option: " << opt->Name << endl;
+								Debug[ERROR] << "Error: Unknown type for option: " << opt->Name << endl;
 								break;
 						}
 						free(string2);
@@ -164,7 +166,7 @@ struct ConfigOption *ConfigDB::FindOption(const char *Name)
 			opt=opt->next;
 	}
 	if(!result)
-		cerr << "Warning: option " << Name << " not found" << endl;
+		Debug[ERROR] << "Warning: option " << Name << " not found" << endl;
 	return(result);
 }
 
@@ -177,7 +179,7 @@ const char *ConfigDB::FindString(const char *Name)
 		if(opt->Type==ConfigARG_STRING)
 			return(opt->Value.string);
 		else
-			cerr << "Error: " << Name << " is not a string option" << endl;
+			Debug[ERROR] << "Error: " << Name << " is not a string option" << endl;
 		return(NULL);
 	}
 	return(NULL);
@@ -194,10 +196,10 @@ int ConfigDB::FindInt(const char *Name)
 			return(opt->Value.intnumber);
 		}
 		else
-			cerr << "Error: " << Name << " is not an integer option" << endl;
+			Debug[ERROR] << "Error: " << Name << " is not an integer option" << endl;
 	}
 	else
-		cerr << Name << " Not found..." << endl;
+		Debug[ERROR] << Name << " Not found..." << endl;
 
 	return(0);
 }
@@ -213,10 +215,10 @@ double ConfigDB::FindFloat(const char *Name)
 			return(opt->Value.floatnumber);
 		}
 		else
-			cerr << "Error: " << Name << " is not a float option" << endl;
+			Debug[ERROR] << "Error: " << Name << " is not a float option" << endl;
 	}
 	else
-		cout << "Not found..." << endl;
+		Debug[ERROR] << "Not found..." << endl;
 
 	return(0);
 }
@@ -232,10 +234,10 @@ void ConfigDB::SetInt(const char *Name,int val)
 			opt->Value.intnumber=val;
 		}
 		else
-			cerr << "Error: " << Name << " is not an integer option" << endl;
+			Debug[ERROR] << "Error: " << Name << " is not an integer option" << endl;
 	}
 	else
-		cout << "Not found..." << endl;
+		Debug[ERROR] << "Not found..." << endl;
 }
 
 
@@ -249,10 +251,10 @@ void ConfigDB::SetFloat(const char *Name,double val)
 			opt->Value.floatnumber=val;
 		}
 		else
-			cerr << "Error: " << Name << " is not a float option" << endl;
+			Debug[ERROR] << "Error: " << Name << " is not a float option" << endl;
 	}
 	else
-		cout << "Not found..." << endl;
+		Debug[ERROR] << "Not found..." << endl;
 }
 
 
@@ -273,10 +275,10 @@ void ConfigDB::SetString(const char *Name,const char *val)
 				opt->Value.string=NULL;
 		}
 		else
-			cerr << "Error: " << Name << " is not an integer option" << endl;
+			Debug[ERROR] << "Error: " << Name << " is not an integer option" << endl;
 	}
 	else
-		cout << "Not found..." << endl;
+		Debug[ERROR] << Name << "Not found..." << endl;
 }
 
 

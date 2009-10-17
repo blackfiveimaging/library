@@ -5,6 +5,7 @@
 #include <queue>
 #include <list>
 
+#include "support/debug.h"
 #include "support/thread.h"
 #include "support/ptmutex.h"
 
@@ -99,7 +100,7 @@ class Worker : public ThreadFunction, public PTMutex
 	Worker(JobQueue &queue)
 		: ThreadFunction(), PTMutex(), queue(queue), thread(this), status(WORKERTHREAD_RUN)
 	{
-//		std::cerr << "Starting worker thread..." << std::endl;
+//		Debug[TRACE] << "Starting worker thread..." << std::endl;
 		thread.Start();
 	}
 	virtual ~Worker()
@@ -126,26 +127,26 @@ class Worker : public ThreadFunction, public PTMutex
 	}
 	virtual int Entry(Thread &t)
 	{
-//		std::cerr << "Worker thread running..." << std::endl;
+//		Debug[TRACE] << "Worker thread running..." << std::endl;
 		do
 		{
-//			std::cerr << "Obtaining mutex" << std::endl;
+//			Debug[TRACE] << "Obtaining mutex" << std::endl;
 			queue.ObtainMutex();
 			while(queue.IsEmpty())
 			{
-//				std::cerr << "Waiting for a job" << std::endl;
+//				Debug[TRACE] << "Waiting for a job" << std::endl;
 				queue.WaitCondition();
-//				std::cerr << "Signal received" << std::endl;
+//				Debug[TRACE] << "Signal received" << std::endl;
 				if(status!=WORKERTHREAD_RUN)
 				{
-//					std::cerr << "Received cancellation signal" << std::endl;
+//					Debug[TRACE] << "Received cancellation signal" << std::endl;
 					queue.ReleaseMutex();
 					return(0);
 				}
 			}
-//			std::cerr << "Releasing mutex" << std::endl;
+//			Debug[TRACE] << "Releasing mutex" << std::endl;
 			queue.ReleaseMutex();
-//			std::cerr << "Running job" << std::endl;
+//			Debug[TRACE] << "Running job" << std::endl;
 
 			// Obtain a per-thread mutex while running the job, so the destructor can avoid a busy-wait.
 			ObtainMutex();
@@ -157,7 +158,7 @@ class Worker : public ThreadFunction, public PTMutex
 			queue.Broadcast();
 			queue.ReleaseMutex();
 		} while(status==WORKERTHREAD_RUN);
-//		std::cerr << "Cancelled" << std::endl;
+//		Debug[TRACE] << "Cancelled" << std::endl;
 		return(0);
 	}
 	protected:
@@ -190,7 +191,7 @@ class JobDispatcher : public JobQueue
 
 		while(JobCount())
 		{
-//				std::cerr << "(" << JobCount() << " jobs remaining...)" << std::endl;
+//				Debug[TRACE] << "(" << JobCount() << " jobs remaining...)" << std::endl;
 			WaitCondition();
 		}
 		ReleaseMutex();

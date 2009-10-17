@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+#include "debug.h"
+
 #ifndef PAGEEXTENT_H
 #define PAGEEXTENT_H
 
@@ -72,12 +74,12 @@ class PageExtent
 	virtual void SetMargins(int left,int right,int top,int bottom)
 	{
 		if((left+right)>=pagewidth)
-			cerr << "Warning: margins are too wide!" << endl;
+			Debug[TRACE] << "Warning: margins are too wide!" << endl;
 		leftmargin=left;
 		rightmargin=right;
 
 		if((top+bottom)>=pageheight)
-			cerr << "Warning: margins are too tall!" << endl;
+			Debug[TRACE] << "Warning: margins are too tall!" << endl;
 		topmargin=top;
 		bottommargin=bottom;
 	}

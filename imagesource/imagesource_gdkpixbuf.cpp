@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../support/debug.h"
+
 #include "imagesource_gdkpixbuf.h"
 
 using namespace std;
@@ -38,7 +40,7 @@ ISDataType *ImageSource_GdkPixbuf::GetRow(int row)
 
 	if(row>=height)
 	{
-		cerr << "ImageSource_GdkPixbuf - Warning: row " << row+1 << " of " << height << " requested." << endl;
+		Debug[WARN] << "ImageSource_GdkPixbuf - Warning: row " << row+1 << " of " << height << " requested." << endl;
 		return(rowbuffer);
 	}
 

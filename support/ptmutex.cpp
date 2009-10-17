@@ -6,6 +6,8 @@
 #include "config.h"
 #endif
 
+#include "debug.h"
+
 using namespace std;
 
 using namespace std;
@@ -60,7 +62,7 @@ void PTMutex::ReleaseMutex()
 
 PTMutex::PTMutex()
 {
-	cerr << "Warning - building a dummy mutex" << endl;
+	Debug[TRACE] << "Warning - building a dummy mutex" << endl;
 }
 
 
@@ -71,20 +73,20 @@ PTMutex::~PTMutex()
 
 void PTMutex::ObtainMutex()
 {
-	cerr << "Warning - obtaining a dummy mutex" << endl;
+	Debug[TRACE] << "Warning - obtaining a dummy mutex" << endl;
 }
 
 
 bool PTMutex::AttemptMutex()
 {
-	cerr << "Warning - attempting a dummy mutex" << endl;
+	Debug[TRACE] << "Warning - attempting a dummy mutex" << endl;
 	return(true);
 }
 
 
 void PTMutex::ReleaseMutex()
 {
-	cerr << "Warning - releasing a dummy mutex" << endl;
+	Debug[TRACE] << "Warning - releasing a dummy mutex" << endl;
 }
 
 
