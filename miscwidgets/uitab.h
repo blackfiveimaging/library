@@ -9,7 +9,7 @@ class UITab
 {
 	public:
 	UITab(GtkWidget *notebook,const char *tabname=NULL);
-	~UITab();
+	virtual ~UITab();
 	GtkWidget *GetBox();
 	void SetText(const char *text);
 	protected:
