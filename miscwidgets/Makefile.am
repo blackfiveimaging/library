@@ -14,6 +14,9 @@ libmiscwidgets_la_SOURCES =	\
 	pixbufview.cpp \
 	pixbufview.h \
 	\
+	uitab.cpp \
+	uitab.h \
+	\
 	patheditor.cpp	\
 	patheditor.h	\
 	imageselector.cpp \
