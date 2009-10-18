@@ -8,9 +8,10 @@ class UITab;
 class UITab
 {
 	public:
-	UITab(GtkWidget *notebook,const char *tabname);
+	UITab(GtkWidget *notebook,const char *tabname=NULL);
 	~UITab();
 	GtkWidget *GetBox();
+	void SetText(const char *text);
 	protected:
 	static void deleteclicked(GtkWidget *wid,gpointer userdata);
 	static void setclosebuttonsize(GtkWidget *wid,GtkStyle *style,gpointer userdata);

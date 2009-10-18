@@ -6,6 +6,9 @@
 
 using namespace std;
 
+// FIXME Win32 namespace clash
+#undef ERROR
+
 enum DebugLevel {NONE, ERROR, WARN, COMMENT, TRACE};
 
 class NullStream : public std::streambuf, public std::ostream

@@ -32,23 +32,23 @@ UITab::UITab(GtkWidget *notebook,const char *tabname) : notebook(notebook)
 {
 	apply_style();
 
-	label=gtk_hbox_new(FALSE,0);
-	GtkWidget *tmp=gtk_label_new(tabname);
-	gtk_box_pack_start(GTK_BOX(label),tmp,TRUE,TRUE,0);
+	GtkWidget *labelbox=gtk_hbox_new(FALSE,0);
+	label=gtk_label_new(tabname);
+	gtk_box_pack_start(GTK_BOX(labelbox),label,TRUE,TRUE,0);
 
 	GtkWidget *closeimg=gtk_image_new_from_stock(GTK_STOCK_CLOSE,GTK_ICON_SIZE_MENU);
-	tmp=gtk_button_new();
+	GtkWidget *tmp=gtk_button_new();
 	gtk_widget_set_name(tmp,"tab-close-button");
 	gtk_button_set_image(GTK_BUTTON(tmp),closeimg);
 	gtk_button_set_relief(GTK_BUTTON(tmp),GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(tmp),"clicked",G_CALLBACK(deleteclicked),this);
 	g_signal_connect(G_OBJECT(tmp),"style-set",G_CALLBACK(setclosebuttonsize),this);
-	gtk_box_pack_start(GTK_BOX(label),tmp,FALSE,FALSE,4);
-	gtk_widget_show_all(label);
+	gtk_box_pack_start(GTK_BOX(labelbox),tmp,FALSE,FALSE,4);
+	gtk_widget_show_all(labelbox);
 	
 	hbox=gtk_hbox_new(FALSE,0);
 	gtk_widget_show(GTK_WIDGET(hbox));
-	gtk_notebook_append_page(GTK_NOTEBOOK(notebook),GTK_WIDGET(hbox),label);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook),GTK_WIDGET(hbox),labelbox);
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook),-1);
     gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(notebook),hbox, TRUE, TRUE,GTK_PACK_START);
 }
@@ -64,6 +64,12 @@ UITab::~UITab()
 GtkWidget *UITab::GetBox()
 {
 	return(hbox);
+}
+
+
+void UITab::SetText(const char *text)
+{
+	gtk_label_set_text(GTK_LABEL(label),text);	
 }
 
 
