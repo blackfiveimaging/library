@@ -30,6 +30,8 @@ class Job
 };
 
 
+enum JobStatus {JOBSTATUS_QUEUED,JOBSTATUS_RUNNING,JOBSTATUS_UNKNOWN};
+
 class JobQueue : public ThreadCondition
 {
 	public:
@@ -47,48 +49,107 @@ class JobQueue : public ThreadCondition
 	Job *PopJob()
 	{
 		ObtainMutex();
-		if(myqueue.empty())
+		if(waiting.empty())
 		{
 			ReleaseMutex();
 			return(NULL);
 		}
-		Job *result=myqueue.front();
-		myqueue.pop();
+		Job *result=waiting.front();
+		waiting.pop_front();
 		ReleaseMutex();
 		return(result);
 	}
 	bool Dispatch(Worker *worker=NULL)
 	{
-		Job *j=PopJob();
-		if(j)
+		// Must transfer the job to the running queue
+		// with the mutex held.
+		ObtainMutex();
+		if(IsEmpty())
 		{
-			j->Run(worker);
-//			delete j;		// Safer to let the job handle its own demise...
-			return(true);
+			ReleaseMutex();
+			return(false);
 		}
-		return(false);
+		Job *j=waiting.front();
+
+		// Transfer the job to the "running" list
+		waiting.pop_front();
+		running.push_back(j);
+
+		// Run the job - without mutex held...
+		ReleaseMutex();
+		j->Run(worker);
+
+		// Now get the mutex again and remove the job from the "running" list.
+		ObtainMutex();
+		running.remove(j);
+		ReleaseMutex();
+		return(true);
 	}
+
 	virtual void PushJob(Job *job)
 	{
 		ObtainMutex();
-		myqueue.push(job);
+		waiting.push_back(job);
 		Broadcast();
 		ReleaseMutex();
+	}
+
+	// Function to cancel a queued job - returns JOBSTATUS_RUNNING
+	// if the job is in progress, and JOBSTATUS_UNKNOWN if not.
+	virtual JobStatus CancelJob(Job *job)
+	{
+		ObtainMutex();
+		JobStatus status=GetJobStatus(job);
+		if(status==JOBSTATUS_QUEUED)
+		{
+			waiting.remove(job);
+			ReleaseMutex();
+			delete job;
+			return(JOBSTATUS_UNKNOWN);
+		}
+		ReleaseMutex();
+		return(status);
+	}
+
+	// FIXME - if the job self-destructs, it's possible for it to do so between this function
+	// determining that the job is running, and this function returning.
+	// Must hold the mutex while using this function - result is no longer valid once
+	// the mutex is released.
+	virtual JobStatus GetJobStatus(Job *job)
+	{
+		std::list<Job *>::iterator it=waiting.begin();
+		while(it!=waiting.end())
+		{
+			if(*it==job)
+				return(JOBSTATUS_QUEUED);
+			++it;
+		}
+
+		it=running.begin();
+		while(it!=running.end())
+		{
+			if(*it==job)
+				return(JOBSTATUS_RUNNING);
+			++it;
+		}
+
+		return(JOBSTATUS_UNKNOWN);
 	}
 
 	// NOTE - Must hold the mutex while using this function.
 	virtual bool IsEmpty()
 	{
-		return(myqueue.empty());
+		return(waiting.empty());
 	}
 
 	// NOTE - Must hold the mutex while using this function.
 	virtual int JobCount()
 	{
-		return(myqueue.size());
+		return(waiting.size());
 	}
 	protected:
-	std::queue<Job *> myqueue;
+	std::list<Job *> waiting;
+	std::list<Job *> running;
 };
 
 
