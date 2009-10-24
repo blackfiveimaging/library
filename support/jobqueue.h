@@ -11,10 +11,12 @@
 
 class Worker;
 
+enum JobStatus {JOBSTATUS_QUEUED,JOBSTATUS_RUNNING,JOBSTATUS_CANCELLED,JOBSTATUS_COMPLETED,JOBSTATUS_UNKNOWN};
+
 class Job
 {
 	public:
-	Job()
+	Job() : jobstatus(JOBSTATUS_UNKNOWN)
 	{
 	}
 	Job(Job &other)
@@ -26,11 +28,23 @@ class Job
 	virtual void Run(Worker *worker=NULL)
 	{
 	}
+	virtual JobStatus GetJobStatus()
+	{
+		return(jobstatus);
+	}
+	virtual void SetJobStatus(JobStatus s)
+	{
+//		Debug[TRACE] << "Job::SetJobStatus(" << s << ")" << endl;
+		jobstatus=s;
+	}
+	virtual void CancelJob()
+	{
+		jobstatus=JOBSTATUS_CANCELLED;
+	}
 	protected:
+	JobStatus jobstatus;
 };
 
-
-enum JobStatus {JOBSTATUS_QUEUED,JOBSTATUS_RUNNING,JOBSTATUS_UNKNOWN};
 
 class JobQueue : public ThreadCondition
 {
@@ -45,6 +59,7 @@ class JobQueue : public ThreadCondition
 		while((j=PopJob()))
 			delete j;
 		ReleaseMutex();
+		DeleteCompleted();
 	}
 	Job *PopJob()
 	{
@@ -63,16 +78,23 @@ class JobQueue : public ThreadCondition
 	{
 		// Must transfer the job to the running queue
 		// with the mutex held.
+
+//		Debug[TRACE] << "JobQueue::Dispatch() - Obtaining mutex" << endl;
+
 		ObtainMutex();
-		if(IsEmpty())
+		if(waiting.empty())
 		{
 			ReleaseMutex();
 			return(false);
 		}
+
+//		Debug[TRACE] << "JobQueue::Dispatch() - Getting first job" << endl;
+
 		Job *j=waiting.front();
 
 		// Transfer the job to the "running" list
 		waiting.pop_front();
+		j->SetJobStatus(JOBSTATUS_RUNNING);
 		running.push_back(j);
 
 		// Run the job - without mutex held...
@@ -80,18 +102,29 @@ class JobQueue : public ThreadCondition
 		j->Run(worker);
 
 		// Now get the mutex again and remove the job from the "running" list.
+		// and move it to the "completed" list, from where it can be safely deleted.
 		ObtainMutex();
 		running.remove(j);
+
+		completed.push_back(j);
+		if(j->GetJobStatus()==JOBSTATUS_RUNNING)	// Don't set status to COMPLETED unless it's currently RUNNING.
+			j->SetJobStatus(JOBSTATUS_COMPLETED);	// - don't want to change CANCELLED to COMPLETED.
+
 		ReleaseMutex();
 		return(true);
 	}
 
-	virtual void PushJob(Job *job)
+	virtual void AddJob(Job *job)
 	{
 		ObtainMutex();
+
+		completed.remove(job);	// FIXME - is this legal if the job's not on the list?
+
+		job->SetJobStatus(JOBSTATUS_QUEUED);
 		waiting.push_back(job);
 		Broadcast();
 		ReleaseMutex();
+		DeleteCompleted();
 	}
 
 	// Function to cancel a queued job - returns JOBSTATUS_RUNNING
@@ -107,12 +140,18 @@ class JobQueue : public ThreadCondition
 			delete job;
 			return(JOBSTATUS_UNKNOWN);
 		}
+		if(status!=JOBSTATUS_UNKNOWN)
+			job->SetJobStatus(JOBSTATUS_CANCELLED);
 		ReleaseMutex();
 		return(status);
 	}
 
 	// FIXME - if the job self-destructs, it's possible for it to do so between this function
 	// determining that the job is running, and this function returning.
+
+	// Proposed fix:  Disallow self-destruction - instead, transfer completed jobs to a new
+	// queue, and delete from there.
+
 	// Must hold the mutex while using this function - result is no longer valid once
 	// the mutex is released.
 	virtual JobStatus GetJobStatus(Job *job)
@@ -133,13 +172,32 @@ class JobQueue : public ThreadCondition
 			++it;
 		}
 
+		it=completed.begin();
+		while(it!=completed.end())
+		{
+			if(*it==job)
+				return(JOBSTATUS_COMPLETED);
+			++it;
+		}
+
 		return(JOBSTATUS_UNKNOWN);
 	}
 
-	// NOTE - Must hold the mutex while using this function.
-	virtual bool IsEmpty()
+	// If your jobs need to be deleted from a specific thread,
+	// call this function from that thread.
+	void DeleteCompleted()
 	{
-		return(waiting.empty());
+		ObtainMutex();
+		while(completed.size())
+		{
+			Job *j=completed.front();
+			completed.remove(j);
+			if(j)
+			{
+				delete j;
+			}
+		}
+		ReleaseMutex();
 	}
 
 	// NOTE - Must hold the mutex while using this function.
@@ -150,6 +208,7 @@ class JobQueue : public ThreadCondition
 	protected:
 	std::list<Job *> waiting;
 	std::list<Job *> running;
+	std::list<Job *> completed;
 };
 
 
@@ -193,7 +252,7 @@ class Worker : public ThreadFunction, public PTMutex
 		{
 //			Debug[TRACE] << "Obtaining mutex" << std::endl;
 			queue.ObtainMutex();
-			while(queue.IsEmpty())
+			while(queue.JobCount()==0)
 			{
 //				Debug[TRACE] << "Waiting for a job" << std::endl;
 				queue.WaitCondition();

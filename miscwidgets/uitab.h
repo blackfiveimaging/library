@@ -2,10 +2,51 @@
 #define UITAB_H
 
 #include <gtk/gtk.h>
+#include "../support/refcount.h"
+#include "../support/thread.h"
+#include "../support/debug.h"
 
 class UITab;
 
-class UITab
+class RefCountUI : public RefCount
+{
+	public:
+	RefCountUI() : RefCount()
+	{
+		threadid=Thread::GetThreadID();
+	}
+	virtual void ObtainRefMutex()
+	{
+		while(!RefCount::refmutex.AttemptMutex())
+		{
+			gtk_main_iteration_do(TRUE);
+		}
+	}
+	virtual void UnRef()
+	{
+		if(threadid==Thread::GetThreadID())
+		{
+			RefCount::UnRef();
+		}
+		else
+		{
+			Debug[TRACE] << "RefCountUI: Unreferencing from a different thread - deferring..." << std::endl;
+			g_timeout_add(1,unreffunc,this);
+		}
+	}
+	protected:
+	static gboolean unreffunc(gpointer ud)
+	{
+		RefCountUI *rc=(RefCountUI *)ud;
+		rc->RefCount::UnRef();
+		return(FALSE);
+	}
+	
+	ThreadID threadid;
+};
+
+
+class UITab : public RefCountUI
 {
 	public:
 	UITab(GtkWidget *notebook,const char *tabname=NULL);

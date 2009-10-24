@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 
 #include "uitab.h"
+#include "../support/debug.h"
 
 #include "config.h"
 #include "gettext.h"
@@ -28,7 +29,7 @@ void UITab::apply_style()
 }
 
 
-UITab::UITab(GtkWidget *notebook,const char *tabname) : notebook(notebook)
+UITab::UITab(GtkWidget *notebook,const char *tabname) : RefCountUI(), notebook(notebook)
 {
 	apply_style();
 
@@ -79,7 +80,8 @@ void UITab::deleteclicked(GtkWidget *wid,gpointer userdata)
 	// Disable the close button here in case it gets clicked again while we're
 	// waiting for thread termination.
 	gtk_widget_set_sensitive(wid,FALSE);
-	delete ui;
+	Debug[TRACE] << "Unreferencing tab" << endl;
+	ui->UnRef();
 }
 
 
