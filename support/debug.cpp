@@ -25,9 +25,11 @@ void DebugStream::SetLogFile(string filename)
 }
 
 
-void DebugStream::SetLevel(enum DebugLevel lvl)
+DebugLevel DebugStream::SetLevel(enum DebugLevel lvl)
 {
+	DebugLevel oldlevel=level;
 	level=lvl;
+	return(oldlevel);
 }
 
 

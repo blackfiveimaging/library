@@ -25,6 +25,8 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixdata.h>
 
+#include "../support/debug.h"
+
 #include "egg-pixbuf-thumbnail.h"
 #include "generaldialogs.h"
 
@@ -272,19 +274,20 @@ class multiselectdata
 	public:
 	multiselectdata(ImageSelector *sel,GtkTreeModel *model) : sel(sel), model(model)
 	{
+		if(sel->selectionlist)
+			delete sel->selectionlist;
+		sel->selectionlist=new vector<string>;
 	}
 	~multiselectdata()
 	{
 	}
 	static void add_name(gpointer data,gpointer userdata)
 	{
+		DebugLevel oldlevel=Debug.SetLevel(TRACE);
+
 		multiselectdata *msd=(multiselectdata *)userdata;
 		GtkTreePath *treepath=(GtkTreePath *)data;
 		GtkTreeIter iter;
-
-		if(msd->sel->selectionlist)
-			delete msd->sel->selectionlist;
-		msd->sel->selectionlist=new vector<string>;
 
 		GdkPixbuf *pb;
 		if(gtk_tree_model_get_iter(msd->model,&iter,treepath))
@@ -294,11 +297,13 @@ class multiselectdata
 			if(ii && ii->filename && msd->sel->selectionlist)
 			{
 				msd->sel->selectionlist->push_back(string(ii->filename));
-//				cerr << "Found: " << ii->filename << endl;
+				Debug[TRACE] << "MultiSelectData - Found: " << ii->filename << endl;
 			}
 		}
 		else
-			cerr << "Unable to select path" << endl;
+			Debug[WARN] << "MultiSelectData: Unable to select path" << endl;
+
+		Debug.SetLevel(oldlevel);
 	}
 	protected:
 	ImageSelector *sel;
@@ -319,6 +324,8 @@ static void selection_changed(GtkTreeSelection *select,gpointer user_data)
 
 		g_list_foreach (list, (GFunc)gtk_tree_path_free, NULL);
 		g_list_free (list);
+
+		cerr << "Selection_changed - list size: " << pe->selectionlist->size() << endl;
 	}
 	else
 	{
@@ -567,8 +574,11 @@ const char *imageselector_get_filename(ImageSelector *c,unsigned int idx)
 {
 	if(c->selectionlist)
 	{
+		Debug[TRACE] << "Checking selection list" << endl;
 		if(idx<c->selectionlist->size())
 			return((*c->selectionlist)[idx].c_str());
+		else
+			Debug[TRACE] << "No filename in selectionlist at index " << idx << endl;
 		return(NULL);
 	}
 	else

@@ -34,7 +34,7 @@ class DebugStream
 	DebugStream(DebugLevel level=ERROR);
 	virtual ~DebugStream();
 	virtual void SetLogFile(string filename);
-	virtual	void SetLevel(enum DebugLevel lvl);
+	virtual	DebugLevel SetLevel(enum DebugLevel lvl);  // returns the old level
 	virtual ostream &operator[](int idx);
 	protected:
 	enum DebugLevel level;
