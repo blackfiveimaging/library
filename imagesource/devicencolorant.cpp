@@ -274,6 +274,8 @@ DeviceNColorant::~DeviceNColorant()
 {
 	if(name)
 		free(name);
+	if(displayname)
+		free(displayname);
 	if(prev)
 		prev->next=next;
 	else
