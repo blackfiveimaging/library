@@ -432,12 +432,15 @@ imageselector_new (SearchPathHandler *sp,GtkSelectionMode selmode,bool allowothe
 	c->searchpath=sp;
 	c->selmode=selmode;
 
-	gtk_drag_dest_set(GTK_WIDGET(c),
-			  GtkDestDefaults(GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP),
-			  dnd_file_drop_types, dnd_file_drop_types_count,
-                          GdkDragAction(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK));
-	g_signal_connect(G_OBJECT(c), "drag_data_received",
-			 G_CALLBACK(get_dnd_data), NULL);
+	if(allowother)
+	{
+		gtk_drag_dest_set(GTK_WIDGET(c),
+				  GtkDestDefaults(GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP),
+				  dnd_file_drop_types, dnd_file_drop_types_count,
+	                          GdkDragAction(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK));
+		g_signal_connect(G_OBJECT(c), "drag_data_received",
+				 G_CALLBACK(get_dnd_data), NULL);
+	}
 
 	GtkWidget *sw = gtk_scrolled_window_new (NULL, NULL);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw),GTK_SHADOW_ETCHED_IN);
