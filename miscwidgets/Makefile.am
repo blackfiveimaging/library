@@ -10,6 +10,8 @@ libmiscwidgets_la_SOURCES =	\
 	\
 	colorantselector.cpp	\
 	colorantselector.h	\
+	coloranttoggle.cpp	\
+	coloranttoggle.h	\
 	\
 	pixbufview.cpp \
 	pixbufview.h \
