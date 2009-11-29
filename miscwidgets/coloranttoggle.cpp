@@ -243,11 +243,11 @@ void coloranttoggle_set_colorants(ColorantToggle *c,DeviceNColorantList *list)
 
 				GtkWidget *img=gtk_image_new_from_pixbuf(colicon);
 				GtkWidget *togglebutton=gtk_toggle_button_new();
-				gtk_widget_set_name(togglebutton,"colourtoggle-button");
+//				gtk_widget_set_name(togglebutton,"colourtoggle-button");
 				gtk_button_set_image(GTK_BUTTON(togglebutton),img);
-				gtk_button_set_relief(GTK_BUTTON(togglebutton),GTK_RELIEF_NONE);
+//				gtk_button_set_relief(GTK_BUTTON(togglebutton),GTK_RELIEF_NONE);
 				gtk_box_pack_start(GTK_BOX(c),togglebutton,FALSE,FALSE,0);
-				gtk_widget_set_size_request(togglebutton,is->width+2,is->height+2);
+//				gtk_widget_set_size_request(togglebutton,is->width+2,is->height+2);
 				gtk_widget_show(togglebutton);
 				gtk_widget_show(img);
 
