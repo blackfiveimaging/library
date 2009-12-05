@@ -5,6 +5,8 @@ noinst_LTLIBRARIES = libmiscwidgets.la
 libmiscwidgets_la_SOURCES =	\
 	generaldialogs.cpp	\
 	generaldialogs.h	\
+	errordialogqueue.cpp	\
+	errordialogqueue.h	\
 	simplecombo.cpp	\
 	simplecombo.h	\
 	\
