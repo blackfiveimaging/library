@@ -18,6 +18,9 @@ libmiscwidgets_la_SOURCES =	\
 	pixbufview.cpp \
 	pixbufview.h \
 	\
+	progressbar.cpp	\
+	progressbar.h	\
+	\
 	uitab.cpp \
 	uitab.h \
 	\
@@ -25,7 +28,9 @@ libmiscwidgets_la_SOURCES =	\
 	patheditor.h	\
 	imageselector.cpp \
 	imageselector.h \
-	imageselector_noborder_image.h
+	imageselector_noborder_image.h \
+	\
+	refcountui.h
 
 libmiscwidgets_la_LDFLAGS = -static
 

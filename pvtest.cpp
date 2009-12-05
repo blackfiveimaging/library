@@ -8,7 +8,7 @@
 #include "imagesource/imagesource_histogram.h"
 #include "pixbufview.h"
 
-#include "support/progressbar.h"
+#include "progressbar.h"
 
 #include "config.h"
 #include "gettext.h"

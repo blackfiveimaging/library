@@ -1,4 +1,5 @@
 #include "errordialogqueue.h"
+#include "generaldialogs.h"
 
 
 ErrorMessageQueue::ErrorMessageQueue() : PTMutex()

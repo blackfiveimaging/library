@@ -24,8 +24,6 @@ libsupport_la_SOURCES =	\
 	progress.h	\
 	progresstext.h \
 	progressthread.h \
-	progressbar.cpp	\
-	progressbar.h	\
 	\
 	rangeparser.cpp \
 	rangeparser.h \
