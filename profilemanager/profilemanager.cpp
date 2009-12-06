@@ -18,8 +18,6 @@
 #include "gettext.h"
 #define _(x) gettext(x)
 
-#define SYSTEMMONITORPROFILE_ESCAPESTRING "<System monitor profile>"
-#define BUILTINSRGB_ESCAPESTRING "<Built-in sRGB profile>"
 using namespace std;
 
 

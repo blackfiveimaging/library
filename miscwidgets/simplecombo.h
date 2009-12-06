@@ -24,6 +24,7 @@ typedef struct _SimpleComboClass SimpleComboClass;
 // SimpleComboOptions opts;
 // opts.Add("Key1 ",_("Displayed text 1"),_("Optional tooltip"));
 // opts.Add("Key2 ",_("Displayed text 2"),_("Optional tooltip"));
+// opts.Add("Other",_("Other..."),_("Optional tooltip"),true);	// Allow "other" to be triggered even if it's already selected...
 //
 // The options list will be copied, so can be safely constructed in local storage.
 
@@ -35,7 +36,7 @@ class SimpleComboOptions
 	SimpleComboOptions();
 	SimpleComboOptions(SimpleComboOptions &other);
 	~SimpleComboOptions();
-	SimpleComboOption *Add(const char *key,const char *displayname,const char *tooltip=NULL);
+	SimpleComboOption *Add(const char *key,const char *displayname,const char *tooltip=NULL,bool repeat=false);
 	SimpleComboOption *FirstOption();
 	SimpleComboOption *operator[](int idx);
 	protected:
@@ -47,7 +48,7 @@ class SimpleComboOptions
 class SimpleComboOption
 {
 	public:
-	SimpleComboOption(SimpleComboOptions &header,const char *key,const char *displayname,const char *tooltip=NULL);
+	SimpleComboOption(SimpleComboOptions &header,const char *key,const char *displayname,const char *tooltip=NULL,bool repeat=false);
 	SimpleComboOption(SimpleComboOptions &header,SimpleComboOption &other);
 	~SimpleComboOption();
 	SimpleComboOption *NextOption();
@@ -55,20 +56,11 @@ class SimpleComboOption
 	char *key;
 	char *displayname;
 	char *tooltip;
+	bool repeat;
 	protected:
 	SimpleComboOptions &header;
 	SimpleComboOption *prevopt,*nextopt;
 };
-
-
-// When declaring your array of SimpleComboOptions, you should mark the displayname members
-// with N_() - the widget will call gettext() to translate them when building the combo.
-
-//struct SimpleComboOption
-//{
-//	const char *option;
-//	const char *displayname;
-//};
 
 
 struct _SimpleCombo

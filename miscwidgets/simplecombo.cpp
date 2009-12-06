@@ -64,12 +64,16 @@ static void	simplecombo_entry_changed(GtkEntry *entry,gpointer user_data)
 	SimpleCombo *c=SIMPLECOMBO(user_data);
 
 	int index=gtk_option_menu_get_history(GTK_OPTION_MENU(c->optionmenu));
+	SimpleComboOption *o=(*c->opts)[index];
+
 	if(index==c->previdx)
-		return;
+	{
+		if(!(o && o->repeat))
+			return;
+	}
 
 	c->previdx=index;
 
-	SimpleComboOption *o=(*c->opts)[index];
 	if(o && o->tooltip && (strlen(o->tooltip)>0))
 	{
 		gtk_tooltips_set_tip(c->tips,c->optionmenu,o->tooltip,o->tooltip);
@@ -225,8 +229,8 @@ void simplecombo_set_index(SimpleCombo *c,int index)
 //  Class definitions for SimpleComboOpt(s)
 
 
-SimpleComboOption::SimpleComboOption(SimpleComboOptions &header,const char *key,const char *displayname,const char *tooltip)
-	:	key(NULL),displayname(NULL),tooltip(NULL),header(header),prevopt(NULL),nextopt(NULL)
+SimpleComboOption::SimpleComboOption(SimpleComboOptions &header,const char *key,const char *displayname,const char *tooltip, bool repeat)
+	:	key(NULL),displayname(NULL),tooltip(NULL),repeat(repeat),header(header),prevopt(NULL),nextopt(NULL)
 {
 	if((prevopt=header.firstopt))
 	{
@@ -245,7 +249,7 @@ SimpleComboOption::SimpleComboOption(SimpleComboOptions &header,const char *key,
 
 
 SimpleComboOption::SimpleComboOption(SimpleComboOptions &header,SimpleComboOption &other)
-	: key(NULL),displayname(NULL),tooltip(NULL),header(header),prevopt(NULL),nextopt(NULL)
+	: key(NULL),displayname(NULL),tooltip(NULL),repeat(other.repeat),header(header),prevopt(NULL),nextopt(NULL)
 {
 	if((prevopt=header.firstopt))
 	{
@@ -315,9 +319,9 @@ SimpleComboOptions::~SimpleComboOptions()
 		delete firstopt;
 }
 
-SimpleComboOption *SimpleComboOptions::Add(const char *key,const char *displayname,const char *tooltip)
+SimpleComboOption *SimpleComboOptions::Add(const char *key,const char *displayname,const char *tooltip,bool repeat)
 {
-	return(new SimpleComboOption(*this,key,displayname,tooltip));
+	return(new SimpleComboOption(*this,key,displayname,tooltip,repeat));
 }
 
 SimpleComboOption *SimpleComboOptions::FirstOption()

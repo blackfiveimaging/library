@@ -10,6 +10,9 @@
 #include <X11/Xlib.h>
 #endif
 
+#define SYSTEMMONITORPROFILE_ESCAPESTRING "<System monitor profile>"
+#define BUILTINSRGB_ESCAPESTRING "<Built-in sRGB profile>"
+
 enum CMColourDevice
 {
 	CM_COLOURDEVICE_NONE=0,
