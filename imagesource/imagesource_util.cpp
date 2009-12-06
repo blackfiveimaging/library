@@ -1,5 +1,7 @@
 #include <iostream>
-#include <string.h>
+#include <cstring>
+
+#include "../support/debug.h"
 
 #include "imagesource.h"
 #include "imagesource_jpeg.h"
@@ -16,7 +18,6 @@
 
 #include "imagesource_util.h"
 
-#include "../support/debug.h"
 
 #include "../config.h"
 

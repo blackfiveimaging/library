@@ -3,8 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-
-using namespace std;
+#include <stack>
 
 // FIXME Win32 namespace clash
 #undef ERROR
@@ -33,13 +32,16 @@ class DebugStream
 	public:
 	DebugStream(DebugLevel level=ERROR);
 	virtual ~DebugStream();
-	virtual void SetLogFile(string filename);
+	virtual void SetLogFile(std::string filename);
 	virtual	DebugLevel SetLevel(enum DebugLevel lvl);  // returns the old level
-	virtual ostream &operator[](int idx);
+	virtual void PushLevel(enum DebugLevel lvl);	// Use PushLevel() and PopLevel() if you want to change
+	virtual void PopLevel();						// the debug level for a specific section of code, and restore afterwards.
+	virtual std::ostream &operator[](int idx);
 	protected:
 	enum DebugLevel level;
+	std::stack<enum DebugLevel> levelstack;
 	NullStream nullstream;
-	ofstream logfile;
+	std::ofstream logfile;
 };
 
 extern DebugStream Debug;

@@ -11,7 +11,7 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -
 check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				mkrgbprofile mklabprofile mkgreyprofile \
 				composite imgsrctest \
-				combotest \
+				combotest tabui \
 				printqueuetest stpuitest debugtest
 
 bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest
@@ -33,6 +33,7 @@ printqueuetest_SOURCES = printqueuetest.cpp
 stpuitest_SOURCES = stpuitest.cpp
 jpegscan_SOURCES = jpegscan.cpp
 dirtreetest_SOURCES = dirtreetest.cpp
+tabui_SOURCES = tabui.cpp
 
 LDADD = \
 	imageutils/libimageutils.la	\

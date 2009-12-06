@@ -15,6 +15,21 @@ int main(int argc,char **argv)
 	Debug[COMMENT] << "Commenting..." << endl;
 	Debug[TRACE] << "Tracing..." << endl;
 
+	Debug.PushLevel(TRACE);
+
+	Debug[ERROR] << "Debugging..." << endl;
+	Debug[WARN] << "Warning..." << endl;
+	Debug[COMMENT] << "Commenting..." << endl;
+	Debug[TRACE] << "Tracing..." << endl;
+
+	Debug.PopLevel();
+
+	Debug[ERROR] << "Debugging..." << endl;
+	Debug[WARN] << "Warning..." << endl;
+	Debug[COMMENT] << "Commenting..." << endl;
+	Debug[TRACE] << "Tracing..." << endl;
+
+
 	if(argc>2)
 	{
 		Debug.SetLogFile(argv[2]);

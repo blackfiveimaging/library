@@ -3,6 +3,8 @@
 #include "refcount.h"
 #include "debug.h"
 
+using namespace std;
+
 RefCount::RefCount() : refcount(1)
 {
 }

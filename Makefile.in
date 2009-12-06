@@ -37,8 +37,8 @@ host_triplet = @host@
 check_PROGRAMS = dirtreetest$(EXEEXT) jpegscan$(EXEEXT) \
 	jpegcheck$(EXEEXT) mkrgbprofile$(EXEEXT) mklabprofile$(EXEEXT) \
 	mkgreyprofile$(EXEEXT) composite$(EXEEXT) imgsrctest$(EXEEXT) \
-	combotest$(EXEEXT) printqueuetest$(EXEEXT) stpuitest$(EXEEXT) \
-	debugtest$(EXEEXT)
+	combotest$(EXEEXT) tabui$(EXEEXT) printqueuetest$(EXEEXT) \
+	stpuitest$(EXEEXT) debugtest$(EXEEXT)
 bin_PROGRAMS = threadtest$(EXEEXT) gprintertest$(EXEEXT) \
 	mkthumbnail$(EXEEXT) profileuitest$(EXEEXT) pvtest$(EXEEXT)
 subdir = .
@@ -285,6 +285,20 @@ stpuitest_DEPENDENCIES = imageutils/libimageutils.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
+am_tabui_OBJECTS = tabui.$(OBJEXT)
+tabui_OBJECTS = $(am_tabui_OBJECTS)
+tabui_LDADD = $(LDADD)
+tabui_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
+	miscwidgets/libmiscwidgets.la imagesource/libimagesource.la \
+	profilemanager/libprofilemanager.la support/libsupport.la \
+	stpui_widgets/libstpui_widgets.la \
+	stp_support/libstp_support.la \
+	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_threadtest_OBJECTS = threadtest.$(OBJEXT)
 threadtest_OBJECTS = $(am_threadtest_OBJECTS)
 threadtest_LDADD = $(LDADD)
@@ -318,7 +332,8 @@ SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
-	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
+	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(tabui_SOURCES) \
+	$(threadtest_SOURCES)
 DIST_SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
 	$(debugtest_SOURCES) $(dirtreetest_SOURCES) \
 	$(gprintertest_SOURCES) $(imgsrctest_SOURCES) \
@@ -326,7 +341,8 @@ DIST_SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
-	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(threadtest_SOURCES)
+	$(pvtest_SOURCES) $(stpuitest_SOURCES) $(tabui_SOURCES) \
+	$(threadtest_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -514,6 +530,7 @@ printqueuetest_SOURCES = printqueuetest.cpp
 stpuitest_SOURCES = stpuitest.cpp
 jpegscan_SOURCES = jpegscan.cpp
 dirtreetest_SOURCES = dirtreetest.cpp
+tabui_SOURCES = tabui.cpp
 LDADD = \
 	imageutils/libimageutils.la	\
 	gp_cppsupport/libgp_cppsupport.la \
@@ -666,6 +683,9 @@ pvtest$(EXEEXT): $(pvtest_OBJECTS) $(pvtest_DEPENDENCIES)
 stpuitest$(EXEEXT): $(stpuitest_OBJECTS) $(stpuitest_DEPENDENCIES) 
 	@rm -f stpuitest$(EXEEXT)
 	$(CXXLINK) $(stpuitest_OBJECTS) $(stpuitest_LDADD) $(LIBS)
+tabui$(EXEEXT): $(tabui_OBJECTS) $(tabui_DEPENDENCIES) 
+	@rm -f tabui$(EXEEXT)
+	$(CXXLINK) $(tabui_OBJECTS) $(tabui_LDADD) $(LIBS)
 threadtest$(EXEEXT): $(threadtest_OBJECTS) $(threadtest_DEPENDENCIES) 
 	@rm -f threadtest$(EXEEXT)
 	$(CXXLINK) $(threadtest_OBJECTS) $(threadtest_LDADD) $(LIBS)
@@ -692,6 +712,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/profileuitest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pvtest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stpuitest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tabui.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/threadtest.Po@am__quote@
 
 .cpp.o:

@@ -33,6 +33,23 @@ DebugLevel DebugStream::SetLevel(enum DebugLevel lvl)
 }
 
 
+void DebugStream::PushLevel(enum DebugLevel lvl)
+{
+	levelstack.push(level);
+	level=lvl;
+}
+
+
+void DebugStream::PopLevel()
+{
+	if(!levelstack.empty())
+	{
+		level=levelstack.top();
+		levelstack.pop();
+	}
+}
+
+
 ostream &DebugStream::operator[](int idx)
 {
 	if(idx>level)
