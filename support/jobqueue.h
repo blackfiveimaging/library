@@ -146,11 +146,11 @@ class JobQueue : public ThreadCondition
 		return(status);
 	}
 
-	// FIXME - if the job self-destructs, it's possible for it to do so between this function
+	// DONE - if the job self-destructs, it's possible for it to do so between this function
 	// determining that the job is running, and this function returning.
 
 	// Proposed fix:  Disallow self-destruction - instead, transfer completed jobs to a new
-	// queue, and delete from there.
+	// queue, and delete from there.  DONE
 
 	// Must hold the mutex while using this function - result is no longer valid once
 	// the mutex is released.
