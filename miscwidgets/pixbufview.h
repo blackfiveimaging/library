@@ -1,6 +1,7 @@
 #ifndef __PIXBUFVIEW_H__
 #define __PIXBUFVIEW_H__
 
+#include <deque>
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -26,6 +27,7 @@ struct _PixbufView
 	int xoffset,yoffset;
 	bool dragging;
 	int prev_x,prev_y;
+	std::deque<GdkPixbuf *> pages;
 };
 
 
@@ -49,6 +51,10 @@ bool pixbufview_get_scale(PixbufView *pv);
 
 void pixbufview_set_offset(PixbufView *pv,int xoff,int yoff);
 void pixbufview_set_scale(PixbufView *pv,bool scaletofit);
+
+void pixbufview_add_page(PixbufView *pb,GdkPixbuf *pb);
+void pixbufview_set_page(PixbufView *pb,int page);
+void pixbufview_clear_pages(PixbufView *pb);
 
 G_END_DECLS
 

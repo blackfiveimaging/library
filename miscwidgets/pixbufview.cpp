@@ -452,6 +452,7 @@ pixbufview_init (PixbufView *pv)
 	pv->resized=false;
 	pv->xoffset=0;
 	pv->yoffset=0;
+	new (&pv->pages) std::deque<GdkPixbuf *>;
 }
 
 
@@ -464,13 +465,8 @@ void pixbufview_refresh(PixbufView *pv)
 
 void pixbufview_set_pixbuf(PixbufView *pv,GdkPixbuf *pb)
 {
-	if(pv->pb)
-		g_object_unref(G_OBJECT(pv->pb));
-	if((pv->pb=pb))
-	{
-		g_object_ref(G_OBJECT(pv->pb));
-	}
-	pixbufview_refresh(pv);
+	pixbufview_clear_pages(pv);
+	pixbufview_add_page(pv,pb);
 }
 
 
@@ -516,6 +512,55 @@ void pixbufview_set_scale(PixbufView *pv,bool scaletofit)
 	if(pv)
 	{
 		pv->scaletofit=scaletofit;
+	}
+}
+
+
+void pixbufview_add_page(PixbufView *pv,GdkPixbuf *pb)
+{
+	if(!pb)
+		return;
+	g_object_ref(G_OBJECT(pb));
+	pv->pages.push_back(pb);
+	if(!pv->pb)
+	{
+		pv->pb=pb;
+		g_object_ref(G_OBJECT(pb));
+		pixbufview_refresh(pv);
+	}
+}
+
+
+void pixbufview_set_page(PixbufView *pv,int page)
+{
+	if(page<pv->pages.size())
+	{
+		if(pv->pb)
+			g_object_unref(G_OBJECT(pv->pb));
+		pv->pb=NULL;
+		if(pv->pb_scaled)
+			g_object_unref(G_OBJECT(pv->pb_scaled));
+		pv->pb_scaled=NULL;
+
+		pv->pb=pv->pages[page];
+		g_object_ref(pv->pb);
+		pixbufview_refresh(pv);
+	}
+}
+
+
+void pixbufview_clear_pages(PixbufView *pv)
+{
+	if(pv->pb)
+		g_object_unref(G_OBJECT(pv->pb));
+	pv->pb=NULL;
+	if(pv->pb_scaled)
+		g_object_unref(G_OBJECT(pv->pb_scaled));
+	pv->pb_scaled=NULL;
+	while(pv->pages.size())
+	{
+		g_object_unref(G_OBJECT(pv->pages[0]));
+		pv->pages.pop_front();
 	}
 }
 
