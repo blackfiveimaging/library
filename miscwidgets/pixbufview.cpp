@@ -519,7 +519,10 @@ void pixbufview_set_scale(PixbufView *pv,bool scaletofit)
 void pixbufview_add_page(PixbufView *pv,GdkPixbuf *pb)
 {
 	if(!pb)
+	{
+		pixbufview_refresh(pv);
 		return;
+	}
 	g_object_ref(G_OBJECT(pb));
 	pv->pages.push_back(pb);
 	if(!pv->pb)
