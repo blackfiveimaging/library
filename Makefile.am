@@ -12,7 +12,8 @@ check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				mkrgbprofile mklabprofile mkgreyprofile \
 				composite imgsrctest \
 				combotest tabui \
-				printqueuetest stpuitest debugtest
+				printqueuetest stpuitest debugtest errorqueuetest
+
 
 bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest
 
@@ -34,6 +35,7 @@ stpuitest_SOURCES = stpuitest.cpp
 jpegscan_SOURCES = jpegscan.cpp
 dirtreetest_SOURCES = dirtreetest.cpp
 tabui_SOURCES = tabui.cpp
+errorqueuetest_SOURCES = errorqueuetest.cpp
 
 LDADD = \
 	imageutils/libimageutils.la	\

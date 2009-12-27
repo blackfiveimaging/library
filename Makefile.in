@@ -38,7 +38,7 @@ check_PROGRAMS = dirtreetest$(EXEEXT) jpegscan$(EXEEXT) \
 	jpegcheck$(EXEEXT) mkrgbprofile$(EXEEXT) mklabprofile$(EXEEXT) \
 	mkgreyprofile$(EXEEXT) composite$(EXEEXT) imgsrctest$(EXEEXT) \
 	combotest$(EXEEXT) tabui$(EXEEXT) printqueuetest$(EXEEXT) \
-	stpuitest$(EXEEXT) debugtest$(EXEEXT)
+	stpuitest$(EXEEXT) debugtest$(EXEEXT) errorqueuetest$(EXEEXT)
 bin_PROGRAMS = threadtest$(EXEEXT) gprintertest$(EXEEXT) \
 	mkthumbnail$(EXEEXT) profileuitest$(EXEEXT) pvtest$(EXEEXT)
 subdir = .
@@ -107,6 +107,20 @@ am_dirtreetest_OBJECTS = dirtreetest.$(OBJEXT)
 dirtreetest_OBJECTS = $(am_dirtreetest_OBJECTS)
 dirtreetest_LDADD = $(LDADD)
 dirtreetest_DEPENDENCIES = imageutils/libimageutils.la \
+	gp_cppsupport/libgp_cppsupport.la \
+	miscwidgets/libmiscwidgets.la imagesource/libimagesource.la \
+	profilemanager/libprofilemanager.la support/libsupport.la \
+	stpui_widgets/libstpui_widgets.la \
+	stp_support/libstp_support.la \
+	pixbufthumbnail/libpixbufthumbnail.la $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am_errorqueuetest_OBJECTS = errorqueuetest.$(OBJEXT)
+errorqueuetest_OBJECTS = $(am_errorqueuetest_OBJECTS)
+errorqueuetest_LDADD = $(LDADD)
+errorqueuetest_DEPENDENCIES = imageutils/libimageutils.la \
 	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la imagesource/libimagesource.la \
 	profilemanager/libprofilemanager.la support/libsupport.la \
@@ -327,8 +341,8 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
 	$(debugtest_SOURCES) $(dirtreetest_SOURCES) \
-	$(gprintertest_SOURCES) $(imgsrctest_SOURCES) \
-	$(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
+	$(errorqueuetest_SOURCES) $(gprintertest_SOURCES) \
+	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
@@ -336,8 +350,8 @@ SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
 	$(threadtest_SOURCES)
 DIST_SOURCES = $(combotest_SOURCES) $(composite_SOURCES) \
 	$(debugtest_SOURCES) $(dirtreetest_SOURCES) \
-	$(gprintertest_SOURCES) $(imgsrctest_SOURCES) \
-	$(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
+	$(errorqueuetest_SOURCES) $(gprintertest_SOURCES) \
+	$(imgsrctest_SOURCES) $(jpegcheck_SOURCES) $(jpegscan_SOURCES) \
 	$(mkgreyprofile_SOURCES) $(mklabprofile_SOURCES) \
 	$(mkrgbprofile_SOURCES) $(mkthumbnail_SOURCES) \
 	$(printqueuetest_SOURCES) $(profileuitest_SOURCES) \
@@ -531,6 +545,7 @@ stpuitest_SOURCES = stpuitest.cpp
 jpegscan_SOURCES = jpegscan.cpp
 dirtreetest_SOURCES = dirtreetest.cpp
 tabui_SOURCES = tabui.cpp
+errorqueuetest_SOURCES = errorqueuetest.cpp
 LDADD = \
 	imageutils/libimageutils.la	\
 	gp_cppsupport/libgp_cppsupport.la \
@@ -647,6 +662,9 @@ debugtest$(EXEEXT): $(debugtest_OBJECTS) $(debugtest_DEPENDENCIES)
 dirtreetest$(EXEEXT): $(dirtreetest_OBJECTS) $(dirtreetest_DEPENDENCIES) 
 	@rm -f dirtreetest$(EXEEXT)
 	$(CXXLINK) $(dirtreetest_OBJECTS) $(dirtreetest_LDADD) $(LIBS)
+errorqueuetest$(EXEEXT): $(errorqueuetest_OBJECTS) $(errorqueuetest_DEPENDENCIES) 
+	@rm -f errorqueuetest$(EXEEXT)
+	$(CXXLINK) $(errorqueuetest_OBJECTS) $(errorqueuetest_LDADD) $(LIBS)
 gprintertest$(EXEEXT): $(gprintertest_OBJECTS) $(gprintertest_DEPENDENCIES) 
 	@rm -f gprintertest$(EXEEXT)
 	$(CXXLINK) $(gprintertest_OBJECTS) $(gprintertest_LDADD) $(LIBS)
@@ -700,6 +718,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/composite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debugtest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirtreetest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/errorqueuetest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gprintertest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/imgsrctest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpegcheck.Po@am__quote@
