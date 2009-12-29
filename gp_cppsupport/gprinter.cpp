@@ -12,11 +12,12 @@
  */
 
 #include <iostream>
+#include <string>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 
 #include <gutenprint/gutenprint.h>
 
@@ -26,6 +27,7 @@
 
 #include "../imagesource/imagesource.h"
 #include "../support/debug.h"
+#include "../support/util.h"
 #include "../support/md5.h"
 #include "../miscwidgets/generaldialogs.h"
 
@@ -284,6 +286,27 @@ void GPrinter::writefunc(void *obj, const char *buf, size_t bytes)
 }
 
 
+string GPrinter::get_extendedopts()
+{
+	string result;
+	stp_string_list_t *external_options = stp_get_external_options(stpvars);
+
+	if(external_options)
+	{
+		int count = stp_string_list_count(external_options);
+		for(int i=0; i<count; i++)
+		{
+			stp_param_string_t *param = stp_string_list_param(external_options, i);
+			string name=ShellQuote(param->name);
+			string value=ShellQuote(param->text);
+			result+=" -o"+name+"="+value;
+		}
+		stp_string_list_destroy(external_options);
+	}
+	return(result);
+}
+
+
 void GPrinter::Print(ImageSource *src,int xpos,int ypos,Consumer *cons)
 {
 	Debug[TRACE] << "*** GPrinter: Printing at position: " << xpos << ", " << ypos << endl;
@@ -336,8 +359,10 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos,Consumer *cons)
 	stp_set_left(stpvars, paperleft-leftbleed);
 	stp_set_top(stpvars, papertop-topbleed);
 
+	string extendedopts=get_extendedopts();
+
 	if(!(consumer=cons))
-		consumer=output.GetConsumer();
+		consumer=output.GetConsumer(extendedopts.c_str());
 
 	if(!consumer)
 		return;

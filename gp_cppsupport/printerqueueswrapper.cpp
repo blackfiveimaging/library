@@ -133,8 +133,9 @@ void PrinterQueues::SetDataType(enum pqinfo_datatype type)
 }
 
 
-bool PrinterQueues::InitialiseJob()
+bool PrinterQueues::InitialiseJob(const char *extendedopts)
 {
+	queues->SetExtendedOptions(queues,extendedopts);
 	return(queues->InitialiseJob(queues)!=0);
 }
 

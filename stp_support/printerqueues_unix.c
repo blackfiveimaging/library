@@ -21,6 +21,7 @@ struct PrintSystem
 	const char *raw_flag;
 	const char *key_file;
 	const char *scan_command;
+	const char *extra_opts;
 };
 
 static struct PrintSystem printsystems[] =
@@ -67,6 +68,7 @@ struct pqprivate
 	struct printernode *first;
 	int cancelled;
 	char *printcommand;
+	char *extopts;
 
 	enum pqoutputmode mode;
 	char *customcommand;
@@ -139,6 +141,8 @@ static void pqp_dispose(struct pqprivate *pp)
 		free(pp->printcommand);
 	if(pp->customcommand)
 		free(pp->customcommand);
+	if(pp->extopts)
+		free(pp->extopts);
 	free(pp);
 }
 
@@ -238,6 +242,7 @@ static struct pqprivate *pqprivate_create()
 		pp->currentqueue=NULL;
 		pp->printcommand=NULL;
 		pp->customcommand=NULL;
+		pp->extopts=strdup("");
 		pp->getfilecallback=NULL;
 		pp->datatype=PQINFO_RAW;
 		pqp_buildqueuelist(pp);
@@ -320,6 +325,17 @@ static void setcustomcommand(struct pqinfo *pq,const char *command)
 static const char *getcustomcommand(struct pqinfo *pq)
 {
 	return(pq->priv->customcommand);
+}
+
+
+static void setextopts(struct pqinfo *pq,const char *opts)
+{
+	if(pq->priv->extopts)
+		free(pq->priv->extopts);
+	if(opts)
+		pq->priv->extopts=strdup(opts);
+	else
+		pq->priv->extopts=strdup("");
 }
 
 
@@ -415,13 +431,11 @@ static void setdatatype(struct pqinfo *pq,enum pqinfo_datatype type)
 
 static char *buildprintcommand(struct pqinfo *pq)
 {
-#if 0
-	int rawmode=1;
-#endif
 	int len=strlen(printsystems[pq->priv->printsystem].print_command);
 	len+=strlen(printsystems[pq->priv->printsystem].queue_select);
 	len+=strlen(printsystems[pq->priv->printsystem].raw_flag);
 	len+=strlen(pq->priv->currentqueue);
+	len+=strlen(pq->priv->extopts)+2;
 
 #if 0
 	const char *driver=getdriver(pq);
@@ -438,11 +452,12 @@ static char *buildprintcommand(struct pqinfo *pq)
 #endif
 
 	char *cmd=(char *)malloc(len+15);
-	sprintf(cmd,"%s %s %s %s",
+	sprintf(cmd,"%s %s %s %s %s",
 		printsystems[pq->priv->printsystem].print_command,
 		pq->priv->currentqueue ? printsystems[pq->priv->printsystem].queue_select : "",
 		pq->priv->currentqueue ? pq->priv->currentqueue : "",
-		pq->priv->datatype==PQINFO_RAW ? printsystems[pq->priv->printsystem].raw_flag : "");
+		pq->priv->datatype==PQINFO_RAW ? printsystems[pq->priv->printsystem].raw_flag : "",
+		pq->priv->extopts ? pq->priv->extopts : "");
 #if 0
 	free((void *)driver);
 #endif
@@ -493,7 +508,7 @@ static int initialisejob(struct pqinfo *pq)
 	// Workaroud for now - clear aborted and cancelled flags in the InitialisePage function.
 	// Race condition, though - not a permanent fix. 
 
-//	fprintf(stderr,"Print command: %s\n",pq->priv->printcommand);
+	fprintf(stderr,"Print command: %s\n",pq->priv->printcommand);
 
 	if(pipe(pq->priv->pipefd))
 		return(0);
@@ -591,6 +606,7 @@ struct pqinfo *pqinfo_create()
 		pq->WriteData=writedata;
 		pq->SetCustomCommand=setcustomcommand;
 		pq->GetCustomCommand=getcustomcommand;
+		pq->SetExtendedOptions=setextopts;
 		pq->SetGetFilenameCallback=setgetfilenamecallback;
 
 		if(!(pq->priv=pqprivate_create()))

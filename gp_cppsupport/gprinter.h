@@ -40,6 +40,7 @@ class GPrinter : public GPrinterSettings
 	protected:
 	stp_image_status_t GetRow(int row,unsigned char *data);
 
+	std::string get_extendedopts();
 	void get_dimensions();
 	void custom_get_dimensions();
 	void print_dimensions();

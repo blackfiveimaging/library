@@ -45,7 +45,15 @@ struct pqinfo
 
 	const char *(*GetCustomCommand)(struct pqinfo *pq);
 	void (*SetCustomCommand)(struct pqinfo *pq,const char *cmd);
+
 #endif
+
+	/* Set Extended Options - No-op on Win32 or non-CUPS unix queues.
+	   On CUPS-capable systems, provide extra options in the form:
+	   -oopt=value -oopt=value ... */
+
+	void (*SetExtendedOptions)(struct pqinfo *pq,const char *extendedopts);
+
 
 	/* Saving to a file (Unix and Windows)
 	   Redirects the print data to a file.

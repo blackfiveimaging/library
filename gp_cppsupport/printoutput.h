@@ -11,7 +11,7 @@ class PrintOutput : public ConfigDB, public PrinterQueues
 {
 	public:
 	PrintOutput(ConfigFile *inif,const char *section);
-	Consumer *GetConsumer();
+	Consumer *GetConsumer(const char *extendedopts=NULL);
 	void DBToQueues();
 	void QueuesToDB();
 	private:

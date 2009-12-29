@@ -25,7 +25,7 @@ class PrinterQueues
 
 	void SetDataType(enum pqinfo_datatype type);
 
-	bool InitialiseJob();
+	bool InitialiseJob(const char *extendedopts=NULL);  // CUPS options to pass on the command line
 	void InitialisePage();
 	void EndPage();
 	void EndJob();

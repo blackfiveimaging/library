@@ -305,6 +305,11 @@ static void canceljob(struct pqinfo *pq)
 }
 
 
+static void setextopts(struct pqinfo *pq,const char *opts)
+{
+}
+
+
 struct pqinfo *pqinfo_create()
 {
 	struct pqinfo *pq=(struct pqinfo *)malloc(sizeof(struct pqinfo));
@@ -318,6 +323,7 @@ struct pqinfo *pqinfo_create()
 		pq->GetDriver=getdriver;
 		pq->GetPPD=getppd;
 		pq->SetDataType=setdatatype;
+		pq->SetExtendedOptions=setextops;
 		pq->InitialiseJob=initialisejob;
 		pq->InitialisePage=initialisepage;
 		pq->EndPage=endpage;

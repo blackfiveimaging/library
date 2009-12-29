@@ -50,6 +50,9 @@ char *BuildAbsoluteFilename(const char *fname);
 // The resulting string should be free()ed when no longer needed.
 char *SerialiseFilename(const char *fname,int serialno,int max=0);
 
+// Quote a string to make it safe to pass as a command line argument
+std::string ShellQuote(std::string &in);
+std::string ShellQuote(const char *in);
 
 // String handling utilities
 

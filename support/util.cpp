@@ -301,6 +301,28 @@ int StrcasecmpIgnoreSpaces(const char *str1,const char *str2)
 }
 
 
+std::string ShellQuote(std::string &in)
+{
+	string out("'");
+
+	for(int i=0;i<in.size();++i)
+	{
+		if(in[i]=='\'')
+			out+="'\\''";
+		else
+			out+=in[i];
+	}
+	out+="'";
+	return(out);
+}
+
+std::string ShellQuote(const char *in)
+{
+	string tmp(in);
+	return(ShellQuote(tmp));
+}
+
+
 // Dummy class for seeding the random number generator.  Declaring a global instance
 // of this class ensures that the seed is set once and only once for the entire program.
 

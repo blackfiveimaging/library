@@ -58,10 +58,10 @@ PrintOutput::PrintOutput(ConfigFile *inif,const char *section) : ConfigDB(Templa
 class Consumer_Queue : public Consumer
 {
 	public:
-	Consumer_Queue(PrinterQueues &pq,const char *queuename) : pq(pq)
+	Consumer_Queue(PrinterQueues &pq,const char *queuename,const char *extendedopts=NULL) : pq(pq)
 	{
 		pq.SetPrinterQueue(queuename);
-		if(!pq.InitialiseJob())
+		if(!pq.InitialiseJob(extendedopts))
 			throw "Can't initialise!";
 		pq.InitialisePage();
 	}
@@ -83,7 +83,7 @@ class Consumer_Queue : public Consumer
 };
 
 
-Consumer *PrintOutput::GetConsumer()
+Consumer *PrintOutput::GetConsumer(const char *extendedopts)
 {
 	const char *str;
 	str=FindString("Driver");
@@ -96,7 +96,7 @@ Consumer *PrintOutput::GetConsumer()
 	{
 		try
 		{
-			Consumer *result=new Consumer_Queue(*this,str);	
+			Consumer *result=new Consumer_Queue(*this,str,extendedopts);	
 			return(result);
 		}
 		catch(const char *err)
