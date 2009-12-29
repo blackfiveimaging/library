@@ -323,7 +323,7 @@ struct pqinfo *pqinfo_create()
 		pq->GetDriver=getdriver;
 		pq->GetPPD=getppd;
 		pq->SetDataType=setdatatype;
-		pq->SetExtendedOptions=setextops;
+		pq->SetExtendedOptions=setextopts;
 		pq->InitialiseJob=initialisejob;
 		pq->InitialisePage=initialisepage;
 		pq->EndPage=endpage;
