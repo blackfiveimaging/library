@@ -52,7 +52,7 @@ bool pixbufview_get_scale(PixbufView *pv);
 void pixbufview_set_offset(PixbufView *pv,int xoff,int yoff);
 void pixbufview_set_scale(PixbufView *pv,bool scaletofit);
 
-void pixbufview_add_page(PixbufView *pb,GdkPixbuf *pb);
+void pixbufview_add_page(PixbufView *pv,GdkPixbuf *pb);
 void pixbufview_set_page(PixbufView *pb,int page);
 void pixbufview_clear_pages(PixbufView *pb);
 
