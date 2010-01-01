@@ -386,7 +386,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 
 	if(destprofile->IsDeviceLink())
 	{
-//		Debug[TRACE] << "Device link profile detected" << endl;
+		Debug[TRACE] << "Device link profile detected" << endl;
 		// Device link profiles make life awkward if we have to use a source profile
 		// (which we must do in the case of an image having an embedded profile).
 		// What we do here is convert from the source profile to the appropriate
@@ -394,13 +394,17 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 
 		CMSProfile *defprofile=NULL;
 		if(srcprofile)
-			defprofile=manager.GetDefaultProfile(srcprofile->GetColourSpace());
+		{
+			// Need to use default profile for the devicelink's *input* -
+			// thus taking care of RGB -> CMYK devlinks used with CMYK input files.
+			defprofile=manager.GetDefaultProfile(destprofile->GetColourSpace());
+		}
 
 		// If we have both source and default profiles, and they're not equal,
 		// create a multi-profile transform: src -> default -> devicelink.
 		if((srcprofile)&&(defprofile)&&(*srcprofile->GetMD5()!=*defprofile->GetMD5()))
 		{
-//			Debug[TRACE] << "Source and default profiles don't match - building transform chain..." << endl;
+			Debug[TRACE] << "Source and default profiles don't match - building transform chain..." << endl;
 			CMSProfile *profiles[3];
 			profiles[0]=srcprofile;
 			profiles[1]=defprofile;
@@ -411,21 +415,21 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 			transform=Search(d1,d2,intent);
 			if(!transform)
 			{
-//				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
+				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
 				transform=new CMSTransform(profiles,3,intent);
 				new CMTransformFactoryNode(this,transform,*d1,*d2,intent);
 			}
 		}
 		else
 		{
-//			Debug[TRACE] << "Source and default profiles match - using devicelink in isolation..." << endl;
+			Debug[TRACE] << "Source and default profiles match - using devicelink in isolation..." << endl;
 			// If there's no default profile, or the source and default profiles match
 			// then we can just use the devicelink profile in isolation.
 			d1=d2;
 			transform=Search(d1,d2,intent);
 			if(!transform)
 			{
-//				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
+				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
 				transform=new CMSTransform(destprofile,intent);
 				new CMTransformFactoryNode(this,transform,*d1,*d2,intent);
 			}
