@@ -114,7 +114,7 @@ static bool verifyprofile(ProfileSelector *c,ProfileInfo *pi)
 	}
 	catch(const char *err)
 	{
-//		Debug[TRACE] << "Profile Selector: " << err << endl;
+		Debug[TRACE] << "Profile Selector: " << err << endl;
 	}
 	return(false);
 }
@@ -163,7 +163,9 @@ static void profileselector_build_options(ProfileSelector *c)
 		try
 		{
 			const char *filename=pi->GetFilename();
+			Debug[TRACE] << "Filename : " << filename << endl;
 			const char *uiname=pi->GetDescription();
+			Debug[TRACE] << "UIName : " << uiname << endl;
 			profsel_entry *ps=new profsel_entry(filename,uiname);
 			if(!g_list_find_custom(c->optionlist,ps,mycmp))
 			{
@@ -196,6 +198,7 @@ static void profileselector_build_options(ProfileSelector *c)
 static void	profileselector_changed(GtkWidget *widget,gpointer user_data)
 {
 	ProfileSelector *c=PROFILESELECTOR(user_data);
+
 	GtkOptionMenu *om=GTK_OPTION_MENU(c->optionmenu);
 
 	gint index=gtk_option_menu_get_history(om);
@@ -215,8 +218,10 @@ static void	profileselector_changed(GtkWidget *widget,gpointer user_data)
 			char *fn=File_Dialog("Choose ICC Profile...",NULL,NULL);
 			if(fn)
 			{
+				Debug[TRACE] << "Setting new filename..." << endl;
 				profileselector_set_filename(c,fn);
 				val=NULL;
+				Debug[TRACE] << "New filename set" << endl;
 			}
 			else
 				val=c->filename;
@@ -230,6 +235,8 @@ static void	profileselector_changed(GtkWidget *widget,gpointer user_data)
 
 		if(val)
 			profileselector_set_filename(c,val);
+
+		Debug[TRACE] << "Emitting changed signal" << endl;
 
 		g_signal_emit(G_OBJECT (c),
 			profileselector_signals[CHANGED_SIGNAL], 0);
@@ -365,7 +372,15 @@ void profileselector_set_filename(ProfileSelector *c,const char *filename)
 		
 		// If the filename is not present, add it.
 
-		CMSProfile *tp=c->pm->GetProfile(c->filename);
+		CMSProfile *tp=NULL;
+		try
+		{
+			tp=c->pm->GetProfile(c->filename);
+		}
+		catch(const char *err)
+		{
+			Debug[WARN] << err << endl;
+		}
 		profsel_entry tempps(c->filename,tp ? tp->GetDescription() : _("Please choose a valid ICC profile"));
 		delete tp;
 

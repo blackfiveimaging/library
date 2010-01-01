@@ -111,8 +111,8 @@ CMSProfile *ProfileManager::GetProfile(const char *name)
 				}
 				catch(const char *err)
 				{
-					free(fn);
-					throw err;
+					Debug[ERROR] << err << endl;
+					result=NULL;
 				}
 			}
 			if(fn)
@@ -702,6 +702,8 @@ ProfileInfo *ProfileManager::GetProfileInfo(int i)
 ProfileInfo::ProfileInfo(ProfileManager &pm,const char *filename)
 	: profilemanager(pm), next(NULL), prev(NULL), filename(NULL), iscached(false), description(NULL), isdevicelink(false)
 {
+	if(!filename)
+		throw "ProfileInfo: Null Filename";
 	if((next=profilemanager.first))
 		next->prev=this;
 	profilemanager.first=this;
@@ -744,6 +746,8 @@ void ProfileInfo::GetInfo()
 		delete profile;
 		iscached=true;
 	}
+	else
+		throw "ProfileInfo: Can't open profile";
 }
 
 

@@ -20,7 +20,7 @@ using namespace std;
 class Test
 {
 	public:
-	Test() : pm(&f,"[Colour Management]")
+	Test(const char *defprof) : pm(&f,"[Colour Management]"), defprof(defprof) 
 	{}
 	~Test() {}
 	void Go()
@@ -54,6 +54,9 @@ class Test
 
 		gtk_widget_show(window);
 
+		if(defprof)
+			profileselector_set_filename(PROFILESELECTOR(ps),defprof);
+
 		intentselector_setintent(INTENTSELECTOR(is),LCMSWRAPPER_INTENT_SATURATION);
 
 		gtk_main();
@@ -64,6 +67,7 @@ class Test
 	GtkWidget *ps;
 	GtkWidget *is;
 	GtkWidget *pe;
+	const char *defprof;
 
 	static void	profile_changed(GtkWidget *widget,gpointer user_data)
 	{
@@ -110,7 +114,7 @@ int main(int argc, char **argv)
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
 	textdomain(PACKAGE);
 
-	Test demo;
+	Test demo(argc>1 ? argv[1] : NULL);
 	
 	demo.Go();
 }
