@@ -30,6 +30,7 @@ RWMutex::RWMutex() : PTMutex(), lockcount(0), exclusive(0)
 
 RWMutex::~RWMutex()
 {
+	Debug[TRACE] << "RWMutex: Destructing" << endl;
 }
 
 

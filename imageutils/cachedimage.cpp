@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "profilemanager/lcmswrapper.h"
+#include "support/debug.h"
 
 #include "cachedimage.h"
 
@@ -10,9 +11,9 @@ CachedImage_Deferred::CachedImage_Deferred(ImageSource *source)
 	: source(source), width(source->width), height(source->height),
 	samplesperpixel(source->samplesperpixel), type(source->type), embeddedprofile(NULL)
 {
-	cerr << "In CachedImage_Deferred constructor" << endl;
-	cerr << "Image type: " << type << endl;
-	cerr << "(" << source->type << ")" << endl;
+	Debug[TRACE] << "In CachedImage_Deferred constructor" << endl;
+	Debug[TRACE] << "Image type: " << type << ", width: " << width << ", height: " << height << endl;
+	Debug[TRACE] << "(" << source->type << ")" << endl;
 	imagedata=new ISDataType[width*height*samplesperpixel];
 	CMSProfile *prof=source->GetEmbeddedProfile();
 	if(prof)
@@ -33,6 +34,7 @@ CachedImage_Deferred::~CachedImage_Deferred()
 
 void CachedImage_Deferred::ReadImage()
 {
+	Debug[TRACE] << "CachedImage: ReadImage()" << endl;
 	for(int row=0;row<height;++row)
 		ReadRow(row);
 }

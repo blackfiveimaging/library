@@ -106,6 +106,8 @@ class JobQueue : public ThreadCondition
 		ObtainMutex();
 		running.remove(j);
 
+		Debug[TRACE] << "Moving job to Completed queue" << endl;
+
 		completed.push_back(j);
 		if(j->GetJobStatus()==JOBSTATUS_RUNNING)	// Don't set status to COMPLETED unless it's currently RUNNING.
 			j->SetJobStatus(JOBSTATUS_COMPLETED);	// - don't want to change CANCELLED to COMPLETED.
@@ -118,6 +120,7 @@ class JobQueue : public ThreadCondition
 	{
 		ObtainMutex();
 
+		// FIXME - need to add some kind of job serial number.
 		completed.remove(job);	// FIXME - is this legal if the job's not on the list?
 
 		job->SetJobStatus(JOBSTATUS_QUEUED);
@@ -220,12 +223,14 @@ class Worker : public ThreadFunction, public PTMutex
 	Worker(JobQueue &queue)
 		: ThreadFunction(), PTMutex(), queue(queue), thread(this), status(WORKERTHREAD_RUN)
 	{
-//		Debug[TRACE] << "Starting worker thread..." << std::endl;
+		Debug[TRACE] << "Starting worker thread..." << std::endl;
 		thread.Start();
 	}
 	virtual ~Worker()
 	{
+		Debug[TRACE] << "Worker Thread - waiting for job completion..." << std::endl;
 		WaitCompletion();
+		Debug[TRACE] << "Worker Thread - disposed" << std::endl;
 	}
 	virtual void Cancel()
 	{
@@ -247,7 +252,7 @@ class Worker : public ThreadFunction, public PTMutex
 	}
 	virtual int Entry(Thread &t)
 	{
-//		Debug[TRACE] << "Worker thread running..." << std::endl;
+		Debug[TRACE] << "Worker thread running..." << std::endl;
 		do
 		{
 //			Debug[TRACE] << "Obtaining mutex" << std::endl;
@@ -278,7 +283,7 @@ class Worker : public ThreadFunction, public PTMutex
 			queue.Broadcast();
 			queue.ReleaseMutex();
 		} while(status==WORKERTHREAD_RUN);
-//		Debug[TRACE] << "Cancelled" << std::endl;
+		Debug[TRACE] << "Worker thread cancelled" << std::endl;
 		return(0);
 	}
 	protected:
@@ -291,6 +296,8 @@ class Worker : public ThreadFunction, public PTMutex
 class JobDispatcher : public JobQueue
 {
 	public:
+	// If you want to provide a custom Worker class, ask for 0 threads when constructing, and
+	// add your custom workers afterwards.
 	JobDispatcher(int threads) : JobQueue()
 	{
 		for(int i=0;i<threads;++i)
@@ -298,6 +305,9 @@ class JobDispatcher : public JobQueue
 	}
 	virtual ~JobDispatcher()
 	{
+		Debug[TRACE] << "JobDispatcher - deleting completed jobs" << std::endl;
+		DeleteCompleted();
+		Debug[TRACE] << "JobDispatcher - freeing threads" << std::endl;
 		while(!threadlist.empty())
 		{
 			Worker *thread=threadlist.front();
@@ -307,6 +317,7 @@ class JobDispatcher : public JobQueue
 	}
 	virtual void WaitCompletion()
 	{
+		Debug[TRACE] << "JobDispatcher - waiting for job completion" << std::endl;
 		ObtainMutex();
 
 		while(JobCount())

@@ -14,6 +14,8 @@
 //	ErrorDialogs.AddMessage("My error messages...");
 //
 //	The message will be displayed the next time the main thread enters the gtk_main loop.
+//
+//  FIXME - add mutex protection for multi-threaded use.
 
 
 #include <deque>

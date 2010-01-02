@@ -11,6 +11,7 @@ RefCount::RefCount() : refcount(1)
 
 RefCount::~RefCount()
 {
+	Debug[TRACE] << "In RefCount destructor" << endl;
 }
 
 void RefCount::ObtainRefMutex()
@@ -45,6 +46,7 @@ void RefCount::UnRef()
 		Debug[TRACE] << "UnRef: deleting object" << endl;
 		delete this;
 	}
+	Debug[TRACE] << "UnRef complete" << endl;
 }
 
 PTMutex RefCount::refmutex;

@@ -35,6 +35,7 @@ GdkPixbuf *pixbuf_from_imagesource(ImageSource *is,
 			pb=gdk_pixbuf_new(GDK_COLORSPACE_RGB,FALSE,8,is->width,is->height);
 			break;
 		default:
+			Debug[WARN] << "pixbuf_from_imagesource: unhandled type - bailing out..." << endl;
 			return(NULL);
 			break;
 	}
