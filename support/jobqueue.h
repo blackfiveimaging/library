@@ -106,7 +106,7 @@ class JobQueue : public ThreadCondition
 		ObtainMutex();
 		running.remove(j);
 
-		Debug[TRACE] << "Moving job to Completed queue" << endl;
+		Debug[TRACE] << "Moving job to Completed queue" << std::endl;
 
 		completed.push_back(j);
 		if(j->GetJobStatus()==JOBSTATUS_RUNNING)	// Don't set status to COMPLETED unless it's currently RUNNING.
