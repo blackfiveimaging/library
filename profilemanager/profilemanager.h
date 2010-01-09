@@ -55,6 +55,7 @@ class ProfileManager : public ConfigDB, public SearchPathHandler
 	virtual void AddPath(const char *path);
 	virtual void RemovePath(const char *path);
 	virtual void ClearPaths();
+	virtual char *SearchPaths(const char *path);
 	virtual const char *GetNextFilename(const char *prev);
 	ProfileInfo *GetFirstProfileInfo();
 	ProfileInfo *GetProfileInfo(int i);

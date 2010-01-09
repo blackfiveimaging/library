@@ -57,8 +57,8 @@ int main(int argc,char **argv)
 		TestUI ui;
 
 		new UITab(ui.notebook,"Tab 1");
-		(new UITab(ui.notebook))->SetText("Tab 2");
-		new UITab(ui.notebook);
+		(new UITab(ui.notebook))->SetTabText("Tab 2");
+		(new UITab(ui.notebook))->AddTabButton(gtk_button_new_with_label("Hi!"));;
 		new UITab(ui.notebook);
 
 		gtk_main();

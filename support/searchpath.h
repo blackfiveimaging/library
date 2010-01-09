@@ -93,12 +93,12 @@ class SearchPathHandler
 	public:
 	SearchPathHandler();
 	virtual ~SearchPathHandler();
-	char *SearchPaths(const char *file);
-	char *MakeRelative(const char *file);
+	virtual char *SearchPaths(const char *file);
+	virtual char *MakeRelative(const char *file);
 	virtual void AddPath(const char *path);
 	virtual void RemovePath(const char *path);
 	virtual void ClearPaths();
-	char *GetPaths();
+	virtual char *GetPaths();
 	protected:
 	SearchPathInstance *FindPath(const char *path);
 	std::list<SearchPathInstance *> paths;

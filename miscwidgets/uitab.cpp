@@ -33,18 +33,15 @@ UITab::UITab(GtkWidget *notebook,const char *tabname) : RefCountUI(), notebook(n
 {
 	apply_style();
 
-	GtkWidget *labelbox=gtk_hbox_new(FALSE,0);
+	labelbox=gtk_hbox_new(FALSE,0);
 	label=gtk_label_new(tabname);
 	gtk_box_pack_start(GTK_BOX(labelbox),label,TRUE,TRUE,0);
 
 	GtkWidget *closeimg=gtk_image_new_from_stock(GTK_STOCK_CLOSE,GTK_ICON_SIZE_MENU);
 	GtkWidget *tmp=gtk_button_new();
-	gtk_widget_set_name(tmp,"tab-close-button");
 	gtk_button_set_image(GTK_BUTTON(tmp),closeimg);
-	gtk_button_set_relief(GTK_BUTTON(tmp),GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(tmp),"clicked",G_CALLBACK(deleteclicked),this);
-	g_signal_connect(G_OBJECT(tmp),"style-set",G_CALLBACK(setclosebuttonsize),this);
-	gtk_box_pack_start(GTK_BOX(labelbox),tmp,FALSE,FALSE,4);
+	AddTabButton(tmp);
 	gtk_widget_show_all(labelbox);
 	
 	hbox=gtk_hbox_new(FALSE,0);
@@ -68,7 +65,18 @@ GtkWidget *UITab::GetBox()
 }
 
 
-void UITab::SetText(const char *text)
+void UITab::AddTabButton(GtkWidget *button)
+{
+	gtk_box_pack_start(GTK_BOX(labelbox),button,FALSE,FALSE,4);
+	gtk_box_reorder_child(GTK_BOX(labelbox),button,1);
+	gtk_widget_set_name(button,"tab-close-button");
+	gtk_button_set_relief(GTK_BUTTON(button),GTK_RELIEF_NONE);
+	g_signal_connect(G_OBJECT(button),"style-set",G_CALLBACK(setclosebuttonsize),this);
+	gtk_widget_show(button);
+}
+
+
+void UITab::SetTabText(const char *text)
 {
 	gtk_label_set_text(GTK_LABEL(label),text);	
 }

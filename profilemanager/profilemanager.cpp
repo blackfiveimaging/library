@@ -626,6 +626,19 @@ void ProfileManager::ClearPaths()
 }
 
 
+char *ProfileManager::SearchPaths(const char *file)
+{
+	if(file)
+	{
+		if(strcmp(file,SYSTEMMONITORPROFILE_ESCAPESTRING)==0)
+			return(strdup(file));
+		if(strcmp(file,BUILTINSRGB_ESCAPESTRING)==0)
+			return(strdup(file));
+	}
+	return(SearchPathHandler::SearchPaths(file));
+}
+
+
 ProfileInfo *ProfileManager::GetFirstProfileInfo()
 {
 	if(!first)
