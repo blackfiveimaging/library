@@ -20,13 +20,13 @@ typedef struct _PixbufViewClass   PixbufViewClass;
 struct _PixbufView
 {
 	GtkWidget wid;
-	GdkPixbuf *pb;
 	GdkPixbuf *pb_scaled;
 	bool resized;
 	bool scaletofit;
 	int xoffset,yoffset;
 	bool dragging;
 	int prev_x,prev_y;
+	int currentpage;
 	std::deque<GdkPixbuf *> pages;
 };
 
@@ -42,7 +42,10 @@ struct _PixbufViewClass
 
 GtkWidget* pixbufview_new(GdkPixbuf *pb,bool scaletofit=true);
 GtkType pixbufview_get_type(void);
-void pixbufview_set_pixbuf(PixbufView *pv,GdkPixbuf *pb);
+
+void pixbufview_set_pixbuf(PixbufView *pv,GdkPixbuf *pb,unsigned int page=0);
+GdkPixbuf *pixbufview_get_pixbuf(PixbufView *pv,unsigned int page=0);
+
 void pixbufview_refresh(PixbufView *pv);
 
 int pixbufview_get_xoffset(PixbufView *pv);
@@ -53,7 +56,7 @@ void pixbufview_set_offset(PixbufView *pv,int xoff,int yoff);
 void pixbufview_set_scale(PixbufView *pv,bool scaletofit);
 
 void pixbufview_add_page(PixbufView *pv,GdkPixbuf *pb);
-void pixbufview_set_page(PixbufView *pb,int page);
+void pixbufview_set_page(PixbufView *pb,unsigned int page);
 void pixbufview_clear_pages(PixbufView *pb);
 
 G_END_DECLS

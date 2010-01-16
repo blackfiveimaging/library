@@ -5,6 +5,8 @@
 
 #include "pixbufview.h"
 
+#include "../support/debug.h"
+
 using namespace std;
 
 enum {
@@ -85,13 +87,15 @@ pixbufview_class_init (PixbufViewClass *cl)
 }
 
 
-GtkWidget*
-pixbufview_new (GdkPixbuf *pb,bool scaletofit)
+GtkWidget *pixbufview_new (GdkPixbuf *pb,bool scaletofit)
 {
 	PixbufView *pv = PIXBUFVIEW(g_object_new (pixbufview_get_type (), NULL));
 
+	pv->currentpage=0;
+
 	pixbufview_set_scale(pv,scaletofit);
-	pixbufview_set_pixbuf(pv,pb);
+	if(pb)
+		pixbufview_set_pixbuf(pv,pb);
 
 	return GTK_WIDGET (pv);
 }
@@ -168,6 +172,7 @@ pixbufview_size_allocate (GtkWidget     *widget,
 
 static void draw_scaled(GtkWidget *widget,GdkEventExpose *event)
 {
+	Debug[TRACE] << "In draw_scaled()" << endl;
 	PixbufView *pv=PIXBUFVIEW(widget);
 	if(pv->resized)
 	{
@@ -175,13 +180,15 @@ static void draw_scaled(GtkWidget *widget,GdkEventExpose *event)
 			g_object_unref(G_OBJECT(pv->pb_scaled));
 		pv->pb_scaled=NULL;
 
-		if(pv->pb)
+		GdkPixbuf *pb=pixbufview_get_pixbuf(pv,pv->currentpage);
+		if(pb)
 		{
+			Debug[TRACE] << "Got pixbuf - finding dimensions" << endl;
 			int height=widget->allocation.height;
 			int width=widget->allocation.width;
 
-			int pw=gdk_pixbuf_get_width(pv->pb);
-			int ph=gdk_pixbuf_get_height(pv->pb);
+			int pw=gdk_pixbuf_get_width(pb);
+			int ph=gdk_pixbuf_get_height(pb);
 
 			int nw,nh;
 			nh=height;
@@ -191,7 +198,7 @@ static void draw_scaled(GtkWidget *widget,GdkEventExpose *event)
 				nw=width;
 				nh=(ph*nw)/pw;
 			}
-			pv->pb_scaled=gdk_pixbuf_scale_simple(pv->pb,nw,nh,GDK_INTERP_BILINEAR);
+			pv->pb_scaled=gdk_pixbuf_scale_simple(pb,nw,nh,GDK_INTERP_BILINEAR);
 			pv->resized=false;
 		}
 	}
@@ -222,6 +229,7 @@ static void draw_scaled(GtkWidget *widget,GdkEventExpose *event)
 
 static void draw_panned(GtkWidget *widget,GdkEventExpose *event)
 {
+	Debug[TRACE] << "In draw_panned()" << endl;
 	PixbufView *pv=PIXBUFVIEW(widget);
 
 	int height=widget->allocation.height;
@@ -231,13 +239,15 @@ static void draw_panned(GtkWidget *widget,GdkEventExpose *event)
 		widget->style->bg_gc[widget->state],TRUE,
 		0,0,width,height);
 
-	if(pv->pb)
+	GdkPixbuf *pb=pixbufview_get_pixbuf(pv,pv->currentpage);
+	if(pb)
 	{
+		Debug[TRACE] << "Got pixbuf - finding dimensions" << endl;
 		int height=widget->allocation.height;
 		int width=widget->allocation.width;
 
-		int pw=gdk_pixbuf_get_width(pv->pb);
-		int ph=gdk_pixbuf_get_height(pv->pb);
+		int pw=gdk_pixbuf_get_width(pb);
+		int ph=gdk_pixbuf_get_height(pb);
 
 		int xo=0;
 		int yo=0;
@@ -265,7 +275,7 @@ static void draw_panned(GtkWidget *widget,GdkEventExpose *event)
 			yo=pv->yoffset;
 		}
 
-		gdk_draw_pixbuf(widget->window,NULL,pv->pb,
+		gdk_draw_pixbuf(widget->window,NULL,pb,
 			xo,yo,
 			xt,yt,
 			pw-xo,ph-yo,
@@ -348,39 +358,42 @@ pixbufview_button_release( GtkWidget      *widget,
 		case 3:
 			pageview->scaletofit=!pageview->scaletofit;
 
-			if(pageview->pb)
 			{
-				int height=widget->allocation.height;
-				int width=widget->allocation.width;
-
-				int pw=gdk_pixbuf_get_width(pageview->pb);
-				int ph=gdk_pixbuf_get_height(pageview->pb);
-
-				int x,y;
-				GdkModifierType mods;
-				gdk_window_get_pointer (widget->window, &x, &y, &mods);
-
-				// Work out which pixel of the image was clicked on.
-
-				int nw,nh;
-				nh=height;
-				nw=(pw*nh)/ph;
-				if(nw>width)
+				GdkPixbuf *pb=pixbufview_get_pixbuf(pageview,pageview->currentpage);
+				if(pb)
 				{
-					nw=width;
-					nh=(ph*nw)/pw;
+					int height=widget->allocation.height;
+					int width=widget->allocation.width;
+
+					int pw=gdk_pixbuf_get_width(pb);
+					int ph=gdk_pixbuf_get_height(pb);
+
+					int x,y;
+					GdkModifierType mods;
+					gdk_window_get_pointer (widget->window, &x, &y, &mods);
+
+					// Work out which pixel of the image was clicked on.
+
+					int nw,nh;
+					nh=height;
+					nw=(pw*nh)/ph;
+					if(nw>width)
+					{
+						nw=width;
+						nh=(ph*nw)/pw;
+					}
+					if(pw>width)
+					{
+						int cx=(pw*(x-(width-nw)/2))/nw;
+						pageview->xoffset=cx-width/2;
+					}
+					if(ph>height)
+					{
+						int cy=(ph*(y-(height-nh)/2))/nh;
+						pageview->yoffset=cy-height/2;
+					}
+					gtk_widget_queue_draw (GTK_WIDGET (pageview));
 				}
-				if(pw>width)
-				{
-					int cx=(pw*(x-(width-nw)/2))/nw;
-					pageview->xoffset=cx-width/2;
-				}
-				if(ph>height)
-				{
-					int cy=(ph*(y-(height-nh)/2))/nh;
-					pageview->yoffset=cy-height/2;
-				}
-				gtk_widget_queue_draw (GTK_WIDGET (pageview));
 			}
 			break;
 		default:
@@ -435,10 +448,7 @@ static void pixbufview_destroy(GtkObject *object)
 		if (GTK_OBJECT_CLASS (parent_class)->destroy)
 			(* GTK_OBJECT_CLASS (parent_class)->destroy) (object);
 	// FIXME - cleanup?  Memory leak here?
-		PixbufView *pv=(PixbufView *)object;
-		if(pv->pb)
-			g_object_unref(G_OBJECT(pv->pb));
-		pv->pb=NULL;
+		pixbufview_clear_pages(PIXBUFVIEW(object));
 	}
 }
 
@@ -447,7 +457,6 @@ static void
 pixbufview_init (PixbufView *pv)
 {
 	parent_class = gtk_type_class (gtk_widget_get_type ());
-	pv->pb=NULL;
 	pv->pb_scaled=NULL;
 	pv->resized=false;
 	pv->xoffset=0;
@@ -463,10 +472,38 @@ void pixbufview_refresh(PixbufView *pv)
 }
 
 
-void pixbufview_set_pixbuf(PixbufView *pv,GdkPixbuf *pb)
+void pixbufview_set_pixbuf(PixbufView *pv,GdkPixbuf *pb,unsigned int page)
 {
-	pixbufview_clear_pages(pv);
-	pixbufview_add_page(pv,pb);
+//	pixbufview_clear_pages(pv);
+//	pixbufview_add_page(pv,pb);
+
+	Debug[TRACE] << "Setting image on page " << page << "  -  list has " << pv->pages.size() << " entries" << endl;
+
+	// If we're trying to set the image of a page that doesn't exist
+	// we need to create pages until it does!
+	int newpages=(page+1); newpages-=pv->pages.size();
+
+	for(int i=0;i<newpages;++i)
+		pixbufview_add_page(pv,NULL);
+
+	bool refresh=false;
+	if(page==pv->currentpage) // Is this the current page?
+	{
+		if(pv->pb_scaled)
+			g_object_unref(G_OBJECT(pv->pb_scaled));
+		pv->pb_scaled=NULL;
+
+		refresh=true;
+	}
+	if(pv->pages[page])
+		g_object_unref(G_OBJECT(pv->pages[page]));
+
+	pv->pages[page]=pb;
+	if(pb)
+		g_object_ref(G_OBJECT(pb));
+
+	if(refresh)
+		pixbufview_refresh(pv);
 }
 
 
@@ -518,35 +555,28 @@ void pixbufview_set_scale(PixbufView *pv,bool scaletofit)
 
 void pixbufview_add_page(PixbufView *pv,GdkPixbuf *pb)
 {
-	if(!pb)
-	{
-		pixbufview_refresh(pv);
-		return;
-	}
-	g_object_ref(G_OBJECT(pb));
+	Debug[TRACE] << "Adding page with pixbuf " << (long)pb << endl;
 	pv->pages.push_back(pb);
-	if(!pv->pb)
+	if(pb)
 	{
-		pv->pb=pb;
 		g_object_ref(G_OBJECT(pb));
-		pixbufview_refresh(pv);
+		pixbufview_set_page(pv,pv->pages.size()-1);
 	}
 }
 
 
-void pixbufview_set_page(PixbufView *pv,int page)
+void pixbufview_set_page(PixbufView *pv,unsigned int page)
 {
+	Debug[TRACE] << "Setting pview page to " << page << endl;
 	if(page<pv->pages.size())
 	{
-		if(pv->pb)
-			g_object_unref(G_OBJECT(pv->pb));
-		pv->pb=NULL;
 		if(pv->pb_scaled)
 			g_object_unref(G_OBJECT(pv->pb_scaled));
 		pv->pb_scaled=NULL;
 
-		pv->pb=pv->pages[page];
-		g_object_ref(pv->pb);
+		pv->currentpage=page;
+
+		Debug[TRACE] << "Refreshing..." << endl;
 		pixbufview_refresh(pv);
 	}
 }
@@ -554,16 +584,23 @@ void pixbufview_set_page(PixbufView *pv,int page)
 
 void pixbufview_clear_pages(PixbufView *pv)
 {
-	if(pv->pb)
-		g_object_unref(G_OBJECT(pv->pb));
-	pv->pb=NULL;
 	if(pv->pb_scaled)
 		g_object_unref(G_OBJECT(pv->pb_scaled));
 	pv->pb_scaled=NULL;
 	while(pv->pages.size())
 	{
-		g_object_unref(G_OBJECT(pv->pages[0]));
+		if(pv->pages[0])
+			g_object_unref(G_OBJECT(pv->pages[0]));
 		pv->pages.pop_front();
 	}
+}
+
+
+GdkPixbuf *pixbufview_get_pixbuf(PixbufView *pv,unsigned int page)
+{
+	GdkPixbuf *result=NULL;
+	if(page<pv->pages.size())
+		result=pv->pages[page];
+	return(result);
 }
 

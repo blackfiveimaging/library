@@ -283,6 +283,7 @@ CMSTransform *CMTransformFactory::Search(MD5Digest *srcdigest,MD5Digest *dstdige
 	CMTransformFactoryNode *tfn=first;
 	while(tfn)
 	{
+		Debug[TRACE] << "Evaluating transform from " << tfn->digest1.GetPrintableDigest() << " to " << tfn->digest2.GetPrintableDigest() << " and intent " << tfn->intent << endl;
 		if((*srcdigest==tfn->digest1)&&(*dstdigest==tfn->digest2)&&(intent==tfn->intent)&&(proof==tfn->proof))
 			return(tfn->transform);
 		tfn=tfn->next;
@@ -293,7 +294,9 @@ CMSTransform *CMTransformFactory::Search(MD5Digest *srcdigest,MD5Digest *dstdige
 
 CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,IS_TYPE type,LCMSWrapper_Intent intent)
 {
+	Debug[TRACE] << "TransformFactory getting default profile for image of type: " << type << endl;
 	CMSProfile *srcprofile=manager.GetDefaultProfile(type);
+	Debug[TRACE] << "Have source profile with input space" << srcprofile->GetColourSpace() << endl;
 	CMSTransform *t=NULL;
 	try
 	{
@@ -309,6 +312,7 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,IS_TYP
 
 CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,ImageSource *src,LCMSWrapper_Intent intent)
 {
+	Debug[TRACE] << "TransformFactory trying embedded profile..." << endl;
 	CMSProfile *srcprofile=src->GetEmbeddedProfile();
 	if(srcprofile)
 		return(GetTransform(target,srcprofile,intent));
@@ -328,6 +332,8 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,CMSPro
 	if(!srcprofile)
 		return(NULL);
 
+	Debug[TRACE] << "TransformFactory using source profile of type: " << srcprofile->GetColourSpace() << endl;
+	
 	CMSProfile *destprofile=manager.GetProfile(target);
 
 	if(target==CM_COLOURDEVICE_PRINTERPROOF)
@@ -372,6 +378,8 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 	if(!destprofile)
 		return(NULL);
 
+	Debug[TRACE] << "TransformFactory using source profile of type: " << srcprofile->GetColourSpace() << endl;
+
 	CMSTransform *transform=NULL;
 	if(intent==LCMSWRAPPER_INTENT_DEFAULT)
 		intent=LCMSWrapper_Intent(manager.FindInt("RenderingIntent"));
@@ -383,6 +391,9 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 	// We use MD5 digests to compare profiles for equality.
 	MD5Digest *d1,*d2;
 	d2=destprofile->GetMD5();
+
+	const char *fn=destprofile->GetFilename();
+	Debug[TRACE] << "Destination profile (" << (fn ? fn : "") << ")" << "has hash: " << d2->GetPrintableDigest() << endl;
 
 	if(destprofile->IsDeviceLink())
 	{
@@ -410,6 +421,9 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 			profiles[1]=defprofile;
 			profiles[2]=destprofile;
 			d1=srcprofile->GetMD5();
+
+			const char *fn=srcprofile->GetFilename();
+			Debug[TRACE] << "Source profile (" << (fn ? fn : "") << ")" << "has hash: " << d1->GetPrintableDigest() << endl;
 			
 			// Search for an existing transform by source / devicelink MD5s...
 			transform=Search(d1,d2,intent);
@@ -442,6 +456,9 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 		// The non-device link case is much easier to deal with...
 		d1=srcprofile->GetMD5();
 
+		const char *fn=srcprofile->GetFilename();
+		Debug[TRACE] << "Source profile (" << (fn ? fn : "") << ")" << "has hash: " << d1->GetPrintableDigest() << endl;
+
 		// Don't bother transforming if src/dest are the same profile...
 		if(*d1==*d2)
 		{
@@ -452,7 +469,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 		transform=Search(d1,d2,intent);
 		if(!transform)
 		{
-//			Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
+			Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
 			transform=new CMSTransform(srcprofile,destprofile,intent);
 			new CMTransformFactoryNode(this,transform,*d1,*d2,intent);
 		}

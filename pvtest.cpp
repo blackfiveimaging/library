@@ -3,6 +3,8 @@
 
 #include <gtk/gtk.h>
 
+#include "support/debug.h"
+
 #include "imagesource/imagesource_util.h"
 #include "imagesource/pixbuf_from_imagesource.h"
 #include "imagesource/imagesource_histogram.h"
@@ -27,6 +29,8 @@ using namespace std;
 
 int main(int argc,char**argv)
 {
+	Debug.SetLevel(TRACE);
+
 	gtk_init(&argc,&argv);
 
 	try

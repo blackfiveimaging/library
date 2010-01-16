@@ -32,6 +32,7 @@ class RefCountUI : public RefCount
 	}
 	virtual void ObtainRefMutex()
 	{
+		Debug[TRACE] << "In UI variant of ObtainRefMutex" << std::endl;
 		if(threadid==Thread::GetThreadID())
 		{
 			if(!RefCount::refmutex.AttemptMutex())
@@ -51,7 +52,7 @@ class RefCountUI : public RefCount
 	{
 		if(threadid==Thread::GetThreadID())
 		{
-			Debug[TRACE] << "RefCountUI: Referencing from same thread as creation - unreferencing directly..." << std::endl;
+			Debug[TRACE] << "RefCountUI: Unreferencing from same thread as creation - unreferencing directly..." << std::endl;
 			RefCount::UnRef();
 			Debug[TRACE] << "RefCountUI: UnReferenced" << std::endl;
 		}
@@ -65,6 +66,7 @@ class RefCountUI : public RefCount
 	static gboolean unreffunc(gpointer ud)
 	{
 		RefCountUI *rc=(RefCountUI *)ud;
+		Debug[TRACE] << "Performing deferred UnReference..." << std::endl;
 		rc->RefCount::UnRef();
 		return(FALSE);
 	}

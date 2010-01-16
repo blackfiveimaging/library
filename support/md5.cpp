@@ -76,6 +76,7 @@ const char *MD5Digest::GetPrintableDigest()
 
 MD5Digest &MD5Digest::operator=(const MD5Digest &other)
 {
+	MD5Context::operator=(other);
 	for(int i=0;i<16;++i)
 		digest[i]=other.digest[i];
 	return(*this);

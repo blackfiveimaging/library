@@ -16,7 +16,9 @@ RefCount::~RefCount()
 
 void RefCount::ObtainRefMutex()
 {
+	Debug[TRACE] << "In ObtainRefMutex" << endl;
 	refmutex.ObtainMutex();
+	Debug[TRACE] << "Obtained" << endl;
 }
 
 void RefCount::ReleaseRefMutex()
