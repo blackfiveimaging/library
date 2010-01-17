@@ -123,12 +123,6 @@ void JPEGSaver::Save()
 }
 
 
-void JPEGSaver::SetProgress(Progress *progress)
-{
-	this->progress=progress;
-}
-
-
 void JPEGSaver::EmbedProfile(CMSProfile *profile)
 {
 	if(!profile)
@@ -161,7 +155,7 @@ void JPEGSaver::EmbedProfile(CMSProfile *profile)
 
 
 JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression)
-	: imagesource(is), tmpbuffer(NULL), progress(NULL)
+	: ImageSaver(), imagesource(is), tmpbuffer(NULL)
 {
 	if(STRIP_ALPHA(is->type)==IS_TYPE_BW)
 		throw _("JPEG Saver only supports greyscale and colour images!");

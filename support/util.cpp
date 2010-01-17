@@ -92,6 +92,9 @@ char *BuildFilename(const char *root,const char *suffix,const char *fileext)
 
 	char *extension;
 
+	if(!suffix)
+		suffix="";
+
 	char *filename=NULL;
 	if(fileext)
 		filename=(char *)malloc(strlen(root)+strlen(suffix)+strlen(fileext)+3);

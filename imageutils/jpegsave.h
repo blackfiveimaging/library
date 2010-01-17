@@ -24,15 +24,14 @@ typedef unsigned char boolean;
 }
 
 #include "imagesource.h"
-#include "progress.h"
+#include "imagesaver.h"
 
 struct JPEGSaver_ErrManager;
-class JPEGSaver
+class JPEGSaver : public ImageSaver
 {
 	public:
 	JPEGSaver(const char *filename,ImageSource *is,int compression=85);
 	~JPEGSaver();
-	void SetProgress(Progress *progress);
 	void Save();
 	void EmbedProfile(CMSProfile *profile);
 	private:
@@ -44,7 +43,6 @@ class JPEGSaver
 	struct jpeg_compress_struct *cinfo;
 	unsigned char *tmpbuffer;
 	struct JPEGSaver_ErrManager *err;
-	Progress *progress;
 };
 
 #endif

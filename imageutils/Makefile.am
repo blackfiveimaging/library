@@ -11,6 +11,7 @@ libimageutils_la_SOURCES =	\
 	cachedimage.cpp	\
 	cachedimage.h	\
 	\
+	imagesaver.h	\
 	jpegsave.cpp	\
 	jpegsave.h	\
 	tiffsave.cpp	\

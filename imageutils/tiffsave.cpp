@@ -113,12 +113,6 @@ void TIFFSaver::Save()
 }
 
 
-void TIFFSaver::SetProgress(Progress *progress)
-{
-	this->progress=progress;
-}
-
-
 static void EmbedProfile(TIFF* Out,CMSProfile *profile)
 {
 	if(!profile)
@@ -151,7 +145,7 @@ static void EmbedProfile(TIFF* Out,CMSProfile *profile)
 
 
 TIFFSaver::TIFFSaver(const char *filename,struct ImageSource *is,bool deep,int bpp,int compression)
-	: deep(deep), imagesource(is), progress(NULL)
+	: ImageSaver(), deep(deep), imagesource(is)
 {
 	switch(is->type)
 	{

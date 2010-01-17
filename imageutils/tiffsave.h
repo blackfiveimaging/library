@@ -16,17 +16,16 @@
 #include <tiffio.h>
 
 #include "imagesource.h"
-#include "progress.h"
+#include "imagesaver.h"
 
 #define TIFFSAVE_STRIPHEIGHT 64
 
-class TIFFSaver
+class TIFFSaver : public ImageSaver
 {
 	public:
 	TIFFSaver(const char *filename,ImageSource *is,bool deep=false,int bitsperpixel=0,int compression=COMPRESSION_NONE);
-	~TIFFSaver();
-	void SetProgress(Progress *progress);
-	void Save();
+	virtual ~TIFFSaver();
+	virtual void Save();
 	private:
 	int width,height;
 	int bitsperpixel;
@@ -39,7 +38,6 @@ class TIFFSaver
 	TIFF *file;
 	unsigned char *tmpbuffer;
 	struct ImageSource *imagesource;
-	Progress *progress;
 };
 
 #endif
