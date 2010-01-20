@@ -41,7 +41,7 @@
 #define _(x) gettext(x)
 #define N_(x) gettext_noop(x)
 
-#include "squiggledata.cpp"
+#include "dabdata.cpp"
 
 using namespace std;
 

@@ -34,5 +34,5 @@ libmiscwidgets_la_SOURCES =	\
 
 libmiscwidgets_la_LDFLAGS = -static
 
-EXTRA_DIST = squiggledata.cpp
+EXTRA_DIST = squiggledata.cpp dabdata.cpp
 
