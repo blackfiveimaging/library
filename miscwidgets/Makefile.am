@@ -30,6 +30,9 @@ libmiscwidgets_la_SOURCES =	\
 	imageselector.h \
 	imageselector_noborder_image.h \
 	\
+	pixbuf_from_imagedata.cpp \
+	pixbuf_from_imagedata.h \
+	\
 	refcountui.h
 
 libmiscwidgets_la_LDFLAGS = -static

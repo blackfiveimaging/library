@@ -81,6 +81,20 @@ ISDataType *ImageSource_GdkPixbuf::GetRow(int row)
 				}
 			}
 			break;
+		case IS_TYPE_RGBA:
+			for(int x=0;x<width;++x)
+			{
+				unsigned int g;
+				g=*src++;
+				*dst++=EIGHTTOIS(g);
+				g=*src++;
+				*dst++=EIGHTTOIS(g);
+				g=*src++;
+				*dst++=EIGHTTOIS(g);
+				g=*src++;
+				*dst++=EIGHTTOIS(g);
+			}
+			break;
 		default:
 			throw "Only RGB pixbufs are currently supported";
 			break;
@@ -129,6 +143,12 @@ void ImageSource_GdkPixbuf::Init()
 	rowstride=gdk_pixbuf_get_rowstride(pixbuf);
 	pixels=gdk_pixbuf_get_pixels(pixbuf);
 	hasalpha=gdk_pixbuf_get_has_alpha(pixbuf);
+
+	if(hasalpha)
+	{
+		type=IS_TYPE_RGBA;
+		++samplesperpixel;
+	}
 
 	MakeRowBuffer();
 	randomaccess=true;

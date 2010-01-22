@@ -44,7 +44,7 @@ ISDataType *ImageSource_Mask::GetRow(int row)
 			for(int s=0;s<source->samplesperpixel-1;++s)
 				rowbuffer[x*samplesperpixel+s]=srcdata[x*source->samplesperpixel+s];
 			rowbuffer[(x+1)*samplesperpixel-1]=
-				(srcdata[(x+1)*source->samplesperpixel-1]*maskdata[x])/IS_SAMPLEMAX;
+				(srcdata[(x+1)*source->samplesperpixel-1]*maskdata[x*mask->samplesperpixel])/IS_SAMPLEMAX;
 		}
 	}
 	else
@@ -53,7 +53,7 @@ ISDataType *ImageSource_Mask::GetRow(int row)
 		{
 			for(int s=0;s<source->samplesperpixel;++s)
 				rowbuffer[x*samplesperpixel+s]=srcdata[x*source->samplesperpixel+s];
-			rowbuffer[(x+1)*samplesperpixel-1]=maskdata[x];
+			rowbuffer[(x+1)*samplesperpixel-1]=maskdata[x*mask->samplesperpixel];
 		}
 	}
 
@@ -69,7 +69,7 @@ ImageSource_Mask::ImageSource_Mask(struct ImageSource *source,ImageSource *mask)
 	if((source->width!=mask->width)||(source->height!=mask->height))
 		throw "Source and mask dimensions must match!";
 
-	if(mask->type!=IS_TYPE_GREY)
+	if(STRIP_ALPHA(mask->type)!=IS_TYPE_GREY)
 		throw "Mask should be a greyscale image";
 
 	switch(source->type)
