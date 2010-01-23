@@ -24,6 +24,9 @@ libmiscwidgets_la_SOURCES =	\
 	uitab.cpp \
 	uitab.h \
 	\
+	spinner.cpp \
+	spinner.h \
+	progressspinner.h \
 	patheditor.cpp	\
 	patheditor.h	\
 	imageselector.cpp \
