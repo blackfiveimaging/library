@@ -172,7 +172,6 @@ pixbufview_size_allocate (GtkWidget     *widget,
 
 static void draw_scaled(GtkWidget *widget,GdkEventExpose *event)
 {
-	Debug[TRACE] << "In draw_scaled()" << endl;
 	PixbufView *pv=PIXBUFVIEW(widget);
 	if(pv->resized)
 	{
@@ -183,7 +182,6 @@ static void draw_scaled(GtkWidget *widget,GdkEventExpose *event)
 		GdkPixbuf *pb=pixbufview_get_pixbuf(pv,pv->currentpage);
 		if(pb)
 		{
-			Debug[TRACE] << "Got pixbuf - finding dimensions" << endl;
 			int height=widget->allocation.height;
 			int width=widget->allocation.width;
 
@@ -229,7 +227,6 @@ static void draw_scaled(GtkWidget *widget,GdkEventExpose *event)
 
 static void draw_panned(GtkWidget *widget,GdkEventExpose *event)
 {
-	Debug[TRACE] << "In draw_panned()" << endl;
 	PixbufView *pv=PIXBUFVIEW(widget);
 
 	int height=widget->allocation.height;
@@ -242,7 +239,6 @@ static void draw_panned(GtkWidget *widget,GdkEventExpose *event)
 	GdkPixbuf *pb=pixbufview_get_pixbuf(pv,pv->currentpage);
 	if(pb)
 	{
-		Debug[TRACE] << "Got pixbuf - finding dimensions" << endl;
 		int height=widget->allocation.height;
 		int width=widget->allocation.width;
 
