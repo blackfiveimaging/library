@@ -35,6 +35,7 @@
 #include "imagesource/pixbuf_from_imagesource.h"
 
 #include "miscwidgets/generaldialogs.h"
+#include "pixbuf_from_imagedata.h"
 #include "coloranttoggle.h"
 
 #include "gettext.h"
@@ -207,14 +208,7 @@ void coloranttoggle_set_colorants(ColorantToggle *c,DeviceNColorantList *list)
 	// Free toggle buttons here, and create a new set...
 	if(c && list)
 	{
-		GdkPixbuf *icon=NULL;
-		GdkPixdata pd;
-		GError *err;
-		if(!gdk_pixdata_deserialize(&pd,sizeof(my_pixbuf),my_pixbuf,&err))
-			throw(err->message);
-
-		if(!(icon=gdk_pixbuf_from_pixdata(&pd,false,&err)))
-			throw(err->message);
+		GdkPixbuf *icon=PixbufFromImageData(dab_data,sizeof(dab_data));
 
 		DeviceNColorant *col=list->FirstColorant();
 		int i=0;

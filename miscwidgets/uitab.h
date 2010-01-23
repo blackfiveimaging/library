@@ -14,7 +14,8 @@ class UITab : public RefCountUI
 	virtual ~UITab();
 	GtkWidget *GetBox();
 	void SetTabText(const char *text);
-	void AddTabButton(GtkWidget *button);
+	void AddTabWidget(GtkWidget *widget);	// Inserts a widget between label and close button
+	void AddTabButton(GtkWidget *button);	// As above but removes border relief and sets custom style
 	protected:
 	static void deleteclicked(GtkWidget *wid,gpointer userdata);
 	static void setclosebuttonsize(GtkWidget *wid,GtkStyle *style,gpointer userdata);

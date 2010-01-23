@@ -1,12 +1,12 @@
 /* GdkPixbuf RGBA C-Source image dump 1-byte-run-length-encoded */
 
 #ifdef __SUNPRO_C
-#pragma align 4 (my_pixbuf)
+#pragma align 4 (dab_data)
 #endif
 #ifdef __GNUC__
-static const guint8 my_pixbuf[] __attribute__ ((__aligned__ (4))) = 
+static const guint8 dab_data[] __attribute__ ((__aligned__ (4))) = 
 #else
-static const guint8 my_pixbuf[] = 
+static const guint8 dab_data[] = 
 #endif
 { ""
   /* Pixbuf magic (0x47646b50) */

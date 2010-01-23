@@ -33,6 +33,7 @@
 #include "imagesource/pixbuf_from_imagesource.h"
 
 #include "miscwidgets/generaldialogs.h"
+#include "pixbuf_from_imagedata.h"
 #include "colorantselector.h"
 
 #include "gettext.h"
@@ -80,14 +81,7 @@ static void populate_list(ColorantSelector *es)
 	{
 		GtkTreeIter iter;
 
-		GdkPixbuf *icon=NULL;
-		GdkPixdata pd;
-		GError *err;
-		if(!gdk_pixdata_deserialize(&pd,sizeof(my_pixbuf),my_pixbuf,&err))
-			throw(err->message);
-
-		if(!(icon=gdk_pixbuf_from_pixdata(&pd,false,&err)))
-			throw(err->message);
+		GdkPixbuf *icon=PixbufFromImageData(squiggle_data,sizeof(squiggle_data));
 
 		DeviceNColorant *col=es->list->FirstColorant();
 		int i=0;

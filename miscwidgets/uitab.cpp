@@ -67,12 +67,18 @@ GtkWidget *UITab::GetBox()
 
 void UITab::AddTabButton(GtkWidget *button)
 {
-	gtk_box_pack_start(GTK_BOX(labelbox),button,FALSE,FALSE,4);
-	gtk_box_reorder_child(GTK_BOX(labelbox),button,1);
+	AddTabWidget(button);
 	gtk_widget_set_name(button,"tab-close-button");
 	gtk_button_set_relief(GTK_BUTTON(button),GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button),"style-set",G_CALLBACK(setclosebuttonsize),this);
 	gtk_widget_show(button);
+}
+
+
+void UITab::AddTabWidget(GtkWidget *widget)
+{
+	gtk_box_pack_start(GTK_BOX(labelbox),widget,FALSE,FALSE,4);
+	gtk_box_reorder_child(GTK_BOX(labelbox),widget,1);
 }
 
 
