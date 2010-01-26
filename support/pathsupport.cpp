@@ -94,7 +94,7 @@ char *substitute_xdgconfighome(const char *path)
 		else
 		{
 //			Debug[TRACE] << "No XDG_CONFIG_HOME set - using $HOME/.config instead" << endl;
-			const char *hd=g_get_home_dir();
+			const char *hd=get_homedir();
 			result=(char *)malloc(strlen(hd)+strlen("/.config/")+strlen(path)+strlen(hd)+2);
 			sprintf(result,"%s%c.config%c%s",hd,SEARCHPATH_SEPARATOR,SEARCHPATH_SEPARATOR,path);
 		}

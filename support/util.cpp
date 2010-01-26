@@ -9,10 +9,11 @@
 
 #include <iostream>
 #include <fstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <unistd.h>
+#include <libgen.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -23,6 +24,10 @@
 
 using namespace std;
 
+// This function is now recursive, so you can provide a pathname of the form
+// /home/user/obscure1/obscure2/obscure3 - and all three of the last components will
+// be created if they don't exist already.
+
 bool CreateDirIfNeeded(const char *path)
 {
 	struct stat s;
@@ -31,6 +36,12 @@ bool CreateDirIfNeeded(const char *path)
 
 	if(errno==ENOENT)
 	{
+		char *s2=strdup(path);
+		char *parent=dirname(s2);
+		if(strcmp(parent,".")!=0)
+			CreateDirIfNeeded(parent);
+		free(s2);
+
 #ifdef WIN32
 		return(mkdir(path)==0);
 #else

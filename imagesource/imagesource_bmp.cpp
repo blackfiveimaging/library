@@ -167,15 +167,34 @@ ISDataType *ImageSource_BMP::GetRow(int row)
 			}
 			break;
 		case 3:
-			for(x=0;x<width;++x)
+			switch(bitsperpixel)
 			{
-				unsigned int r,g,b;
-				b=*src++;
-				g=*src++;
-				r=*src++;
-				*dst++=EIGHTTOIS(r);
-				*dst++=EIGHTTOIS(g);
-				*dst++=EIGHTTOIS(b);
+				case 24:
+					for(x=0;x<width;++x)
+					{
+						unsigned int r,g,b;
+						b=*src++;
+						g=*src++;
+						r=*src++;
+						*dst++=EIGHTTOIS(r);
+						*dst++=EIGHTTOIS(g);
+						*dst++=EIGHTTOIS(b);
+					}
+					break;
+				case 16:
+					for(x=0;x<width;++x)
+					{
+						unsigned int r,g,b;
+						unsigned int t1=*src++;
+						unsigned int t2=*src++;
+						b=(t1&0x1f)<<3;
+						g=((t1&0xe0)>>3) | ((t2&0x7) <<5);
+						r=(t2&0xf8);
+						*dst++=EIGHTTOIS(r);
+						*dst++=EIGHTTOIS(g);
+						*dst++=EIGHTTOIS(b);
+					}
+					break;
 			}
 			break;
 		case 1:
@@ -206,7 +225,6 @@ ImageSource_BMP::ImageSource_BMP(const char *filename) : ImageSource(), strips(N
 {
 	char fileheader[14];
 	char ImageHeader[64];
-	int bitsperpixel;
 
 	strips=NULL;
 
@@ -234,6 +252,7 @@ ImageSource_BMP::ImageSource_BMP(const char *filename) : ImageSource(), strips(N
 			cmapentries=256;
 			break;
 		case 40:
+		case 56:
 		case 64:
 			file.read(ImageHeader+12,headerlen-12);
 			width=GetValue(ImageHeader+4,4);
@@ -249,19 +268,26 @@ ImageSource_BMP::ImageSource_BMP(const char *filename) : ImageSource(), strips(N
 			throw "Unknown header type";
 	}
 
+	int inbpp;
+
 	imagestart=GetValue(fileheader+10,4);
 	switch(bitsperpixel)
 	{
 		case 32:
-			samplesperpixel=4;
+			inbpp=samplesperpixel=4;
 			type=IS_TYPE_RGBA;
 			break;
-		case 24:
+		case 16:
+			inbpp=2;
 			samplesperpixel=3;
 			type=IS_TYPE_RGB;
 			break;
+		case 24:
+			inbpp=samplesperpixel=3;
+			type=IS_TYPE_RGB;
+			break;
 		case 8:
-			samplesperpixel=1;
+			inbpp=samplesperpixel=1;
 			type=IS_TYPE_GREY;
 			break;
 		default:
@@ -269,10 +295,10 @@ ImageSource_BMP::ImageSource_BMP(const char *filename) : ImageSource(), strips(N
 			throw "BMP loader doesn't yet support Indexed Colour";
 	}
 
-	if((bitsperpixel<24)&&(cmapentries==0))
+	if((bitsperpixel<=8)&&(cmapentries==0))
 		cmapentries=1<<bitsperpixel;
 
-	bytesperrow=((samplesperpixel*width)+3)&~3;
+	bytesperrow=((inbpp*width)+3)&~3;
 	
 	unsigned char pal[1024];
 	if(cmapbytes<5)

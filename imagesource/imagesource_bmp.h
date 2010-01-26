@@ -33,8 +33,8 @@ class ImageSource_BMP : public ImageSource
 	int cmapbytes;
 	int cmapentries;
 	int bytesperrow;
-	long stripsize;
 	int imagestart;
+	int bitsperpixel;
 	int palette[256][3];
 	IS_BMPStrip *strips;
 	friend class IS_BMPStrip;
