@@ -378,7 +378,10 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 	if(!destprofile)
 		return(NULL);
 
-	Debug[TRACE] << "TransformFactory using source profile of type: " << srcprofile->GetColourSpace() << endl;
+	if(srcprofile)
+		Debug[TRACE] << "TransformFactory using source profile of type: " << srcprofile->GetColourSpace() << endl;
+	else
+		Debug[TRACE] << "TransformFactory - no source profile present." << endl;
 
 	CMSTransform *transform=NULL;
 	if(intent==LCMSWRAPPER_INTENT_DEFAULT)

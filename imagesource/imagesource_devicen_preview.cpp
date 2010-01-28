@@ -209,10 +209,12 @@ ISDataType *ImageSource_DeviceN_Preview::GetRow(int row)
 ImageSource_DeviceN_Preview::ImageSource_DeviceN_Preview(struct ImageSource *source,DeviceNColorantList *cols,int firstcolorant)
 	: ImageSource(source), source(source), colorants(NULL)
 {
+	int sourcespp=source->samplesperpixel;
 	if(HAS_ALPHA(type))
 	{
 		type=IS_TYPE_RGBA;
 		samplesperpixel=4;
+		--sourcespp;
 	}
 	else
 	{
@@ -220,7 +222,7 @@ ImageSource_DeviceN_Preview::ImageSource_DeviceN_Preview(struct ImageSource *sou
 		samplesperpixel=3;
 	}
 	int c=cols->GetColorantCount();
-	if((c-firstcolorant)<source->samplesperpixel)
+	if((c-firstcolorant)<sourcespp)
 		throw "ISDeviceN: Not enough colorants provided!";
 	colorants=new ISDeviceNPreview_Colorant[c];
 	for(int i=0;i<(c-firstcolorant);++i)

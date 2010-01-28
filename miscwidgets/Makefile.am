@@ -38,6 +38,7 @@ libmiscwidgets_la_SOURCES =	\
 	\
 	refcountui.h
 
+
 BUILT_SOURCES = squiggledata.cpp dabdata.cpp spinner1.cpp spinner2.cpp spinner3.cpp \
 	spinner4.cpp spinner5.cpp spinner6.cpp spinner7.cpp spinner8.cpp
 
