@@ -11,6 +11,7 @@ using namespace std;
 
 enum {
 	CHANGED_SIGNAL,
+	MOUSEMOVE_SIGNAL,
 	LAST_SIGNAL
 };
 
@@ -79,6 +80,13 @@ pixbufview_class_init (PixbufViewClass *cl)
 
 	pixbufview_signals[CHANGED_SIGNAL] =
 	g_signal_new ("changed",
+		G_TYPE_FROM_CLASS (cl),
+		GSignalFlags(G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION),
+		G_STRUCT_OFFSET (PixbufViewClass, changed),
+		NULL, NULL,
+		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	pixbufview_signals[MOUSEMOVE_SIGNAL] =
+	g_signal_new ("mousemove",
 		G_TYPE_FROM_CLASS (cl),
 		GSignalFlags(G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION),
 		G_STRUCT_OFFSET (PixbufViewClass, changed),
@@ -432,6 +440,57 @@ pixbufview_motion_notify( GtkWidget      *widget,
 
 		gtk_widget_queue_draw (GTK_WIDGET (pageview));
 	}
+	else
+	{
+		int x,y;
+		GdkModifierType mods;
+		gdk_window_get_pointer (widget->window, &x, &y, &mods);
+
+		GdkPixbuf *pb=pixbufview_get_pixbuf(pageview,pageview->currentpage);
+		if(pb)
+		{
+			int pw=gdk_pixbuf_get_width(pb);
+			int ph=gdk_pixbuf_get_height(pb);
+
+			int height=widget->allocation.height;
+			int width=widget->allocation.width;
+
+			if(pageview->scaletofit)
+			{
+				// Calculate scaled size...
+				int nw,nh;
+				nh=height;
+				nw=(pw*nh)/ph;
+				if(nw>width)
+				{
+					nw=width;
+					nh=(ph*nw)/pw;
+				}
+				x-=(width-nw)/2;
+				y-=(height-nh)/2;
+				pageview->mousex=(x*pw)/nw;
+				pageview->mousey=(y*ph)/nh;
+			}
+			else
+			{
+				if(pw<width)
+					x-=(width-pw)/2;
+				if(ph<height)
+					y-=(height-ph)/2;
+				pageview->mousex=x+pageview->xoffset;
+				pageview->mousey=y+pageview->yoffset;
+			}
+			if(pageview->mousex<0)
+				pageview->mousex=0;
+			if(pageview->mousey<0)
+				pageview->mousey=0;
+			if(pageview->mousex>=pw)
+				pageview->mousex=pw-1;
+			if(pageview->mousey>=ph)
+				pageview->mousey=ph-1;
+			g_signal_emit_by_name (GTK_OBJECT (pageview), "mousemove");
+		}
+	}
 	return FALSE;
 }
 
@@ -598,5 +657,21 @@ GdkPixbuf *pixbufview_get_pixbuf(PixbufView *pv,unsigned int page)
 	if(page<pv->pages.size())
 		result=pv->pages[page];
 	return(result);
+}
+
+
+int pixbufview_get_mousex(PixbufView *pv)
+{
+	if(pv)
+		return(pv->mousex);
+	return(0);
+}
+
+
+int pixbufview_get_mousey(PixbufView *pv)
+{
+	if(pv)
+		return(pv->mousey);
+	return(0);
 }
 

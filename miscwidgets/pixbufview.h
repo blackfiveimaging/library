@@ -17,6 +17,11 @@ typedef struct _PixbufView        PixbufView;
 typedef struct _PixbufViewClass   PixbufViewClass;
 
 
+// Signals:
+//
+// "changed" - emitted when the view changes
+// "mousemove" - emitted when the mouse position changes but the widget is not being manipulated
+
 struct _PixbufView
 {
 	GtkWidget wid;
@@ -27,6 +32,7 @@ struct _PixbufView
 	bool dragging;
 	int prev_x,prev_y;
 	int currentpage;
+	int mousex,mousey;
 	std::deque<GdkPixbuf *> pages;
 };
 
@@ -48,13 +54,20 @@ GdkPixbuf *pixbufview_get_pixbuf(PixbufView *pv,unsigned int page=0);
 
 void pixbufview_refresh(PixbufView *pv);
 
+// Get mouse position, in image coordinates.
+int pixbufview_get_mousex(PixbufView *pv);
+int pixbufview_get_mousey(PixbufView *pv);
+
+// Get view parameters.
 int pixbufview_get_xoffset(PixbufView *pv);
 int pixbufview_get_yoffset(PixbufView *pv);
 bool pixbufview_get_scale(PixbufView *pv);
 
+// Set view parameters
 void pixbufview_set_offset(PixbufView *pv,int xoff,int yoff);
 void pixbufview_set_scale(PixbufView *pv,bool scaletofit);
 
+// Add and remove pages
 void pixbufview_add_page(PixbufView *pv,GdkPixbuf *pb);
 void pixbufview_set_page(PixbufView *pb,unsigned int page);
 void pixbufview_clear_pages(PixbufView *pb);

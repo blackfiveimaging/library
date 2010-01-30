@@ -25,6 +25,15 @@ static void change_page(GtkWidget *widget,gpointer userdata)
 }
 
 
+static void mouse_move(GtkWidget *widget,gpointer userdata)
+{
+	PixbufView *pv=(PixbufView *)userdata;
+	int x=pixbufview_get_mousex(pv);
+	int y=pixbufview_get_mousey(pv);
+	cerr << "Mouse position: " << x << ", " << y << endl;
+}
+
+
 using namespace std;
 
 int main(int argc,char**argv)
@@ -45,6 +54,7 @@ int main(int argc,char**argv)
 		gtk_widget_show(GTK_WIDGET(vbox));
 
 		GtkWidget *pview=pixbufview_new(NULL,false);
+		g_signal_connect(G_OBJECT(pview),"mousemove",G_CALLBACK(mouse_move),pview);
 
 		gtk_box_pack_start(GTK_BOX(vbox),pview,TRUE,TRUE,0);
 		gtk_widget_show(pview);
