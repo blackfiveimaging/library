@@ -99,6 +99,8 @@ void ImageSource_JPEG::Init()
 	width=cinfo->image_width;
 	height=cinfo->image_height;
 
+	Debug[TRACE] << "JPEG Loader: Have " << cinfo->num_components << " components" << endl;
+
 	switch(cinfo->num_components)
 	{
 		case 1:
@@ -109,8 +111,12 @@ void ImageSource_JPEG::Init()
 			type=IS_TYPE_RGB;
 			samplesperpixel=3;
 			break;
+		case 4:
+			type=IS_TYPE_CMYK;
+			samplesperpixel=4;
+			break;
 		default:
-			throw "Only greyscale and RGB JPEGs are currently supported";
+			throw "Only greyscale, RGB and CMYK JPEGs are currently supported";
 			break;
 	}
 
@@ -192,6 +198,13 @@ ISDataType *ImageSource_JPEG::GetRow(int row)
 				rowbuffer[x*3+1]=EIGHTTOIS(t);
 				t=tmprow[x*3+2];
 				rowbuffer[x*3+2]=EIGHTTOIS(t);
+			}
+			break;
+		case 4:
+			for(x=0;x<width*samplesperpixel;++x)
+			{
+				int t=tmprow[x];
+				rowbuffer[x]=IS_SAMPLEMAX-EIGHTTOIS(t);
 			}
 			break;
 	}

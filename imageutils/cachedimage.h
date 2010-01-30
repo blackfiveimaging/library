@@ -27,6 +27,7 @@ class CachedImage_Deferred
 	IS_TYPE type;
 	ISDataType *imagedata;
 	CMSProfile *embeddedprofile;
+	double xres,yres;
 	friend class ImageSource_CachedImage;
 	friend class ImageSource_Tee;
 };

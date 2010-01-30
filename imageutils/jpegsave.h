@@ -37,8 +37,6 @@ class JPEGSaver : public ImageSaver
 	private:
 	struct ImageSource *imagesource;
 	int width,height;
-	float xres;
-	float yres;
 	int bytesperrow;
 	struct jpeg_compress_struct *cinfo;
 	unsigned char *tmpbuffer;

@@ -16,6 +16,7 @@
 #include <setjmp.h>
 #include <sys/stat.h>
 
+#include "debug.h"
 #include "lcmswrapper.h"
 #include "imagesource_flatten.h"
 
@@ -59,8 +60,11 @@ JPEGSaver::~JPEGSaver()
 			fclose(err->file);
 		delete err;
 	}
-	jpeg_destroy_compress((jpeg_compress_struct *)cinfo);
-	delete cinfo;
+	if(cinfo)
+	{
+		jpeg_destroy_compress((jpeg_compress_struct *)cinfo);
+		delete cinfo;
+	}
 	
 	if(tmpbuffer)
 		free(tmpbuffer);
@@ -119,6 +123,8 @@ void JPEGSaver::Save()
 			progress->DoProgress(height,height);
 		jpeg_finish_compress(cinfo);
 		jpeg_destroy_compress(cinfo);
+		delete cinfo;
+		cinfo=NULL;
 	}
 }
 
@@ -127,6 +133,8 @@ void JPEGSaver::EmbedProfile(CMSProfile *profile)
 {
 	if(!profile)
 		return;
+	if(!cinfo)
+		throw "JPEGSaver: cinfo already freed!";
 	FILE* f;
 	size_t size, EmbedLen;
 	JOCTET *EmbedBuffer;
@@ -155,22 +163,19 @@ void JPEGSaver::EmbedProfile(CMSProfile *profile)
 
 
 JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression)
-	: ImageSaver(), imagesource(is), tmpbuffer(NULL)
+	: ImageSaver(), imagesource(is), cinfo(NULL), tmpbuffer(NULL)
 {
 	if(STRIP_ALPHA(is->type)==IS_TYPE_BW)
 		throw _("JPEG Saver only supports greyscale and colour images!");
 
-	if(STRIP_ALPHA(is->type)==IS_TYPE_CMYK)
-		throw _("Saving CMYK JPEGs not (yet) supported");
+//	if(STRIP_ALPHA(is->type)==IS_TYPE_CMYK)
+//		throw _("Saving CMYK JPEGs not (yet) supported");
 
 	if(HAS_ALPHA(is->type))
 		is=new ImageSource_Flatten(is);
 
 	this->width=is->width;
 	this->height=is->height;
-
-	this->xres=is->xres;
-	this->yres=is->yres;
 
 	cinfo=new jpeg_compress_struct;
 	err=new JPEGSaver_ErrManager;
@@ -201,16 +206,26 @@ JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression
 			cinfo->input_components=1;
 			cinfo->in_color_space = JCS_GRAYSCALE;
 			jpeg_set_defaults(cinfo);
-			jpeg_set_colorspace(cinfo,JCS_GRAYSCALE);
 			break;
 		case IS_TYPE_CMYK:
-			throw _("Saving CMYK JPEGs not (yet) supported");
+			cinfo->input_components=4;
+			cinfo->in_color_space = JCS_CMYK;
+			jpeg_set_defaults(cinfo);
 			break;
 		default:
 			throw _("JPEG Saver can currently only save RGB or Greyscale images.");
 			break;
 	}
+
 	jpeg_set_quality(cinfo,compression,TRUE);
+
+	cinfo->density_unit=1;
+	cinfo->X_density=is->xres;
+	cinfo->Y_density=is->yres;
+
+	Debug[TRACE] << "JPEGSaver: Set xres to " << cinfo->X_density << endl;
+	Debug[TRACE] << "JPEGSaver: Set yres to " << cinfo->Y_density << endl;
+
 	jpeg_start_compress(cinfo,TRUE);
 
 	if(is->GetEmbeddedProfile())
