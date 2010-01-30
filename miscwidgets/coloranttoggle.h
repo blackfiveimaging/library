@@ -40,6 +40,7 @@ class ToggleData
 		button=gtk_check_button_new();
 		gtk_button_set_image(GTK_BUTTON(button),canvas);
 		gtk_box_pack_start(GTK_BOX(toggle),button,FALSE,FALSE,0);
+		g_signal_connect(G_OBJECT(button),"toggled",G_CALLBACK(toggled),this);
 		gtk_widget_show(button);
 
 //		gtk_box_pack_start(GTK_BOX(toggle),canvas,TRUE,TRUE,0);
@@ -50,7 +51,8 @@ class ToggleData
 	}
 	static void toggled(GtkWidget *wid,gpointer user_data);
 	static void paint(GtkWidget *widget,GdkEventExpose *eev,gpointer userdata);
-	void refresh(int level=-1);
+	void redraw(int level=-1);
+	void refresh();
 	protected:
 	ColorantToggle *toggle;
 	GtkWidget *button;

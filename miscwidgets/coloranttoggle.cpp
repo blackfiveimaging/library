@@ -107,30 +107,9 @@ void ToggleData::paint(GtkWidget *widget,GdkEventExpose *eev,gpointer userdata)
 	// Yuk.
 
 	gdk_draw_rectangle (widget->window,
-		widget->style->bg_gc[GTK_STATE_PRELIGHT],TRUE,
+		widget->style->bg_gc[widget->state],TRUE,
 		0,0,width,height);
 
-#if 0
-	Debug[TRACE] << "Widget state: " << int(widget->state) << endl;
-	GdkGC *gc=widget->style->bg_gc[widget->state];
-	GdkGCValues gcv;
-	gdk_gc_get_values(gc,&gcv);
-	Debug[TRACE] << "Got colour: " << gcv.foreground.pixel << ", " << gcv.foreground.red << ", " << gcv.foreground.green << ", " << gcv.foreground.blue << endl;
-	GdkColormap *cm=gtk_widget_get_colormap(widget);
-	if(cm)
-	{
-		Debug[TRACE] << "Got colormap" << endl;
-		GdkColor bgcol;
-		gdk_colormap_query_color(cm,gcv.foreground.pixel,&bgcol);
-		Debug[TRACE] << "Got colour: " << bgcol.pixel << ", " << bgcol.red << ", " << bgcol.green << ", " << bgcol.blue << endl;
-
-		cairo_set_source_rgb (cr,bgcol.red/65535.0,bgcol.green/65535.0,bgcol.blue/65535.0);
-	}
-	else
-		cairo_set_source_rgb (cr,gcv.background.red/65535.0,gcv.background.green/65535.0,gcv.background.blue/65535.0);
-
-	cairo_paint (cr);
-#endif
 
 	// draw ellipse
 
@@ -155,11 +134,16 @@ void ToggleData::paint(GtkWidget *widget,GdkEventExpose *eev,gpointer userdata)
 		int l=(100 * td->level) / IS_SAMPLEMAX;
 		sprintf(buf,"%d",l<100 ? l : 100);
 
-		int total=td->col.red+td->col.green+td->col.blue;
-		if(total<384)
+		// We try to figure out whether black or white will contrast better with the blob...
+		// Coefficients from http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+
+		double total=0.2126729*td->col.red + 0.7151522 * td->col.green + 0.0721750*td->col.blue;
+
+		if(total<128)
 			cairo_set_source_rgb(cr,1.0,1.0,1.0);
 		else
 			cairo_set_source_rgb(cr,0.0,0.0,0.0);
+
 
 	    cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
                                         CAIRO_FONT_WEIGHT_BOLD);
@@ -186,12 +170,16 @@ void ToggleData::paint(GtkWidget *widget,GdkEventExpose *eev,gpointer userdata)
 }
 
 
-void ToggleData::refresh(int value)
+void ToggleData::redraw(int value)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),col.GetEnabled());
-
 	level=value;
 	paint(canvas,NULL,this);
+}
+
+
+void ToggleData::refresh()
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),col.GetEnabled());
 }
 
 
@@ -280,7 +268,6 @@ coloranttoggle_init (ColorantToggle *c)
 }
 
 
-// Rebuilds the listview from the ColorantList
 void coloranttoggle_refresh(ColorantToggle *c)
 {
 	if(c)
@@ -313,6 +300,7 @@ void coloranttoggle_set_colorants(ColorantToggle *c,DeviceNColorantList *list)
 		int i=0;
 		while(col)
 		{
+
 			if(col->GetName())
 			{
 				// Colorize the icon here
@@ -375,7 +363,7 @@ void coloranttoggle_set_value(ColorantToggle *c,ISDeviceNValue &value)
 {
 	for(int i=0;i<c->buttons.size();++i)
 	{
-		c->buttons[i]->refresh(value[i]);
+		c->buttons[i]->redraw(value[i]);
 	}
 }
 
