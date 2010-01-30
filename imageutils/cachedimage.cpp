@@ -54,10 +54,25 @@ void CachedImage_Deferred::ReadRow(int row)
 ISDataType *CachedImage_Deferred::GetRow(int row)
 {
 	if(row>=height)
-		row=height;
+		row=height-1;
 	if(row<0)
 		row=0;
 	return(imagedata+row*width*samplesperpixel);
+}
+
+
+ISDeviceNValue CachedImage_Deferred::GetPixel(int x, int y)
+{
+	ISDeviceNValue result(samplesperpixel);
+	ISDataType *row=GetRow(y);
+	if(x<0)
+		x=0;
+	if(x>=width)
+		x=width-1;
+	row+=x*samplesperpixel;
+	for(int s=0;s<samplesperpixel;++s)
+		result[s]=row[s];
+	return(result);
 }
 
 

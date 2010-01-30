@@ -15,11 +15,12 @@ class CachedImage_Deferred
 {
 	public:
 	CachedImage_Deferred(ImageSource *source);
-	~CachedImage_Deferred();
-	void ReadImage();
-	void ReadRow(int row);
-	ISDataType *GetRow(int row);
-	ImageSource *GetImageSource();
+	virtual ~CachedImage_Deferred();
+	virtual void ReadImage();
+	virtual void ReadRow(int row);
+	virtual ISDataType *GetRow(int row);
+	virtual ImageSource *GetImageSource();
+	virtual ISDeviceNValue GetPixel(int x, int y);
 	protected:
 	ImageSource *source;
 	int width, height;
@@ -42,7 +43,7 @@ class CachedImage : public CachedImage_Deferred
 	{
 		ReadImage();
 	}
-	~CachedImage()
+	virtual ~CachedImage()
 	{
 	}
 	protected:

@@ -57,7 +57,7 @@ class ISDeviceNValue
 	}
 	ISDataType &operator[](int i)
 	{
-		if(i<channels)
+		if(i<channels && i>=0)
 			return(values[i]);
 		else
 			throw "DeviceNValue - bounds check failed";
