@@ -12,6 +12,7 @@
 #include <gtk/gtktreeview.h>
 #include <gtk/gtktreestore.h>
 #include <gtk/gtkcellrendererpixbuf.h>
+#include <cairo.h>
 
 #include "imagesource/devicencolorant.h"
 
@@ -28,20 +29,34 @@ typedef struct _ColorantToggleClass ColorantToggleClass;
 class ToggleData
 {
 	public:
-	ToggleData(ColorantToggle *toggle,GtkWidget *button,DeviceNColorant &col)
-		: toggle(toggle), button(button), col(col)
+	ToggleData(ColorantToggle *toggle,DeviceNColorant &col)
+		: toggle(toggle), button(NULL), canvas(NULL), col(col), level(-1)
 	{
+		canvas = gtk_drawing_area_new();
+		gtk_widget_set_size_request(canvas,20,20);
+		g_signal_connect(G_OBJECT (canvas), "expose-event",G_CALLBACK(paint), this);
+		gtk_widget_show(canvas);
+
+		button=gtk_check_button_new();
+		gtk_button_set_image(GTK_BUTTON(button),canvas);
+		gtk_box_pack_start(GTK_BOX(toggle),button,FALSE,FALSE,0);
+		gtk_widget_show(button);
+
+//		gtk_box_pack_start(GTK_BOX(toggle),canvas,TRUE,TRUE,0);
 	}
 	~ToggleData()
 	{
-		gtk_widget_destroy(GTK_WIDGET(toggle));
+		gtk_widget_destroy(GTK_WIDGET(button));
 	}
 	static void toggled(GtkWidget *wid,gpointer user_data);
-	void refresh();
+	static void paint(GtkWidget *widget,GdkEventExpose *eev,gpointer userdata);
+	void refresh(int level=-1);
 	protected:
 	ColorantToggle *toggle;
 	GtkWidget *button;
+	GtkWidget *canvas;
 	DeviceNColorant &col;
+	int level;
 };
 
 
@@ -65,6 +80,7 @@ GType coloranttoggle_get_type (void);
 GtkWidget* coloranttoggle_new(DeviceNColorantList *list);
 void coloranttoggle_refresh(ColorantToggle *c);
 void coloranttoggle_set_colorants(ColorantToggle *c,DeviceNColorantList *list);
+void coloranttoggle_set_value(ColorantToggle *c,ISDeviceNValue &value);
 
 
 #endif /* __COLORANTTOGGLE_H__ */

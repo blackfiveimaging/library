@@ -44,7 +44,7 @@ class ISDeviceNValue
 		for(int i=0;i<channels;++i)
 			values[i]=value;
 	}
-	ISDeviceNValue(ISDeviceNValue &other) : channels(other.channels), values(NULL)
+	ISDeviceNValue(const ISDeviceNValue &other) : channels(other.channels), values(NULL)
 	{
 		values=new ISDataType[channels];
 		for(int i=0;i<channels;++i)
@@ -55,7 +55,7 @@ class ISDeviceNValue
 		if(values)
 			delete[] values;
 	}
-	ISDataType &operator[](int i)
+	ISDataType &operator[](int i) const
 	{
 		if(i<channels && i>=0)
 			return(values[i]);
@@ -64,10 +64,15 @@ class ISDeviceNValue
 	}
 	ISDeviceNValue &operator=(ISDeviceNValue &other)
 	{
-		if(values)
-			delete[] values;
-		channels=other.channels;
-		values=new ISDataType[channels];
+		if(channels<other.channels)
+		{
+			if(values)
+				delete[] values;
+			values=NULL;
+			channels=other.channels;
+		}
+		if(!values)
+			values=new ISDataType[channels];
 		for(int i=0;i<channels;++i)
 			values[i]=other[i];
 		return(*this);
