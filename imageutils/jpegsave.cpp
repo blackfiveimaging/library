@@ -210,7 +210,12 @@ JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression
 		case IS_TYPE_CMYK:
 			cinfo->input_components=4;
 			cinfo->in_color_space = JCS_CMYK;
+			cinfo->jpeg_color_space = JCS_YCCK;
 			jpeg_set_defaults(cinfo);
+		    jpeg_set_colorspace(cinfo, JCS_YCCK);
+			cinfo->write_JFIF_header=TRUE;	// HACK to force resolution to be saved.
+											// Not strictly correct, since JFIF files can't be CMYK.
+											// LCMS's jpegicc does this too (though probably not deliberately!)
 			break;
 		default:
 			throw _("JPEG Saver can currently only save RGB or Greyscale images.");
