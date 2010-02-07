@@ -315,14 +315,21 @@ SimpleComboOptions::SimpleComboOptions(SimpleComboOptions &other) : firstopt(NUL
 
 SimpleComboOptions::~SimpleComboOptions()
 {
-	while(firstopt)
-		delete firstopt;
+	Clear();
 }
 
 SimpleComboOption *SimpleComboOptions::Add(const char *key,const char *displayname,const char *tooltip,bool repeat)
 {
 	return(new SimpleComboOption(*this,key,displayname,tooltip,repeat));
 }
+
+
+void SimpleComboOptions::Clear()
+{
+	while(firstopt)
+		delete firstopt;
+}
+
 
 SimpleComboOption *SimpleComboOptions::FirstOption()
 {
@@ -339,6 +346,8 @@ SimpleComboOption *SimpleComboOptions::operator[](int idx)
 		opt=opt->NextOption();
 		--idx;
 	}
+	if(!opt)
+		throw "SimpleComboOptions::[] Index out of range";
 	return(opt);
 }
 

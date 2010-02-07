@@ -37,6 +37,7 @@ class SimpleComboOptions
 	SimpleComboOptions(SimpleComboOptions &other);
 	~SimpleComboOptions();
 	SimpleComboOption *Add(const char *key,const char *displayname,const char *tooltip=NULL,bool repeat=false);
+	void Clear();
 	SimpleComboOption *FirstOption();
 	SimpleComboOption *operator[](int idx);
 	protected:
