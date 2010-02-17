@@ -18,11 +18,55 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #include "debug.h"
 #include "searchpath.h"
 #include "pathsupport.h"
 
+
 using namespace std;
+
+
+// Open a file from a utf-8-encoded filename.
+// On Unix, this is a straight passthrough to fopen().
+// On Win32 the filename is will converted to wchar_t, then opened with _wfopen 
+// If either translation or opening the translated filename fails, falls back to using
+// the untranslated filename.  (Should take care of code-page command-line arguments...)
+
+FILE *FOpenUTF8(const char *name,const char *mode)
+{
+#ifdef WIN32
+	FILE *result=NULL;
+
+	size_t fnlen=MultiByteToWideChar(CP_UTF*,0,name,-1,NULL,0);
+	size_t modelen=MultiByteToWideChar(CP_UTF*,0,mode,-1,NULL,0);
+
+	if(fnlen && modelen)
+	{
+		wchar_t *fnbuf=(wchar_t *)malloc(fnlen*sizeof(wchar_t));
+		wchar_t *modebuf=(wchar_t *)malloc(modelen*sizeof(wchar_t));
+		if(MultiByteToWideChar(CP_UTF8,0,filename,-1,fnbuf,fnlen))
+		{
+			MultiByteToWideChar(CP_UTF8,0,filename,-1,modebuf,modelen);
+
+			file=_wfopen(fnbuf,modebuf);
+
+		}
+		free(modebuf);
+		free(fnbuf);
+	}
+	// If we've not succeeded in opening the file, fall back to regular fopen() -
+	// maybe it's a code-page encoded filename supplied on the command line...
+	if(result)
+		return(result);
+#else
+	return(fopen(name,mode));
+#endif
+}
+
 
 // This function is now recursive, so you can provide a pathname of the form
 // /home/user/obscure1/obscure2/obscure3 - and all three of the last components will

@@ -31,6 +31,17 @@ bool CheckSettingsDir(const char *dirname);
 bool CompareFiles(const char *fn1,const char *fn2);
 
 
+// Open a file from a utf-8-encoded filename.
+// On Unix, this is a straight passthrough to fopen().
+// On Win32 the filename is will converted to wchar_t, then opened with _wfopen 
+// if FOpenUTF8EnableTransation() has been called.
+// This allows client code to cope with filenames from GTK+ (in UTF-8) and also
+// from the command line.
+FILE *FOpenUTF8(const char *name,const char *mode);
+void FOpenUTF8EnableTranslation();
+void FOpenUTF8DisableTranslation();
+
+
 // Filename handling utilities
 
 // Attempts to construct a filename given a root, a suffix and an extension.

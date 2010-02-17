@@ -1,5 +1,5 @@
 /*
- * imagesource_rotate.cpp - filter to rotate and image through
+ * imagesource_rotate.cpp - filter to rotate an image through
  * 0, 90, 180 or 270 degrees.
  * supports random access, unless source image doesn't, and rotation is zero.
  *

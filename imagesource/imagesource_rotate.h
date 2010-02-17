@@ -1,5 +1,5 @@
 /*
- * imagesource_rotate.h - filter to rotate and image through
+ * imagesource_rotate.h - filter to rotate an image through
  * 0, 90, 180 or 270 degrees.
  * supports random access, even if source image doesn't.
  *
