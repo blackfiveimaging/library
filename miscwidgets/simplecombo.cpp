@@ -73,7 +73,6 @@ static void	simplecombo_entry_changed(GtkEntry *entry,gpointer user_data)
 
 void simplecombo_set_opts(SimpleCombo *c,SimpleComboOptions &opts)
 {
-	cerr << "Removing old menu" << endl;
 	string oldkey;
 	int oldidx=-1;
 	if(c->optionmenu)
@@ -83,7 +82,6 @@ void simplecombo_set_opts(SimpleCombo *c,SimpleComboOptions &opts)
 		gtk_widget_destroy(c->optionmenu);
 	}
 	c->optionmenu=c->menu=NULL;
-	cerr << "Deleting old opts" << endl;
 	if(c->opts)
 		delete c->opts;
 
@@ -92,7 +90,6 @@ void simplecombo_set_opts(SimpleCombo *c,SimpleComboOptions &opts)
 	c->optionmenu=gtk_option_menu_new();
 	c->menu=gtk_menu_new();
 
-	cerr << "Creating new menu items" << endl;
 	SimpleComboOption *o=c->opts->FirstOption();
 	while(o)
 	{
@@ -101,14 +98,10 @@ void simplecombo_set_opts(SimpleCombo *c,SimpleComboOptions &opts)
 		gtk_widget_show (menu_item);
 		o=o->NextOption();
 	}
-	cerr << "Done - setting menu" << endl;
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(c->optionmenu),c->menu);
 
-	cerr << "Done - packing box" << endl;
 	gtk_box_pack_start(GTK_BOX(c),GTK_WIDGET(c->optionmenu),TRUE,TRUE,0);
-	cerr << "Done - showing widget" << endl;
 	gtk_widget_show(c->optionmenu);
-	cerr << "Done - connecting signal" << endl;
 
 	if(oldkey.size())
 		simplecombo_set(c,oldkey.c_str());
@@ -116,8 +109,6 @@ void simplecombo_set_opts(SimpleCombo *c,SimpleComboOptions &opts)
 		simplecombo_set_index(c,oldidx);
 
 	g_signal_connect(c->optionmenu,"changed",G_CALLBACK(simplecombo_entry_changed),c);
-
-	cerr << "Done" << endl;
 }
 
 

@@ -57,4 +57,7 @@ const char *imageselector_get_filename(ImageSelector *c, unsigned int idx=0);
 void imageselector_set_filename(ImageSelector *c,const char *filename);
 bool imageselector_add_filename(ImageSelector *c,const char *filename,GdkPixbuf *pb=NULL);
 
+// Remove an image from the selector.  If no filename's provided, the widget will remove any selected images.
+void imageselector_remove(ImageSelector *c,const char *filename=NULL);
+
 #endif /* __IMAGESELECTOR_H__ */

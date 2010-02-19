@@ -634,3 +634,44 @@ void imageselector_set_filename(ImageSelector *c,const char *filename)
 		}
 	}
 }
+
+
+static void removebyname(ImageSelector *c,const char *filename)
+{
+	if(filename)
+	{
+		GList *iter=c->imagelist;
+		while(iter)
+		{
+			ImageEntry *ii=(ImageEntry *)iter->data;
+			if(ii && ii->filename && strcmp(ii->filename,filename)==0)
+			{
+				c->imagelist=g_list_delete_link(c->imagelist,iter);
+				delete ii;
+				break;
+			}
+			iter=g_list_next(iter);
+		}
+	}
+}
+
+void imageselector_remove(ImageSelector *c,const char *fn)
+{
+	if(fn)
+	{
+		removebyname(c,fn);
+	}
+	else
+	{
+		if(c->selectionlist)
+		{
+			Debug[TRACE] << "Checking selection list" << endl;
+			for(int i=0;i<c->selectionlist->size();++i)
+				removebyname(c,(*c->selectionlist)[i].c_str());
+		}
+		else
+			removebyname(c,c->filename);
+	}
+	rebuild_liststore(c);
+}
+
