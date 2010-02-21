@@ -1,6 +1,8 @@
 #ifndef IMAGESOURCE_TYPES_H
 #define IMAGESOURCE_TYPES_H
 
+#include "../support/debug.h"
+
 typedef unsigned short ISDataType;
 #define IS_SAMPLEMAX 65535
 #define EIGHTTOIS(x) (((x) << 8) | (x))
@@ -62,7 +64,7 @@ class ISDeviceNValue
 		else
 			throw "DeviceNValue - bounds check failed";
 	}
-	ISDeviceNValue &operator=(ISDeviceNValue &other)
+	ISDeviceNValue &operator=(const ISDeviceNValue &other)
 	{
 		if(channels<other.channels)
 		{
