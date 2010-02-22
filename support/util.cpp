@@ -48,9 +48,9 @@ FILE *FOpenUTF8(const char *name,const char *mode)
 	{
 		wchar_t *fnbuf=(wchar_t *)malloc(fnlen*sizeof(wchar_t));
 		wchar_t *modebuf=(wchar_t *)malloc(modelen*sizeof(wchar_t));
-		if(MultiByteToWideChar(CP_UTF8,0,filename,-1,fnbuf,fnlen))
+		if(MultiByteToWideChar(CP_UTF8,0,name,-1,fnbuf,fnlen))
 		{
-			MultiByteToWideChar(CP_UTF8,0,filename,-1,modebuf,modelen);
+			MultiByteToWideChar(CP_UTF8,0,mode,-1,modebuf,modelen);
 
 			file=_wfopen(fnbuf,modebuf);
 
@@ -62,9 +62,8 @@ FILE *FOpenUTF8(const char *name,const char *mode)
 	// maybe it's a code-page encoded filename supplied on the command line...
 	if(result)
 		return(result);
-#else
-	return(fopen(name,mode));
 #endif
+	return(fopen(name,mode));
 }
 
 
