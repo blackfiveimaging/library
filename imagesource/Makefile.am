@@ -23,6 +23,7 @@ libimagesource_la_SOURCES =	\
 	imagesource_convolution.h	\
 	imagesource_crop.cpp	\
 	imagesource_crop.h	\
+	imagesource_colorize.h	\
 	imagesource_dither.cpp	\
 	imagesource_dither.h	\
 	imagesource_desaturate.cpp	\
@@ -59,6 +60,7 @@ libimagesource_la_SOURCES =	\
 	imagesource_modifiedgamma.h	\
 	imagesource_montage.cpp	\
 	imagesource_montage.h	\
+	imagesource_overlay.h   \
 	imagesource_devicen_preview.cpp \
 	imagesource_devicen_preview.h \
 	imagesource_devicen_remap.cpp \
