@@ -100,6 +100,7 @@ static void pqp_buildqueuelist(struct pqprivate *pp)
 		{
 			for ( dwItem = 0; dwItem < dwNumItems; dwItem++ )
 			{
+				fprintf(stderr,"Creating printer node for: %s\n",lpINfo[dwItem].pPrinterName);
 				printernode_create(pp,lpInfo[dwItem].pPrinterName);
 			}
 		}
@@ -117,6 +118,7 @@ static struct pqprivate *pqprivate_create()
 	{
 		pp->Dispose=pqp_dispose;
 		pp->first=NULL;
+		pp->currentqueue=NULL;
 		pqp_buildqueuelist(pp);
 	}
 	return(pp);

@@ -99,7 +99,11 @@ char *PrinterQueues::GetDriver()
 
 char *PrinterQueues::GetPPD()
 {
-	Debug[TRACE] << "Current queue: " << GetPrinterQueue() << endl;
+	const char *queue=GetPrinterQueue();
+	if(queue)
+	{
+		Debug[TRACE] << "Current queue: " << queue << endl;
+	}
 	char *ppd=queues->GetPPD(queues);
 	if(ppd)
 		Debug[TRACE] << "PPD: " << ppd << endl;

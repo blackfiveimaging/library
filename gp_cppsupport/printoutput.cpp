@@ -43,10 +43,14 @@ PrintOutput::PrintOutput(ConfigFile *inif,const char *section) : ConfigDB(Templa
 		
 		if(queue)
 		{
+			SetPrinterQueue(queue);
 			SetString("Queue",queue);
 			char *driver=GetPrinterDriver(queue);
-			SetString("Driver",driver);
-			free(driver);
+			if(driver)
+			{
+				SetString("Driver",driver);
+				free(driver);
+			}
 			free(queue);
 		}
 		else

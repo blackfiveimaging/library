@@ -41,8 +41,8 @@ FILE *FOpenUTF8(const char *name,const char *mode)
 #ifdef WIN32
 	FILE *result=NULL;
 
-	size_t fnlen=MultiByteToWideChar(CP_UTF*,0,name,-1,NULL,0);
-	size_t modelen=MultiByteToWideChar(CP_UTF*,0,mode,-1,NULL,0);
+	size_t fnlen=MultiByteToWideChar(CP_UTF8,0,name,-1,NULL,0);
+	size_t modelen=MultiByteToWideChar(CP_UTF8,0,mode,-1,NULL,0);
 
 	if(fnlen && modelen)
 	{
