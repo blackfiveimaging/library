@@ -47,6 +47,8 @@ class ExternalProgram : public SearchPathHandler
 		// If the application knows where a particular program should be stored,
 		// such as /usr/lib/cups/backend, or c:/Program Files/PhotoPrint/
 		// then override and set in here.
+		// Note: Constructor doesn't call this, because the vtables aren't set up in time!
+		// Thus, you should call this in your own constructor.
 	}
 	virtual void AddArg(const std::string &arg)
 	{
