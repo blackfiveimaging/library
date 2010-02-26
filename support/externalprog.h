@@ -4,6 +4,7 @@
 #include <string>
 #include <deque>
 #include <cstdlib>
+#include <cstring>
 #include <unistd.h>
 #ifndef WIN32
 #include <sys/wait.h>
