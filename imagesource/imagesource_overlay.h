@@ -1,6 +1,8 @@
 #ifndef IMAGESOURCE_OVERLAY_H
 #define IMAGESOURCE_OVERLAY_H
 
+#include <iostream>
+
 class ImageSource_Overlay : public ImageSource
 {
 	public:
@@ -33,8 +35,8 @@ class ImageSource_Overlay : public ImageSource
 	}
 	void AddPlate(ImageSource *plate)
 	{
-		Debug[TRACE] << "Width: " << plate->width << endl;
-		Debug[TRACE] << "Height: " << plate->height << endl;
+		Debug[TRACE] << "Width: " << plate->width << std::endl;
+		Debug[TRACE] << "Height: " << plate->height << std::endl;
 		if(width==0)
 		{
 			width=plate->width;
