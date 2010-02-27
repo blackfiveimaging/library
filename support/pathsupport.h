@@ -1,6 +1,8 @@
 #ifndef PATHSUPPORT_H
 #define PATHSUPPORT_H
 
+#include <string>
+
 // Wrapper for either getenv("HOME") or g_get_home_dir().
 
 const char *get_homedir();
@@ -19,5 +21,17 @@ char *substitute_homedir(const char *path);
 //
 // Similar to substitute_homedir, but instead uses the XDG Base Directory specification.
 char *substitute_xdgconfighome(const char *path);
+
+
+
+// Given a top-level directory, extracts the last component, and matches against a prefix.
+// Useful for locating an executable.
+int MatchBaseName(const char *prefix,const char *path);
+
+
+// Given a top-level directory, scans recursively looking for an executable,
+// and returns its path, minus the executable.
+std::string FindParent(std::string initialpath, std::string program);
+
 
 #endif

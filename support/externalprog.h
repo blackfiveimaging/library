@@ -10,6 +10,9 @@
 #include <sys/wait.h>
 #endif
 
+#include "pathsupport.h"
+
+
 class ExternalProgArgList : public std::deque<std::string>
 {
 	public:
@@ -61,29 +64,17 @@ class ExternalProgram : public SearchPathHandler
 		char *prgname=SearchPaths(args[0].c_str());
 		if(!prgname)
 			throw "Can't find external program";
-#ifdef WIN32
-		string cmd(prgname);
-		cmd+=" ";
-		for(int i=1;i<argc;++i)
-		{
-			if(argv[i])
-			{
-				cmd+=argv[i];
-				cmd+=" ";
-			}
-		}
-		Debug[TRACE] << "Using command " << cmd << std::endl;
-		system(cmd.c_str());
-#else
 		char **arglist=(char **)malloc(sizeof(char *)*(args.size()+1));
-		arglist[0]=strdup(prgname);
-		for(unsigned int i=1;i<args.size();++i)
+		for(unsigned int i=0;i<args.size();++i)
 		{
 			arglist[i]=strdup(args[i].c_str());
 			Debug[TRACE] << "Argument: " << i << ": " << args[i].c_str() << std::endl;
 		}
 		arglist[args.size()]=NULL;
 
+#ifdef WIN32
+		forkpid=_spawnv(_P_WAIT,prgname,arglist);
+#else
 		switch((forkpid=fork()))
 		{
 			case -1:
@@ -100,20 +91,23 @@ class ExternalProgram : public SearchPathHandler
 				Debug[TRACE] << "Subprocess complete." << std::endl;
 				break;
 		}		
-
+#endif
 		for(unsigned int i=0;i<args.size();++i)
 		{
 			if(arglist[i])
 				free(arglist[i]);
 		}
 		free(arglist);
-#endif
 		free(prgname);
 	}
 	virtual void StopProgram()
 	{
+#ifdef WIN32
+		
+#else
 		if(forkpid)
 			kill(forkpid,SIGTERM);
+#endif
 	}
 	virtual void ClearArgs()
 	{
@@ -122,7 +116,11 @@ class ExternalProgram : public SearchPathHandler
 	}
 	protected:
 	ExternalProgArgList args;
+#ifdef WIN32
+	intptr_t forkpid;
+#else
 	int forkpid;
+#endif
 };
 
 #endif

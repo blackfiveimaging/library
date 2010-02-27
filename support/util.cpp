@@ -52,7 +52,7 @@ FILE *FOpenUTF8(const char *name,const char *mode)
 		{
 			MultiByteToWideChar(CP_UTF8,0,mode,-1,modebuf,modelen);
 
-			file=_wfopen(fnbuf,modebuf);
+			result=_wfopen(fnbuf,modebuf);
 
 		}
 		free(modebuf);
