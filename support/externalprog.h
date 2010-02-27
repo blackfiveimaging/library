@@ -76,9 +76,11 @@ class ExternalProgram : public SearchPathHandler
 		system(cmd.c_str());
 #else
 		char **arglist=(char **)malloc(sizeof(char *)*(args.size()+1));
-		for(unsigned int i=0;i<args.size();++i)
+		arglist[0]=strdup(prgname);
+		for(unsigned int i=1;i<args.size();++i)
 		{
 			arglist[i]=strdup(args[i].c_str());
+			Debug[TRACE] << "Argument: " << i << ": " << args[i].c_str() << std::endl;
 		}
 		arglist[args.size()]=NULL;
 
@@ -112,6 +114,11 @@ class ExternalProgram : public SearchPathHandler
 	{
 		if(forkpid)
 			kill(forkpid,SIGTERM);
+	}
+	virtual void ClearArgs()
+	{
+		while(args.size()>1)
+			args.pop_back();
 	}
 	protected:
 	ExternalProgArgList args;

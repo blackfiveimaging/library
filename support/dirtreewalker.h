@@ -5,7 +5,7 @@
 
 #include "dirent.h"
 
-class DirTreeWalker
+class DirTreeWalker : public std::string
 {
 	public:
 	DirTreeWalker(const char *initialpath,DirTreeWalker *parent=NULL);
@@ -16,7 +16,7 @@ class DirTreeWalker
 	protected:
 	DirTreeWalker *parent;
 	DirTreeWalker *child;
-	std::string path;
+//	std::string path;
 	std::string filename;
 	DIR *files;
 	DIR *dirs;

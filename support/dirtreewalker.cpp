@@ -14,7 +14,7 @@
 using namespace std;
 
 DirTreeWalker::DirTreeWalker(const char *initialpath,DirTreeWalker *parent)
-	: parent(parent), child(NULL), path(initialpath), filename(), files(NULL), dirs(NULL)
+	: std::string(initialpath), parent(parent), child(NULL), filename(), files(NULL), dirs(NULL)
 {
 	dirs=opendir(initialpath);
 	files=opendir(initialpath);
@@ -49,7 +49,7 @@ const char *DirTreeWalker::NextFile()
 		}
 		if(de)
 		{
-			filename=path+SEARCHPATH_SEPARATOR+de->d_name;
+			filename=*this+SEARCHPATH_SEPARATOR+de->d_name;
 
 			struct stat statbuf;
 			stat(filename.c_str(),&statbuf);
@@ -87,7 +87,7 @@ DirTreeWalker *DirTreeWalker::NextDirectory()
 		}
 		if(de)
 		{
-			filename=path+SEARCHPATH_SEPARATOR+de->d_name;
+			filename=*this+SEARCHPATH_SEPARATOR+de->d_name;
 
 			struct stat statbuf;
 			stat(filename.c_str(),&statbuf);
