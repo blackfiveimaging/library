@@ -41,6 +41,7 @@ struct _ProfileSelector
 	ProfileManager *pm;
 	IS_TYPE colourspace;
 	bool allowdevicelink;
+	bool allownone;
 	gchar *filename;
 	int currentidx;
 };
@@ -55,7 +56,7 @@ struct _ProfileSelectorClass
 
 GType profileselector_get_type (void);
 
-GtkWidget* profileselector_new (ProfileManager *pm,IS_TYPE colourspace=IS_TYPE_NULL,bool allowdevicelink=false);
+GtkWidget* profileselector_new (ProfileManager *pm,IS_TYPE colourspace=IS_TYPE_NULL,bool allowdevicelink=false, bool allownone=false);
 // Pass IS_TYPE_NULL to match any colourspace
 
 const char *profileselector_get_filename(ProfileSelector *c);

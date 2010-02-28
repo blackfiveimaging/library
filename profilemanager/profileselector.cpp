@@ -187,6 +187,13 @@ static void profileselector_build_options(ProfileSelector *c)
 
 	c->optionlist=g_list_sort(c->optionlist,mycmp_desc);
 
+	// "None" option - needs to go at the head...
+	if(c->allownone)
+	{
+		profsel_entry *noneps=new profsel_entry(NOPROFILE_ESCAPESTRING,gettext("None"));
+		c->optionlist=g_list_prepend(c->optionlist,noneps);
+	}
+
 	// "Other..." option, pops up a file selector.
 	profsel_entry *otherps=new profsel_entry(PS_ESCAPESTRING,gettext(PS_ESCAPESTRING));
 	c->optionlist=g_list_append(c->optionlist,otherps);
@@ -245,13 +252,14 @@ static void	profileselector_changed(GtkWidget *widget,gpointer user_data)
 
 
 GtkWidget*
-profileselector_new (ProfileManager *pm,IS_TYPE colourspace,bool allowdevicelink)
+profileselector_new (ProfileManager *pm,IS_TYPE colourspace,bool allowdevicelink,bool allownone)
 {
 	ProfileSelector *c=PROFILESELECTOR(g_object_new (profileselector_get_type (), NULL));
 
 	c->pm=pm;
 	c->colourspace=colourspace;
 	c->allowdevicelink=allowdevicelink;
+	c->allownone=allownone;
 
 	c->optionmenu=gtk_option_menu_new();
 	c->menu=NULL;  // Built on demand...

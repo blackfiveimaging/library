@@ -12,6 +12,7 @@
 
 #define SYSTEMMONITORPROFILE_ESCAPESTRING "<System monitor profile>"
 #define BUILTINSRGB_ESCAPESTRING "<Built-in sRGB profile>"
+#define NOPROFILE_ESCAPESTRING "<None>"
 
 enum CMColourDevice
 {
