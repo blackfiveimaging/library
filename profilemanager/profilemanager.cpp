@@ -296,7 +296,10 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,IS_TYP
 {
 	Debug[TRACE] << "TransformFactory getting default profile for image of type: " << type << endl;
 	CMSProfile *srcprofile=manager.GetDefaultProfile(type);
-	Debug[TRACE] << "Have source profile with input space" << srcprofile->GetColourSpace() << endl;
+	if(srcprofile)
+		Debug[TRACE] << "Have source profile with input space" << srcprofile->GetColourSpace() << endl;
+	else
+		Debug[TRACE] << "Unable to open default profile" << endl;
 	CMSTransform *t=NULL;
 	try
 	{

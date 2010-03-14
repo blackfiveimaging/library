@@ -1,7 +1,10 @@
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
-#include <string.h>
+#include <cstring>
+
+#include <libgen.h>
+
 #include <glib.h>
 
 #ifdef WIN32
