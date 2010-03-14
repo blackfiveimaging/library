@@ -40,7 +40,7 @@ void ProgressBar::cancel_callback(GtkWidget *wid,gpointer *ob)
 
 
 ProgressBar::ProgressBar(const char *message,bool cancel,GtkWidget *parent,bool modal)
-	: Progress(), message(NULL), label(NULL), cancelled(false)
+	: Progress(), message(NULL), label(NULL), cancelled(false), threadid(Thread::GetThreadID())
 {
 	if(message)
 		this->message=strdup(message);
@@ -92,23 +92,42 @@ ProgressBar::~ProgressBar()
 bool ProgressBar::DoProgress(int i,int maxi)
 {
 	Progress::DoProgress(i,maxi);
-	if(maxi)
+	current=i; max=maxi;
+	if(threadid==Thread::GetThreadID())
 	{
-		float v=i;
-		v/=maxi;
-		
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progressbar),v);
+		// We can call directly...
+		update(this);
 	}
 	else
-		gtk_progress_bar_pulse(GTK_PROGRESS_BAR(progressbar));
-
-	while(gtk_events_pending())
-		gtk_main_iteration_do(false);
+	{
+		// Need to defer update to main thread
+		g_timeout_add(1,update,this);
+	}
 
 	if(cancelled)
 		return(false);
 	else
 		return(true);
+}
+
+
+gboolean ProgressBar::update(gpointer ud)
+{
+	ProgressBar *pb=(ProgressBar *)ud;
+	if(pb->max)
+	{
+		float v=pb->current;
+		v/=pb->max;
+		
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(pb->progressbar),v);
+	}
+	else
+		gtk_progress_bar_pulse(GTK_PROGRESS_BAR(pb->progressbar));
+
+	while(gtk_events_pending())
+		gtk_main_iteration_do(false);
+
+	return(FALSE);
 }
 
 

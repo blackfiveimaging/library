@@ -2,6 +2,7 @@
 #define PP_PROGRESS_H
 
 #include "progress.h"
+#include "thread.h"
 #include <gtk/gtkwidget.h>
 
 class ProgressBar : public Progress
@@ -12,12 +13,15 @@ class ProgressBar : public Progress
 	bool DoProgress(int i,int maxi);
 	void SetMessage(const char *msg);
 	static void cancel_callback(GtkWidget *wid,gpointer *ob);
+	static gboolean update(gpointer ud);
 	private:
 	char *message;
 	GtkWidget *window;
 	GtkWidget *progressbar;
 	GtkWidget *label;
 	bool cancelled;
+	int current,max;
+	ThreadID threadid;
 };
 
 #endif

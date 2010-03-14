@@ -160,8 +160,12 @@ char *BuildFilename(const char *root,const char *suffix,const char *fileext)
 	while (extension >= root2)
 	{
 		if(*extension == '/' || *extension == '\\')
-			extension=root2;
-		if (*extension == '.') break;
+		{
+			extension=root2 + strlen(root2) - 1;
+			break;
+		}
+		if (*extension == '.')
+			break;
 		extension--;
 	}
 	if (extension >= root2 && fileext && strlen(fileext))
