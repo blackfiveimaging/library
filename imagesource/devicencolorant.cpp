@@ -254,19 +254,15 @@ DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name,co
 
 
 DeviceNColorant::DeviceNColorant(DeviceNColorantList &header,const char *name,const char *displayname,int r,int g, int b)
-	: red(r), green(g), blue(b), header(header), name(NULL), next(NULL), prev(NULL)
+	: red(r), green(g), blue(b), header(header), enabled(true), name(NULL), displayname(NULL), next(NULL), prev(NULL)
 {
 	if(name)
 		this->name=strdup(name);
-	prev=header.first;
-	if(prev)
-	{
-		while(prev->next)
-			prev=prev->next;
-		prev->next=this;
-	}
+	if(displayname)
+		this->displayname=strdup(displayname);
 	else
-		header.first=this;
+		this->displayname=strdup(gettext(name));
+	linknode();
 }
 
 
