@@ -17,8 +17,8 @@
 #include "progress.h"
 
 GdkPixbuf *pixbuf_from_imagesource(ImageSource *is,
-	int redbg8=255,int greenbg8=255,int bluebg8=255,Progress *prog=NULL);
+	int redbg8=255,int greenbg8=255,int bluebg8=255,Progress *prog=NULL,GdkPixbuf *pb=NULL);
 
-GdkPixbuf *pixbuf_alpha_from_imagesource(ImageSource *is,Progress *prog=NULL);
+GdkPixbuf *pixbuf_alpha_from_imagesource(ImageSource *is,Progress *prog=NULL,GdkPixbuf *pb=NULL);
 
 #endif

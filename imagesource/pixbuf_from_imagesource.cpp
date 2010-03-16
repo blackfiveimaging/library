@@ -16,14 +16,10 @@
 using namespace std;
 
 GdkPixbuf *pixbuf_from_imagesource(ImageSource *is,
-	int redbg8,int greenbg8,int bluebg8,Progress *prog)
+	int redbg8,int greenbg8,int bluebg8,Progress *prog,GdkPixbuf *pb)
 {
 	if(!is)
 		return(NULL);
-
-	GdkPixbuf *pb;
-
-	Debug[COMMENT] << "pixbuf_from_imagesource: Converting image of type " << is->type << endl;
 
 	switch(is->type)
 	{
@@ -32,12 +28,24 @@ GdkPixbuf *pixbuf_from_imagesource(ImageSource *is,
 		case IS_TYPE_GREY:
 		case IS_TYPE_GREYA:
 		case IS_TYPE_CMYK:
-			pb=gdk_pixbuf_new(GDK_COLORSPACE_RGB,FALSE,8,is->width,is->height);
 			break;
 		default:
 			Debug[WARN] << "pixbuf_from_imagesource: unhandled type - bailing out..." << endl;
 			return(NULL);
 			break;
+	}
+
+	if(pb)
+	{
+		if(gdk_pixbuf_get_width(pb)!=is->width)
+			throw "Pixbuf's dimensions must match that of ImageSource!";
+		if(gdk_pixbuf_get_height(pb)!=is->height)
+			throw "Pixbuf's dimensions must match that of ImageSource!";
+	}
+	else
+	{
+		Debug[COMMENT] << "pixbuf_from_imagesource: Converting image of type " << is->type << endl;
+		pb=gdk_pixbuf_new(GDK_COLORSPACE_RGB,FALSE,8,is->width,is->height);
 	}
 
 	if(pb)
@@ -130,14 +138,10 @@ GdkPixbuf *pixbuf_from_imagesource(ImageSource *is,
 }
 
 
-GdkPixbuf *pixbuf_alpha_from_imagesource(ImageSource *is,Progress *prog)
+GdkPixbuf *pixbuf_alpha_from_imagesource(ImageSource *is,Progress *prog,GdkPixbuf *pb)
 {
 	if(!is)
 		return(NULL);
-
-	GdkPixbuf *pb;
-
-	Debug[COMMENT] << "pixbuf_from_imagesource: Converting image of type " << is->type << endl;
 
 	switch(is->type)
 	{
@@ -146,11 +150,24 @@ GdkPixbuf *pixbuf_alpha_from_imagesource(ImageSource *is,Progress *prog)
 		case IS_TYPE_GREY:
 		case IS_TYPE_GREYA:
 		case IS_TYPE_CMYK:
-			pb=gdk_pixbuf_new(GDK_COLORSPACE_RGB,TRUE,8,is->width,is->height);
 			break;
 		default:
+			Debug[WARN] << "pixbuf_from_imagesource: unhandled type - bailing out..." << endl;
 			return(NULL);
 			break;
+	}
+
+	if(pb)
+	{
+		if(gdk_pixbuf_get_width(pb)!=is->width)
+			throw "Pixbuf's dimensions must match that of ImageSource!";
+		if(gdk_pixbuf_get_height(pb)!=is->height)
+			throw "Pixbuf's dimensions must match that of ImageSource!";
+	}
+	else
+	{
+		Debug[COMMENT] << "pixbuf_from_imagesource: Converting image of type " << is->type << endl;
+		pb=gdk_pixbuf_new(GDK_COLORSPACE_RGB,TRUE,8,is->width,is->height);
 	}
 
 	if(pb)
