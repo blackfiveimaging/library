@@ -125,7 +125,7 @@ ThreadID Thread::GetThreadID()
 }
 
 Thread::Thread(ThreadFunction *threadfunc)
-	: threadfunc(threadfunc)
+	: threadfunc(threadfunc), state(THREAD_IDLE)
 {
 	pthread_attr_init(&attr);
 }
