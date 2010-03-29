@@ -3,6 +3,7 @@
 
 #include "progress.h"
 #include "thread.h"
+#include "refcountui.h"
 #include <gtk/gtkwidget.h>
 
 class ProgressBar : public Progress
@@ -22,6 +23,16 @@ class ProgressBar : public Progress
 	bool cancelled;
 	int current,max;
 	ThreadID threadid;
+};
+
+
+class ProgressBar_RefCount : public ProgressBar, public RefCountUI
+{
+	public:
+	ProgressBar_RefCount(const char *message,bool cancelbutton,GtkWidget *parent=NULL,bool modal=false)
+		: ProgressBar(message,cancelbutton,parent,modal), RefCountUI()
+	{
+	}
 };
 
 #endif
