@@ -29,9 +29,4 @@ char *substitute_xdgconfighome(const char *path);
 int MatchBaseName(const char *prefix,const char *path);
 
 
-// Given a top-level directory, scans recursively looking for an executable,
-// and returns its path, minus the executable.
-std::string FindParent(std::string initialpath, std::string program);
-
-
 #endif

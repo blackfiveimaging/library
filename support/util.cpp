@@ -24,6 +24,7 @@
 
 #include "debug.h"
 #include "searchpath.h"
+#include "dirtreewalker.h"
 #include "pathsupport.h"
 
 
@@ -299,6 +300,34 @@ bool CompareFiles(const char *fn1,const char *fn2)
 
 	return(result);
 }
+
+
+
+// Given a top-level directory, scans recursively looking for an executable,
+// and returns its path, minus the executable.
+std::string FindParent(std::string initialpath, std::string program)
+{
+	DirTreeWalker dtw(initialpath.c_str());
+	const char *fn;
+	while((fn=dtw.NextFile()))
+	{
+		Debug[TRACE] << "Checking " << fn << std::endl;
+		if(MatchBaseName(program.c_str(),fn)==0)
+			return(dtw);
+		Debug[TRACE] << "Getting next file..." << std::endl;
+	}
+	DirTreeWalker *w;
+	while((w=dtw.NextDirectory()))
+	{
+		Debug[TRACE] << "Recursively scanning: " << *w << std::endl;
+		std::string result=FindParent(*w,program);
+		if(result.size())
+			return(result);
+		Debug[TRACE] << "Getting next dir..." << std::endl;
+	}
+	return("");
+}
+
 
 
 // A "safe" version of strdup which returns a valid pointer to an empty string

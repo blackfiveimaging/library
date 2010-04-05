@@ -66,6 +66,13 @@ char *SerialiseFilename(const char *fname,int serialno,int max=0);
 std::string ShellQuote(std::string &in);
 std::string ShellQuote(const char *in);
 
+
+// Given a top-level directory, scans recursively looking for an executable,
+// and returns its path, minus the executable.
+std::string FindParent(std::string initialpath, std::string program);
+
+
+
 // String handling utilities
 
 // A variant of strdup() which is safe to use on a NULL string, in which case it returns
