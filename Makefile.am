@@ -1,6 +1,6 @@
 # Makefile.am
 
-SUBDIRS = po support imagesource imageutils miscwidgets stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
+SUBDIRS = po argyllsupport support imagesource imageutils miscwidgets stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
 
 localedir=$(datadir)/locale
 
@@ -38,6 +38,7 @@ tabui_SOURCES = tabui.cpp
 errorqueuetest_SOURCES = errorqueuetest.cpp
 
 LDADD = \
+	argyllsupport/libargyllsupport.la \
 	imageutils/libimageutils.la	\
 	gp_cppsupport/libgp_cppsupport.la \
 	miscwidgets/libmiscwidgets.la	\

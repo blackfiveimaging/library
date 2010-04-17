@@ -249,8 +249,8 @@ static void rebuild_liststore(ImageSelector *c)
 {
 	if(!c->imagelist)
 		populate_list(c);
-	else
-	{
+//	else
+//	{
 		// Rebuild list view from ImageSelector
 		GList *iter=c->imagelist;
 	
@@ -265,7 +265,7 @@ static void rebuild_liststore(ImageSelector *c)
 			gtk_list_store_set(c->liststore,&iter1,0,ii->pixbuf,-1);
 			iter=g_list_next(iter);
 		}	
-	}
+//	}
 }
 
 
