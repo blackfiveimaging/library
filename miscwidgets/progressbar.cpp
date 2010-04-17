@@ -19,6 +19,7 @@
 #include <gtk/gtkprogressbar.h>
 #include <gtk/gtkstock.h>
 
+#include "errordialogqueue.h"
 #include "progressbar.h"
 
 #ifdef HAVE_CONFIG_H
@@ -142,3 +143,11 @@ void ProgressBar::SetMessage(const char *msg)
 	if(label)
 		gtk_label_set_text(GTK_LABEL(label),message);
 }
+
+
+// Presents an error message to the user by way of the ErrorDialogQueue system.
+void ProgressBar::ErrorMessage(const char *msg)
+{
+	ErrorDialogs.AddMessage(msg);
+}
+

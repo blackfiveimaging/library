@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "errordialogqueue.h"
 #include "generaldialogs.h"
 
@@ -12,6 +14,7 @@ ErrorMessageQueue::~ErrorMessageQueue()
 
 void ErrorMessageQueue::AddMessage(const char *message)
 {
+	std::cerr << "***Queuing error message: " << message << std::endl;
 	ObtainMutex();
 	messages.push_back(message);
 	ReleaseMutex();

@@ -11,6 +11,7 @@
 #define PROGRESS_H
 
 #include <iostream>
+#include "debug.h"
 
 using namespace std;
 
@@ -37,6 +38,10 @@ class Progress
 	virtual void SetMessage(const char *msg)
 	{
 	}
+	virtual void ErrorMessage(const char *msg)
+	{
+		Debug[ERROR] << "Error: " << msg << endl;
+	}	
 	protected:
 	int current;
 	int max;

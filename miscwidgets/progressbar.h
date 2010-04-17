@@ -13,6 +13,7 @@ class ProgressBar : public Progress
 	~ProgressBar();
 	bool DoProgress(int i,int maxi);
 	void SetMessage(const char *msg);
+	void ErrorMessage(const char *msg);
 	static void cancel_callback(GtkWidget *wid,gpointer *ob);
 	static gboolean update(gpointer ud);
 	private:
