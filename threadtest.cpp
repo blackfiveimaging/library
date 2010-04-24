@@ -66,7 +66,7 @@ class TestThread_WaitTH : public ThreadFunction
 	{
 		cerr << "Thread " << t.GetThreadID() << " initializing" << endl;
 
-		ThreadCondition &cond=event.WaitAndHold();
+		event.WaitAndHold();
 
 		cerr << "Thread " << t.GetThreadID() << " pausing..." << endl;
 
@@ -76,7 +76,7 @@ class TestThread_WaitTH : public ThreadFunction
 			sleep(1);
 #endif
 
-		cond.ReleaseMutex();
+		event.Release();
 		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
 		return(0);
 	}

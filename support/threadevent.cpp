@@ -289,6 +289,12 @@ ThreadCondition &ThreadEvent::QueryWaitAndHold()
 }
 
 
+void ThreadEvent::Release()
+{
+	cond.ReleaseMutex();
+}
+
+
 void ThreadEvent::Subscribe()
 {
 	Debug[TRACE] << "ThreadEvent - obtaining mutex" << endl;

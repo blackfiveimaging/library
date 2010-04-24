@@ -30,12 +30,20 @@ class ThreadEvent
 	const char *GetName();
 	void Trigger();
 	void WaitEvent();
+
 	// Use this if you want to block other threads from responding to the
-	// event.  Simply call ReleaseMutex() on the returned ThreadCondition to
-	// unblock other threads.
+	// event.  When done, just call Release() to unblock other threads.  Alternatively
+	// you can call ReleaseMutex() on the returned ThreadCondition.
 	ThreadCondition &WaitAndHold();
+
+	// If you've used one of the ...AndHold() functions, you should call Release() when
+	// you're done.  Alternatively you can call ReleaseMutex() on the ThreadCondition
+	// returned by the ..AndHold() function.
+	void Release();
+
 	// If you want to know whether the signal's been triggered, but not wait, use this:
 	int Query();
+
 	// If you want to wait but only if the signal hasn't already been triggered, use this:
 	int QueryAndWait();
 	ThreadCondition &QueryWaitAndHold();
