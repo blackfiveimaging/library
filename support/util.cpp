@@ -162,7 +162,7 @@ char *BuildFilename(const char *root,const char *suffix,const char *fileext)
 	{
 		if(*extension == '/' || *extension == '\\')
 		{
-			extension=root2 + strlen(root2) - 1;
+			extension=root2 + strlen(root2);
 			break;
 		}
 		if (*extension == '.')
