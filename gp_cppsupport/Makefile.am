@@ -6,6 +6,8 @@ noinst_LTLIBRARIES = libgp_cppsupport.la
 libgp_cppsupport_la_SOURCES = 		\
 	gprintersettings.cpp	\
 	gprintersettings.h	\
+	gpdevicensupport.cpp \
+	gpdevicensupport.h \
 	printoutput.cpp	\
 	printoutput.h	\
 	printerqueueswrapper.cpp	\

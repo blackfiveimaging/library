@@ -11,7 +11,10 @@ class DeviceNColorantList
 	DeviceNColorantList(IS_TYPE type);
 	virtual ~DeviceNColorantList();
 	virtual int GetColorantCount();
+
+	// Find a colorant by name - returns -1 if not found
 	virtual int GetColorantIndex(const char *name);
+
 	virtual char *GetEnabledColorants();
 	virtual void SetEnabledColorants(const char *col);
 	virtual DeviceNColorant *FirstColorant();
