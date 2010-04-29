@@ -131,6 +131,9 @@ ImageSource_Montage::ImageSource_Montage(IS_TYPE type,int resolution, int sample
 		case IS_TYPE_CMYK:
 			this->samplesperpixel=4;
 			break;
+		case IS_TYPE_CMYKA:
+			this->samplesperpixel=5;
+			break;
 		case IS_TYPE_DEVICEN:
 			break;
 		default:
