@@ -26,6 +26,7 @@
 #include <glib/gprintf.h>
 
 #include "../imagesource/imagesource.h"
+#include "../imagesource/imagesource_flatten.h"
 #include "../support/debug.h"
 #include "../support/util.h"
 #include "../support/md5.h"
@@ -310,7 +311,12 @@ string GPrinter::get_extendedopts()
 void GPrinter::Print(ImageSource *src,int xpos,int ypos,Consumer *cons)
 {
 	Debug[TRACE] << "*** GPrinter: Printing at position: " << xpos << ", " << ypos << endl;
+
+	if(HAS_ALPHA(src->type))
+		src=new ImageSource_Flatten(src);
+
 	source=src;
+
 	switch(source->type)
 	{
 		case IS_TYPE_RGB:
@@ -326,7 +332,7 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos,Consumer *cons)
 			stp_set_string_parameter(stpvars, "InputImageType", "Raw");
 			{
 				char nchan[10];
-				sprintf(nchan,"%d",src->samplesperpixel);
+				sprintf(nchan,"%d",source->samplesperpixel);
 				stp_set_string_parameter(stpvars, "RawChannels", nchan);
 			}
 			break;

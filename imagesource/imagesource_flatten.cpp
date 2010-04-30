@@ -60,10 +60,14 @@ ISDataType *ImageSource_Flatten::GetRow(int row)
 			for(i=0;i<width;++i)
 			{
 				int a=srcdata[i*5+4];
-				rowbuffer[i*4]=(a*srcdata[i*5]+IS_SAMPLEMAX*(IS_SAMPLEMAX-a))/IS_SAMPLEMAX;
-				rowbuffer[i*4+1]=(a*srcdata[i*5+1]+IS_SAMPLEMAX*(IS_SAMPLEMAX-a))/IS_SAMPLEMAX;
-				rowbuffer[i*4+2]=(a*srcdata[i*5+2]+IS_SAMPLEMAX*(IS_SAMPLEMAX-a))/IS_SAMPLEMAX;
-				rowbuffer[i*4+3]=(a*srcdata[i*5+3]+IS_SAMPLEMAX*(IS_SAMPLEMAX-a))/IS_SAMPLEMAX;
+//				rowbuffer[i*4]=(a*srcdata[i*5]+IS_SAMPLEMAX*(IS_SAMPLEMAX-a))/IS_SAMPLEMAX;
+//				rowbuffer[i*4+1]=(a*srcdata[i*5+1]+IS_SAMPLEMAX*(IS_SAMPLEMAX-a))/IS_SAMPLEMAX;
+//				rowbuffer[i*4+2]=(a*srcdata[i*5+2]+IS_SAMPLEMAX*(IS_SAMPLEMAX-a))/IS_SAMPLEMAX;
+//				rowbuffer[i*4+3]=(a*srcdata[i*5+3]+IS_SAMPLEMAX*(IS_SAMPLEMAX-a))/IS_SAMPLEMAX;
+				rowbuffer[i*4]=(a*srcdata[i*5])/IS_SAMPLEMAX;
+				rowbuffer[i*4+1]=(a*srcdata[i*5+1])/IS_SAMPLEMAX;
+				rowbuffer[i*4+2]=(a*srcdata[i*5+2])/IS_SAMPLEMAX;
+				rowbuffer[i*4+3]=(a*srcdata[i*5+3])/IS_SAMPLEMAX;
 			}
 			break;
 	}
