@@ -159,6 +159,7 @@ ImageSource_Montage::~ImageSource_Montage()
 
 void ImageSource_Montage::Add(ImageSource *is,int xpos,int ypos)
 {
+	Debug[TRACE] << "Adding image of type " << is->type << " to page of type " << type << endl;
 	if(STRIP_ALPHA(is->type)!=STRIP_ALPHA(type))
 		throw "Can't yet mix different colour spaces on one page";
 	new ISMontage_Component(this,is,xpos,ypos);
