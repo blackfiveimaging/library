@@ -218,6 +218,9 @@ enum IS_TYPE CMSProfile::GetColourSpace()
 		case icSigCmykData:
 			return(IS_TYPE_CMYK);
 			break;
+		case icSigLabData:
+			return(IS_TYPE_LAB);
+			break;
 		default:
 			return(IS_TYPE_NULL);
 			break;
@@ -240,6 +243,9 @@ enum IS_TYPE CMSProfile::GetDeviceLinkOutputSpace()
 			break;
 		case icSigCmykData:
 			return(IS_TYPE_CMYK);
+			break;
+		case icSigLabData:
+			return(IS_TYPE_LAB);
 			break;
 		default:
 			return(IS_TYPE_NULL);
@@ -425,6 +431,9 @@ CMSTransform::CMSTransform(CMSProfile *profiles[],int profilecount,LCMSWrapper_I
 			case IS_TYPE_CMYK:
 				it=TYPE_CMYK_16;
 				break;
+			case IS_TYPE_LAB:
+				it=TYPE_Lab_16;
+				break;
 			default:
 				throw "Unsupported colour space (input)";
 				break;
@@ -440,6 +449,9 @@ CMSTransform::CMSTransform(CMSProfile *profiles[],int profilecount,LCMSWrapper_I
 				break;
 			case IS_TYPE_CMYK:
 				ot=TYPE_CMYK_16;
+				break;
+			case IS_TYPE_LAB:
+				ot=TYPE_Lab_16;
 				break;
 			default:
 				throw "Unsupported colour space (output)";
@@ -498,6 +510,9 @@ void CMSTransform::MakeTransform(CMSProfile *in,CMSProfile *out,LCMSWrapper_Inte
 		case IS_TYPE_CMYK:
 			it=TYPE_CMYK_16;
 			break;
+		case IS_TYPE_LAB:
+			it=TYPE_Lab_16;
+			break;
 		default:
 			throw "Unsupported colour space (input)";
 			break;
@@ -513,6 +528,9 @@ void CMSTransform::MakeTransform(CMSProfile *in,CMSProfile *out,LCMSWrapper_Inte
 			break;
 		case IS_TYPE_CMYK:
 			ot=TYPE_CMYK_16;
+			break;
+		case IS_TYPE_LAB:
+			ot=TYPE_Lab_16;
 			break;
 		default:
 			throw "Unsupported colour space (output)";
@@ -626,6 +644,9 @@ CMSProofingTransform::CMSProofingTransform(CMSProfile *in,CMSProfile *out,CMSPro
 		case IS_TYPE_CMYK:
 			it=TYPE_CMYK_16;
 			break;
+		case IS_TYPE_LAB:
+			it=TYPE_Lab_16;
+			break;
 		default:
 			throw "Unsupported colour space (input)";
 			break;
@@ -641,6 +662,9 @@ CMSProofingTransform::CMSProofingTransform(CMSProfile *in,CMSProfile *out,CMSPro
 			break;
 		case IS_TYPE_CMYK:
 			ot=TYPE_CMYK_16;
+			break;
+		case IS_TYPE_LAB:
+			ot=TYPE_Lab_16;
 			break;
 		default:
 			throw "Unsupported colour space (output)";
@@ -689,6 +713,9 @@ CMSProofingTransform::CMSProofingTransform(CMSProfile *devicelink,CMSProfile *pr
 		case IS_TYPE_CMYK:
 			it=TYPE_CMYK_16;
 			break;
+		case IS_TYPE_LAB:
+			it=TYPE_Lab_16;
+			break;
 		default:
 			throw "Unsupported colour space (input)";
 			break;
@@ -704,6 +731,9 @@ CMSProofingTransform::CMSProofingTransform(CMSProfile *devicelink,CMSProfile *pr
 			break;
 		case IS_TYPE_CMYK:
 			ot=TYPE_CMYK_16;
+			break;
+		case IS_TYPE_LAB:
+			ot=TYPE_Lab_16;
 			break;
 		default:
 			throw "Unsupported colour space (output)";
