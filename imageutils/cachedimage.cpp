@@ -36,8 +36,13 @@ CachedImage_Deferred::~CachedImage_Deferred()
 void CachedImage_Deferred::ReadImage()
 {
 	Debug[TRACE] << "CachedImage: ReadImage()" << endl;
+	if(!source)
+		throw "CachedImage_Deferred::ReadImage - source is NULL";
 	for(int row=0;row<height;++row)
 		ReadRow(row);
+	if(source)
+		delete source;
+	source=NULL;
 }
 
 

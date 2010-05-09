@@ -178,6 +178,17 @@ TIFFSaver::TIFFSaver(const char *filename,struct ImageSource *is,bool deep,int b
 	}
 	switch(bitsperpixel)
 	{
+		case 40:
+			if(HAS_ALPHA(is->type))
+			{
+				TIFFSetField(file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_SEPARATED);
+				TIFFSetField(file, TIFFTAG_SAMPLESPERPIXEL, 5);
+				TIFFSetField(file, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+				TIFFSetField(file, TIFFTAG_BITSPERSAMPLE, deep ? 16 : 8);
+			}
+			else
+				throw "DeviceN TIFF output is not yet complete";
+			break;
 		case 32:
 			if(HAS_ALPHA(is->type))
 			{

@@ -320,6 +320,35 @@ void ConfigDB::SaveDB(FILE *file)
 }
 
 
+ConfigDB &ConfigDB::operator=(ConfigDB &other)
+{
+	ConfigOption *o=firstopt;
+	while(o)
+	{
+		switch(o->Type)
+		{
+			case ConfigARG_INTEGER:
+				SetInt(o->Name,other.FindInt(o->Name));
+				break;
+			case ConfigARG_FLOAT:
+				SetFloat(o->Name,other.FindFloat(o->Name));
+				break;
+			case ConfigARG_STRING:
+				{
+					const char *v=other.FindString(o->Name);
+					if(v && strlen(v))
+						SetString(o->Name,v);
+				}
+				break;
+			default:
+				break;
+		}
+		o=o->next;
+	}
+	return(*this);
+}
+
+
 ConfigDB::ConfigDB(struct ConfigTemplate *templ)
 {
 	firstopt=NULL;

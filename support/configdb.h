@@ -8,20 +8,22 @@
 
 In its simplest form you use it like this:
 
+#include <iostream>
+
 #include "configdb.h"
 
 class MyClassThatNeedsConfigData : public ConfigDB
 {
 	public:
 	MyClassThatNeedsConfigData(ConfigFile *myfile)
-		: ConfigDB(Template);
+		: ConfigDB(Template)
 	{
 		new ConfigDBHandler(myfile,"[SectionName]",this);
 		// (This object is owned by the ConfigFile and will be freed by it.)
 	}
 	void MemberFunction()
 	{
-		cout << "Int value: " << FindInt("AnIntValue") << endl;
+		std::cout << "Int value: " << FindInt("AnIntValue") << std::endl;
 	}
 	private:
 	static ConfigTemplate Template[];
@@ -39,11 +41,11 @@ ConfigTemplate MyClassThatNeedsConfigData::Template[]=
 int main(int argc,char **argv)
 {
 	ConfigFile myconfig;
-	MyClassThatNeedsConfigData myclass(myconfig);
+	MyClassThatNeedsConfigData myclass(&myconfig);
 	myconfig.ParseConfigFile("/path/to/myconfigfile");
 
 	myclass.MemberFunction();
-	cout "String value: " << myclass.FindString("AStringValue");
+	std::cout << "String value: " << myclass.FindString("AStringValue") << std::endl;
 
 	myclass.SetFloat("AFloatValue",1.45);
 	
@@ -51,8 +53,7 @@ int main(int argc,char **argv)
 
 	return(0);
 }
-
- */
+*/
 
 #ifndef CONFIGDB_H
 #define CONFIGDB_H
@@ -99,6 +100,7 @@ class ConfigDB
 	void SetInt(const char *Name,int val);
 	void SetFloat(const char *Name,double val);
 	void SetString(const char *Name,const char *val);
+	ConfigDB &operator=(ConfigDB &other);
 	private:
 	ConfigOption *FindOption(const char *Name);
 	struct ConfigOption *firstopt;

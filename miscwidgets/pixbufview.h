@@ -46,7 +46,7 @@ struct _PixbufViewClass
 };
 
 
-GtkWidget* pixbufview_new(GdkPixbuf *pb,bool scaletofit=true);
+GtkWidget* pixbufview_new(GdkPixbuf *pb=NULL,bool scaletofit=true);
 GtkType pixbufview_get_type(void);
 
 void pixbufview_set_pixbuf(PixbufView *pv,GdkPixbuf *pb,unsigned int page=0);
