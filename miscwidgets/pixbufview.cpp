@@ -439,6 +439,7 @@ pixbufview_motion_notify( GtkWidget      *widget,
 			pageview->yoffset=0;
 
 		gtk_widget_queue_draw (GTK_WIDGET (pageview));
+		g_signal_emit_by_name (GTK_OBJECT (pageview), "mousemove");
 	}
 	else
 	{
@@ -488,7 +489,7 @@ pixbufview_motion_notify( GtkWidget      *widget,
 				pageview->mousex=pw-1;
 			if(pageview->mousey>=ph)
 				pageview->mousey=ph-1;
-			g_signal_emit_by_name (GTK_OBJECT (pageview), "mousemove");
+			g_signal_emit_by_name (GTK_OBJECT (pageview), "changed");
 		}
 	}
 	return FALSE;

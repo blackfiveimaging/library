@@ -207,6 +207,7 @@ static struct colorantdefinition colorantdefinitions[]=
 	{"Green",0,255,0},
 	{"Orange",255,128,0},
 	{"Alpha",192,192,192},
+	{"White",255,255,255},
 	{NULL,0,0,0}
 };
 
