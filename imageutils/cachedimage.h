@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+#include "progress.h"
 #include "imagesource/imagesource.h"
 
 // CachedImage_Deferred - the base class for cached images.  Sets up the width, height, type, etc.
@@ -16,7 +17,7 @@ class CachedImage_Deferred
 	public:
 	CachedImage_Deferred(ImageSource *source);
 	virtual ~CachedImage_Deferred();
-	virtual void ReadImage();
+	virtual void ReadImage(Progress *prog=NULL);
 	virtual void ReadRow(int row);
 	virtual ISDataType *GetRow(int row);
 	virtual ImageSource *GetImageSource();
@@ -39,9 +40,9 @@ class CachedImage_Deferred
 class CachedImage : public CachedImage_Deferred
 {
 	public:
-	CachedImage(ImageSource *source) : CachedImage_Deferred(source)
+	CachedImage(ImageSource *source, Progress *prog=NULL) : CachedImage_Deferred(source)
 	{
-		ReadImage();
+		ReadImage(prog);
 	}
 	virtual ~CachedImage()
 	{
