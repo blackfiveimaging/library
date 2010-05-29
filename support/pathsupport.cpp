@@ -46,9 +46,9 @@ char *substitute_homedir(const char *path)
 	{
 		// First try to substitute a "$HOME_PICTURES" path.  On Win32 this will be My Pictures.
 		// On UNIX we'll just use $HOME for now.
-		if(strncmp(path,"$HOME_PICTURES",15)==0)
+		if(strncmp(path,"$HOME_PICTURES",14)==0)
 		{
-			path+=15;
+			path+=14;
 #ifdef WIN32
 			static char pixdir[MAX_PATH]={0};
 			static bool init=false;
