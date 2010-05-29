@@ -15,7 +15,14 @@ CachedImage_Deferred::CachedImage_Deferred(ImageSource *source)
 	Debug[TRACE] << "In CachedImage_Deferred constructor" << endl;
 	Debug[TRACE] << "Image type: " << type << ", width: " << width << ", height: " << height << endl;
 	Debug[TRACE] << "(" << source->type << ")" << endl;
-	imagedata=new ISDataType[width*height*samplesperpixel];
+	try
+	{
+		imagedata=new ISDataType[width*height*samplesperpixel];
+	}
+	catch (bad_alloc&)
+	{
+		throw "Can't allocate pixel buffer";
+	}
 	CMSProfile *prof=source->GetEmbeddedProfile();
 	if(prof)
 		embeddedprofile=new CMSProfile(*prof);
