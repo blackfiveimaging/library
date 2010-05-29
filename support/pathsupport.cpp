@@ -41,14 +41,36 @@ const char *get_homedir()
 char *substitute_homedir(const char *path)
 {
 	char *result=NULL;
+	const char *subst=NULL;
 	if(path)
 	{
-		if(path[0]=='~')
+		// First try to substitute a "$HOME_PICTURES" path.  On Win32 this will be My Pictures.
+		// On UNIX we'll just use $HOME for now.
+		if(strncmp(path,"$HOME_PICTURES",15)==0)
+		{
+			path+=15;
+#ifdef WIN32
+			static char pixdir[MAX_PATH]={0};
+			static bool init=false;
+			if(!init)
+			{
+				SHGetFolderPath(NULL,CSIDL_COMMON_PICTURES,NULL,SHGFP_TYPE(SHGFP_TYPE_CURRENT),pixdir);
+			}
+			subst=pixdir;
+#else
+			subst=get_homedir();
+#endif
+		}
+		else if(path[0]=='~')
+		{
 			++path;
-
+			subst=get_homedir();
+		}
 		else if(strncmp(path,"$HOME",5)==0)
+		{
 			path+=5;
-
+			subst=get_homedir();
+		}
 		else	// No substitution to be done...
 			return(strdup(path));
 
@@ -57,11 +79,10 @@ char *substitute_homedir(const char *path)
 
 		// If we get this far, then we need to substitute - and path now points
 		// to the beginning of the path proper...
-		const char *hd=get_homedir();
 
-		result=(char *)malloc(strlen(path)+strlen(hd)+2);	
+		result=(char *)malloc(strlen(path)+strlen(subst)+2);	
 
-		sprintf(result,"%s%c%s",hd,SEARCHPATH_SEPARATOR,path);
+		sprintf(result,"%s%c%s",subst,SEARCHPATH_SEPARATOR,path);
 	}
 	return(result);
 }
