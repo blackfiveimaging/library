@@ -8,6 +8,8 @@
 #include "imagesource/imagesource_util.h"
 #include "imagesource/pixbuf_from_imagesource.h"
 #include "imagesource/imagesource_histogram.h"
+#include "imagesource/imagesource_hreflect.h"
+#include "imagesource/imagesource_vreflect.h"
 #include "simplecombo.h"
 #include "pixbufview.h"
 
@@ -65,6 +67,7 @@ int main(int argc,char**argv)
 		for(int i=1;i<argc;++i)
 		{
 			ImageSource *is=ISLoadImage(argv[i]);
+			is=new ImageSource_HReflect(is);
 			GdkPixbuf *pb=pixbuf_from_imagesource(is);
 			delete is;
 
