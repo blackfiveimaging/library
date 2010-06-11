@@ -33,6 +33,7 @@ using namespace std;
 
 enum {
 	CHANGED_SIGNAL,
+	DOUBLECLICKED_SIGNAL,
 	LAST_SIGNAL
 };
 
@@ -62,8 +63,7 @@ static void	simplelistview_entry_changed(GtkEntry *entry,gpointer user_data)
 {
 	SimpleListView *c=SIMPLELISTVIEW(user_data);
 
-	int index=0;
-	// FIXME: Fetch index here...
+	int index=simplelistview_get_index(c);
 
 	SimpleListViewOption *o=(*c->opts)[index];
 
@@ -82,14 +82,16 @@ static void	simplelistview_entry_changed(GtkEntry *entry,gpointer user_data)
 }
 
 
-void simplelistview_set_opts(SimpleListView *c,SimpleListViewOptions &opts)
+void simplelistview_set_opts(SimpleListView *c,SimpleListViewOptions *opts)
 {
-	// FIXME: Clear list here...
+	gtk_list_store_clear(GTK_LIST_STORE(c->liststore));
 
 	if(c->opts)
 		delete c->opts;
-
-	c->opts=new SimpleListViewOptions(opts);
+	if(opts)
+		c->opts=new SimpleListViewOptions(*opts);
+	else
+		c->opts=new SimpleListViewOptions();
 
 	GtkTreeIter iter;
 	for(unsigned int idx=0;idx<c->opts->size();++idx)
@@ -104,23 +106,26 @@ void simplelistview_set_opts(SimpleListView *c,SimpleListViewOptions &opts)
 			POINTER_COLUMN,o,
 			-1);
 	}
-
-//	gtk_box_pack_start(GTK_BOX(c),GTK_WIDGET(c->optionmenu),TRUE,TRUE,0);
-//	gtk_widget_show(c->optionmenu);
-
-//	g_signal_connect(c->optionmenu,"changed",G_CALLBACK(simplelistview_entry_changed),c);
 }
 
 
 static void row_activated(GtkTreeView *tree_view,GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data)
 {
-	SimpleListView *pe=SIMPLELISTVIEW(user_data);
+	SimpleListView *c=SIMPLELISTVIEW(user_data);
 	cerr << "Got row-activated signal" << endl;
-//	g_signal_emit(G_OBJECT (pe),simplelistviewr_signals[DOUBLECLICKED_SIGNAL], 0);
+	g_signal_emit(G_OBJECT (c),simplelistview_signals[DOUBLECLICKED_SIGNAL], 0);
 }
 
 
-GtkWidget *simplelistview_new (SimpleListViewOptions &opts)
+static void selection_changed(GtkTreeSelection *select,gpointer user_data)
+{
+	cerr << "Got selection changed signal" << endl;
+	SimpleListView *c=SIMPLELISTVIEW(user_data);
+	g_signal_emit(G_OBJECT(c),simplelistview_signals[CHANGED_SIGNAL], 0);
+};
+
+
+GtkWidget *simplelistview_new (SimpleListViewOptions *opts)
 {
 	SimpleListView *c=SIMPLELISTVIEW(g_object_new (simplelistview_get_type (), NULL));
 
@@ -153,8 +158,15 @@ GtkWidget *simplelistview_new (SimpleListViewOptions &opts)
 	g_signal_connect (G_OBJECT (c->treeview), "row-activated",
 		G_CALLBACK (row_activated),c);
 
-
 	simplelistview_set_opts(c,opts);
+
+
+	GtkTreeSelection *select;
+	select = gtk_tree_view_get_selection (GTK_TREE_VIEW (c->treeview));
+
+	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
+	g_signal_connect (G_OBJECT (select), "changed",
+		G_CALLBACK (selection_changed),c);
 
 	return(GTK_WIDGET(c));
 }
@@ -203,6 +215,13 @@ simplelistview_class_init (SimpleListViewClass *cl)
 		G_STRUCT_OFFSET (SimpleListViewClass, changed),
 		NULL, NULL,
 		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	simplelistview_signals[DOUBLECLICKED_SIGNAL] =
+	g_signal_new ("double-clicked",
+		G_TYPE_FROM_CLASS (cl),
+		GSignalFlags(G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION),
+		G_STRUCT_OFFSET (SimpleListViewClass, changed),
+		NULL, NULL,
+		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
 
@@ -232,18 +251,37 @@ simplelistview_init (SimpleListView *c)
 
 SimpleListViewOption *simplelistview_get(SimpleListView *c)
 {
-// FIXME - return key of selected index here...
-	return((*c->opts)[0]);
+	SimpleListViewOption *result=0;
+	cerr << "Getting selection" << endl;
+	GtkTreeSelection *select = gtk_tree_view_get_selection (GTK_TREE_VIEW (c->treeview));
+
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	if(gtk_tree_selection_get_selected (select, &model, &iter))
+	{
+		gtk_tree_model_get (model, &iter, POINTER_COLUMN, &result, -1);
+	}
+	return(result);
 }
 
 
 int simplelistview_get_index(SimpleListView *c)
 {
-// FIXME - return selected index here..static void populate_list(ColorantSelector *es)
-//	return(gtk_option_menu_get_history(GTK_OPTION_MENU(c->optionmenu)));
+	int result=0;
+	cerr << "Getting selection" << endl;
+	GtkTreeSelection *select = gtk_tree_view_get_selection (GTK_TREE_VIEW (c->treeview));
+
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	if(gtk_tree_selection_get_selected (select, &model, &iter))
+	{
+		gtk_tree_model_get (model, &iter, INDEX_COLUMN, &result, -1);
+	}
+	return(result);
 }
 
 
+#if 0
 bool simplelistview_set(SimpleListView *c,const char *key)
 {
 	int i=0;
@@ -263,12 +301,27 @@ bool simplelistview_set(SimpleListView *c,const char *key)
 	}
 	return(false);
 }
+#endif
 
 
-void simplelistview_set_index(SimpleListView *c,int index)
+void simplelistview_set_index(SimpleListView *c,int idx)
 {
-				// FIXME - set selection option here...
-//	gtk_option_menu_set_history(GTK_OPTION_MENU(c->optionmenu),index);
+	// FIXME - only supports up to 100 list entries!
+	char path[]={'0','0'};
+	if(idx>9)
+	{
+		path[0]+=idx/10;
+		path[1]+=idx%10;
+	}
+	else
+	{
+		path[0]+=idx%10;
+		path[1]=0;
+	}
+	GtkTreePath *tmppath=gtk_tree_path_new_from_string(path);
+	gtk_tree_view_set_cursor(GTK_TREE_VIEW(c->treeview),tmppath,NULL,FALSE);
+	gtk_tree_view_row_activated(GTK_TREE_VIEW(c->treeview),tmppath,NULL);
+	gtk_tree_path_free(tmppath);
 }
 
 

@@ -83,14 +83,14 @@ struct _SimpleListViewClass
 
 GType simplelistview_get_type (void);
 
-GtkWidget* simplelistview_new(SimpleListViewOptions &opts);
+GtkWidget* simplelistview_new(SimpleListViewOptions *opts);
 
 SimpleListViewOption *simplelistview_get(SimpleListView *c);
-bool simplelistview_set(SimpleListView *c,const char *key);
+//bool simplelistview_set(SimpleListView *c,const char *key);
 int simplelistview_get_index(SimpleListView *c);
 void simplelistview_set_index(SimpleListView *c,int index);
 
-void simplelistview_set_opts(SimpleListView *c,SimpleListViewOptions &opts);
+void simplelistview_set_opts(SimpleListView *c,SimpleListViewOptions *opts);
 
 G_END_DECLS
 
