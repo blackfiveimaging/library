@@ -256,8 +256,10 @@ SimpleComboOption::SimpleComboOption(SimpleComboOptions &header,const char *key,
 	else
 		header.firstopt=this;
 
-	this->key=strdup(key);
-	this->displayname=strdup(displayname);
+	if(key)
+		this->key=strdup(key);
+	if(displayname)
+		this->displayname=strdup(displayname);
 	if(tooltip)
 		this->tooltip=strdup(tooltip);
 }
@@ -275,8 +277,10 @@ SimpleComboOption::SimpleComboOption(SimpleComboOptions &header,SimpleComboOptio
 	else
 		header.firstopt=this;
 
-	key=strdup(other.key);
-	displayname=strdup(other.displayname);
+	if(other.key)
+		key=strdup(other.key);
+	if(other.displayname)
+		displayname=strdup(other.displayname);
 	if(other.tooltip)
 		tooltip=strdup(other.tooltip);
 }

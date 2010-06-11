@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef IMAGESOURCE_GAMMA_H
-#define IMAGESOURCE_GAMMA_H
+#ifndef IMAGESOURCE_HREFLECT_H
+#define IMAGESOURCE_HREFLECT_H
 
 #include "imagesource.h"
 #include "lcmswrapper.h"

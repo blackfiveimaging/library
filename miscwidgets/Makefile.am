@@ -9,6 +9,8 @@ libmiscwidgets_la_SOURCES =	\
 	errordialogqueue.h	\
 	simplecombo.cpp	\
 	simplecombo.h	\
+	simplelistview.cpp \
+	simplelistview.h \
 	\
 	colorantselector.cpp	\
 	colorantselector.h	\

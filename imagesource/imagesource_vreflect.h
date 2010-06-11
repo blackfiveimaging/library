@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef IMAGESOURCE_ROTATE_H
-#define IMAGESOURCE_ROTATE_H
+#ifndef IMAGESOURCE_VREFLECT_H
+#define IMAGESOURCE_VREFLECT_H
 
 #include "imagesource.h"
 #include "imagesource_interruptible.h"

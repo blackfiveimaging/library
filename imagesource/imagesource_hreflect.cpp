@@ -38,7 +38,7 @@ ISDataType *ImageSource_HReflect::GetRow(int row)
 	{
 		for(int s=0;s<samplesperpixel;++s)
 		{
-			rowbuffer[x*samplesperpixel+s]=src[(width-x)*samplesperpixel+s];
+			rowbuffer[x*samplesperpixel+s]=src[(width-x-1)*samplesperpixel+s];
 		}
 	}
 	currentrow=row;
