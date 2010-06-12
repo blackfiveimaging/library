@@ -22,13 +22,15 @@ to generate a specific type of temporary file.
 using namespace std;
 
 
-TempFile::TempFile(const char *pfix,const char *skey)
-	: filename(NULL), prefix(NULL), searchkey(NULL)
+TempFile::TempFile(TempFileTracker *header,const char *pfix,const char *skey)
+	: header(header), filename(NULL), prefix(NULL), searchkey(NULL)
 {
 	if(skey)
 		searchkey=strdup(skey);
 	if(pfix)
 		prefix=strdup(pfix);
+	if(header)
+		header->AddTempFile(this);
 }
 
 
@@ -44,6 +46,8 @@ TempFile::~TempFile()
 		free(searchkey);
 	if(prefix)
 		free(prefix);
+	if(header)
+		header->RemoveTempFile(this);
 }
 
 
@@ -90,8 +94,8 @@ TempFile *TempFileTracker::GetTempFile(const char *prefix,const char *searchkey)
 		result=FindTempFile(searchkey);
 	if(!result)
 	{
-		result=new TempFile(prefix,searchkey);
-		Add(result);
+		result=new TempFile(this,prefix,searchkey);
+		AddTempFile(result);
 	}
 	return(result);
 }
@@ -111,10 +115,25 @@ TempFile *TempFileTracker::FindTempFile(const char *searchkey)
 }
 
 
-void TempFileTracker::Add(TempFile *tempfile)
+void TempFileTracker::AddTempFile(TempFile *tempfile)
 {
 	ObtainMutex();
 	push_back(tempfile);
+	tempfile->header=this;
+	ReleaseMutex();
+}
+
+
+void TempFileTracker::RemoveTempFile(TempFile *tempfile)
+{
+	ObtainMutex();
+	for(unsigned int idx=0;idx<size();++idx)
+	{
+		if((*this)[idx]==tempfile)
+		{
+			erase(begin()+idx);
+		}
+	}
 	ReleaseMutex();
 }
 

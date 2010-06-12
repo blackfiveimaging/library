@@ -9,14 +9,16 @@ class TempFileTracker;
 class TempFile
 {
 	public:
-	TempFile(const char *prefix=NULL,const char *searchkey=NULL);
+	TempFile(TempFileTracker *header,const char *prefix=NULL,const char *searchkey=NULL);
 	virtual ~TempFile();
 	virtual const char *Filename();
 	virtual bool MatchTempFile(const char *searchkey);
 	protected:
+	TempFileTracker *header;
 	char *filename;
 	char *prefix;
 	char *searchkey;
+	friend class TempFileTracker;
 };
 
 
@@ -34,7 +36,8 @@ class TempFileTracker : public std::deque<TempFile *>, public RWMutex
 	TempFile *FindTempFile(const char *searchkey);
 
 	// Add a tempfile to the tracker.
-	void Add(TempFile *tempfile);
+	void AddTempFile(TempFile *tempfile);
+	void RemoveTempFile(TempFile *tempfile);
 	protected:
 	friend class TempFile;
 };
