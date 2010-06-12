@@ -23,36 +23,20 @@ using namespace std;
 
 
 TempFile::TempFile(TempFileTracker *header,const char *pfix,const char *skey)
-	: filename(NULL), prefix(NULL), searchkey(NULL), header(header), nexttempfile(NULL), prevtempfile(NULL)
+	: filename(NULL), prefix(NULL), searchkey(NULL)
 {
-	header->mutex.ObtainMutex();
-	if((prevtempfile=header->firsttempfile))
-	{
-		while(prevtempfile->nexttempfile)
-			prevtempfile=prevtempfile->nexttempfile;
-		prevtempfile->nexttempfile=this;
-	}
-	else
-		header->firsttempfile=this;
-//	if((nexttempfile=header->firsttempfile))
-//		nexttempfile->prevtempfile=this;
-//	header->firsttempfile=this;
-
 	if(skey)
 		searchkey=strdup(skey);
 	if(pfix)
 		prefix=strdup(pfix);
-	header->mutex.ReleaseMutex();
 }
 
 
 TempFile::~TempFile()
 {
-//	Debug[TRACE] << "In TempFile destructor" << endl;
-	header->mutex.ObtainMutex();
 	if(filename)
 	{
-//		Debug[TRACE] << "Removing " << filename << endl;
+		Debug[TRACE] << "Removing tempfile: " << filename << endl;
 		remove(filename);
 		free(filename);
 	}
@@ -60,13 +44,6 @@ TempFile::~TempFile()
 		free(searchkey);
 	if(prefix)
 		free(prefix);
-	if(nexttempfile)
-		nexttempfile->prevtempfile=prevtempfile;
-	if(prevtempfile)
-		prevtempfile->nexttempfile=nexttempfile;
-	else
-		header->firsttempfile=nexttempfile;
-	header->mutex.ReleaseMutex();
 }
 
 
@@ -79,12 +56,6 @@ const char *TempFile::Filename()
 }
 
 
-TempFile *TempFile::NextTempFile()
-{
-	return(nexttempfile);
-}
-
-
 bool TempFile::MatchTempFile(const char *skey)
 {
 	return(strcmp(skey,searchkey)==0);
@@ -94,7 +65,7 @@ bool TempFile::MatchTempFile(const char *skey)
 // TempFileTracker
 
 
-TempFileTracker::TempFileTracker() : mutex(), firsttempfile(NULL)
+TempFileTracker::TempFileTracker() : RWMutex()
 {
 
 }
@@ -102,50 +73,48 @@ TempFileTracker::TempFileTracker() : mutex(), firsttempfile(NULL)
 
 TempFileTracker::~TempFileTracker()
 {
-	mutex.ObtainMutex();
-	while(firsttempfile)
-		delete firsttempfile;
-	mutex.ReleaseMutex();
+	ObtainMutex();
+	while(size())
+	{
+		delete (*this)[0];
+		pop_front();
+	}	
+	ReleaseMutex();
 }
 
 
 TempFile *TempFileTracker::GetTempFile(const char *prefix,const char *searchkey)
 {
-	mutex.ObtainMutexShared();
 	TempFile *result=NULL;
 	if(searchkey)
 		result=FindTempFile(searchkey);
 	if(!result)
+	{
 		result=new TempFile(this,prefix,searchkey);
-	mutex.ReleaseMutexShared();
+		Add(result);
+	}
 	return(result);
 }
 
 
 TempFile *TempFileTracker::FindTempFile(const char *searchkey)
 {
-	mutex.ObtainMutexShared();
-	TempFile *result=NULL;
-	TempFile *t=FirstTempFile();
-	while(t)
+	for(unsigned int idx=0;idx<size();++idx)
 	{
-		t=t->NextTempFile();
+		TempFile *t=(*this)[idx];
 		if(t->MatchTempFile(searchkey))
 		{
-			result=t;
-			t=NULL;
+			return(t);
 		}
 	}
-	mutex.ReleaseMutexShared();
-	return(result);
+	return(NULL);
 }
 
 
-TempFile *TempFileTracker::FirstTempFile()
+void TempFileTracker::Add(TempFile *tempfile)
 {
-	mutex.ObtainMutexShared();
-	TempFile *result=firsttempfile;
-	mutex.ReleaseMutexShared();
-	return(result);
+	ObtainMutex();
+	push_back(tempfile);
+	ReleaseMutex();
 }
 
