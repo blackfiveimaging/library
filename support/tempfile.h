@@ -9,7 +9,7 @@ class TempFileTracker;
 class TempFile
 {
 	public:
-	TempFile(TempFileTracker *header,const char *prefix=NULL,const char *searchkey=NULL);
+	TempFile(const char *prefix=NULL,const char *searchkey=NULL);
 	virtual ~TempFile();
 	virtual const char *Filename();
 	virtual bool MatchTempFile(const char *searchkey);

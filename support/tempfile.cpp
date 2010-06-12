@@ -22,7 +22,7 @@ to generate a specific type of temporary file.
 using namespace std;
 
 
-TempFile::TempFile(TempFileTracker *header,const char *pfix,const char *skey)
+TempFile::TempFile(const char *pfix,const char *skey)
 	: filename(NULL), prefix(NULL), searchkey(NULL)
 {
 	if(skey)
@@ -90,7 +90,7 @@ TempFile *TempFileTracker::GetTempFile(const char *prefix,const char *searchkey)
 		result=FindTempFile(searchkey);
 	if(!result)
 	{
-		result=new TempFile(this,prefix,searchkey);
+		result=new TempFile(prefix,searchkey);
 		Add(result);
 	}
 	return(result);
