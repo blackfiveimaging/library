@@ -439,3 +439,37 @@ int RandomSeeded(int max)
 	return(globalrandomseeded.Random(max));
 }
 
+
+// Routine to copy UTF-8 characters into a buffer.
+// Note, the buffer should be 4 times the number of characters to
+// accommodate the worst-case scenario.
+// Always null-terminates the result, so allow space for the terminating null.
+void utf8ncpy(char *out,const char *in,int count)
+{
+	int count2=0;
+	while(count)
+	{
+		char c=*out++=*in++;
+		if(c==0)
+			return;
+		if(c&0x80)	// multi-byte sequence
+		{
+			if((c&0xe0)==0xc0)	// 2-byte sequence
+				count2=2;
+			if((c&0xf0)==0xc0)	// 3-byte sequence
+				count2=3;
+			if((c&0xf8)==0xf0)	// 4-byte sequence
+				count2=4;
+								// If none of these conditions is met, we have a continuation byte
+		}
+		else
+			count2=1;	// 1-byte sequence
+
+		--count2;
+		if(count2==0)
+			--count;
+	}
+	*out++=0;	// Null terminate if required.
+}
+
+

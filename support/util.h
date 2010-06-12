@@ -106,4 +106,11 @@ bool TestHostName(char *str,char **hostname,int *port);
 
 int RandomSeeded(int max);
 
+
+// Routine to copy UTF-8 characters into a buffer.
+// Note, the buffer should be 4 times the number of characters to
+// accommodate the worst-case scenario.
+// Always null-terminates the result, so allow space for the terminating null.
+void utf8ncpy(char *out,const char *in,int count);
+
 #endif
