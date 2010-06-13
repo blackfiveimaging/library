@@ -111,6 +111,11 @@ int RandomSeeded(int max);
 // Note, the buffer should be 4 times the number of characters to
 // accommodate the worst-case scenario.
 // Always null-terminates the result, so allow space for the terminating null.
-void utf8ncpy(char *out,const char *in,int count);
+void utf8ncpy(char *out,const char *in,unsigned int count);
+
+
+// Routine to truncate a UTF-8 string to a specified length, with ellipsis to
+// indicate truncation.
+std::string TruncateUTF8(std::string in,unsigned int count);
 
 #endif

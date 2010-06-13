@@ -24,6 +24,7 @@
 #include <gtk/gtkmenuitem.h>
 
 #include "../miscwidgets/generaldialogs.h"
+#include "../support/util.h"
 #include "../support/debug.h"
 
 #ifdef HAVE_CONFIG_H
@@ -171,7 +172,8 @@ static void profileselector_build_options(ProfileSelector *c)
 			{
 				if(verifyprofile(c,pi))
 				{
-					profsel_entry *ps2=new profsel_entry(filename,uiname);
+					std::string uiname_truncated=TruncateUTF8(uiname,42);
+					profsel_entry *ps2=new profsel_entry(filename,uiname_truncated.c_str());
 					c->optionlist=g_list_append(c->optionlist,ps2);
 				}
 			}

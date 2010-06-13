@@ -444,7 +444,7 @@ int RandomSeeded(int max)
 // Note, the buffer should be 4 times the number of characters to
 // accommodate the worst-case scenario.
 // Always null-terminates the result, so allow space for the terminating null.
-void utf8ncpy(char *out,const char *in,int count)
+void utf8ncpy(char *out,const char *in,unsigned int count)
 {
 	int count2=0;
 	while(count)
@@ -472,4 +472,16 @@ void utf8ncpy(char *out,const char *in,int count)
 	*out++=0;	// Null terminate if required.
 }
 
+
+std::string TruncateUTF8(std::string in,unsigned int count)
+{
+	if(in.size()<count)
+		return(in);
+	char *buf=(char *)malloc(count*4+1);
+	utf8ncpy(buf,in.c_str(),count-3);
+	std::string result=buf;
+	free(buf);
+	result+="...";
+	return(result);
+}
 
