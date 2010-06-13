@@ -78,7 +78,8 @@ void simplecombo_set_opts(SimpleCombo *c,SimpleComboOptions &opts)
 	if(c->optionmenu)
 	{
 		oldidx=simplecombo_get_index(c);
-		oldkey=opts[oldidx]->key;
+		if(opts[oldidx]->key)
+			oldkey=opts[oldidx]->key;
 		gtk_widget_destroy(c->optionmenu);
 	}
 	c->optionmenu=c->menu=NULL;
@@ -222,7 +223,7 @@ bool simplecombo_set(SimpleCombo *c,const char *key)
 		SimpleComboOption *o=c->opts->FirstOption();
 		while(o)
 		{
-			if(strcmp(key,o->key)==0)
+			if(o->key && strcmp(key,o->key)==0)
 			{
 				gtk_option_menu_set_history(GTK_OPTION_MENU(c->optionmenu),i);
 				return(true);
