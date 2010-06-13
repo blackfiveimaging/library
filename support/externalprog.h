@@ -9,7 +9,7 @@
 #ifndef WIN32
 #include <sys/wait.h>
 #endif
-
+#include "searchpath.h"
 #include "pathsupport.h"
 
 
