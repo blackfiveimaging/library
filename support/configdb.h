@@ -55,6 +55,8 @@ int main(int argc,char **argv)
 }
 */
 
+#include <cstdio>
+
 #ifndef CONFIGDB_H
 #define CONFIGDB_H
 
