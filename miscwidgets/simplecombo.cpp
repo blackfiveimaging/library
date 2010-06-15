@@ -19,6 +19,8 @@
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtktooltips.h>
 
+#include "debug.h"
+
 #include "simplecombo.h"
 
 #include "config.h"
@@ -75,13 +77,14 @@ void simplecombo_set_opts(SimpleCombo *c,SimpleComboOptions &opts)
 {
 	string oldkey;
 	int oldidx=-1;
-	if(c->optionmenu)
+	if(c->optionmenu && c->opts)
 	{
 		oldidx=simplecombo_get_index(c);
-		if(opts[oldidx]->key)
-			oldkey=opts[oldidx]->key;
+		if((*c->opts)[oldidx]->key)
+			oldkey=(*c->opts)[oldidx]->key;
 		gtk_widget_destroy(c->optionmenu);
 	}
+	Debug[TRACE] << "Simplecombo - Old index: " << oldidx << ", old key: " << oldkey << std::endl;
 	c->optionmenu=c->menu=NULL;
 	if(c->opts)
 		delete c->opts;
@@ -104,10 +107,17 @@ void simplecombo_set_opts(SimpleCombo *c,SimpleComboOptions &opts)
 	gtk_box_pack_start(GTK_BOX(c),GTK_WIDGET(c->optionmenu),TRUE,TRUE,0);
 	gtk_widget_show(c->optionmenu);
 
-	if(oldkey.size())
-		simplecombo_set(c,oldkey.c_str());
-	else if(oldidx>=0)
-		simplecombo_set_index(c,oldidx);
+	try
+	{
+		if(oldkey.size())
+			simplecombo_set(c,oldkey.c_str());
+		else if(oldidx>=0)
+			simplecombo_set_index(c,oldidx);
+	}
+	catch(const char *err)
+	{
+		Debug[WARN] << "Tried to set combo index out of range..." << std::endl;
+	}
 
 	g_signal_connect(c->optionmenu,"changed",G_CALLBACK(simplecombo_entry_changed),c);
 }
