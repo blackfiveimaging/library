@@ -75,7 +75,7 @@ class ExternalProgram : public SearchPathHandler
 #ifdef WIN32
 		Debug[TRACE] << "Launching subprocess and waiting for completion..." << std::endl;
 		int status=_spawnv(_P_WAIT,prgname,arglist);
-		Debug[TRACE] << "Subprocess returned code " << status << endl;
+		Debug[TRACE] << "Subprocess returned code " << status << std::endl;
 #else
 		switch((forkpid=fork()))
 		{
