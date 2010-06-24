@@ -7,6 +7,7 @@
 #include <glib-object.h>
 #include <gtk/gtkhbox.h>
 #include <gtk/gtktooltips.h>
+#include <gtk/gtkliststore.h>
 
 G_BEGIN_DECLS
 

@@ -306,22 +306,31 @@ bool simplelistview_set(SimpleListView *c,const char *key)
 
 void simplelistview_set_index(SimpleListView *c,int idx)
 {
-	// FIXME - only supports up to 100 list entries!
-	char path[]={'0','0'};
-	if(idx>9)
+	// Use -1 to indicate no selection
+	if(idx<0)
 	{
-		path[0]+=idx/10;
-		path[1]+=idx%10;
+		GtkTreeSelection *s=gtk_tree_view_get_selection(GTK_TREE_VIEW(c->treeview));
+		gtk_tree_selection_unselect_all(s);
 	}
 	else
 	{
-		path[0]+=idx%10;
-		path[1]=0;
+		// FIXME - only supports up to 100 list entries!
+		char path[]={'0','0'};
+		if(idx>9)
+		{
+			path[0]+=idx/10;
+			path[1]+=idx%10;
+		}
+		else
+		{
+			path[0]+=idx%10;
+			path[1]=0;
+		}
+		GtkTreePath *tmppath=gtk_tree_path_new_from_string(path);
+		gtk_tree_view_set_cursor(GTK_TREE_VIEW(c->treeview),tmppath,NULL,FALSE);
+		gtk_tree_view_row_activated(GTK_TREE_VIEW(c->treeview),tmppath,NULL);
+		gtk_tree_path_free(tmppath);
 	}
-	GtkTreePath *tmppath=gtk_tree_path_new_from_string(path);
-	gtk_tree_view_set_cursor(GTK_TREE_VIEW(c->treeview),tmppath,NULL,FALSE);
-	gtk_tree_view_row_activated(GTK_TREE_VIEW(c->treeview),tmppath,NULL);
-	gtk_tree_path_free(tmppath);
 }
 
 
