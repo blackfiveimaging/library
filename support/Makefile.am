@@ -54,6 +54,7 @@ libsupport_la_SOURCES =	\
 	\
 	md5.cpp \
 	md5.h \
+	md5consumer.h \
 	debug.cpp	\
 	debug.h	\
 	util.cpp \
