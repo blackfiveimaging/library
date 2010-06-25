@@ -71,11 +71,19 @@ void GPColorantList::BuildList(stp_vars_t *vars)
 	const char *mode=stp_get_string_parameter(vars,"InputImageType");
 	if(!mode)
 	{
+<<<<<<< HEAD
 		Debug[TRACE] << "(setting default mode)" << endl;
 		stp_set_string_parameter(vars,"InputImageType","CMYK");
 		mode="CMYK";
 	}
 	Debug[TRACE] << "GPColorantList::BuildList() - got mode : " << mode << endl;
+=======
+		Debug[TRACE] << "No mode found - falling back to CMYK" << endl;
+		stp_set_string_parameter(vars,"InputImageType","CMYK");
+		mode="CMYK";
+	}
+	Debug[TRACE] << "InputImageType set to " << mode << endl;
+>>>>>>> f9a01b697fed9ca73d74b6059ce6d47d36c4f4f6
 	if(strcmp(mode,"Raw")==0)
 	{
 		BuildList_Raw(vars);
