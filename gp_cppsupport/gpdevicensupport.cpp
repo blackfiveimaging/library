@@ -71,14 +71,16 @@ void GPColorantList::BuildList(stp_vars_t *vars)
 	const char *mode=stp_get_string_parameter(vars,"InputImageType");
 	if(!mode)
 	{
+		Debug[TRACE] << "(setting default mode)" << endl;
 		stp_set_string_parameter(vars,"InputImageType","CMYK");
 		mode="CMYK";
 	}
+	Debug[TRACE] << "GPColorantList::BuildList() - got mode : " << mode << endl;
 	if(strcmp(mode,"Raw")==0)
 	{
 		BuildList_Raw(vars);
 	}
-	else if(strcmp(mode,"Greyscale")==0)
+	else if(strcmp(mode,"Grayscale")==0)
 	{
 		new DeviceNColorant(*this,"Black");
 	}
@@ -100,6 +102,7 @@ void GPColorantList::BuildList(stp_vars_t *vars)
 
 void GPColorantList::BuildList_Raw(stp_vars_t *vars)
 {
+	Debug[TRACE] << "GPColorantList - building raw list" << endl;
 	if(!vars)
 		vars=cachedvars;
 	if(!vars)
