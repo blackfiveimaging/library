@@ -223,8 +223,8 @@ GtkWidget *blackgenselector_new()
 	gtk_widget_show(table);
 
 	GtkWidget *tmp=gtk_vbox_new(FALSE,0);
-	gtk_box_pack_start(GTK_BOX(c),tmp,TRUE,TRUE,0);
-	gtk_widget_show(vbox);
+	gtk_box_pack_start(GTK_BOX(vbox),tmp,TRUE,TRUE,0);
+	gtk_widget_show(tmp);
 
 	GtkWidget *label;
 
