@@ -213,7 +213,18 @@ GtkWidget *blackgenselector_new()
 {
 	BlackGenSelector *c=BLACKGENSELECTOR(g_object_new (blackgenselector_get_type (), NULL));
 
+	// Graph
+
 	GtkWidget *vbox=gtk_vbox_new(FALSE,0);
+	gtk_box_pack_start(GTK_BOX(c),vbox,TRUE,TRUE,8);
+	gtk_widget_show(vbox);
+
+	c->canvas = gtk_drawing_area_new();
+	g_signal_connect(G_OBJECT (c->canvas), "expose-event",G_CALLBACK(paint_graph), c);
+	gtk_box_pack_start(GTK_BOX(vbox),c->canvas,TRUE,TRUE,8);
+	gtk_widget_show(c->canvas);
+
+	vbox=gtk_vbox_new(FALSE,0);
 	gtk_box_pack_start(GTK_BOX(c),vbox,FALSE,FALSE,8);
 	gtk_widget_show(vbox);
 
@@ -238,14 +249,12 @@ GtkWidget *blackgenselector_new()
 
 	SimpleComboOptions opts;
 
-	opts.Add("",_("Absolute black (target, -k)"),_("The black generation will attempt to use the actual level of black specified by the curve"));
-	opts.Add("",_("Proportional black (locus, -K)"),_("The black generation will pick a black level between the minimum and maximum possible, based on the curve"));
+	opts.Add("",_("Absolute black generation (target, -k)"),_("The black generation will attempt to use the actual level of black specified by the curve"));
+	opts.Add("",_("Proportional black generation (locus, -K)"),_("The black generation will pick a black level between the minimum and maximum possible, based on the curve"));
 	c->locus=simplecombo_new(opts);
-	gtk_table_attach_defaults(GTK_TABLE(table),c->locus,1,2,row,row+1);
+	gtk_table_attach_defaults(GTK_TABLE(table),c->locus,0,2,row,row+1);
 	gtk_widget_show(c->locus);
 
-	label=gtk_label_new(_("Black generation uses:"));
-	gtk_table_attach_defaults(GTK_TABLE(table),label,0,1,row,row+1);
 	gtk_widget_show(label);
 
 	++row;
@@ -260,7 +269,7 @@ GtkWidget *blackgenselector_new()
 	opts.Add("",_("Retain from target profile"));
 
 	c->combo=simplecombo_new(opts);
-	gtk_table_attach_defaults(GTK_TABLE(table),c->combo,1,2,row,row+1);
+	gtk_table_attach_defaults(GTK_TABLE(table),c->combo,0,2,row,row+1);
 	gtk_widget_show(c->combo);
 
 	++row;
@@ -325,12 +334,6 @@ GtkWidget *blackgenselector_new()
 	gtk_table_attach_defaults(GTK_TABLE(table),c->shape,1,2,row,row+1);
 	gtk_widget_show(c->shape);
 
-	// Graph
-
-	c->canvas = gtk_drawing_area_new();
-	g_signal_connect(G_OBJECT (c->canvas), "expose-event",G_CALLBACK(paint_graph), c);
-	gtk_box_pack_start(GTK_BOX(c),c->canvas,TRUE,TRUE,0);
-	gtk_widget_show(c->canvas);
 
 	// Plumbing
 
