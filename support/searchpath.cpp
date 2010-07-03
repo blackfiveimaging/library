@@ -156,7 +156,7 @@ char *SearchPathHandler::SearchPaths(const char *file)
 
 void SearchPathHandler::AddPath(const char *path)
 {
-	if(path)
+	if(path && strlen(path))
 	{
 		try
 		{
