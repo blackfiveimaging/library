@@ -218,7 +218,7 @@ JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression
 											// LCMS's jpegicc does this too (though probably not deliberately!)
 			break;
 		default:
-			throw _("JPEG Saver can currently only save RGB or Greyscale images.");
+			throw _("JPEG Saver can currently only save RGB, CMYK or Greyscale images.");
 			break;
 	}
 
