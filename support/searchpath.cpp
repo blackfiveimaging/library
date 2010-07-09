@@ -118,6 +118,21 @@ SearchPathHandler::SearchPathHandler()
 }
 
 
+SearchPathHandler::SearchPathHandler(SearchPathHandler &other) : searchiterator(NULL)
+{
+	char *p=other.GetPaths();
+	AddPath(p);
+	free(p);
+}
+
+SearchPathHandler &SearchPathHandler::operator=(SearchPathHandler &other)
+{
+	ClearPaths();
+	char *p=other.GetPaths();
+	AddPath(p);
+	free(p);
+}
+
 SearchPathHandler::~SearchPathHandler()
 {
 	list<SearchPathInstance *>::iterator it=paths.begin();

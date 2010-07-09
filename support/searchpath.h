@@ -92,6 +92,8 @@ class SearchPathHandler
 {
 	public:
 	SearchPathHandler();
+	SearchPathHandler(SearchPathHandler &other);
+	SearchPathHandler &operator=(SearchPathHandler &other);
 	virtual ~SearchPathHandler();
 	virtual char *SearchPaths(const char *file);
 	virtual char *MakeRelative(const char *file);
