@@ -60,4 +60,6 @@ bool imageselector_add_filename(ImageSelector *c,const char *filename,GdkPixbuf 
 // Remove an image from the selector.  If no filename's provided, the widget will remove any selected images.
 void imageselector_remove(ImageSelector *c,const char *filename=NULL);
 
+void imageselector_select_all(ImageSelector *c);
+void imageselector_select_none(ImageSelector *c);
 #endif /* __IMAGESELECTOR_H__ */

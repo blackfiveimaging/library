@@ -675,3 +675,15 @@ void imageselector_remove(ImageSelector *c,const char *fn)
 	rebuild_liststore(c);
 }
 
+
+void imageselector_select_all(ImageSelector *c)
+{
+	GtkTreeSelection *select=gtk_tree_view_get_selection (GTK_TREE_VIEW (c->treeview));
+	gtk_tree_selection_select_all(select);
+}
+
+void imageselector_select_none(ImageSelector *c)
+{
+	GtkTreeSelection *select=gtk_tree_view_get_selection (GTK_TREE_VIEW (c->treeview));
+	gtk_tree_selection_unselect_all(select);
+}

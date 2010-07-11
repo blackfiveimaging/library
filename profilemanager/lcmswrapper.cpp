@@ -147,7 +147,7 @@ CMSProfile::CMSProfile()
 CMSProfile::CMSProfile(const CMSProfile &src)
 	: md5(NULL), generated(src.generated), filename(NULL), buffer(NULL), buflen(0)
 {
-	Debug[TRACE] << "In CMSProfile Copy Constructor" << endl;
+//	Debug[TRACE] << "In CMSProfile Copy Constructor" << endl;
 	if(src.filename)
 	{
 		filename=strdup(src.filename);

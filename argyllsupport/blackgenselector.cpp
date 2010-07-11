@@ -42,6 +42,8 @@ static void blackgenselector_locus_changed(GtkEntry *entry,gpointer user_data)
 {
 	BlackGenSelector *c=BLACKGENSELECTOR(user_data);
 	c->curve.SetLocusMode(simplecombo_get_index(SIMPLECOMBO(c->locus))==1 ? true : false);
+
+	g_signal_emit(G_OBJECT (c),blackgenselector_signals[CHANGED_SIGNAL], 0);
 }
 
 
@@ -260,13 +262,13 @@ GtkWidget *blackgenselector_new()
 	++row;
 
 	opts.Clear();
-	opts.Add("",_("Minimum black"));
-	opts.Add("",_("Medium black"));
-	opts.Add("",_("Maximum black"));
-	opts.Add("",_("Ramp min to max"));
-	opts.Add("",_("Custom"));
-	opts.Add("",_("Transfer from source profile"));
-	opts.Add("",_("Retain from target profile"));
+	opts.Add("",_("Minimum black"),_("Aims for 0% black when mixing colours, using just C, M and Y."));
+	opts.Add("",_("Medium black"),_("Aims for 50% black when mixing colours"));
+	opts.Add("",_("Maximum black"),_("Aims to use as much black, and as little C, M and Y as possible."));
+	opts.Add("",_("Ramp min to max"),_("Uses a transition from 0% black for light colours, and 100% black for dark colours."));
+	opts.Add("",_("Custom"),_("Define a custom black-generation curve."));
+	opts.Add("",_("Transfer from source profile"),_("Attempts to retain the black-generation from the source profile (if source profile is CMYK)"));
+	opts.Add("",_("Retain from target profile"),_("Attempts to retain the existing black generation from the destination profile."));
 
 	c->combo=simplecombo_new(opts);
 	gtk_table_attach_defaults(GTK_TABLE(table),c->combo,0,2,row,row+1);
