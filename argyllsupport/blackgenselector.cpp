@@ -257,7 +257,6 @@ GtkWidget *blackgenselector_new()
 	gtk_table_attach_defaults(GTK_TABLE(table),c->locus,0,2,row,row+1);
 	gtk_widget_show(c->locus);
 
-	gtk_widget_show(label);
 
 	++row;
 

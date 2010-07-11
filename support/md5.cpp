@@ -11,14 +11,14 @@ using namespace std;
 
 static void md5_transform(unsigned int buf[4], unsigned int const in[16]);
 
-MD5Digest::MD5Digest(const char *message,long length)
+MD5Digest::MD5Digest(const char *message,long length) : MD5Context()
 {
 	Update(message, length);
 	Finalize();
 }
 
 
-MD5Digest::MD5Digest()
+MD5Digest::MD5Digest() : MD5Context()
 {
 	for(int i=0;i<16;++i)
 		digest[i]=0;
