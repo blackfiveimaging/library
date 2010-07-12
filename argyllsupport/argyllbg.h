@@ -129,7 +129,7 @@ class Argyll_BlackGenerationCurve
 	std::string GetCmdLine()
 	{
 		std::string result;
-		result += locusmode ? " -K" : " -k";
+		result += locusmode ? "-K" : "-k";
 		switch(blackgenerationmode)
 		{
 			case ARGYLLBG_TRANSFER:
