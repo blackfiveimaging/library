@@ -232,6 +232,7 @@ GtkWidget *blackgenselector_new()
 
 	GtkWidget *table=gtk_table_new(2,6,FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table),4);
+	gtk_table_set_col_spacings(GTK_TABLE(table),4);
 	gtk_box_pack_start(GTK_BOX(vbox),table,FALSE,FALSE,8);
 	gtk_widget_show(table);
 
@@ -280,6 +281,7 @@ GtkWidget *blackgenselector_new()
 	// Start Level
 
 	label=gtk_label_new(_("Start level:"));
+	gtk_misc_set_alignment(GTK_MISC(label),1.0,0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table),label,0,1,row,row+1);
 	gtk_widget_show(label);
 
@@ -292,6 +294,7 @@ GtkWidget *blackgenselector_new()
 	// Start Position
 
 	label=gtk_label_new(_("Start position:"));
+	gtk_misc_set_alignment(GTK_MISC(label),1.0,0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table),label,0,1,row,row+1);
 	gtk_widget_show(label);
 
@@ -304,6 +307,7 @@ GtkWidget *blackgenselector_new()
 	// End Position
 
 	label=gtk_label_new(_("End position:"));
+	gtk_misc_set_alignment(GTK_MISC(label),1.0,0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table),label,0,1,row,row+1);
 	gtk_widget_show(label);
 
@@ -316,6 +320,7 @@ GtkWidget *blackgenselector_new()
 	// End Level
 
 	label=gtk_label_new(_("End level:"));
+	gtk_misc_set_alignment(GTK_MISC(label),1.0,0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table),label,0,1,row,row+1);
 	gtk_widget_show(label);
 
@@ -328,6 +333,7 @@ GtkWidget *blackgenselector_new()
 	// Shape
 
 	label=gtk_label_new(_("Shape:"));
+	gtk_misc_set_alignment(GTK_MISC(label),1.0,0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table),label,0,1,row,row+1);
 	gtk_widget_show(label);
 
