@@ -11,7 +11,9 @@
 
 class Worker;
 
-enum JobStatus {JOBSTATUS_QUEUED,JOBSTATUS_RUNNING,JOBSTATUS_CANCELLED,JOBSTATUS_COMPLETED,JOBSTATUS_UNKNOWN};
+// We use powers of two for these so they can be logical or'ed...
+
+enum JobStatus {JOBSTATUS_QUEUED=1,JOBSTATUS_RUNNING=2,JOBSTATUS_CANCELLED=4,JOBSTATUS_COMPLETED=8,JOBSTATUS_UNKNOWN=16};
 
 class Job
 {
@@ -204,9 +206,19 @@ class JobQueue : public ThreadCondition
 	}
 
 	// NOTE - Must hold the mutex while using this function.
-	virtual int JobCount()
+	// The statemask can be used to specify which jobs are counted -
+	// JOBSTATUS_QUEUED, JOBSTATUS_RUNNING and JOBSTATUS_COMPLETED,
+	// these can be logical-ored if you want combination counts.
+	virtual int JobCount(int statemask=JOBSTATUS_QUEUED)
 	{
-		return(waiting.size());
+		int result=0;
+		if(statemask&JOBSTATUS_QUEUED)
+			result+=waiting.size();
+		if(statemask&JOBSTATUS_RUNNING)
+			result+=running.size();
+		if(statemask&JOBSTATUS_COMPLETED)
+			result+=completed.size();
+		return(result);
 	}
 	protected:
 	std::list<Job *> waiting;

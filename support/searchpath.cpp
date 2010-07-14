@@ -152,8 +152,9 @@ char *SearchPathHandler::SearchPaths(const char *file)
 	list<SearchPathInstance *>::iterator it=paths.begin();
 	while(it!=paths.end())
 	{
+		Debug[TRACE] << "Searching for " << file << " in " << (*it)->path << endl;
 		char *p=(*it)->MakeAbsolute(file);
-//		Debug[TRACE] << file << " -> " << p << endl;
+		Debug[TRACE] << " -> " << p << endl;
 
 		if(stat(p,&statbuf)==0)
 			return(p);

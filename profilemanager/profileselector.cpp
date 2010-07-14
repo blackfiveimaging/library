@@ -224,7 +224,7 @@ static void	profileselector_changed(GtkWidget *widget,gpointer user_data)
 	{
 		if(strcmp(val,PS_ESCAPESTRING)==0)
 		{
-			char *fn=File_Dialog("Choose ICC Profile...",NULL,NULL);
+			char *fn=File_Dialog(_("Choose ICC Profile..."),NULL,NULL);
 			if(fn)
 			{
 				Debug[TRACE] << "Setting new filename..." << endl;

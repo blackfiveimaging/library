@@ -594,6 +594,12 @@ void CMTransformFactory::Flush()
 }
 
 
+ProfileManager &CMTransformFactory::GetManager()
+{
+	return(manager);
+}
+
+
 // Path handling
 
 static const char *findextension(const char *filename)

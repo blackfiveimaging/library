@@ -24,8 +24,6 @@ class ExternalProgArgList : public std::deque<std::string>
 	}
 	virtual std::string &operator[](unsigned int i)
 	{
-		Debug[TRACE] << "Referencing argument " << i << std::endl;
-
 		if(i<0)
 			throw "ExternalProgArgList - index must be >= 0";
 		while(size()<=i)
@@ -60,10 +58,15 @@ class ExternalProgram : public SearchPathHandler
 	}
 	virtual void RunProgram()
 	{
+		Debug.PushLevel(TRACE);	// Promote debuglevel to TRACE for this call
 		Debug[TRACE] << "Hunting for " << args[0] << std::endl;
 		char *prgname=SearchPaths(args[0].c_str());
 		if(!prgname)
+		{
+			Debug.PopLevel();
 			throw "Can't find external program";
+		}
+		Debug[TRACE] << "Found external program at " << prgname << std::endl;
 		char **arglist=(char **)malloc(sizeof(char *)*(args.size()+1));
 		for(unsigned int i=0;i<args.size();++i)
 		{
@@ -101,6 +104,7 @@ class ExternalProgram : public SearchPathHandler
 		}
 		free(arglist);
 		free(prgname);
+		Debug.PopLevel();
 	}
 	virtual void StopProgram()
 	{

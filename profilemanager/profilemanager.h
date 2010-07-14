@@ -113,6 +113,7 @@ class CMTransformFactory
 	CMSTransform *GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT,int displayintent=LCMSWRAPPER_INTENT_DEFAULT);
 	CMSTransform *Search(MD5Digest *srcdigest,MD5Digest *dstdigest,LCMSWrapper_Intent intent,bool proof=0);
 	void Flush();
+	ProfileManager &GetManager();
 	protected:
 	ProfileManager &manager;
 	CMTransformFactoryNode *first;
