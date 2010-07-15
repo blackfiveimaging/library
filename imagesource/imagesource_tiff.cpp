@@ -30,6 +30,7 @@
 #include <tiffio.h>
 
 #include "../support/debug.h"
+#include "util.h"
 
 #include "imagesource_tiff.h"#include "../profilemanager/lcmswrapper.h"
 
@@ -266,10 +267,19 @@ int ImageSource_TIFF::CountTIFFDirs(const char *filename,int &largestdir)
 	largestdir=0;
 	int count=0;
 	long largestarea=0;
+
+#if WIN32
+	wchar_t *tmpfn=UTF8ToWChar(filename);
+	if(!(file=TIFFOpenW(tmpfn,"r")))
+	{
+		throw "Can't open file...";
+	}
+#else
 	if(!(file=TIFFOpen(filename,"r")))
 	{
 		throw "Can't open file...";
 	}
+#endif
 
 	do
 	{
@@ -312,10 +322,18 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 	int largestimage=0;
 	CountTIFFDirs(filename,largestimage);
 
+#if WIN32
+	wchar_t *tmpfn=UTF8ToWChar(filename);
+	if(!(file=TIFFOpenW(tmpfn,"r")))
+	{
+		throw "Can't open file...";
+	}
+#else
 	if(!(file=TIFFOpen(filename,"r")))
 	{
 		throw "Can't open file...";
 	}
+#endif
 
 //	TIFFReadDirectory(file);
 

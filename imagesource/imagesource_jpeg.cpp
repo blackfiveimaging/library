@@ -28,6 +28,7 @@ typedef unsigned char boolean;
 #include "../support/debug.h"
 
 #include "lcmswrapper.h"
+#include "util.h"
 
 #include "iccjpeg.h"
 
@@ -61,7 +62,7 @@ ImageSource_JPEG::ImageSource_JPEG(const char *filename)
 	: ImageSource(), cinfo(NULL), tmprow(NULL), err(NULL), iccprofbuffer(NULL), started(false)
 {
 	err=new ImageSource_JPEG_ErrManager;
-	if ((err->File = fopen(filename,"rb")) == NULL)
+	if ((err->File = FOpenUTF8(filename,"rb")) == NULL)
     	throw "Unable to open file";
 	err->FileOwned=true;
 	Init();

@@ -20,7 +20,7 @@
 #if defined HAVE_LIBPNM || defined HAVE_LIBNETPBM
 
 #include "../support/debug.h"
-
+#include "util.h"
 #include "imagesource_pnm.h"
 
 using namespace std;
@@ -91,7 +91,7 @@ ImageSource_PNM::ImageSource_PNM(const char *filename)
 
 	pnm_init(&argc,argv);
 
-	if(!(file=fopen(filename,"rb")))
+	if(!(file=FOpenUTF8(filename,"rb")))
 		throw "Can't open file";
 
 	Debug[TRACE] << "Attempting to read PNM file..." << endl;

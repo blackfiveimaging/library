@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 
 #include "lcmswrapper.h"
+#include "util.h"
 
 #include "tiffsave.h"
 
@@ -125,7 +126,7 @@ static void EmbedProfile(TIFF* Out,CMSProfile *profile)
 	if(!fn)
 		return;
 
-	if(!(f = fopen(fn, "rb")))
+	if(!(f = FOpenUTF8(fn, "rb")))
 		return;
 	
 	fseek(f,0,SEEK_END);
@@ -171,11 +172,19 @@ TIFFSaver::TIFFSaver(const char *filename,struct ImageSource *is,bool deep,int b
 	stripheight=TIFFSAVE_STRIPHEIGHT;
 
 	tmpbuffer=NULL;
-
+#if WIN32
+	wchar_t *tmpfn=UTF8ToWChar(filename);
+	if(!(file = TIFFOpenW(tmpfn, "w")))
+	{
+		throw "Can't open file";
+	}
+	free(tmpfn);
+#else
 	if(!(file = TIFFOpen(filename, "w")))
 	{
 		throw "Can't open file";
 	}
+#endif
 	switch(bitsperpixel)
 	{
 		case 40:

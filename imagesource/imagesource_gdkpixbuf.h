@@ -14,7 +14,6 @@
 
 #include "imagesource.h"
 #include <gdk/gdkpixbuf.h>
-#include <fstream>
 
 using namespace std;
 

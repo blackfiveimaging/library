@@ -19,6 +19,7 @@
 #include "debug.h"
 #include "lcmswrapper.h"
 #include "imagesource_flatten.h"
+#include "util.h"
 
 #include "iccjpeg.h"
 #include "jpegsave.h"
@@ -143,7 +144,7 @@ void JPEGSaver::EmbedProfile(CMSProfile *profile)
 	if(!fn)
 		return;
 
-	if(!(f = fopen(fn, "rb")))
+	if(!(f = FOpenUTF8(fn, "rb")))
 		return;
 	
 	fseek(f,0,SEEK_END);
@@ -184,7 +185,7 @@ JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression
 	cinfo->err = jpeg_std_error(&err->std);
 	err->std.error_exit = isjpeg_error_exit;
 
-	if((err->file = fopen(filename,"wb")) == NULL)
+	if((err->file = FOpenUTF8(filename,"wb")) == NULL)
 		throw _("Can't open file for saving");
 
 	cerr << "File " << filename << " opened" << endl;

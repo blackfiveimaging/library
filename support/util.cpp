@@ -30,6 +30,22 @@
 
 using namespace std;
 
+// Convert UTF8 string to wchar_t - only available on Win32
+
+#ifdef WIN32
+wchar_t *UTF8ToWChar(const char *in)
+{
+	size_t inlen=MultiByteToWideChar(CP_UTF8,0,in,-1,NULL,0);
+	wchar_t *result=(wchar_t *)malloc(inlen*sizeof(wchar_t));
+	if(!MultiByteToWideChar(CP_UTF8,0,in,-1,result,inlen))
+	{
+		free(result);
+		result=NULL;
+	}
+	return(result);
+}
+#endif
+
 
 // Open a file from a utf-8-encoded filename.
 // On Unix, this is a straight passthrough to fopen().
@@ -42,23 +58,12 @@ FILE *FOpenUTF8(const char *name,const char *mode)
 #ifdef WIN32
 	FILE *result=NULL;
 
-	size_t fnlen=MultiByteToWideChar(CP_UTF8,0,name,-1,NULL,0);
-	size_t modelen=MultiByteToWideChar(CP_UTF8,0,mode,-1,NULL,0);
-
-	if(fnlen && modelen)
-	{
-		wchar_t *fnbuf=(wchar_t *)malloc(fnlen*sizeof(wchar_t));
-		wchar_t *modebuf=(wchar_t *)malloc(modelen*sizeof(wchar_t));
-		if(MultiByteToWideChar(CP_UTF8,0,name,-1,fnbuf,fnlen))
-		{
-			MultiByteToWideChar(CP_UTF8,0,mode,-1,modebuf,modelen);
-
-			result=_wfopen(fnbuf,modebuf);
-
-		}
-		free(modebuf);
-		free(fnbuf);
-	}
+	wchar_t *fnbuf=UTF8ToWChar(name);
+	wchar_t *modebuf=UTF8ToWChar(mode);
+	if(fnbuf && modebuf)
+		result=_wfopen(fnbuf,modebuf);
+	free(modebuf);
+	free(fnbuf);
 	// If we've not succeeded in opening the file, fall back to regular fopen() -
 	// maybe it's a code-page encoded filename supplied on the command line...
 	if(result)
