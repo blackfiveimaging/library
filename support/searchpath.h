@@ -83,7 +83,11 @@ class SearchPathIterator
 	protected:
 	SearchPathHandler &header;
 	std::list<SearchPathInstance *>::iterator spiterator;
+#ifdef WIN32
+	_WDIR *searchdirectory;
+#else
 	DIR *searchdirectory;
+#endif
 	char *searchfilename;
 };
 

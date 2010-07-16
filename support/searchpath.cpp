@@ -23,6 +23,9 @@ class SearchPathInstance
 	SearchPathInstance *Next();
 	protected:
 	char *path;
+#ifdef WIN32
+	wchar_t *wpath;
+#endif
 	friend class SearchPathHandler;
 	friend class SearchPathIterator;
 	friend std::ostream& operator<<(std::ostream &s,SearchPathInstance &sp);
@@ -33,6 +36,9 @@ SearchPathInstance::SearchPathInstance(const char *path)
 	: path(NULL)
 {
 	this->path=substitute_homedir(path);
+#ifdef WIN32
+	this->wpath=UTF8ToWChar(this->path);
+#endif
 }
 
 
@@ -40,6 +46,10 @@ SearchPathInstance::~SearchPathInstance()
 {
 	if(path)
 		free(path);
+#ifdef WIN32
+	if(wpath)
+		free(wpath);
+#endif
 }
 
 
@@ -102,8 +112,13 @@ SearchPathIterator::SearchPathIterator(SearchPathHandler &header)
 
 SearchPathIterator::~SearchPathIterator()
 {
+#ifdef WIN32
+	if(searchdirectory)
+		_wclosedir(searchdirectory);
+#else
 	if(searchdirectory)
 		closedir(searchdirectory);
+#endif
 
 	if(searchfilename)
 		free(searchfilename);
@@ -299,6 +314,63 @@ char *SearchPathHandler::MakeRelative(const char *path)
 }
 
 
+#ifdef WIN32
+const char *SearchPathIterator::GetNextFilename(const char *last)
+{
+	if(searchfilename)
+		free(searchfilename);
+	searchfilename=NULL;
+
+	// If we're provided with a NULL pointer, clean up
+	// the remnants of any previous run...
+
+	if(!last)
+	{
+		if(searchdirectory)
+			_wclosedir(searchdirectory);
+		searchdirectory=NULL;
+
+		spiterator=header.paths.begin();
+		if(spiterator!=header.paths.end())
+		{
+			while(!searchdirectory)
+			{
+				if(!(searchdirectory=_wopendir((*spiterator)->wpath)))
+					++spiterator;
+				if(spiterator==header.paths.end())
+					return(NULL);
+			}
+		}
+	}
+
+	struct _wdirent *de=NULL;
+
+	while(searchdirectory && !de)
+	{
+		de=_wreaddir(searchdirectory);
+		if(!de)
+		{
+			_wclosedir(searchdirectory);
+			searchdirectory=NULL;
+			while(!searchdirectory && (++spiterator!=header.paths.end()))
+			{
+				searchdirectory=_wopendir((*spiterator)->wpath);
+			}
+			if(searchdirectory)
+				de=_wreaddir(searchdirectory);
+		}
+		if(de)
+		{
+			searchfilename=WCharToUTF8(de->d_name);
+			if(strcmp(".",searchfilename)==0)
+				de=NULL;
+			else if(strcmp("..",searchfilename)==0)
+				de=NULL;
+		}
+	}
+	return(searchfilename);
+}
+#else
 const char *SearchPathIterator::GetNextFilename(const char *last)
 {
 	if(searchfilename)
@@ -331,7 +403,6 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 
 	while(searchdirectory && !de)
 	{
-		// FIXME - need to use wchar equivalents
 		de=readdir(searchdirectory);
 		if(!de)
 		{
@@ -358,7 +429,7 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 	}
 	return(searchfilename);
 }
-
+#endif
 
 const char *SearchPathIterator::GetNextPath(const char *last)
 {

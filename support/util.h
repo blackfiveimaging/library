@@ -34,6 +34,8 @@ bool CompareFiles(const char *fn1,const char *fn2);
 #ifdef WIN32
 // Convert UTF8 string to wchar_t - only available on Win32
 wchar_t *UTF8ToWChar(const char *in);
+// And back again
+char *WCharToUTF8(const wchar_t *in);
 #endif
 
 // Open a file from a utf-8-encoded filename.
