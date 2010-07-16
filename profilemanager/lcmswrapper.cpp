@@ -19,6 +19,7 @@
 #include <fstream>
 
 #include "../support/debug.h"
+#include "../support/binaryblob.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -48,10 +49,20 @@ CMSProfile::CMSProfile(const char *fn) : md5(NULL), generated(false), filename(N
 
 	cmsErrorAction(LCMS_ERROR_SHOW);
 
+#ifdef WIN32
+	BinaryBlob blob(fn);	// Work around lack of wchar filename support by loading profile
+							// manually...
+
+	buflen=blob.GetSize();
+	buffer=blob.Relinquish();
+	if(!(prof=cmsOpenProfileFromMem(buffer,buflen)))
+		throw "Can't open profile";
+#else
 	filename=strdup(fn);
 
 	if(!(prof=cmsOpenProfileFromFile(filename,"r")))
 		throw "Can't open profile";
+#endif
 
 	CalcMD5();
 }

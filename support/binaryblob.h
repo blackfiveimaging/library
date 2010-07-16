@@ -22,7 +22,7 @@ class BinaryBlob
 	virtual ~BinaryBlob()
 	{
 		if(owned && pointer)
-			delete[] pointer;
+			free(pointer);
 	}
 	virtual unsigned char *Load(const char *filename)
 	{
@@ -40,7 +40,7 @@ class BinaryBlob
 
 		Debug[TRACE] << "Loading binary blob " << filename << " of size: " << size << std::endl;
 
-		pointer=new unsigned char[size];
+		pointer=(unsigned char *)malloc(size);
 		owned=true;
 		size_t readlen = fread(pointer, 1, size, f);
 		fclose(f);
@@ -51,6 +51,13 @@ class BinaryBlob
 	int GetSize()
 	{
 		return(size);
+	}
+	// Relinquish ownership of the blob.  The caller will then be reponsible for
+	// free()ing the data when done with it;
+	unsigned char *Relinquish()
+	{
+		owned=false;
+		return(pointer);
 	}
 	unsigned char &operator[](int idx)
 	{
