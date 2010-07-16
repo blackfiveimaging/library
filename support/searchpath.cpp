@@ -160,7 +160,7 @@ char *SearchPathHandler::SearchPaths(const char *file)
 		Debug[TRACE] << "Searching for " << file << " in " << (*it)->path << endl;
 		char *p=(*it)->MakeAbsolute(file);
 		Debug[TRACE] << " -> " << p << endl;
-#if WIN32
+#ifdef WIN32
 		wchar_t *p2=UTF8ToWChar(p);	// We check for existing of wchar filename but return UTF8 name
 		bool exists=_wstat(p2,&statbuf)==0;
 		free(p2);
@@ -174,7 +174,7 @@ char *SearchPathHandler::SearchPaths(const char *file)
 		++it;
 	}
 
-#if WIN32
+#ifdef WIN32
 	wchar_t *p2=UTF8ToWChar(file);	// We check for existing of wchar filename but return UTF8 name
 	bool exists=_wstat(p2,&statbuf)==0;
 	free(p2);
@@ -331,6 +331,7 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 
 	while(searchdirectory && !de)
 	{
+		// FIXME - need to use wchar equivalents
 		de=readdir(searchdirectory);
 		if(!de)
 		{
