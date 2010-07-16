@@ -8,7 +8,7 @@
 #include "pathsupport.h"
 
 #include "searchpath.h"
-
+#include "util.h"
 #include "debug.h"
 
 using namespace std;
@@ -131,6 +131,7 @@ SearchPathHandler &SearchPathHandler::operator=(SearchPathHandler &other)
 	char *p=other.GetPaths();
 	AddPath(p);
 	free(p);
+	return(*this);
 }
 
 SearchPathHandler::~SearchPathHandler()
@@ -147,7 +148,11 @@ SearchPathHandler::~SearchPathHandler()
 
 char *SearchPathHandler::SearchPaths(const char *file)
 {
+#ifdef WIN32
+	struct _stat statbuf;
+#else
 	struct stat statbuf;
+#endif
 
 	list<SearchPathInstance *>::iterator it=paths.begin();
 	while(it!=paths.end())
@@ -155,16 +160,30 @@ char *SearchPathHandler::SearchPaths(const char *file)
 		Debug[TRACE] << "Searching for " << file << " in " << (*it)->path << endl;
 		char *p=(*it)->MakeAbsolute(file);
 		Debug[TRACE] << " -> " << p << endl;
-
+#if WIN32
+		wchar_t *p2=UTF8ToWChar(p);	// We check for existing of wchar filename but return UTF8 name
+		bool exists=_wstat(p2,&statbuf)==0;
+		free(p2);
+		if(exists)
+			return(p);
+#else
 		if(stat(p,&statbuf)==0)
 			return(p);
+#endif
 		free(p);
-
 		++it;
 	}
 
+#if WIN32
+	wchar_t *p2=UTF8ToWChar(file);	// We check for existing of wchar filename but return UTF8 name
+	bool exists=_wstat(p2,&statbuf)==0;
+	free(p2);
+	if(exists)
+		return(strdup(file));
+#else
 	if(stat(file,&statbuf)==0)
 		return(strdup(file));
+#endif
 
 	return(NULL);
 }

@@ -68,6 +68,7 @@ FILE *FOpenUTF8(const char *name,const char *mode)
 	// maybe it's a code-page encoded filename supplied on the command line...
 	if(result)
 		return(result);
+	Debug[WARN] << "Opening " << name << " failed with " << errno << " - trying regular mode..." << endl;
 #endif
 	return(fopen(name,mode));
 }
@@ -79,9 +80,22 @@ FILE *FOpenUTF8(const char *name,const char *mode)
 
 bool CreateDirIfNeeded(const char *path)
 {
+#ifdef WIN32
+	struct _stat s;
+
+	wchar_t *widepath=UTF8ToWChar(path);
+	bool exists=_wstat(widepath,&s)==0;
+	if(exists)
+	{
+		free(widepath);
+		return(true);
+	}
+#else
 	struct stat s;
+
 	if(stat(path,&s)==0)
 		return(true);
+#endif
 
 	if(errno==ENOENT)
 	{
@@ -92,19 +106,32 @@ bool CreateDirIfNeeded(const char *path)
 		free(s2);
 
 #ifdef WIN32
-		return(mkdir(path)==0);
+		bool created=_wmkdir(widepath)==0;
+		free(widepath);
+		return(created);
 #else
 		return(mkdir(path,0755)==0);
 #endif
 	}
+#ifdef WIN32
+	free(widepath);
+#endif
 	return(false);
 }
 
 
 bool CheckFileExists(const char *file)
 {
+#ifdef WIN32
+	struct _stat s;
+	wchar_t *t=UTF8ToWChar(file);
+	bool result=_wstat(t,&s)==0;
+	free(t);
+	return(result);
+#else
 	struct stat s;
 	return(stat(file,&s)==0);
+#endif
 }
 
 

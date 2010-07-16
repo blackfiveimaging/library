@@ -4,6 +4,7 @@ noinst_LTLIBRARIES = libsupport.la
 
 libsupport_la_SOURCES =	\
 	binarysearch.h \
+	binaryblob.h \
 	\
 	consumer.cpp	\
 	consumer.h	\

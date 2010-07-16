@@ -12,13 +12,12 @@
 
 #include <iostream>
 
-#include <sys/stat.h>
-
 #include <gtk/gtk.h>
 
 #include "egg-pixbuf-thumbnail.h"
 
 #include "generaldialogs.h"
+#include "util.h"
 #include "searchpath.h"
 
 using namespace std;
@@ -166,8 +165,7 @@ char *File_Save_Dialog(const char *title,const char *oldfilename,GtkWidget *pare
 		newfile = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
 		cerr << "Checking if file " << newfile << " already exists?" << endl;
-		struct stat statbuf;
-		if(stat(newfile,&statbuf)==0)
+		if(CheckFileExists(newfile))
 		{
 			cerr << "Yes - asking for confirmation before overwriting..." << endl;
 			GtkWidget *confirm = gtk_message_dialog_new (GTK_WINDOW(parent),GtkDialogFlags(0),
