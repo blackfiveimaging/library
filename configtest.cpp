@@ -2,6 +2,7 @@
 
 #include "configdb.h"
 
+#include "hackstream.h"
 
 class MyClassThatNeedsConfigData : public ConfigDB
 {
@@ -63,6 +64,13 @@ ConfigTemplate MyOtherClass::Template[]=
 
 int main(int argc,char **argv)
 {
+	if(argc>1)
+	{
+		char buf[100];
+		hack_istream stream(argv[1]);
+		stream.getline(buf,100);
+		std::cerr << "First line of file: " << buf << std::endl;
+	}
 	ConfigFile myconfig;
 	MyClassThatNeedsConfigData myclass(&myconfig);
 //	myconfig.ParseConfigFile("/path/to/myconfigfile");

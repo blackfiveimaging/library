@@ -18,8 +18,13 @@ class DirTreeWalker : public std::string
 	DirTreeWalker *child;
 //	std::string path;
 	std::string filename;
+#ifdef WIN32
+	_WDIR *files;
+	_WDIR *dirs;
+#else
 	DIR *files;
 	DIR *dirs;
+#endif
 };
 
 #endif

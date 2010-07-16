@@ -5,6 +5,8 @@
 #include <fstream>
 #include <stack>
 
+#include "hackstream.h"
+
 // FIXME Win32 namespace clash
 #undef ERROR
 
@@ -41,7 +43,7 @@ class DebugStream
 	enum DebugLevel level;
 	std::stack<enum DebugLevel> levelstack;
 	NullStream nullstream;
-	std::ofstream logfile;
+	hack_ostream logfile;
 };
 
 extern DebugStream Debug;

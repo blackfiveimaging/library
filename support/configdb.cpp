@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "util.h"
+
 #include "debug.h"
 
 #include "configdb.h"
@@ -428,7 +430,7 @@ bool ConfigFile::ParseConfigFile(const char *inifile)
 {
 	bool result=false;
 	FILE *file;
-	if((file=fopen(inifile,"r")))
+	if((file=FOpenUTF8(inifile,"r")))
 	{
 		char inb[4096];
 		while((fgets(inb,4096,file)))
@@ -462,7 +464,7 @@ bool ConfigFile::ParseConfigFile(const char *inifile)
 bool ConfigFile::SaveConfigFile(const char *inifile)
 {
 	FILE *file;
-	if((file=fopen(inifile,"w")))
+	if((file=FOpenUTF8(inifile,"w")))
 	{
 		ConfigSectionHandler *h;
 		h=first;

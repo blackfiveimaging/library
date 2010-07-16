@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 
 #include "searchpath.h"
+#include "util.h"
 
 #include "dirtreewalker.h"
 
@@ -16,8 +17,15 @@ using namespace std;
 DirTreeWalker::DirTreeWalker(const char *initialpath,DirTreeWalker *parent)
 	: std::string(initialpath), parent(parent), child(NULL), filename(), files(NULL), dirs(NULL)
 {
+#ifdef WIN32
+	wchar_t *ip=UTF8ToWChar(initialpath);
+	dirs=_wopendir(ip);
+	files=_wopendir(ip);
+	free(ip);
+#else
 	dirs=opendir(initialpath);
 	files=opendir(initialpath);
+#endif
 }
 
 
@@ -25,15 +33,57 @@ DirTreeWalker::~DirTreeWalker()
 {
 	if(child)
 		delete child;
+#ifdef WIN32
+	if(files)
+		_wclosedir(files);
+	if(dirs)
+		_wclosedir(dirs);
+#else
 	if(files)
 		closedir(files);
 	if(dirs)
 		closedir(dirs);
+#endif
 }
 
 
 const char *DirTreeWalker::NextFile()
 {
+#ifdef WIN32
+	if(!files)
+		return(NULL);
+	struct _wdirent *de=NULL;
+
+	while((de=_wreaddir(files)))
+	{
+		char *dname=NULL;
+		if(de)
+		{
+			dname=WCharToUTF8(de->d_name);
+			if(strcmp(".",dname)==0)
+				de=NULL;
+			else if(strcmp("..",dname)==0)
+				de=NULL;
+		}
+		if(de)
+		{
+			filename=*this+SEARCHPATH_SEPARATOR+dname;
+			free(dname);
+			wchar_t *wfn=UTF8ToWChar(filename.c_str());
+			struct _stat statbuf;
+			_wstat(wfn,&statbuf);
+			free(wfn);
+
+			// Do we have a file?
+			if(!S_ISDIR(statbuf.st_mode))
+			{
+				return(filename.c_str());
+			}
+		}
+		if(dname)
+			free(dname);
+	}
+#else
 	if(!files)
 		return(NULL);
 	struct dirent *de=NULL;
@@ -61,6 +111,7 @@ const char *DirTreeWalker::NextFile()
 			}
 		}
 	}
+#endif
 	return(NULL);
 }
 
@@ -73,7 +124,38 @@ DirTreeWalker *DirTreeWalker::NextDirectory()
 	if(child)
 		delete child;
 	child=NULL;
+#ifdef WIN32
+	struct _wdirent *de=NULL;
 
+	while((de=_wreaddir(dirs)))
+	{
+		char *dname=NULL;
+		if(de)
+		{
+			dname=WCharToUTF8(de->d_name);
+			if(strcmp(".",dname)==0)
+				de=NULL;
+			else if(strcmp("..",dname)==0)
+				de=NULL;
+		}
+		if(de)
+		{
+			filename=*this+SEARCHPATH_SEPARATOR+dname;
+
+			wchar_t *fnw=UTF8ToWChar(filename.c_str());
+			struct _stat statbuf;
+			_wstat(fnw,&statbuf);
+			free(fnw);
+
+			// Do we have a directory?
+			if(S_ISDIR(statbuf.st_mode))
+			{
+				return(child=new DirTreeWalker(filename.c_str(),this));
+			}
+		}
+	}
+	return(parent);
+#else
 	struct dirent *de=NULL;
 
 	while((de=readdir(dirs)))
@@ -100,6 +182,7 @@ DirTreeWalker *DirTreeWalker::NextDirectory()
 		}
 	}
 	return(parent);
+#endif
 }
 
 

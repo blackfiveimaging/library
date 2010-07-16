@@ -45,7 +45,7 @@ wchar_t *UTF8ToWChar(const char *in)
 	return(result);
 }
 
-char *UTF8ToWChar(const wchar_t *in)
+char *WCharToUTF8(const wchar_t *in)
 {
 	size_t inlen=WideCharToMultiByte(CP_UTF8,0,in,-1,NULL,0,NULL,NULL);
 	char *result=(char *)malloc(inlen*sizeof(char));

@@ -49,6 +49,7 @@ libsupport_la_SOURCES =	\
 	dirtreewalker.cpp \
 	dirtreewalker.h \
 	externalprog.h \
+	hackstream.h \
 	\
 	tempfile.cpp	\
 	tempfile.h	\
