@@ -48,6 +48,22 @@ class BinaryBlob
 			throw "Binary blob reading failed";
 		return(pointer);
 	}
+	virtual void Save(const char *filename)
+	{
+		if(!pointer)
+			throw "Binary blob: no data yet loaded!";
+
+		FILE *f;
+		if(!(f = FOpenUTF8(filename, "wb")))
+			throw "Can't open file";
+		
+		Debug[TRACE] << "Saving binary blog of size " << size << std::endl;
+
+		size_t wlen = fwrite(pointer, 1, size, f);
+		fclose(f);
+		if(wlen!=size)
+			throw "Binary blob: write failed";
+	}
 	int GetSize()
 	{
 		return(size);
