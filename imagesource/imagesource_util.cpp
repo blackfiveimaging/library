@@ -128,6 +128,8 @@ ImageSource *ISScaleImageByResolution(ImageSource *source,double xres,double yre
 
 static IS_ScalingQuality ChooseScaling(int src,int dst,IS_ScalingQuality quality)
 {
+	if(src==dst)
+		return(IS_SCALING_NONE);
 	if(quality==IS_SCALING_AUTOMATIC)
 	{
 		double f=dst;  f/=src;
@@ -159,7 +161,6 @@ ImageSource *ISScaleImageBySize(ImageSource *source,int width,int height,IS_Scal
 
 	switch(hscale)
 	{
-		default:
 		case IS_SCALING_NEARESTNEIGHBOUR:
 			source=new ImageSource_HScale(source,width);
 			break;
@@ -176,11 +177,13 @@ ImageSource *ISScaleImageBySize(ImageSource *source,int width,int height,IS_Scal
 		case IS_SCALING_DOWNSAMPLE:
 			source=new ImageSource_HDownsample(source,width);
 			break;
+		default:
+			// no scaling needed
+			break;
 	}
 
 	switch(vscale)
 	{
-		default:
 		case IS_SCALING_NEARESTNEIGHBOUR:
 			source=new ImageSource_VScale(source,height);
 			break;
@@ -196,6 +199,9 @@ ImageSource *ISScaleImageBySize(ImageSource *source,int width,int height,IS_Scal
 			break;
 		case IS_SCALING_DOWNSAMPLE:
 			source=new ImageSource_VDownsample(source,height);
+			break;
+		default:
+			// no scaling needed
 			break;
 	}
 
