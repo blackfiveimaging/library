@@ -59,6 +59,8 @@ class ExternalProgram : public SearchPathHandler
 	virtual void RunProgram()
 	{
 		Debug.PushLevel(TRACE);	// Promote debuglevel to TRACE for this call
+
+#ifdef WIN32
 		Debug[TRACE] << "Hunting for " << args[0] << std::endl;
 		char *prgname=SearchPaths(args[0].c_str());
 		if(!prgname)
@@ -67,6 +69,30 @@ class ExternalProgram : public SearchPathHandler
 			throw "Can't find external program";
 		}
 		Debug[TRACE] << "Found external program at " << prgname << std::endl;
+
+		wchar_t *prgnamew=UTF8ToWChar(prgname);
+		wchar_t **arglist=(wchar_t **)malloc(sizeof(char *)*(args.size()+1));
+		for(unsigned int i=0;i<args.size();++i)
+		{
+			arglist[i]=UTF8ToWChar(args[i].c_str());
+			Debug[TRACE] << "Argument: " << i << ": " << args[i].c_str() << std::endl;
+		}
+		arglist[args.size()]=NULL;
+
+		Debug[TRACE] << "Launching subprocess and waiting for completion..." << std::endl;
+		int status=_wspawnv(_P_WAIT,prgnamew,arglist);
+		free(prgnamew);
+		Debug[TRACE] << "Subprocess returned code " << status << std::endl;
+#else
+		Debug[TRACE] << "Hunting for " << args[0] << std::endl;
+		char *prgname=SearchPaths(args[0].c_str());
+		if(!prgname)
+		{
+			Debug.PopLevel();
+			throw "Can't find external program";
+		}
+		Debug[TRACE] << "Found external program at " << prgname << std::endl;
+
 		char **arglist=(char **)malloc(sizeof(char *)*(args.size()+1));
 		for(unsigned int i=0;i<args.size();++i)
 		{
@@ -75,11 +101,6 @@ class ExternalProgram : public SearchPathHandler
 		}
 		arglist[args.size()]=NULL;
 
-#ifdef WIN32
-		Debug[TRACE] << "Launching subprocess and waiting for completion..." << std::endl;
-		int status=_spawnv(_P_WAIT,prgname,arglist);
-		Debug[TRACE] << "Subprocess returned code " << status << std::endl;
-#else
 		switch((forkpid=fork()))
 		{
 			case -1:
