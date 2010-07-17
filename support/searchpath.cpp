@@ -473,7 +473,7 @@ char *SearchPathHandler::GetPaths()
 	list<SearchPathInstance *>::iterator spi=paths.begin();
 	while(spi!=paths.end())
 	{
-		if(homedir && strncmp(homedir,(*spi)->path,homedirlen)==0)
+		if(homedir && homedirlen && strncmp(homedir,(*spi)->path,homedirlen)==0)
 			sl+=strlen((*spi)->path)+strlen("$HOME/")+1-homedirlen;
 		else
 			sl+=strlen((*spi)->path)+1;
@@ -486,7 +486,7 @@ char *SearchPathHandler::GetPaths()
 	spi=paths.begin();
 	while(spi!=paths.end())
 	{
-		if(homedir && strncmp(homedir,(*spi)->path,homedirlen)==0)
+		if(homedir && homedirlen && strncmp(homedir,(*spi)->path,homedirlen)==0)
 		{
 			strcat(result,"$HOME");
 			strcat(result,(*spi)->path+homedirlen);

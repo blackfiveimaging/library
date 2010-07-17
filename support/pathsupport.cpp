@@ -14,6 +14,7 @@
 #include <shlobj.h>
 #endif
 
+#include "util.h"
 #include "debug.h"
 #include "searchpath.h"
 #include "pathsupport.h"
@@ -25,11 +26,16 @@ const char *get_homedir()
 {
 //	return(getenv("HOME"));
 #ifdef WIN32
+	static wchar_t homedir_w[MAX_PATH]={0};
 	static char homedir[MAX_PATH]={0};
 	static bool init=false;
 	if(!init)
 	{
-		SHGetFolderPath(NULL,CSIDL_APPDATA,NULL,SHGFP_TYPE(SHGFP_TYPE_CURRENT),homedir);
+		SHGetFolderPathW(NULL,CSIDL_APPDATA,NULL,SHGFP_TYPE(SHGFP_TYPE_CURRENT),homedir_w);
+		char *utf=WCharToUTF8(homedir_w);
+		strncpy(homedir,utf,MAX_PATH);
+		free(utf);
+		init=true;
 	}
 	return(homedir);
 #else
@@ -80,9 +86,13 @@ char *substitute_homedir(const char *path)
 		// If we get this far, then we need to substitute - and path now points
 		// to the beginning of the path proper...
 
-		result=(char *)malloc(strlen(path)+strlen(subst)+2);	
-
-		sprintf(result,"%s%c%s",subst,SEARCHPATH_SEPARATOR,path);
+		if(subst && strlen(subst))
+		{
+			result=(char *)malloc(strlen(path)+strlen(subst)+2);	
+			sprintf(result,"%s%c%s",subst,SEARCHPATH_SEPARATOR,path);
+		}
+		else
+			result=strdup(path);
 	}
 	return(result);
 }
@@ -119,8 +129,13 @@ char *substitute_xdgconfighome(const char *path)
 		{
 //			Debug[TRACE] << "No XDG_CONFIG_HOME set - using $HOME/.config instead" << endl;
 			const char *hd=get_homedir();
-			result=(char *)malloc(strlen(hd)+strlen("/.config/")+strlen(path)+strlen(hd)+2);
-			sprintf(result,"%s%c.config%c%s",hd,SEARCHPATH_SEPARATOR,SEARCHPATH_SEPARATOR,path);
+			if(hd && strlen(hd))
+			{
+				result=(char *)malloc(strlen(hd)+strlen("/.config/")+strlen(path)+strlen(hd)+2);
+				sprintf(result,"%s%c.config%c%s",hd,SEARCHPATH_SEPARATOR,SEARCHPATH_SEPARATOR,path);
+			}
+			else
+				result=strdup(path);
 		}
 		
 	}
