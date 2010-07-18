@@ -56,11 +56,16 @@ char *substitute_homedir(const char *path)
 		{
 			path+=14;
 #ifdef WIN32
+			static wchar_t pixdir_w[MAX_PATH]={0};
 			static char pixdir[MAX_PATH]={0};
 			static bool init=false;
 			if(!init)
 			{
-				SHGetFolderPath(NULL,CSIDL_COMMON_PICTURES,NULL,SHGFP_TYPE(SHGFP_TYPE_CURRENT),pixdir);
+				SHGetFolderPathW(NULL,CSIDL_COMMON_PICTURES,NULL,SHGFP_TYPE(SHGFP_TYPE_CURRENT),pixdir_w);
+				char *utf=WCharToUTF8(pixdir_w);
+				strncpy(pixdir,utf,MAX_PATH);
+				free(utf);
+				init=true;
 			}
 			subst=pixdir;
 #else
