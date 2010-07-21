@@ -118,7 +118,7 @@ ImageSource_CachedImage::ImageSource_CachedImage(CachedImage_Deferred *img) : Im
 	yres=img->yres;
 	samplesperpixel=img->samplesperpixel;
 	type=img->type;
-	cerr << "Image type: " << type << endl;
+//	cerr << "Image type: " << type << endl;
 	randomaccess=true;
 	if(img->embeddedprofile)
 	{
