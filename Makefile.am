@@ -15,8 +15,9 @@ check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				printqueuetest stpuitest debugtest errorqueuetest
 
 
-bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest
+bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest whitespread
 
+whitespread_SOURCES = whitespread.cpp
 configtest_SOURCES = configtest.cpp
 debugtest_SOURCES = debugtest.cpp
 gprintertest_SOURCES = gprintertest.cpp
