@@ -19,6 +19,7 @@ libimagesource_la_SOURCES =	\
 	imagesource_chequerboard.h	\
 	imagesource_cms.cpp	\
 	imagesource_cms.h	\
+	imagesource_colorantmask.h \
 	imagesource_convolution.cpp	\
 	imagesource_convolution.h	\
 	imagesource_crop.cpp	\
