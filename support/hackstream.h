@@ -28,7 +28,7 @@
 // for memmove():
 #include <cstring>
 
-#include "util.h"
+#include "support/util.h"
 
 
 /************************************************************

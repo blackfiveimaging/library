@@ -520,6 +520,10 @@ static void imageselector_destroy(GtkObject *object)
 
 	clear_list(il);
 
+	if(il->selectionlist)
+		delete il->selectionlist;
+	il->selectionlist=NULL;
+
 	if(il->filename)
 		free(il->filename);
 	il->filename=NULL;

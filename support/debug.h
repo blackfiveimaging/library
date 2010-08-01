@@ -5,6 +5,7 @@
 #include <fstream>
 #include <stack>
 
+#include "util.h"
 #include "hackstream.h"
 
 // FIXME Win32 namespace clash
