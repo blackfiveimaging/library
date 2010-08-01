@@ -183,5 +183,6 @@ ImageSource_GaussianBlur::ImageSource_GaussianBlur(struct ImageSource *source,fl
 	tmprows=(float **)malloc(sizeof(float *)*kernel->GetWidth());
 	MakeRowBuffer();
 	randomaccess=false;
+	currentrow=-1;
 }
 
