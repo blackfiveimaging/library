@@ -9,9 +9,9 @@ class ImageSource_RowCache : public ImageSource
 	public:
 	ImageSource_RowCache(ImageSource *source,int hextra,int vextra) : ImageSource(source), source(source), hextra(hextra), vextra(vextra)
 	{
-		cachewidth=source->width+hextra*2;
+		cachewidth=source->width+hextra*2+1;
 		bufferrows=vextra*2+1;
-		rowcache=(ISDataType *)malloc(sizeof(float)*source->samplesperpixel*source->width*bufferrows);
+		rowcache=(ISDataType *)malloc(sizeof(ISDataType)*source->samplesperpixel*source->width*bufferrows);
 		rawcurrentrow=currentrow=-1;
 	}
 	~ImageSource_RowCache()
@@ -56,7 +56,7 @@ class ImageSource_RowCache : public ImageSource
 			}
 		}
 		rawcurrentrow=row;
-		return(rowptr+hextra);
+		return(rowptr+samplesperpixel*hextra);
 	}
 	private:
 	ImageSource *source;

@@ -57,7 +57,11 @@ ISGaussianBlur_RowCache::ISGaussianBlur_RowCache(ImageSource_GaussianBlur *sourc
 	cachehoffset=source->hextra;
 	bufferrows=source->vextra*2+1;
 	convcache=(float *)malloc(sizeof(float)*source->samplesperpixel*cachewidth*bufferrows);
-	rawcache=(ISDataType *)malloc(sizeof(float)*source->samplesperpixel*source->width*bufferrows);
+	rawcache=(ISDataType *)malloc(sizeof(ISDataType)*source->samplesperpixel*source->width*bufferrows);
+	for(int s=0;s<cachewidth*source->samplesperpixel;++s)
+		convcache[s]=0.0;
+	for(int s=0;s<source->width*source->samplesperpixel;++s)
+		rawcache[s]=0;
 }
 
 
@@ -181,6 +185,8 @@ ImageSource_GaussianBlur::ImageSource_GaussianBlur(struct ImageSource *source,fl
 	vextra=hextra;
 	cache=new ISGaussianBlur_RowCache(this);
 	tmprows=(float **)malloc(sizeof(float *)*kernel->GetWidth());
+	for(int s=0;s<kernel->GetWidth();++s)
+		tmprows[s]=NULL;
 	MakeRowBuffer();
 	randomaccess=false;
 	currentrow=-1;
