@@ -1,7 +1,7 @@
 #ifndef IMAGESOURCE_TYPES_H
 #define IMAGESOURCE_TYPES_H
 
-#include "debug.h"
+#include "../support/debug.h"
 
 typedef unsigned short ISDataType;
 #define IS_SAMPLEMAX 65535
