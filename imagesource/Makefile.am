@@ -76,6 +76,7 @@ libimagesource_la_SOURCES =	\
 	imagesource_vreflect.h \
 	imagesource_hreflect.cpp \
 	imagesource_hreflect.h \
+	imagesource_rowcache.h \
 	imagesource_scale.cpp	\
 	imagesource_scale.h	\
 	imagesource_scaledensity.cpp	\
