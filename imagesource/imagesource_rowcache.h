@@ -11,7 +11,7 @@ class ImageSource_RowCache : public ImageSource
 	{
 		cachewidth=source->width+hextra*2+1;
 		bufferrows=vextra*2+1;
-		rowcache=(ISDataType *)malloc(sizeof(ISDataType)*source->samplesperpixel*source->width*bufferrows);
+		rowcache=(ISDataType *)malloc(sizeof(ISDataType)*source->samplesperpixel*cachewidth*bufferrows);
 		rawcurrentrow=currentrow=-1;
 	}
 	~ImageSource_RowCache()

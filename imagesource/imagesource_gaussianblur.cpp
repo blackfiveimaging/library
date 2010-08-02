@@ -18,6 +18,8 @@
 #include "imagesource_gaussianblur.h"
 #include "convkernel_gaussian_1D.h"
 
+#include "debug.h"
+
 using namespace std;
 
 // The row cache is just a simplistic ring-buffer type cache which handles
@@ -53,7 +55,7 @@ ISGaussianBlur_RowCache::~ISGaussianBlur_RowCache()
 ISGaussianBlur_RowCache::ISGaussianBlur_RowCache(ImageSource_GaussianBlur *source)
 	: source(source), rawcurrentrow(-1), convcurrentrow(-1)
 {
-	cachewidth=source->width+source->hextra*2;
+	cachewidth=source->width+source->hextra*2+1;
 	cachehoffset=source->hextra;
 	bufferrows=source->vextra*2+1;
 	convcache=(float *)malloc(sizeof(float)*source->samplesperpixel*cachewidth*bufferrows);
@@ -86,7 +88,7 @@ inline float *ISGaussianBlur_RowCache::GetConvRow(int row)
 			{
 				int sx=x+kx-cachehoffset*2;
 				if(sx<0) sx=0;
-				if(sx>source->width) sx=source->width-1;
+				if(sx>=source->width) sx=source->width-1;
 				for(int s=0;s<source->samplesperpixel;++s)
 				{
 					t[s]+=source->kernel->Kernel(kx,0)*src[sx*source->samplesperpixel+s];
