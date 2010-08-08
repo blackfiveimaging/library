@@ -4,6 +4,8 @@
 // The row cache is just a simplistic ring-buffer type cache which handles
 // the details of tracking several rows of "support" data.
 
+#include "imagesource.h"
+
 class ImageSource_RowCache : public ImageSource
 {
 	public:
@@ -31,13 +33,14 @@ class ImageSource_RowCache : public ImageSource
 
 		if(row>rawcurrentrow)
 		{
-			if((row-rawcurrentrow)>vextra)
-				rawcurrentrow=row-vextra-1;
+//			if((row-rawcurrentrow)>vextra)
+//				rawcurrentrow=row-vextra-1;
 
 			for(rawcurrentrow=rawcurrentrow+1;rawcurrentrow<=row;++rawcurrentrow)
 			{
-				ISDataType *src=source->GetRow(row);
-				int crow=row%(vextra*2+1);
+				Debug[TRACE] << "Don't yet have row " << row << " - fetching..." << std::endl;
+				ISDataType *src=source->GetRow(rawcurrentrow);
+				int crow=rawcurrentrow%(vextra*2+1);
 				ISDataType *rowptr=rowcache+crow*source->samplesperpixel*source->width;
 
 				// Store the row to be cached in a temporary buffer...
@@ -54,8 +57,8 @@ class ImageSource_RowCache : public ImageSource
 					}
 				}
 			}
+			rawcurrentrow=row;
 		}
-		rawcurrentrow=row;
 		return(rowptr+samplesperpixel*hextra);
 	}
 	private:
