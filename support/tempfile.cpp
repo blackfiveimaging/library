@@ -81,7 +81,7 @@ TempFileTracker::~TempFileTracker()
 	while(size())
 	{
 		delete (*this)[0];
-		pop_front();
+//		pop_front();	//	Tempfile destructor handles its own removal...
 	}	
 	ReleaseMutex();
 }
