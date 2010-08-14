@@ -4,6 +4,7 @@
 #include <iostream>
 #include <queue>
 #include <list>
+#include <string>
 
 #include "support/debug.h"
 #include "support/thread.h"
@@ -15,10 +16,11 @@ class Worker;
 
 enum JobStatus {JOBSTATUS_QUEUED=1,JOBSTATUS_RUNNING=2,JOBSTATUS_CANCELLED=4,JOBSTATUS_COMPLETED=8,JOBSTATUS_UNKNOWN=16};
 
+
 class Job
 {
 	public:
-	Job() : jobstatus(JOBSTATUS_UNKNOWN)
+	Job(std::string jobname="Unnamed job") : jobstatus(JOBSTATUS_UNKNOWN), jobname(jobname)
 	{
 	}
 	Job(Job &other)
@@ -43,8 +45,13 @@ class Job
 	{
 		jobstatus=JOBSTATUS_CANCELLED;
 	}
+	std::string &GetJobName()
+	{
+		return(jobname);
+	}
 	protected:
 	JobStatus jobstatus;
+	std::string jobname;
 };
 
 
@@ -220,10 +227,66 @@ class JobQueue : public ThreadCondition
 			result+=completed.size();
 		return(result);
 	}
+
 	protected:
 	std::list<Job *> waiting;
 	std::list<Job *> running;
 	std::list<Job *> completed;
+	friend class JobMonitorList;
+};
+
+
+// Rather than allow monitoring routines direct access to the live job list, we sidestep the
+// concurrency issues that would arise from that by creating a separate list of informational
+// entries.
+
+
+class JobMonitorEntry
+{
+	public:
+	JobMonitorEntry(JobQueue &queue,Job *job) : name(job->GetJobName()), status(job->GetJobStatus()), queue(queue), job(job)
+	{
+	}
+	JobMonitorEntry(const JobMonitorEntry &other) : name(other.name), status(other.status), queue(other.queue), job(other.job)
+	{
+	}
+	void Cancel()
+	{
+		queue.CancelJob(job);
+	}
+	std::string name;
+	JobStatus status;
+	protected:
+	JobQueue &queue;	
+	Job *job;	// Must not use this for any purpose other than cancellation!
+};
+
+
+class JobMonitorList : public std::deque<JobMonitorEntry>
+{
+	JobMonitorList(JobQueue &queue) : std::deque<JobMonitorEntry>()
+	{
+		std::list<Job *>::iterator it=queue.waiting.begin();
+		while(it!=queue.waiting.end())
+		{
+			push_back(JobMonitorEntry(queue,*it));
+			++it;
+		}
+
+		it=queue.running.begin();
+		while(it!=queue.running.end())
+		{
+			push_back(JobMonitorEntry(queue,*it));
+			++it;
+		}
+
+		it=queue.completed.begin();
+		while(it!=queue.completed.end())
+		{
+			push_back(JobMonitorEntry(queue,*it));
+			++it;
+		}
+	}
 };
 
 
