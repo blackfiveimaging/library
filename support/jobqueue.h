@@ -127,6 +127,7 @@ class JobQueue : public ThreadCondition
 
 	virtual void AddJob(Job *job)
 	{
+		Debug[TRACE] << "*** In JobQueue::AddJob" << std::endl;
 		ObtainMutex();
 
 		// FIXME - need to add some kind of job serial number.
@@ -264,27 +265,39 @@ class JobMonitorEntry
 
 class JobMonitorList : public std::deque<JobMonitorEntry>
 {
-	JobMonitorList(JobQueue &queue) : std::deque<JobMonitorEntry>()
+	public:
+	JobMonitorList(JobQueue &queue,int statemask=JOBSTATUS_QUEUED|JOBSTATUS_RUNNING) : std::deque<JobMonitorEntry>()
 	{
-		std::list<Job *>::iterator it=queue.waiting.begin();
-		while(it!=queue.waiting.end())
+		std::list<Job *>::iterator it;
+
+		if(statemask&JOBSTATUS_QUEUED)
 		{
-			push_back(JobMonitorEntry(queue,*it));
-			++it;
+			it=queue.waiting.begin();
+			while(it!=queue.waiting.end())
+			{
+				push_back(JobMonitorEntry(queue,*it));
+				++it;
+			}
 		}
 
-		it=queue.running.begin();
-		while(it!=queue.running.end())
+		if(statemask&JOBSTATUS_RUNNING)
 		{
-			push_back(JobMonitorEntry(queue,*it));
-			++it;
+			it=queue.running.begin();
+			while(it!=queue.running.end())
+			{
+				push_back(JobMonitorEntry(queue,*it));
+				++it;
+			}
 		}
 
-		it=queue.completed.begin();
-		while(it!=queue.completed.end())
+		if(statemask&JOBSTATUS_COMPLETED)
 		{
-			push_back(JobMonitorEntry(queue,*it));
-			++it;
+			it=queue.completed.begin();
+			while(it!=queue.completed.end())
+			{
+				push_back(JobMonitorEntry(queue,*it));
+				++it;
+			}
 		}
 	}
 };
@@ -408,6 +421,11 @@ class JobDispatcher : public JobQueue
 			(*it)->WaitCompletion();
 			++it;
 		}
+	}
+	virtual void AddJob(Job *job)
+	{
+		Debug[TRACE] << "*** In JobDispatcher::AddJob" << std::endl;
+		JobQueue::AddJob(job);
 	}
 	void AddWorker(Worker *worker)
 	{

@@ -40,6 +40,7 @@ struct argyllviewingcond
 
 struct argyllviewingcond viewingconds[]=
 {
+	{"",N_("Default")},
 	{"pp",N_("Practical Reflection Print")},
 	{"pe",N_("Print evaluation environment")},
 	{"mt",N_("Monitor in typical work environment")},
