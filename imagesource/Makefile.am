@@ -31,6 +31,8 @@ libimagesource_la_SOURCES =	\
 	imagesource_desaturate.h	\
 	imagesource_downsample.cpp	\
 	imagesource_downsample.h	\
+	imagesource_extractchannel.cpp \
+	imagesource_extractchannel.h	\
 	imagesource_flatten.cpp	\
 	imagesource_flatten.h	\
 	imagesource_gamma.cpp	\
