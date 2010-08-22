@@ -48,7 +48,8 @@ static void isjpeg_error_exit (j_common_ptr cinfo)
 	cinfo->err->output_message(cinfo);
 	cinfo->err->format_message(cinfo,buffer);
 	cerr << buffer << endl;
-	fclose(myerr->file);
+	if(myerr->file && myerr->file!=stdout)
+		fclose(myerr->file);
 	exit(1);
 }
 
@@ -57,7 +58,7 @@ JPEGSaver::~JPEGSaver()
 {
 	if(err)
 	{
-		if(err->file)
+		if(err->file && err->file!=stdout)
 			fclose(err->file);
 		delete err;
 	}
@@ -185,10 +186,14 @@ JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression
 	cinfo->err = jpeg_std_error(&err->std);
 	err->std.error_exit = isjpeg_error_exit;
 
-	if((err->file = FOpenUTF8(filename,"wb")) == NULL)
-		throw _("Can't open file for saving");
-
-	cerr << "File " << filename << " opened" << endl;
+	if(filename)
+	{
+		if((err->file = FOpenUTF8(filename,"wb")) == NULL)
+			throw _("Can't open file for saving");
+		Debug[TRACE] << "File " << filename << " opened" << endl;
+	}
+	else
+		err->file=stdout;
 
 	jpeg_create_compress(cinfo);
 	jpeg_stdio_dest(cinfo, err->file);

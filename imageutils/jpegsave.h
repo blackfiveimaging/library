@@ -30,6 +30,7 @@ struct JPEGSaver_ErrManager;
 class JPEGSaver : public ImageSaver
 {
 	public:
+	// Provide a NULL filename to output to stdout
 	JPEGSaver(const char *filename,ImageSource *is,int compression=85);
 	~JPEGSaver();
 	void Save();

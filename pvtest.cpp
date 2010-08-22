@@ -10,6 +10,7 @@
 #include "imagesource/imagesource_histogram.h"
 #include "imagesource/imagesource_hreflect.h"
 #include "imagesource/imagesource_vreflect.h"
+#include "imagesource/imagesource_dropshadow.h"
 #include "simplecombo.h"
 #include "simplelistview.h"
 #include "pixbufview.h"
@@ -21,6 +22,7 @@
 #include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
+
 
 #if 0
 static void change_page(GtkWidget *widget,gpointer userdata)
@@ -136,6 +138,7 @@ class PVTest : public SimpleListViewOptions
 	void Set_Image(const char *fn)
 	{
 		ImageSource *is=ISLoadImage(fn);
+		is=new ImageSource_DropShadow(is,20,5);
 		GdkPixbuf *pb=pixbuf_from_imagesource(is);
 		delete is;
 

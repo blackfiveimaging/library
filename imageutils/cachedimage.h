@@ -8,7 +8,7 @@
 
 // CachedImage_Deferred - the base class for cached images.  Sets up the width, height, type, etc.
 // and allocated storage, but doesn't actually read the data from the ImageSource until asked.
-// ReadImage() reads and caches the entire image.
+// ReadImage() reads and caches the entire image, disposing of the source ImageSource when done.
 // ReadRow() reads and caches a single row.
 // Generally you won't use this except with ImageSource_Tee.
 
@@ -40,7 +40,7 @@ class CachedImage_Deferred
 class CachedImage : public CachedImage_Deferred
 {
 	public:
-	CachedImage(ImageSource *source, Progress *prog=NULL) : CachedImage_Deferred(source)
+	CachedImage(ImageSource *src, Progress *prog=NULL) : CachedImage_Deferred(src)
 	{
 		ReadImage(prog);
 	}

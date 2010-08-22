@@ -25,6 +25,7 @@ libimagesource_la_SOURCES =	\
 	imagesource_crop.cpp	\
 	imagesource_crop.h	\
 	imagesource_colorize.h	\
+	imagesource_dropshadow.h \
 	imagesource_dither.cpp	\
 	imagesource_dither.h	\
 	imagesource_desaturate.cpp	\
@@ -87,6 +88,7 @@ libimagesource_la_SOURCES =	\
 	imagesource_segmentmask.h \
 	imagesource_solid.cpp	\
 	imagesource_solid.h	\
+	imagesource_tee.h \
 	imagesource_tiff.cpp	\
 	imagesource_tiff.h	\
 	imagesource_unsharpmask.cpp	\

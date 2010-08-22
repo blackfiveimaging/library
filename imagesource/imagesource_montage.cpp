@@ -216,12 +216,21 @@ ISDataType *ImageSource_Montage::GetRow(int row)
 						int xp=(mc->xpos+i)*samplesperpixel;
 						int sp=i*mc->source->samplesperpixel;
 						int j;
+
+						// Attempt to blend between existing and new alpha values.
+						// If existing alpha is 1, we want to blend using a and ia untouched.
+						// If existing alpha is 0, we want to blend using a biased to 1, and ia to 0.
+						// FIXME - blend seems OK but is final alpha value right?
+						int origa=dst[xp+samplesperpixel-1];
+						ia=(ia*origa)/IS_SAMPLEMAX;
+						int reala=IS_SAMPLEMAX-ia;
+
 						for(j=0;j<samplesperpixel-1;++j)
 						{
 							int t=dst[xp+j];
 							t*=ia;
 							int t2=src[sp+j];
-							t2*=a;
+							t2*=reala;
 							dst[xp+j]=(t+t2)/IS_SAMPLEMAX;
 						}
 						if(a>0)
