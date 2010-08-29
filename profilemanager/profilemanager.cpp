@@ -70,7 +70,8 @@ ProfileManager::~ProfileManager()
 	if(proffromdisplay)
 		XFree(proffromdisplay);
 	proffromdisplay=NULL;
-	XCloseDisplay (xdisplay);
+	if(xdisplay)
+		XCloseDisplay (xdisplay);
 #endif
 	ProfileInfo *pi;
 	while((pi=first))
@@ -233,8 +234,9 @@ CMTransformFactory *ProfileManager::GetTransformFactory()
 
 // CMTransformFactoryNode
 
-CMTransformFactoryNode::CMTransformFactoryNode(CMTransformFactory *header,CMSTransform *transform,MD5Digest &d1,MD5Digest &d2,LCMSWrapper_Intent intent,bool proof)
-	: header(header), prev(NULL), next(NULL), transform(transform), digest1(d1), digest2(d2), intent(intent), proof(proof)
+CMTransformFactoryNode::CMTransformFactoryNode(CMTransformFactory *header,CMSTransform *transform,MD5Digest &d1,MD5Digest &d2,
+	LCMSWrapper_Intent intent,bool proof,LCMSWrapper_Intent proofintent)
+	: header(header), prev(NULL), next(NULL), transform(transform), digest1(d1), digest2(d2), intent(intent), proof(proof),proofintent(proofintent)
 {
 	prev=header->first;
 	if((prev=header->first))
@@ -278,13 +280,14 @@ CMTransformFactory::~CMTransformFactory()
 }
 
 
-CMSTransform *CMTransformFactory::Search(MD5Digest *srcdigest,MD5Digest *dstdigest,LCMSWrapper_Intent intent,bool proof)
+CMSTransform *CMTransformFactory::Search(MD5Digest *srcdigest,MD5Digest *dstdigest,
+	LCMSWrapper_Intent intent,bool proof,LCMSWrapper_Intent proofintent)
 {
 	CMTransformFactoryNode *tfn=first;
 	while(tfn)
 	{
 		Debug[TRACE] << "Evaluating transform from " << tfn->digest1.GetPrintableDigest() << " to " << tfn->digest2.GetPrintableDigest() << " and intent " << tfn->intent << endl;
-		if((*srcdigest==tfn->digest1)&&(*dstdigest==tfn->digest2)&&(intent==tfn->intent)&&(proof==tfn->proof))
+		if((*srcdigest==tfn->digest1)&&(*dstdigest==tfn->digest2)&&(intent==tfn->intent)&&(proof==tfn->proof)&&(proofintent==tfn->proofintent))
 			return(tfn->transform);
 		tfn=tfn->next;
 	}
@@ -484,7 +487,8 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 	return(transform);
 }
 
-CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,LCMSWrapper_Intent intent,int displayintent)
+CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,
+	LCMSWrapper_Intent intent,LCMSWrapper_Intent displayintent)
 {
 //	Debug[TRACE] << "Getting proofing transform - Using intent: " << intent << endl;
 
@@ -534,7 +538,8 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 			d1=srcprofile->GetMD5();
 			
 			// Search for an existing transform by source / devicelink MD5s...
-			transform=Search(d1,d2,intent,true);
+			// FIXME - what about display intent?
+			transform=Search(d1,d2,intent,true,displayintent);
 			if(!transform)
 			{
 //				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
@@ -542,7 +547,7 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 				// FIXME - need a version of CMSProofingTransform that can cope with
 				// multiple profiles!
 				transform=new CMSTransform(profiles,3,intent);
-				new CMTransformFactoryNode(this,transform,*d1,*d2,intent);
+				new CMTransformFactoryNode(this,transform,*d1,*d2,intent,displayintent);
 			}
 		}
 		else
@@ -551,14 +556,14 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 			// If there's no default profile, or the source and default profiles match
 			// then we can just use the devicelink profile in isolation.
 			d1=d2;
-			transform=Search(d1,d2,intent,true);
+			transform=Search(d1,d2,intent,true,displayintent);
 			if(!transform)
 			{
 //				Debug[TRACE] << "No suitable cached transform found - creating a new one..." << endl;
 				// FIXME - need a version of CMSProofingTransform that can cope with
 				// devicelink profiles
 				transform=new CMSProofingTransform(destprofile,proofprofile,intent,displayintent);
-				new CMTransformFactoryNode(this,transform,*d1,*d2,intent,true);
+				new CMTransformFactoryNode(this,transform,*d1,*d2,intent,true,displayintent);
 			}
 		}
 		if(defprofile)
@@ -574,12 +579,12 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 //		if(*d1==*d2)
 //			return(NULL);
 
-		transform=Search(d1,d2,intent,true);
+		transform=Search(d1,d2,intent,true,displayintent);
 		if(!transform)
 		{
 //			Debug[TRACE] << "No suitable cached transform found - creating a new proofing transform..." << endl;
 			transform=new CMSProofingTransform(srcprofile,destprofile,proofprofile,intent,displayintent);
-			new CMTransformFactoryNode(this,transform,*d1,*d2,intent,true);
+			new CMTransformFactoryNode(this,transform,*d1,*d2,intent,true,displayintent);
 		}
 	}
 

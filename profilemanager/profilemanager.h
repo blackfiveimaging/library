@@ -87,7 +87,7 @@ class ProfileManager : public ConfigDB, public SearchPathHandler
 class CMTransformFactoryNode
 {
 	public:
-	CMTransformFactoryNode(CMTransformFactory *header,CMSTransform *transform,MD5Digest &d1,MD5Digest &d2,LCMSWrapper_Intent intent,bool proof=false);
+	CMTransformFactoryNode(CMTransformFactory *header,CMSTransform *transform,MD5Digest &d1,MD5Digest &d2,LCMSWrapper_Intent intent,bool proof=false,LCMSWrapper_Intent=LCMSWRAPPER_INTENT_PERCEPTUAL);
 	~CMTransformFactoryNode();
 	protected:
 	CMTransformFactory *header;
@@ -97,6 +97,7 @@ class CMTransformFactoryNode
 	MD5Digest digest2;
 	LCMSWrapper_Intent intent;
 	bool proof;
+	LCMSWrapper_Intent proofintent;
 	friend class CMTransformFactory;
 };
 
@@ -110,8 +111,10 @@ class CMTransformFactory
 	CMSTransform *GetTransform(CMSProfile *targetprofile,CMSProfile *srcprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
 	CMSTransform *GetTransform(enum CMColourDevice target,ImageSource *src,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
 	CMSTransform *GetTransform(enum CMColourDevice target,IS_TYPE type,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
-	CMSTransform *GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT,int displayintent=LCMSWRAPPER_INTENT_DEFAULT);
-	CMSTransform *Search(MD5Digest *srcdigest,MD5Digest *dstdigest,LCMSWrapper_Intent intent,bool proof=0);
+	CMSTransform *GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,
+		LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT,LCMSWrapper_Intent displayintent=LCMSWRAPPER_INTENT_DEFAULT);
+	CMSTransform *Search(MD5Digest *srcdigest,MD5Digest *dstdigest,LCMSWrapper_Intent intent,
+		bool proof=0,LCMSWrapper_Intent proofintent=LCMSWRAPPER_INTENT_DEFAULT);
 	void Flush();
 	ProfileManager &GetManager();
 	protected:

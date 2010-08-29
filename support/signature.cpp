@@ -19,32 +19,30 @@ using namespace std;
 void Signature::EqualiseMargins()
 {
 	PageExtent::EqualiseMargins();
-	if(absolutemode)
-		ReCalcByCellSize();
-	else
-		ReCalc();
+	ReCalc();
 }
 
 
 void Signature::ReCalc()
 {
-	absolutemode=false;
-	int w,h;
-	w=pagewidth-(leftmargin+rightmargin);
-	h=pageheight-(topmargin+bottommargin);
-	celwidth=(w-(columns-1)*hgutter); celwidth/=columns;
-	celheight=(h-(rows-1)*vgutter); celheight/=rows;
-	rightpadding=bottompadding=0;
+	if(absolutemode)
+		ReCalcByCellSize();
+	else
+	{
+		int w,h;
+		w=pagewidth-(leftmargin+rightmargin);
+		h=pageheight-(topmargin+bottommargin);
+		celwidth=(w-(columns-1)*hgutter); celwidth/=columns;
+		celheight=(h-(rows-1)*vgutter); celheight/=rows;
+		rightpadding=bottompadding=0;
+	}
 }
 
 
 void Signature::SetPageExtent(PageExtent &pe)
 {
 	PageExtent::SetPageExtent(pe);
-	if(absolutemode)
-		ReCalcByCellSize();
-	else
-		ReCalc();
+	ReCalc();
 }
 
 
@@ -65,10 +63,7 @@ void Signature::SetPaperSize(int width,int height)
 void Signature::SetMargins(int left,int right,int top,int bottom)
 {
 	PageExtent::SetMargins(left,right,top,bottom);
-	if(absolutemode)
-		ReCalcByCellSize();
-	else
-		ReCalc();
+	ReCalc();
 }
 
 
@@ -113,26 +108,30 @@ void Signature::SetVGutter(int gutter)
   
 void Signature::SetColumns(int columns)
 {
-  if(((columns-1)*hgutter)>=(pagewidth-(leftmargin+rightmargin)))
-    Debug[WARN] << "Too many columns!" << endl;
-  else
-    this->columns=columns;
-  ReCalc();
+	Debug[TRACE] << "Setting Columns to :" << columns << endl;
+	absolutemode=false;
+	if(((columns-1)*hgutter)>=(pagewidth-(leftmargin+rightmargin)))
+		Debug[WARN] << "Too many columns!" << endl;
+	else
+		this->columns=columns;
+	ReCalc();
 }
 
 
 void Signature::SetRows(int rows)
 {
-  if(((rows-1)*vgutter)>=(pageheight-(topmargin+bottommargin)))
-    Debug[WARN] << "Too many rows!" << endl;
-  else
-    this->rows=rows;
-  ReCalc();
+	Debug[TRACE] << "Setting Columns to :" << rows << endl;
+	absolutemode=false;
+	if(((rows-1)*vgutter)>=(pageheight-(topmargin+bottommargin)))
+		Debug[WARN] << "Too many rows!" << endl;
+	else
+		this->rows=rows;
+	ReCalc();
 }
+
 
 void Signature::ReCalcByCellSize()
 {
-	absolutemode=true;
 	int r=(pageheight-(topmargin+bottommargin))/celheight;
 	int c=(pagewidth-(leftmargin+rightmargin))/celwidth;
 	Debug[TRACE] << "Rows: " << r << ", cols: " << c << endl;
@@ -144,13 +143,12 @@ void Signature::ReCalcByCellSize()
 	}
 	else if(r>1)
 	{
-		vgutter=((pageheight-(topmargin+bottommargin))-r*celheight)/(r-1);
-		Debug[TRACE] << "VGutter = " << vgutter << endl;
+		int newvgutter=((pageheight-(topmargin+bottommargin))-r*celheight)/(r-1);
+		Debug[TRACE] << "Old VGutter = " << vgutter << ", new VGutter = " << newvgutter << endl;
+		if(newvgutter<vgutter)
+			vgutter=newvgutter;
 	}
-	else
-	{
-		bottompadding=pageheight-(topmargin+bottommargin+celheight);
-	}
+	bottompadding=pageheight-(topmargin+bottommargin+r*celheight+(r-1)*vgutter);
 
 	if(c<1)
 	{
@@ -159,13 +157,12 @@ void Signature::ReCalcByCellSize()
 	}
 	else if(c>1)
 	{
-		hgutter=((pagewidth-(leftmargin+rightmargin))-c*celwidth)/(c-1);
-		Debug[TRACE] << "HGutter = " << hgutter << endl;
+		int newhgutter=((pagewidth-(leftmargin+rightmargin))-c*celwidth)/(c-1);
+		Debug[TRACE] << "Old HGutter = " << hgutter << ", new HGutter = " << newhgutter << endl;
+		if(newhgutter<hgutter)
+			hgutter=newhgutter;
 	}
-	else
-	{
-		rightpadding=pagewidth-(leftmargin+rightmargin+celwidth);
-	}
+	rightpadding=pagewidth-(leftmargin+rightmargin+c*celwidth+(c-1)*hgutter);
 
 	rows=r;
 	columns=c;
@@ -174,6 +171,7 @@ void Signature::ReCalcByCellSize()
 
 void Signature::SetCellWidth(int width)
 {
+	absolutemode=true;
 	Debug[TRACE] << "Setting cell width to " << width << endl;
 	celwidth=width;
 	ReCalcByCellSize();
@@ -182,6 +180,7 @@ void Signature::SetCellWidth(int width)
 
 void Signature::SetCellHeight(int height)
 {
+	absolutemode=true;
 	Debug[TRACE] << "Setting cell height to " << height << endl;
 	celheight=height;
 	ReCalcByCellSize();
