@@ -19,8 +19,36 @@
 #include "generaldialogs.h"
 #include "util.h"
 #include "searchpath.h"
+#include "debug.h"
 
 using namespace std;
+
+#ifdef WIN32
+#define display.HaveDisplay(x) true
+#else
+#include <X11/Xlib.h>
+class LiveDisplayCheck
+{
+	public:
+	LiveDisplayCheck()
+	{
+		xdisplay = XOpenDisplay(NULL);
+	}
+	~LiveDisplayCheck()
+	{
+		if(xdisplay)
+			XCloseDisplay(xdisplay);
+	}
+	bool HaveDisplay()
+	{
+		return(xdisplay!=0);
+	}
+	protected:
+	Display *xdisplay;
+};
+
+static LiveDisplayCheck display;
+#endif
 
 
 // Error message handling
@@ -28,11 +56,15 @@ using namespace std;
 
 void ErrorMessage_Dialog(const char *message,GtkWidget *parent)
 {
-	GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(parent),GtkDialogFlags(0),
-		GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,
-		"%s",message);
-	gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
+	if(display.HaveDisplay())
+	{
+		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(parent),GtkDialogFlags(0),
+			GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,
+			"%s",message);
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+	}
+	Debug[ERROR] << message << std::endl;
 }
 
 

@@ -1,0 +1,39 @@
+
+Need an "ImageSink" superclass, upon which CachedImage and the Image Savers will be based upon.
+The sinks will have a ProcessRow() function, as well as a Process(Progress &) function.
+The advantage of this is that several imagesinks can in this way operate on the same image, like so:
+ImageSource *source=ISLoadImage("filename");
+CachedImage img1(new ImageSource_Tee(source));
+CachedImage img2(new ImageSource_Tee(source));
+TIFFSaver saver("filenameout",source);
+
+for(int row=0;row<source->height;++row)
+{
+	img1.ProcessRow(row);
+	img2.ProcessRow(row);
+	saver.ProcessRow(row);
+}
+
+class ImageSink
+{
+	public:
+	ImageSink(ImageSource *source) : source(source)
+	{
+	}
+	virtual ~ImageSink()
+	{
+		if(source)
+			delete source;
+	}
+	virtual void Process()
+	{
+		for(int i=0;i<source->height;++i)
+			ProcessRow(i);
+	}
+	virtual void ProcessRow(int row)
+	{
+	}
+	protected:
+	ImageSource *source;
+};
+

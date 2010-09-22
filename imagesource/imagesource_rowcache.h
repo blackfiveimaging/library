@@ -31,6 +31,8 @@ class ImageSource_RowCache : public ImageSource
 		int crow=row%(vextra*2+1);
 		ISDataType *rowptr=rowcache+crow*source->samplesperpixel*source->width;
 
+		Debug[TRACE] << "Rowcache - getting row " << row << std::endl;
+
 		if(row>rawcurrentrow)
 		{
 //			if((row-rawcurrentrow)>vextra)

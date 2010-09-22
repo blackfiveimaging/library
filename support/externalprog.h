@@ -58,14 +58,14 @@ class ExternalProgram : public SearchPathHandler
 	}
 	virtual void RunProgram()
 	{
-		Debug.PushLevel(TRACE);	// Promote debuglevel to TRACE for this call
+//		Debug.PushLevel(TRACE);	// Promote debuglevel to TRACE for this call
 
 #ifdef WIN32
 		Debug[TRACE] << "Hunting for " << args[0] << std::endl;
 		char *prgname=SearchPaths(args[0].c_str());
 		if(!prgname)
 		{
-			Debug.PopLevel();
+//			Debug.PopLevel();
 			throw "Can't find external program";
 		}
 		Debug[TRACE] << "Found external program at " << prgname << std::endl;
@@ -125,7 +125,7 @@ class ExternalProgram : public SearchPathHandler
 		}
 		free(arglist);
 		free(prgname);
-		Debug.PopLevel();
+//		Debug.PopLevel();
 	}
 	virtual void StopProgram()
 	{
