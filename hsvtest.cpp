@@ -222,35 +222,57 @@ class ImageSource_HSVToRGB : public ImageSource
 			case IS_TYPE_HSVA:
 				for(int x=0;x<width;++x)
 				{
-					int r=src[4*x];
-					int g=src[4*x+1];
-					int b=src[4*x+2];
-					int a=0;
-					int M=r;
-					if(M<g) M=g;
-					if(M<b) M=b;
+					int h=src[4*x];
+					int s=src[4*x+1];
+					int v=src[4*x+2];
+					int a=src[4*x+3];
 
-					int m=r;
-					if(m>g) m=g;
-					if(m>b) m=b;
+					int c=((s/2)*(v/2))/(IS_SAMPLEMAX/4);
 
-					int c=M-m;
-					int h=0;
-					if(M==r)
-						h=(((g-b)*2048)/c);
-					if(M==g)
-						h=(((b-r)*2048)/c)+4096;
-					if(M==r)
-						h=(((r-g)*2048)/c)+8192;
-					if(h<0)
-						h+=(6*2048);
+					int r=0;
+					int g=0;
+					int b=0;
+					int t=(h % 0x4000) - 0x2000;
+					if(t<0)
+						t=-t;
+					t=(c*(0x2000-t))/0x2000;
 
-					int s=0;
-					if(M)
-						s=(IS_SAMPLEMAX*c)/M;
-					rowbuffer[4*x]=h;
-					rowbuffer[4*x+1]=s;
-					rowbuffer[4*x+2]=M;
+					if(h<0x2000)
+					{
+						r=c; g=t; b=0;
+					}
+					else if(h<0x4000)
+					{
+						r=t; g=c; b=0;
+					}
+					else if(h<0x6000)
+					{
+						r=0; g=c; b=t;
+					}
+					else if(h<0x8000)
+					{
+						r=0; g=t; b=c;
+					}
+					else if(h<0xa000)
+					{
+						r=t; g=0; b=c;
+					}
+					else if(h<0xc000)
+					{
+						r=c; g=0; b=t;
+					}
+					r+=v-c;
+					g+=v-c;
+					b+=v-c;
+					if(r>IS_SAMPLEMAX) r=IS_SAMPLEMAX;
+					if(r<0) r=0;
+					if(g>IS_SAMPLEMAX) g=IS_SAMPLEMAX;
+					if(g<0) g=0;
+					if(b>IS_SAMPLEMAX) b=IS_SAMPLEMAX;
+					if(b<0) b=0;
+					rowbuffer[4*x]=r;
+					rowbuffer[4*x+1]=g;
+					rowbuffer[4*x+2]=b;
 					rowbuffer[4*x+3]=a;
 				}
 				break;
