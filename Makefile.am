@@ -15,9 +15,8 @@ check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				printqueuetest stpuitest debugtest errorqueuetest
 
 
-bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest hsvtest
+bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest
 
-hsvtest_SOURCES = hsvtest.cpp
 configtest_SOURCES = configtest.cpp
 debugtest_SOURCES = debugtest.cpp
 gprintertest_SOURCES = gprintertest.cpp
