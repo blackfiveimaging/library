@@ -30,7 +30,7 @@ enum IS_TYPE {
 	IS_TYPE_DEVICENA
 };
 
-#define IS_TYPE_ALPHA 8
+#define IS_TYPE_ALPHA 16
 #define IS_MAX_SAMPLESPERPIXEL 5
 #define STRIP_ALPHA(x) IS_TYPE(((x)&~IS_TYPE_ALPHA))
 #define HAS_ALPHA(x) ((x)&IS_TYPE_ALPHA)
