@@ -50,6 +50,9 @@ libimagesource_la_SOURCES =	\
 	imagesource_histogram.h \
 	imagesource_hsweep.cpp	\
 	imagesource_hsweep.h	\
+	imagesource_hsv.h	\
+	imagesource_hsvtorgb.h	\
+	imagesource_huerotate.h	\
 	imagesource_hticks.cpp	\
 	imagesource_hticks.h	\
 	imagesource_invert.cpp	\
