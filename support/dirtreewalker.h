@@ -102,9 +102,11 @@ class DirTree_Dirs
 		const char *result=NULL;
 		while(!result)
 		{
-			walker=walker->NextDirectory();
 			if(!walker)
 				return(NULL);
+			walker=walker->NextDirectory();
+			if(!walker)
+				return(dtw.Directory());
 			if(!walker->Child())
 				result=walker->Directory();
 		}

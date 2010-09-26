@@ -41,7 +41,7 @@ ConfigTemplate ProfileManager::Template[]=
 	ConfigTemplate("RenderingIntent",int(LCMSWRAPPER_INTENT_PERCEPTUAL)),
 	ConfigTemplate("ProofMode",int(CM_PROOFMODE_NONE)),
 #ifdef WIN32
-	ConfigTemplate("ProfilePath","c:\\winnt\\system32\\spool\\drivers\\color\\;c:\\windows\\system32\\spool\\drivers\\color"),
+	ConfigTemplate("ProfilePath","c:\\winnt\\system32\\spool\\drivers\\color\\;c:\\windows\\system32\\spool\\drivers\\color;$HOME\\.color\\icc"),
 #else
 	ConfigTemplate("ProfilePath","/usr/share/color/icc:/usr/local/share/color/icc:$HOME/.color/icc"),
 #endif
@@ -487,7 +487,8 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 	return(transform);
 }
 
-CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,
+
+CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,
 	LCMSWrapper_Intent intent,LCMSWrapper_Intent displayintent)
 {
 //	Debug[TRACE] << "Getting proofing transform - Using intent: " << intent << endl;
