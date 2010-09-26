@@ -16,7 +16,7 @@
 using namespace std;
 
 DirTreeWalker::DirTreeWalker(const char *initialpath,DirTreeWalker *parent)
-	: std::string(initialpath), parent(parent), child(NULL), filename(), files(NULL), dirs(NULL)
+	: initialpath(initialpath), parent(parent), child(NULL), filename(), files(NULL), dirs(NULL)
 {
 	Debug[WARN] << "DTW: " << initialpath << endl;
 #ifdef WIN32
@@ -46,6 +46,18 @@ DirTreeWalker::~DirTreeWalker()
 	if(dirs)
 		closedir(dirs);
 #endif
+}
+
+
+DirTreeWalker *DirTreeWalker::Parent()
+{
+	return(parent);
+}
+
+
+DirTreeWalker *DirTreeWalker::Child()
+{
+	return(child);
 }
 
 
@@ -101,7 +113,7 @@ const char *DirTreeWalker::NextFile()
 		}
 		if(de)
 		{
-			filename=*this+SEARCHPATH_SEPARATOR+de->d_name;
+			filename=initialpath+SEARCHPATH_SEPARATOR+de->d_name;
 
 			struct stat statbuf;
 			stat(filename.c_str(),&statbuf);
@@ -115,6 +127,12 @@ const char *DirTreeWalker::NextFile()
 	}
 #endif
 	return(NULL);
+}
+
+
+const char *DirTreeWalker::Directory()
+{
+	return(initialpath.c_str());
 }
 
 
@@ -139,7 +157,7 @@ DirTreeWalker *DirTreeWalker::NextDirectory()
 		}
 		if(de)
 		{
-			filename=*this+SEARCHPATH_SEPARATOR+dname;
+			filename=initialpath+SEARCHPATH_SEPARATOR+dname;
 
 			wchar_t *fnw=UTF8ToWChar(filename.c_str());
 			struct _stat statbuf;
@@ -171,7 +189,7 @@ DirTreeWalker *DirTreeWalker::NextDirectory()
 		}
 		if(de)
 		{
-			filename=*this+SEARCHPATH_SEPARATOR+de->d_name;
+			filename=initialpath+SEARCHPATH_SEPARATOR+de->d_name;
 
 			struct stat statbuf;
 			stat(filename.c_str(),&statbuf);

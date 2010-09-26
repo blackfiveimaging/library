@@ -35,6 +35,22 @@ int main(int argc,char **argv)
 
 				dir=dir->NextDirectory();
 			}
+
+			cerr << endl << " -----   High level - files   ----- " << endl;
+			DirTree_Files dtf(argv[1]);
+			const char *fn;
+			while((fn=dtf.Next()))
+			{
+				cerr << fn << endl;
+			}
+
+			cerr << endl << " -----   High level - directories   ----- " << endl;
+			DirTree_Dirs dtd(argv[1]);
+			while((fn=dtd.Next()))
+			{
+				cerr << fn << endl;
+			}
+
 		}
 	}
 	catch(const char *err)

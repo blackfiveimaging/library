@@ -357,14 +357,14 @@ std::string FindParent(std::string initialpath, std::string program)
 	{
 		Debug[TRACE] << "Checking " << fn << std::endl;
 		if(MatchBaseName(program.c_str(),fn)==0)
-			return(dtw);
+			return(dtw.Directory());
 		Debug[TRACE] << "Getting next file..." << std::endl;
 	}
 	DirTreeWalker *w;
 	while((w=dtw.NextDirectory()))
 	{
-		Debug[TRACE] << "Recursively scanning: " << *w << std::endl;
-		std::string result=FindParent(*w,program);
+		Debug[TRACE] << "Recursively scanning: " << w->Directory() << std::endl;
+		std::string result=FindParent(w->Directory(),program);
 		if(result.size())
 			return(result);
 		Debug[TRACE] << "Getting next dir..." << std::endl;
