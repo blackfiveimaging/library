@@ -19,6 +19,7 @@ class SearchPathInstance
 	SearchPathInstance(const char *path);
 	~SearchPathInstance();
 	char *Simplify(const char *file);
+	std::string Search(const char *file);
 	char *MakeAbsolute(const char *file);
 	SearchPathInstance *Next();
 	protected:
@@ -47,21 +48,76 @@ char *SearchPathInstance::Simplify(const char *file)
 {
 	if(path && file)
 	{
-		if(strncmp(file,path,strlen(path))==0)
+		unsigned int bestlen=0;
+		DirTree_Dirs dtd(path);
+		const char *path;
+		while((path=dtd.Next()))
 		{
-			int i=strlen(path);
-			if(file[i]==SEARCHPATH_SEPARATOR)
-				++i;
-			if(file[i])
-				return(strdup(file+i));
+			if(strncmp(file,path,strlen(path))==0)
+			{
+				if(strlen(path)>bestlen)
+				{
+					bestlen=strlen(path);
+				}
+			}
+		}
+		if(bestlen)
+		{
+			if(file[bestlen]==SEARCHPATH_SEPARATOR)
+				++bestlen;
+			if(file[bestlen])
+				return(strdup(file+bestlen));
 		}
 	}
-	return(strdup(file));
+	return(SafeStrdup(file));
 }
 
 
+std::string SearchPathInstance::Search(const char *file)
+{
+#ifdef WIN32
+	struct _stat statbuf;
+#else
+	struct stat statbuf;
+#endif
+
+	DirTree_Dirs dtd(path);
+	const char *dir;
+	while((dir=dtd.Next()))
+	{
+		Debug[TRACE] << "Searching for " << file << " in " << dir << endl;
+		std::string fn=dir;
+		fn+=SEARCHPATH_SEPARATOR;
+		fn+=file;
+		Debug[TRACE] << " -> " << fn << endl;
+#ifdef WIN32
+		wchar_t *p2=UTF8ToWChar(fn.cstr());	// We check for existence of wchar filename but return UTF8 name
+		bool exists=_wstat(p2,&statbuf)==0;
+		free(p2);
+		if(exists)
+			return(fn);
+#else
+		if(stat(fn.c_str(),&statbuf)==0)
+			return(fn);
+#endif
+	}
+#ifdef WIN32
+		wchar_t *p2=UTF8ToWChar(file);	// We check for existence of wchar filename but return UTF8 name
+		bool exists=_wstat(p2,&statbuf)==0;
+		free(p2);
+		if(exists)
+			return(file);
+#else
+		if(stat(file,&statbuf)==0)
+			return(file);
+#endif
+	return("");
+}
+
+#if 0
 char *SearchPathInstance::MakeAbsolute(const char *file)
 {
+	// FixMe - may not work now we have recursive scanning.
 	char *result=NULL;
 	int l=strlen(path);
 	int m=strlen(file);
@@ -75,7 +131,7 @@ char *SearchPathInstance::MakeAbsolute(const char *file)
 	}
 	return(result);
 }
-
+#endif
 
 std::ostream& operator<<(std::ostream &s,SearchPathInstance &spi)
 {
@@ -150,38 +206,20 @@ char *SearchPathHandler::SearchPaths(const char *file)
 #else
 	struct stat statbuf;
 #endif
+	Debug[WARN] << "Searching for " << file << endl;
 
 	list<SearchPathInstance *>::iterator it=paths.begin();
 	while(it!=paths.end())
 	{
 		Debug[TRACE] << "Searching for " << file << " in " << (*it)->path << endl;
-		char *p=(*it)->MakeAbsolute(file);
-		Debug[TRACE] << " -> " << p << endl;
-#ifdef WIN32
-		wchar_t *p2=UTF8ToWChar(p);	// We check for existing of wchar filename but return UTF8 name
-		bool exists=_wstat(p2,&statbuf)==0;
-		free(p2);
-		if(exists)
-			return(p);
-#else
-		if(stat(p,&statbuf)==0)
-			return(p);
-#endif
-		free(p);
+		std::string p=(*it)->Search(file);
+		if(p.size())
+		{
+			Debug[TRACE] << " -> " << p << endl;
+			return(strdup(p.c_str()));
+		}
 		++it;
 	}
-
-#ifdef WIN32
-	wchar_t *p2=UTF8ToWChar(file);	// We check for existing of wchar filename but return UTF8 name
-	bool exists=_wstat(p2,&statbuf)==0;
-	free(p2);
-	if(exists)
-		return(strdup(file));
-#else
-	if(stat(file,&statbuf)==0)
-		return(strdup(file));
-#endif
-
 	return(NULL);
 }
 

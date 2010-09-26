@@ -18,7 +18,7 @@ using namespace std;
 DirTreeWalker::DirTreeWalker(const char *initialpath,DirTreeWalker *parent)
 	: initialpath(initialpath), parent(parent), child(NULL), filename(), files(NULL), dirs(NULL)
 {
-	Debug[WARN] << "DTW: " << initialpath << endl;
+	Debug[TRACE] << "DTW: " << initialpath << endl;
 #ifdef WIN32
 	wchar_t *ip=UTF8ToWChar(initialpath);
 	dirs=_wopendir(ip);
