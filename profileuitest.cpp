@@ -7,6 +7,7 @@
 #include "intentselector.h"
 #include "patheditor.h"
 #include "imageselector.h"
+#include "debug.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +38,7 @@ class Test
 		gtk_container_add (GTK_CONTAINER (window), vbox);
 		gtk_widget_show (vbox);
 		
-		ps = profileselector_new(&pm,IS_TYPE_RGB);
+		ps = profileselector_new(&pm,IS_TYPE_NULL);
 		g_signal_connect(ps,"changed",G_CALLBACK(profile_changed),this);
 		gtk_box_pack_start(GTK_BOX(vbox),ps,FALSE,FALSE,8);
 		gtk_widget_show(ps);
@@ -107,6 +108,8 @@ class Test
 
 int main(int argc, char **argv)
 {
+	Debug.SetLevel(WARN);
+
 	gtk_init(&argc,&argv);
 
 	gtk_set_locale();

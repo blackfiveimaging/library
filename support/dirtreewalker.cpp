@@ -9,6 +9,7 @@
 
 #include "searchpath.h"
 #include "util.h"
+#include "debug.h"
 
 #include "dirtreewalker.h"
 
@@ -17,6 +18,7 @@ using namespace std;
 DirTreeWalker::DirTreeWalker(const char *initialpath,DirTreeWalker *parent)
 	: std::string(initialpath), parent(parent), child(NULL), filename(), files(NULL), dirs(NULL)
 {
+	Debug[WARN] << "DTW: " << initialpath << endl;
 #ifdef WIN32
 	wchar_t *ip=UTF8ToWChar(initialpath);
 	dirs=_wopendir(ip);
@@ -31,7 +33,7 @@ DirTreeWalker::DirTreeWalker(const char *initialpath,DirTreeWalker *parent)
 
 DirTreeWalker::~DirTreeWalker()
 {
-	if(child)
+	if(child && child!=this)
 		delete child;
 #ifdef WIN32
 	if(files)
@@ -121,9 +123,6 @@ DirTreeWalker *DirTreeWalker::NextDirectory()
 	if(!dirs)
 		return(NULL);
 
-	if(child)
-		delete child;
-	child=NULL;
 #ifdef WIN32
 	struct _wdirent *de=NULL;
 
@@ -150,6 +149,9 @@ DirTreeWalker *DirTreeWalker::NextDirectory()
 			// Do we have a directory?
 			if(S_ISDIR(statbuf.st_mode))
 			{
+				// We leave child deletion until now so we can catch the case of a directory with no subdirs.
+				if(child)
+					delete child;
 				return(child=new DirTreeWalker(filename.c_str(),this));
 			}
 		}
@@ -177,10 +179,16 @@ DirTreeWalker *DirTreeWalker::NextDirectory()
 			// Do we have a directory?
 			if(S_ISDIR(statbuf.st_mode))
 			{
+				// We leave child deletion until now so we can catch the case of a directory with no subdirs.
+				if(child)
+					delete child;
 				return(child=new DirTreeWalker(filename.c_str(),this));
 			}
 		}
 	}
+	// Child will only be NULL if the directory has no subdirectories.
+	if(!child)
+		return(child=this);
 	return(parent);
 #endif
 }

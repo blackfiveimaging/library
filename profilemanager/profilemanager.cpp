@@ -43,7 +43,7 @@ ConfigTemplate ProfileManager::Template[]=
 #ifdef WIN32
 	ConfigTemplate("ProfilePath","c:\\winnt\\system32\\spool\\drivers\\color\\;c:\\windows\\system32\\spool\\drivers\\color"),
 #else
-	ConfigTemplate("ProfilePath","/usr/share/color/icc:/usr/local/share/color/icc/:$HOME/.color/icc"),
+	ConfigTemplate("ProfilePath","/usr/share/color/icc:/usr/local/share/color/icc:$HOME/.color/icc"),
 #endif
 	ConfigTemplate()
 };

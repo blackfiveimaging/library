@@ -23,9 +23,6 @@ class SearchPathInstance
 	SearchPathInstance *Next();
 	protected:
 	char *path;
-#ifdef WIN32
-	wchar_t *wpath;
-#endif
 	friend class SearchPathHandler;
 	friend class SearchPathIterator;
 	friend std::ostream& operator<<(std::ostream &s,SearchPathInstance &sp);
@@ -36,9 +33,6 @@ SearchPathInstance::SearchPathInstance(const char *path)
 	: path(NULL)
 {
 	this->path=substitute_homedir(path);
-#ifdef WIN32
-	this->wpath=UTF8ToWChar(this->path);
-#endif
 }
 
 
@@ -46,10 +40,6 @@ SearchPathInstance::~SearchPathInstance()
 {
 	if(path)
 		free(path);
-#ifdef WIN32
-	if(wpath)
-		free(wpath);
-#endif
 }
 
 
@@ -104,7 +94,7 @@ std::ostream& operator<<(std::ostream &s,SearchPathInstance &spi)
 // SearchPathIterator
 
 SearchPathIterator::SearchPathIterator(SearchPathHandler &header)
-	: header(header), searchdirectory(NULL), searchfilename(NULL)
+	: header(header), toplevel(NULL), subdirs(NULL)
 {
 
 }
@@ -112,16 +102,8 @@ SearchPathIterator::SearchPathIterator(SearchPathHandler &header)
 
 SearchPathIterator::~SearchPathIterator()
 {
-#ifdef WIN32
-	if(searchdirectory)
-		_wclosedir(searchdirectory);
-#else
-	if(searchdirectory)
-		closedir(searchdirectory);
-#endif
-
-	if(searchfilename)
-		free(searchfilename);
+	if(toplevel)
+		delete toplevel;
 }
 
 // SearchPathHandler
@@ -314,122 +296,64 @@ char *SearchPathHandler::MakeRelative(const char *path)
 }
 
 
-#ifdef WIN32
 const char *SearchPathIterator::GetNextFilename(const char *last)
 {
-	if(searchfilename)
-		free(searchfilename);
-	searchfilename=NULL;
-
+//	Debug.PushLevel(TRACE);
 	// If we're provided with a NULL pointer, clean up
 	// the remnants of any previous run...
 
-	if(!last)
+	if(!last || !subdirs)
 	{
-		if(searchdirectory)
-			_wclosedir(searchdirectory);
-		searchdirectory=NULL;
+		Debug[TRACE] << "No previous filename provided - starting over..." << endl;
+		if(toplevel)
+			delete toplevel;
+		toplevel=NULL;
 
 		spiterator=header.paths.begin();
-		if(spiterator!=header.paths.end())
+		if(spiterator==header.paths.end())
+			return(NULL);
+
+		Debug[TRACE] << "Setting toplevel to " << (*spiterator)->path << endl;
+		toplevel=new DirTreeWalker((*spiterator)->path);
+		subdirs=toplevel->NextDirectory();
+		++spiterator;
+	}
+
+	const char *searchfilename=NULL;
+	while(!searchfilename)
+	{
+		if(subdirs)
+			searchfilename=subdirs->NextFile();
+		if(!searchfilename)
 		{
-			while(!searchdirectory)
+			Debug[TRACE] << "No more filenames, going onto next directory..." << endl;
+
+			if(subdirs)
+				subdirs=subdirs->NextDirectory();
+
+			// If we've reached the end of the files, we load the next path...
+			if(!subdirs)
 			{
-				if(!(searchdirectory=_wopendir((*spiterator)->wpath)))
-					++spiterator;
+				Debug[TRACE] << "No more directories, going onto next path..." << endl;
+				if(toplevel)
+					delete toplevel;
+				toplevel=NULL;
+
 				if(spiterator==header.paths.end())
 					return(NULL);
+
+				Debug[TRACE] << "Setting toplevel to " << (*spiterator)->path << endl;
+				toplevel=new DirTreeWalker((*spiterator)->path);
+				subdirs=toplevel->NextDirectory();
+				++spiterator;
 			}
 		}
 	}
-
-	struct _wdirent *de=NULL;
-
-	while(searchdirectory && !de)
-	{
-		de=_wreaddir(searchdirectory);
-		if(!de)
-		{
-			_wclosedir(searchdirectory);
-			searchdirectory=NULL;
-			while(!searchdirectory && (++spiterator!=header.paths.end()))
-			{
-				searchdirectory=_wopendir((*spiterator)->wpath);
-			}
-			if(searchdirectory)
-				de=_wreaddir(searchdirectory);
-		}
-		if(de)
-		{
-			searchfilename=WCharToUTF8(de->d_name);
-			if(strcmp(".",searchfilename)==0)
-				de=NULL;
-			else if(strcmp("..",searchfilename)==0)
-				de=NULL;
-		}
-	}
-	return(searchfilename);
+	Debug[TRACE] << "Returning filename " << (searchfilename ? searchfilename : "NULL") << endl;
+//	Debug.PopLevel();
+	return(searchfilename ? strdup(searchfilename) : NULL);
 }
-#else
-const char *SearchPathIterator::GetNextFilename(const char *last)
-{
-	if(searchfilename)
-		free(searchfilename);
-	searchfilename=NULL;
 
-	// If we're provided with a NULL pointer, clean up
-	// the remnants of any previous run...
-
-	if(!last)
-	{
-		if(searchdirectory)
-			closedir(searchdirectory);
-		searchdirectory=NULL;
-
-		spiterator=header.paths.begin();
-		if(spiterator!=header.paths.end())
-		{
-			while(!searchdirectory)
-			{
-				if(!(searchdirectory=opendir((*spiterator)->path)))
-					++spiterator;
-				if(spiterator==header.paths.end())
-					return(NULL);
-			}
-		}
-	}
-
-	struct dirent *de=NULL;
-
-	while(searchdirectory && !de)
-	{
-		de=readdir(searchdirectory);
-		if(!de)
-		{
-			closedir(searchdirectory);
-			searchdirectory=NULL;
-			while(!searchdirectory && (++spiterator!=header.paths.end()))
-			{
-				searchdirectory=opendir((*spiterator)->path);
-			}
-			if(searchdirectory)
-				de=readdir(searchdirectory);
-		}
-		if(de)
-		{
-			if(strcmp(".",de->d_name)==0)
-				de=NULL;
-			else if(strcmp("..",de->d_name)==0)
-				de=NULL;
-		}
-	}
-	if(de)
-	{
-		searchfilename=strdup(de->d_name);
-	}
-	return(searchfilename);
-}
-#endif
 
 const char *SearchPathIterator::GetNextPath(const char *last)
 {

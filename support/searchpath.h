@@ -7,6 +7,8 @@
 #include <dirent.h>
 #include <ostream>
 
+#include "dirtreewalker.h"
+
 /*
 	SearchPathHandler - a class to handle multiple search paths.
 	Written by Alastair M. Robinson to handle PhotoPrint's ICC profiles.
@@ -84,11 +86,13 @@ class SearchPathIterator
 	SearchPathHandler &header;
 	std::list<SearchPathInstance *>::iterator spiterator;
 #ifdef WIN32
-	_WDIR *searchdirectory;
+//	_WDIR *searchdirectory;
 #else
-	DIR *searchdirectory;
+//	DIR *searchdirectory;
 #endif
-	char *searchfilename;
+//	char *searchfilename;
+	DirTreeWalker *toplevel;
+	DirTreeWalker *subdirs;
 };
 
 
