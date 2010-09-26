@@ -7,7 +7,8 @@ libargyllsupport_la_SOURCES =	\
 	blackgenselector.cpp \
 	blackgenselector.h \
 	viewingcondselector.cpp \
-	viewingcondselector.h
+	viewingcondselector.h \
+	rsplwrapper.h 
 
 libargyllsupport_la_LDFLAGS = -static
 
