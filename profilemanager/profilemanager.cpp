@@ -28,8 +28,8 @@ ConfigTemplate ProfileManager::Template[]=
 {
  	ConfigTemplate("DefaultRGBProfile",BUILTINSRGB_ESCAPESTRING),
 	ConfigTemplate("DefaultRGBProfileActive",int(1)),
-	ConfigTemplate("DefaultCMYKProfile","USWebCoatedSWOP.icc"),
-	ConfigTemplate("DefaultCMYKProfileActive",int(0)),
+	ConfigTemplate("DefaultCMYKProfile","coated_FOGRA39L_argl.icc"),
+	ConfigTemplate("DefaultCMYKProfileActive",int(1)),
 	ConfigTemplate("DefaultGreyProfile",""),
 	ConfigTemplate("DefaultGreyProfileActive",int(0)),
 	ConfigTemplate("PrinterProfile",""),
