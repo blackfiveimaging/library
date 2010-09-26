@@ -81,7 +81,7 @@ const char *DirTreeWalker::NextFile()
 		}
 		if(de)
 		{
-			filename=*this+SEARCHPATH_SEPARATOR+dname;
+			filename=initialpath+SEARCHPATH_SEPARATOR+dname;
 			free(dname);
 			wchar_t *wfn=UTF8ToWChar(filename.c_str());
 			struct _stat statbuf;

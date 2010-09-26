@@ -91,7 +91,7 @@ std::string SearchPathInstance::Search(const char *file)
 		fn+=file;
 		Debug[TRACE] << " -> " << fn << endl;
 #ifdef WIN32
-		wchar_t *p2=UTF8ToWChar(fn.cstr());	// We check for existence of wchar filename but return UTF8 name
+		wchar_t *p2=UTF8ToWChar(fn.c_str());	// We check for existence of wchar filename but return UTF8 name
 		bool exists=_wstat(p2,&statbuf)==0;
 		free(p2);
 		if(exists)
