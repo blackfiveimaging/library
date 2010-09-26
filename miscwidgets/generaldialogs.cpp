@@ -24,7 +24,14 @@
 using namespace std;
 
 #ifdef WIN32
-#define display.HaveDisplay(x) true
+class LiveDisplayCheck
+{
+	public:
+	bool HaveDisplay()
+	{
+		return(true);
+	}
+};
 #else
 #include <X11/Xlib.h>
 class LiveDisplayCheck
@@ -46,9 +53,9 @@ class LiveDisplayCheck
 	protected:
 	Display *xdisplay;
 };
+#endif
 
 static LiveDisplayCheck display;
-#endif
 
 
 // Error message handling
