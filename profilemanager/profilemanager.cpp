@@ -41,7 +41,7 @@ ConfigTemplate ProfileManager::Template[]=
 	ConfigTemplate("RenderingIntent",int(LCMSWRAPPER_INTENT_PERCEPTUAL)),
 	ConfigTemplate("ProofMode",int(CM_PROOFMODE_NONE)),
 #ifdef WIN32
-	ConfigTemplate("ProfilePath","c:\\winnt\\system32\\spool\\drivers\\color\\;c:\\windows\\system32\\spool\\drivers\\color;$HOME\\.color\\icc"),
+	ConfigTemplate("ProfilePath","c:\\winnt\\system32\\spool\\drivers\\color\\;c:\\windows\\system32\\spool\\drivers\\color;$HOME\\.color\\icc;profiles"),
 #else
 	ConfigTemplate("ProfilePath","/usr/share/color/icc:/usr/local/share/color/icc:$HOME/.color/icc"),
 #endif
