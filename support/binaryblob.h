@@ -1,8 +1,10 @@
 #ifndef BINARYBLOB_H
+#define BINARYBLOB_H
 #include <iostream>
 
 #include <cstdio>
 #include <cstdlib>
+#include "debug.h"
 
 #include "util.h"
 
@@ -19,6 +21,12 @@ class BinaryBlob
 	{
 		Load(filename);
 	}
+	BinaryBlob(const char *buffer,int bufsize) : pointer(NULL), size(bufsize), owned(false)
+	{
+		pointer=(char *)malloc(size);
+		memcpy(pointer,buffer,size);
+		owned=true;
+	}
 	virtual ~BinaryBlob()
 	{
 		if(owned && pointer)
@@ -27,7 +35,7 @@ class BinaryBlob
 	virtual char *Load(const char *filename)
 	{
 		if(owned && pointer)
-			delete[] pointer;
+			free(pointer);
 		pointer=NULL;
 
 		FILE *f;
@@ -63,6 +71,10 @@ class BinaryBlob
 		fclose(f);
 		if(wlen!=size)
 			throw "Binary blob: write failed";
+	}
+	char *GetPointer()
+	{
+		return(pointer);
 	}
 	int GetSize()
 	{

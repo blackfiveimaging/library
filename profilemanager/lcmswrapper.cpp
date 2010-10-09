@@ -57,6 +57,7 @@ CMSProfile::CMSProfile(const char *fn) : md5(NULL), generated(false), filename(N
 	buffer=blob.Relinquish();
 	if(!(prof=cmsOpenProfileFromMem(buffer,buflen)))
 		throw "Can't open profile";
+	filename=strdup(fn);	// Still need the filename!
 #else
 	filename=strdup(fn);
 
@@ -149,9 +150,11 @@ CMSProfile::CMSProfile(char *srcbuf,int length)
 CMSProfile::CMSProfile()
 	: md5(NULL), generated(true), filename(NULL), buffer(NULL), buflen(0)
 {
+	Debug[TRACE] << "Generating virtual sRGB profile" << endl;
 	if(!(prof=cmsCreate_sRGBProfile()))
 		throw "Can't create virtual sRGB profile";
 	CalcMD5();
+	Debug[TRACE] << "Buffer: " << long(buffer) << endl;
 }
 
 
@@ -341,46 +344,35 @@ bool CMSProfile::Save(const char *outfn)
 {
 	try
 	{
-//		(Since we now save a generated profile to memory so we can calc an MD5 hash
-//		we can simply save that, like an embedded profile, if we need to.
-//		if(generated)	// If profile was generated on the fly, then we use LCMS function
-//		{				// to save it;
-//			return(_cmsSaveProfile(prof,outfn));
-//		}
-//		else
-//		{
-			if(filename)	// If profile was loaded from disk, we need to load it again
+		if(outfn)
+		{
+			BinaryBlob *p=GetBlob();
+			if(p)
 			{
-				ifstream f(filename);
-				f.exceptions(fstream::badbit);
-				f.seekg(0,ios::end);
-				buflen=f.tellg();
-				f.seekg(0);
-
-				buffer=(char *)malloc(buflen);
-				f.read((char *)buffer,buflen);
-				f.close();
+				p->Save(outfn);
+				delete p;
 			}
-			if(outfn)
-			{
-				Debug[TRACE] << "Saving buffer: " << long(buffer) << ", length: " << buflen << endl;
-				ofstream f(outfn,ios::out|ios::binary);
-				f.write(buffer,buflen);
-				f.close();
-			}
-			if(filename)	// Did we load the profile from disk?  Need to free buffer if so
-			{
-				free(buffer);
-				buffer=NULL;
-				buflen=0;
-			}
-//		}
+		}
 	}
 	catch(fstream::failure e)
 	{
 		return(false);
 	}
 	return(true);
+}
+
+
+BinaryBlob *CMSProfile::GetBlob()
+{
+	BinaryBlob *result=NULL;
+	if(filename)
+		result=new BinaryBlob(filename);
+	if(!result && buffer)
+	{
+		Debug[TRACE] << "Creating binary blob from " << long(buffer) << ", " << buflen << endl;
+		result=new BinaryBlob(buffer,buflen);
+	}
+	return(result);
 }
 
 

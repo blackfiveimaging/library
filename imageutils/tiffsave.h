@@ -17,6 +17,7 @@
 
 #include "imagesource.h"
 #include "imagesaver.h"
+#include "binaryblob.h"
 
 #define TIFFSAVE_STRIPHEIGHT 64
 
@@ -37,7 +38,8 @@ class TIFFSaver : public ImageSaver
 	int bytesperrow;
 	TIFF *file;
 	unsigned char *tmpbuffer;
-	struct ImageSource *imagesource;
+	ImageSource *imagesource;
+	BinaryBlob *embprofile;
 };
 
 #endif

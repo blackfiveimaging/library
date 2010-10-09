@@ -21,6 +21,7 @@
 
 #include <lcms.h>
 #include "md5.h"
+#include "binaryblob.h"
 #include "imagesource_types.h"
 
 
@@ -64,6 +65,7 @@ class CMSProfile
 	const char *GetCopyright();
 	const char *GetFilename();
 	MD5Digest *GetMD5();
+	BinaryBlob *GetBlob();	// Owned by caller, must be deleted when done.
 	bool Save(const char *filename);
 	bool operator==(const CMSProfile &other);
 	protected:
@@ -72,8 +74,8 @@ class CMSProfile
 	cmsHPROFILE prof;
 	bool generated;	// Was this profile generated on the fly?
 	char *filename;	// Only used if profile is on disk.
-	char *buffer;	// Only used if profile
-	int buflen;		// is loaded from memory
+	char *buffer;	// Used if profile is loaded from memory.
+	int buflen;		// (All profiles are on Win32 as a workaround to lack of wchar support)
 	friend class CMSTransform;
 	friend class CMSProofingTransform;
 	friend std::ostream& operator<<(std::ostream &s,CMSProfile &sp);

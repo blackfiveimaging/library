@@ -137,30 +137,12 @@ void JPEGSaver::EmbedProfile(CMSProfile *profile)
 		return;
 	if(!cinfo)
 		throw "JPEGSaver: cinfo already freed!";
-	FILE* f;
-	size_t size, EmbedLen;
-	JOCTET *EmbedBuffer;
-
-	const char *fn=profile->GetFilename();
-	if(!fn)
-		return;
-
-	if(!(f = FOpenUTF8(fn, "rb")))
-		return;
-	
-	fseek(f,0,SEEK_END);
-	size=ftell(f);
-	fseek(f,0,SEEK_SET);
-
-	cerr << "Profile " << fn << " is " << size << "bytes." << endl;
-
-	EmbedBuffer = (JOCTET *) malloc(size + 1);
-	EmbedLen = fread(EmbedBuffer, 1, size, f);
-	fclose(f);
-	EmbedBuffer[EmbedLen] = 0;
+	BinaryBlob *blob=profile->GetBlob();
+	size_t EmbedLen=blob->GetSize();
+	JOCTET *EmbedBuffer=(JOCTET *)blob->GetPointer();
 	
 	write_icc_profile(cinfo,EmbedBuffer,EmbedLen);
-	free(EmbedBuffer);
+	delete blob;
 }
 
 

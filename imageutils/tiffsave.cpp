@@ -35,6 +35,8 @@ TIFFSaver::~TIFFSaver()
 	
 	if(tmpbuffer)
 		free(tmpbuffer);
+	if(embprofile)
+		delete embprofile;
 }
 
 
@@ -114,39 +116,8 @@ void TIFFSaver::Save()
 }
 
 
-static void EmbedProfile(TIFF* Out,CMSProfile *profile)
-{
-	if(!profile)
-		return;
-	FILE* f;
-	size_t size, EmbedLen;
-	char *EmbedBuffer;
-
-	const char *fn=profile->GetFilename();
-	if(!fn)
-		return;
-
-	if(!(f = FOpenUTF8(fn, "rb")))
-		return;
-	
-	fseek(f,0,SEEK_END);
-	size=ftell(f);
-	fseek(f,0,SEEK_SET);
-
-	cerr << "Profile " << fn << " is " << size << "bytes." << endl;
-
-	EmbedBuffer = (char *) malloc(size + 1);
-	EmbedLen = fread(EmbedBuffer, 1, size, f);
-	fclose(f);
-	EmbedBuffer[EmbedLen] = 0;
-	
-	TIFFSetField(Out, TIFFTAG_ICCPROFILE, EmbedLen, EmbedBuffer);
-	free(EmbedBuffer);
-}
-
-
 TIFFSaver::TIFFSaver(const char *filename,struct ImageSource *is,bool deep,int bpp,int compression)
-	: ImageSaver(), deep(deep), imagesource(is)
+	: ImageSaver(), deep(deep), imagesource(is), embprofile(NULL)
 {
 	switch(is->type)
 	{
@@ -256,7 +227,12 @@ TIFFSaver::TIFFSaver(const char *filename,struct ImageSource *is,bool deep,int b
 	TIFFSetField(file, TIFFTAG_COMPRESSION, compression);
 
 	if(is->GetEmbeddedProfile())
-		EmbedProfile(file,is->GetEmbeddedProfile());
+	{
+		if(embprofile)
+			delete embprofile;
+		embprofile=is->GetEmbeddedProfile()->GetBlob();
+		TIFFSetField(file, TIFFTAG_ICCPROFILE, embprofile->GetSize(),embprofile->GetPointer());
+	}
 
 	stripsize = TIFFStripSize(file);
 	bytesperrow = (width*bitsperpixel+7)/8;
