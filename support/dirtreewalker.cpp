@@ -174,6 +174,9 @@ DirTreeWalker *DirTreeWalker::NextDirectory()
 			}
 		}
 	}
+	// Child will only be NULL if the directory has no subdirectories.
+	if(!child)
+		return(child=this);
 	return(parent);
 #else
 	struct dirent *de=NULL;
