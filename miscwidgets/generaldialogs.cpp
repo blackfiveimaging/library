@@ -164,23 +164,6 @@ char *File_Dialog(const char *title,const char *oldfilename,GtkWidget *parent,bo
 
 char *File_Save_Dialog(const char *title,const char *oldfilename,GtkWidget *parent)
 {
-
-#if 0
-	char *newfile=NULL;
-	GtkWidget *sel=gtk_file_selection_new(title);
-	if(oldfilename)
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(sel),oldfilename);
-	
-	gint result=gtk_dialog_run(GTK_DIALOG(sel));
-	if(result==GTK_RESPONSE_OK)
-		newfile=g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(sel)));
-
-	gtk_widget_destroy(GTK_WIDGET(sel));
-	
-	return(newfile);
-
-#else
-
 	char *newfile=NULL;
 	GtkWidget *dialog;
 
@@ -195,7 +178,8 @@ char *File_Save_Dialog(const char *title,const char *oldfilename,GtkWidget *pare
 		cerr << "Setting old filename to: " << oldfilename << endl;
 	if(oldfilename)
 	{
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),g_path_get_dirname(oldfilename));
+		if(g_path_is_absolute(oldfilename))
+			gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),g_path_get_dirname(oldfilename));
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),g_path_get_basename(oldfilename));
 	}
 
@@ -224,9 +208,6 @@ char *File_Save_Dialog(const char *title,const char *oldfilename,GtkWidget *pare
 	gtk_widget_destroy (dialog);
 
 	return(newfile);
-
-#endif
-
 }
 
 

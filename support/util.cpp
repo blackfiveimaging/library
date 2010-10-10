@@ -435,8 +435,7 @@ int StrcasecmpIgnoreSpaces(const char *str1,const char *str2)
 }
 
 
-// On Windows, surround string with double quotes, and replace any occurence of "
-// with "^"" - i.e. ending one string literal, escaping a double quote, and beginning another literal.
+// On Windows, surround string with double quotes, and remove any other double-quotes.
 //
 // On Unix, surround string with single quotes, and escape any single quote in the string
 // with a backslash
@@ -448,9 +447,7 @@ std::string ShellQuote(std::string &in)
 
 	for(int i=0;i<in.size();++i)
 	{
-		if(in[i]=='\"')
-			out+="\"^\"\"";
-		else
+		if(in[i]!='\"')
 			out+=in[i];
 	}
 	out+="\"";
