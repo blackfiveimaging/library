@@ -108,7 +108,7 @@ class Test
 
 int main(int argc, char **argv)
 {
-	Debug.SetLevel(WARN);
+	Debug.SetLevel(TRACE);
 
 	gtk_init(&argc,&argv);
 

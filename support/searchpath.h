@@ -5,6 +5,7 @@
 
 #include <sys/types.h>
 #include <dirent.h>
+#include <string>
 #include <ostream>
 
 #include "dirtreewalker.h"
@@ -91,6 +92,7 @@ class SearchPathIterator
 //	DIR *searchdirectory;
 #endif
 //	char *searchfilename;
+	std::string searchfn;
 	DirTreeWalker *toplevel;
 	DirTreeWalker *subdirs;
 };

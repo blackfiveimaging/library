@@ -389,7 +389,10 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 	}
 	Debug[TRACE] << "Returning filename " << (searchfilename ? searchfilename : "NULL") << endl;
 //	Debug.PopLevel();
-	return(searchfilename ? strdup(searchfilename) : NULL);
+	searchfn="";
+	if(searchfilename)
+		searchfn=basename(searchfilename);
+	return(searchfn.c_str());
 }
 
 

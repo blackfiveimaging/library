@@ -373,7 +373,7 @@ void profileselector_set_type(ProfileSelector *c,IS_TYPE colourspace)
 void profileselector_set_filename(ProfileSelector *c,const char *filename)
 {
 	char *fn=c->pm->MakeRelative(filename);
-
+	cerr << "MakeRelative returned " << fn << endl;
 	try
 	{
 		if(c->filename)
