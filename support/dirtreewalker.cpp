@@ -83,6 +83,7 @@ const char *DirTreeWalker::NextFile()
 		{
 			filename=initialpath+SEARCHPATH_SEPARATOR+dname;
 			free(dname);
+			dname=NULL;
 			wchar_t *wfn=UTF8ToWChar(filename.c_str());
 			struct _stat statbuf;
 			_wstat(wfn,&statbuf);
