@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <libgen.h>
 
 #include "pathsupport.h"
 
@@ -391,7 +392,11 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 //	Debug.PopLevel();
 	searchfn="";
 	if(searchfilename)
-		searchfn=basename(searchfilename);
+	{
+		char *tmp=strdup(searchfilename);
+		searchfn=basename(tmp);
+		free(tmp);
+	}
 	return(searchfn.c_str());
 }
 
