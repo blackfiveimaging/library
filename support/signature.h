@@ -23,32 +23,32 @@ class Signature : public virtual PageExtent
 	public:
 	Signature(int rows=1,int columns=1);
 	Signature(PageExtent &extent,int rows=1,int columns=1);
-	~Signature()
+	virtual ~Signature()
 	{
 	}
-	void SetPageExtent(PageExtent &pe);
-	void SetPaperSize(int width,int height);
-	void SetMargins(int left,int right,int top,int bottom);
-	void SetGutters(int hgutter,int vgutter);
-	void SetHGutter(int gutter);
-	void SetVGutter(int gutter);
-	void SetColumns(int columns);
-	void SetRows(int rows);
-	void SetCellWidth(int width);
-	void SetCellHeight(int height);
-	int GetCellWidth();
-	int GetCellHeight();
-	int GetColumns();
-	int GetRows();
-	int GetHGutter();
-	int GetVGutter();
-	bool GetAbsolute();
-	LayoutRectangle *GetLayoutRectangle(int row,int column);
-	void EqualiseMargins();
-	void ReCalc();
-	void ReCalcByCellSize();
-	int ColumnAt(int xpos);
-	int RowAt(int ypos);
+	virtual void SetPageExtent(PageExtent &pe);
+	virtual void SetPaperSize(int width,int height);
+	virtual void SetMargins(int left,int right,int top,int bottom);
+	virtual void SetGutters(int hgutter,int vgutter);
+	virtual void SetHGutter(int gutter);
+	virtual void SetVGutter(int gutter);
+	virtual void SetColumns(int columns);
+	virtual void SetRows(int rows);
+	virtual void SetCellWidth(int width);
+	virtual void SetCellHeight(int height);
+	virtual int GetCellWidth();
+	virtual int GetCellHeight();
+	virtual int GetColumns();
+	virtual int GetRows();
+	virtual int GetHGutter();
+	virtual int GetVGutter();
+	virtual bool GetAbsolute();
+	virtual LayoutRectangle *GetLayoutRectangle(int row,int column);
+	virtual void EqualiseMargins();
+	virtual void ReCalc();
+	virtual void ReCalcByCellSize();
+	virtual int ColumnAt(int xpos);
+	virtual int RowAt(int ypos);
 	protected:
 	int hgutter,vgutter;
 	int rows,columns;
