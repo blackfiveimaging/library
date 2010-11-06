@@ -28,6 +28,7 @@ class PageExtent
 		leftmargin(DEFAULTMARGIN), rightmargin(DEFAULTMARGIN),
 		topmargin(DEFAULTMARGIN), bottommargin(DEFAULTMARGIN)
 	{
+		GetImageableArea();
 	}
 
 	PageExtent(int w,int h)
@@ -35,6 +36,7 @@ class PageExtent
 		leftmargin(DEFAULTMARGIN), rightmargin(DEFAULTMARGIN),
 		topmargin(DEFAULTMARGIN), bottommargin(DEFAULTMARGIN)
 	{
+		GetImageableArea();
 	}
 
 	virtual ~PageExtent()

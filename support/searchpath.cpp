@@ -86,11 +86,11 @@ std::string SearchPathInstance::Search(const char *file)
 	const char *dir;
 	while((dir=dtd.Next()))
 	{
-		Debug[TRACE] << "Searching for " << file << " in " << dir << endl;
+//		Debug[TRACE] << "Searching for " << file << " in " << dir << endl;
 		std::string fn=dir;
 		fn+=SEARCHPATH_SEPARATOR;
 		fn+=file;
-		Debug[TRACE] << " -> " << fn << endl;
+//		Debug[TRACE] << " -> " << fn << endl;
 #ifdef WIN32
 		wchar_t *p2=UTF8ToWChar(fn.c_str());	// We check for existence of wchar filename but return UTF8 name
 		bool exists=_wstat(p2,&statbuf)==0;

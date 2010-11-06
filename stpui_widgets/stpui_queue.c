@@ -70,9 +70,13 @@ static void stpui_customcommand_changed(GtkWidget *wid,gpointer *ud)
 	if(cc && strlen(cc)==0)
 		cc=NULL;
 	t->pq->SetCustomCommand(t->pq,cc);
-	
-	g_signal_emit(G_OBJECT (t),
-		stpui_queue_signals[CHANGED_SIGNAL], 0);
+
+//  FIXME - is disabling this the right thing to do?
+//  It will make PhotoPrint more responsive, since the whole dialog won't be recreated
+//  on every keypress any more!
+
+//	g_signal_emit(G_OBJECT (t),
+//		stpui_queue_signals[CHANGED_SIGNAL], 0);
 }
 #endif
 
