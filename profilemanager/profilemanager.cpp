@@ -30,8 +30,8 @@ ConfigTemplate ProfileManager::Template[]=
 	ConfigTemplate("DefaultRGBProfileActive",int(1)),
 	ConfigTemplate("DefaultCMYKProfile","coated_FOGRA39L_argl.icc"),
 	ConfigTemplate("DefaultCMYKProfileActive",int(1)),
-	ConfigTemplate("DefaultGreyProfile",""),
-	ConfigTemplate("DefaultGreyProfileActive",int(0)),
+	ConfigTemplate("DefaultGreyProfile",BUILTINSGREY_ESCAPESTRING),
+	ConfigTemplate("DefaultGreyProfileActive",int(1)),
 	ConfigTemplate("PrinterProfile",""),
 	ConfigTemplate("PrinterProfileActive",int(0)),
 	ConfigTemplate("ExportProfile",""),
@@ -100,6 +100,10 @@ CMSProfile *ProfileManager::GetProfile(const char *name)
 		else if(strcmp(name,BUILTINSRGB_ESCAPESTRING)==0)
 		{
 			result=new CMSProfile();
+		}
+		else if(strcmp(name,BUILTINSGREY_ESCAPESTRING)==0)
+		{
+			result=new CMSProfile(IS_TYPE_GREY);
 		}
 		else
 		{

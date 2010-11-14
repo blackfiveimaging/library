@@ -50,7 +50,7 @@ class CMSProfile
 	CMSProfile(CMSRGBPrimaries &primaries,CMSRGBGamma &gamma,CMSWhitePoint &whitepoint); // Create virtual RGB profile
 	CMSProfile(CMSGamma &gamma,CMSWhitePoint &whitepoint); // Create virtual Grey profile
 	CMSProfile(CMSWhitePoint &whitepoint); // Create a virtual LAB profile
-	CMSProfile(); // Create a virtual sRGB profile
+	CMSProfile(IS_TYPE type=IS_TYPE_RGB); // Create a virtual sRGB / sGray profile
 	CMSProfile(const CMSProfile &src); // Copy constructor
 	~CMSProfile();
 	enum IS_TYPE GetColourSpace();
@@ -145,12 +145,24 @@ class CMSRGBPrimaries : public cmsCIExyYTRIPLE
 };
 
 
+// FIXME - split into superclass and subclasses for simple and sRGB-style gamma
 class CMSGamma
 {
 	public:
-	CMSGamma(float gamma)
+	CMSGamma(float gamma, bool sRGB=false)
 	{
-		gammatable=cmsBuildGamma(256,gamma);
+		if(sRGB)
+		{
+			double params[]={2.4,1.0/1.055,0.055/1.055,1.0/12.92,0.04045};
+			gammatable=cmsBuildParametricGamma(256,4,params);
+		}
+//                    Y = (aX + b)^Gamma | X >= d
+//                    Y = cX             | X < d
+//a=1/1.055;
+//b=0.055/1.055;
+//c=1.0/12.92
+		else
+			gammatable=cmsBuildGamma(256,gamma);
 	}
 	~CMSGamma()
 	{

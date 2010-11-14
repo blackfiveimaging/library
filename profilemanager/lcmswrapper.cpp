@@ -147,12 +147,30 @@ CMSProfile::CMSProfile(char *srcbuf,int length)
 }
 
 
-CMSProfile::CMSProfile()
+CMSProfile::CMSProfile(IS_TYPE type)
 	: md5(NULL), generated(true), filename(NULL), buffer(NULL), buflen(0)
 {
-	Debug[TRACE] << "Generating virtual sRGB profile" << endl;
-	if(!(prof=cmsCreate_sRGBProfile()))
-		throw "Can't create virtual sRGB profile";
+	switch(type)
+	{
+		case IS_TYPE_RGB:
+			Debug[TRACE] << "Generating virtual sRGB profile" << endl;
+			if(!(prof=cmsCreate_sRGBProfile()))
+				throw "Can't create virtual sRGB profile";
+			break;
+		case IS_TYPE_GREY:
+			Debug[TRACE] << "Generating virtual sGrey profile" << endl;
+			{
+				CMSGamma gamma(2.4,true);
+				CMSWhitePoint wp(6500);
+				if(!(prof=cmsCreateGrayProfile(&wp.whitepoint,gamma.GetGammaTable())))
+					throw "Can't create virtual sRGB profile";
+			}
+			break;
+			break;
+		default:
+			throw "CMSProfile: asked to create a default profile for an unhandled colourspace.";
+			break;		
+	}
 	CalcMD5();
 	Debug[TRACE] << "Buffer: " << long(buffer) << endl;
 }
