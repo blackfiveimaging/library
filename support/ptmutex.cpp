@@ -31,6 +31,7 @@ PTMutex::PTMutex()
 
 PTMutex::~PTMutex()
 {
+	Debug[TRACE] << "In PTMutex destructor..." << std::endl;
 	pthread_mutex_destroy(&mutex);
 }
 

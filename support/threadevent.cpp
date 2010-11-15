@@ -76,10 +76,12 @@ ThreadEventHandler::ThreadEventHandler() : PTMutex(), firstevent(NULL)
 
 ThreadEventHandler::~ThreadEventHandler()
 {
+	Debug[TRACE] << "In ThreadEventHandler's destructor" << endl;
 	ObtainMutex();
 	while(firstevent)
 		delete firstevent;
 	ReleaseMutex();
+	Debug[TRACE] << "ThreadEventHandler's destructor completed" << endl;
 }
 
 

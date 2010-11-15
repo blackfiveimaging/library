@@ -673,6 +673,8 @@ char *ProfileManager::SearchPaths(const char *file)
 			return(strdup(file));
 		if(strcmp(file,BUILTINSRGB_ESCAPESTRING)==0)
 			return(strdup(file));
+		if(strcmp(file,BUILTINSGREY_ESCAPESTRING)==0)
+			return(strdup(file));
 	}
 	return(SearchPathHandler::SearchPaths(file));
 }
@@ -692,6 +694,7 @@ void ProfileManager::BuildProfileInfoList()
 	const char *f=NULL;
 	FlushProfileInfoList();
 	new ProfileInfo(*this,BUILTINSRGB_ESCAPESTRING);
+	new ProfileInfo(*this,BUILTINSGREY_ESCAPESTRING);
 	while((f=GetNextFilename(f)))
 	{
 		if(!(FindProfileInfo(f)))
