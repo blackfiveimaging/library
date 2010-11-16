@@ -50,11 +50,14 @@ ISDataType *ImageSource_Dither::GetRow(int row)
 			{
 				int t=srcdata[x*samplesperpixel+s];
 				t+=err1[(x+1)*samplesperpixel+s];
+				if(t>IS_SAMPLEMAX) t=IS_SAMPLEMAX;
+				if(t<0) t=0;
 				int u=t&mask;
 //				u=(u*IS_SAMPLEMAX)/mask;
-				if(t>IS_SAMPLEMAX) u=IS_SAMPLEMAX;
-				if(t<0) u=0;
-				int err=t-u;
+//				if(t>IS_SAMPLEMAX) u=mask;
+//				if(t<0) u=0;
+				int effective=(u*(IS_SAMPLEMAX/2))/(mask/2);
+				int err=t-effective;
 				rowbuffer[x*samplesperpixel+s]=u;
 				err1[(x+2)*samplesperpixel+s]+=(7*err)/16;
 				err2[(x)*samplesperpixel+s]+=(1*err)/16;
@@ -74,11 +77,15 @@ ISDataType *ImageSource_Dither::GetRow(int row)
 			{
 				int t=srcdata[x*samplesperpixel+s];
 				t+=err2[(x+1)*samplesperpixel+s];
+				if(t>IS_SAMPLEMAX) t=IS_SAMPLEMAX;
+				if(t<0) t=0;
 				int u=t&mask;
 //				u=(u*IS_SAMPLEMAX)/mask;
-				if(t>IS_SAMPLEMAX) u=IS_SAMPLEMAX;
-				if(t<0) u=0;
-				int err=t-u;
+//				if(t>IS_SAMPLEMAX) u=mask;
+//				if(t<0) u=0;
+				int effective=(u*(IS_SAMPLEMAX/2))/(mask/2);
+//				int effective=(u*IS_SAMPLEMAX)/mask;
+				int err=t-effective;
 				rowbuffer[x*samplesperpixel+s]=u;
 				err2[(x)*samplesperpixel+s]+=(7*err)/16;
 				err1[(x)*samplesperpixel+s]=(3*err)/16;
