@@ -58,7 +58,7 @@ ISDataType *ImageSource_Dither::GetRow(int row)
 //				if(t<0) u=0;
 				int effective=(u*(IS_SAMPLEMAX/2))/(mask/2);
 				int err=t-effective;
-				rowbuffer[x*samplesperpixel+s]=u;
+				rowbuffer[x*samplesperpixel+s]=effective;
 				err1[(x+2)*samplesperpixel+s]+=(7*err)/16;
 				err2[(x)*samplesperpixel+s]+=(1*err)/16;
 				err2[(x+1)*samplesperpixel+s]+=(5*err)/16;
@@ -86,7 +86,7 @@ ISDataType *ImageSource_Dither::GetRow(int row)
 				int effective=(u*(IS_SAMPLEMAX/2))/(mask/2);
 //				int effective=(u*IS_SAMPLEMAX)/mask;
 				int err=t-effective;
-				rowbuffer[x*samplesperpixel+s]=u;
+				rowbuffer[x*samplesperpixel+s]=effective;
 				err2[(x)*samplesperpixel+s]+=(7*err)/16;
 				err1[(x)*samplesperpixel+s]=(3*err)/16;
 				err1[(x+1)*samplesperpixel+s]+=(5*err)/16;
@@ -116,7 +116,7 @@ ImageSource_Dither::ImageSource_Dither(ImageSource *source,int bitdepth)
 
 	err1=(int *)malloc(sizeof(int)*samplesperpixel*(width+2));
 	err2=(int *)malloc(sizeof(int)*samplesperpixel*(width+2));
-	for(int i=0;i<width+2;++i)
+	for(int i=0;i<width*samplesperpixel+2;++i)
 		err1[i]=err2[i]=0;
 
 	MakeRowBuffer();

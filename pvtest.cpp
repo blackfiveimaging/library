@@ -12,6 +12,7 @@
 #include "imagesource/imagesource_vreflect.h"
 #include "imagesource/imagesource_dropshadow.h"
 #include "imagesource/imagesource_cms.h"
+#include "imagesource/imagesource_dither.h"
 #include "simplecombo.h"
 #include "simplelistview.h"
 #include "pixbufview.h"
@@ -200,6 +201,7 @@ class PVTest : public ConfigFile, public ProfileManager
 		else
 			trans=factory.GetTransform(CM_COLOURDEVICE_DISPLAY,is->type);
 		is=new ImageSource_CMS(is,trans);
+//		is=new ImageSource_Dither(is,8);
 		is=new ImageSource_DropShadow(is,20,5);
 		GdkPixbuf *pb=pixbuf_from_imagesource(is);
 		delete is;
