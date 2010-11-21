@@ -168,7 +168,7 @@ struct ConfigOption *ConfigDB::FindOption(const char *Name)
 			opt=opt->next;
 	}
 	if(!result)
-		Debug[ERROR] << "Warning: option " << Name << " not found" << endl;
+		Debug[WARN] << "Warning: option " << Name << " not found" << endl;
 	return(result);
 }
 
@@ -200,8 +200,6 @@ int ConfigDB::FindInt(const char *Name)
 		else
 			Debug[ERROR] << "Error: " << Name << " is not an integer option" << endl;
 	}
-	else
-		Debug[ERROR] << Name << " Not found..." << endl;
 
 	return(0);
 }
@@ -219,8 +217,6 @@ double ConfigDB::FindFloat(const char *Name)
 		else
 			Debug[ERROR] << "Error: " << Name << " is not a float option" << endl;
 	}
-	else
-		Debug[ERROR] << "Not found..." << endl;
 
 	return(0);
 }
@@ -239,7 +235,7 @@ void ConfigDB::SetInt(const char *Name,int val)
 			Debug[ERROR] << "Error: " << Name << " is not an integer option" << endl;
 	}
 	else
-		Debug[ERROR] << "Not found..." << endl;
+		Debug[WARN] << "Not found..." << endl;
 }
 
 
@@ -255,8 +251,6 @@ void ConfigDB::SetFloat(const char *Name,double val)
 		else
 			Debug[ERROR] << "Error: " << Name << " is not a float option" << endl;
 	}
-	else
-		Debug[ERROR] << "Not found..." << endl;
 }
 
 
@@ -279,8 +273,6 @@ void ConfigDB::SetString(const char *Name,const char *val)
 		else
 			Debug[ERROR] << "Error: " << Name << " is not an integer option" << endl;
 	}
-	else
-		Debug[ERROR] << Name << "Not found..." << endl;
 }
 
 

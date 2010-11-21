@@ -116,7 +116,7 @@ ImageSource_Dither::ImageSource_Dither(ImageSource *source,int bitdepth)
 
 	err1=(int *)malloc(sizeof(int)*samplesperpixel*(width+2));
 	err2=(int *)malloc(sizeof(int)*samplesperpixel*(width+2));
-	for(int i=0;i<width*samplesperpixel+2;++i)
+	for(int i=0;i<(width+2)*samplesperpixel;++i)
 		err1[i]=err2[i]=0;
 
 	MakeRowBuffer();
