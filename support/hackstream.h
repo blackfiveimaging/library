@@ -65,7 +65,7 @@ class hack_outbuf : public std::streambuf {
 			fclose(file);
 		file=NULL;
 	}
-	void open(const char *utf8name,std::ios_base::openmode mode=std::ios_base::out)
+	virtual void open(const char *utf8name,std::ios_base::openmode mode=std::ios_base::out)
 	{
 		if(file)
 			fclose(file);
@@ -111,9 +111,9 @@ class hack_ostream : public std::ostream, public hack_outbuf
 	}
 	hack_ostream() : std::ostream(0), hack_outbuf()
 	{
+	    rdbuf(this);
 	}
 	protected:
-//	hack_outbuf buf;
 };
 
 

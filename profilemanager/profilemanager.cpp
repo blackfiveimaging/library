@@ -690,7 +690,7 @@ ProfileInfo *ProfileManager::GetFirstProfileInfo()
 
 void ProfileManager::BuildProfileInfoList()
 {
-//	Debug[TRACE] << "Building ProfileInfo List:" << endl;
+	Debug[TRACE] << "Building ProfileInfo List:" << endl;
 	const char *f=NULL;
 	FlushProfileInfoList();
 	new ProfileInfo(*this,BUILTINSRGB_ESCAPESTRING);
@@ -772,16 +772,16 @@ ProfileInfo::ProfileInfo(ProfileManager &pm,const char *filename)
 
 ProfileInfo::~ProfileInfo()
 {
-	if(filename)
-		free(filename);
-	if(description)
-		free(description);
 	if(prev)
 		prev->next=next;
 	else
 		profilemanager.first=next;
 	if(next)
 		next->prev=prev;
+	if(filename)
+		free(filename);
+	if(description)
+		free(description);
 }
 
 
