@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 
 #include "lcmswrapper.h"
+#include "binaryblob.h"
 #include "util.h"
 
 #include "tiffsave.h"

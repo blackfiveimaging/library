@@ -58,53 +58,48 @@ CMSProfile::CMSProfile(const char *fn) : md5(NULL), generated(false), filename(N
 	if(!(prof=cmsOpenProfileFromMem(buffer,buflen)))
 		throw "Can't open profile";
 	filename=strdup(fn);	// Still need the filename!
+	CalcMD5FromMem();
 #else
 	filename=strdup(fn);
 
 	if(!(prof=cmsOpenProfileFromFile(filename,"r")))
 		throw "Can't open profile";
+	CalcMD5FromFile();
 #endif
 
-	CalcMD5();
 }
 
 
-void CMSProfile::CalcMD5()
+// CalcMD5 has been split because it's getting harder to determine algorithmically which method should be used.
+// Much more predictable to call the right variant explicity in the constructors.
+
+void CMSProfile::CalcMD5FromGenerated()
 {
-	if(generated)
+	Debug[TRACE] << "Saving profile to RAM for MD5 calculation." << endl;
+	size_t plen=0;
+	_cmsSaveProfileToMem(prof,NULL,&plen);
+	if(plen>0)
 	{
-		Debug[TRACE] << "Saving profile to RAM for MD5 calculation." << endl;
-		size_t plen=0;
-		_cmsSaveProfileToMem(prof,NULL,&plen);
-		if(plen>0)
+		Debug[TRACE] << "Plen = " << plen << endl;
+		buflen=plen;
+		buffer=(char *)malloc(buflen);
+		if(_cmsSaveProfileToMem(prof,buffer,&plen))
 		{
-			Debug[TRACE] << "Plen = " << plen << endl;
-			buflen=plen;
-			buffer=(char *)malloc(buflen);
-			if(_cmsSaveProfileToMem(prof,buffer,&plen))
-			{
-				Debug[TRACE] << "Saved successfully" << endl;
-				md5=new MD5Digest(buffer+sizeof(icHeader),buflen-sizeof(icHeader));
-			}
+			Debug[TRACE] << "Saved successfully" << endl;
+			md5=new MD5Digest(buffer+sizeof(icHeader),buflen-sizeof(icHeader));
 		}
 	}
-	else if(filename)
-	{
-		ifstream f(filename);
-		f.seekg(0,ios::end);
-		int filelen=f.tellg();
-		f.seekg(0);
+}
 
-		char *data=(char *)malloc(filelen);
-		f.read((char *)data,filelen);
-		f.close();
-		md5=new MD5Digest(data+sizeof(icHeader),filelen-sizeof(icHeader));
-		free(data);
-	}
-	else
-	{
-		md5=new MD5Digest(buffer+sizeof(icHeader),buflen-sizeof(icHeader));
-	}
+void CMSProfile::CalcMD5FromFile()
+{
+	BinaryBlob blob(filename);
+	md5=new MD5Digest(blob.GetPointer()+sizeof(icHeader),blob.GetSize()-sizeof(icHeader));
+}
+
+void CMSProfile::CalcMD5FromMem()
+{
+	md5=new MD5Digest(buffer+sizeof(icHeader),buflen-sizeof(icHeader));
 }
 
 
@@ -113,7 +108,7 @@ CMSProfile::CMSProfile(CMSRGBPrimaries &primaries,CMSRGBGamma &gamma,CMSWhitePoi
 {
 	if(!(prof=cmsCreateRGBProfile(&whitepoint.whitepoint,&primaries,gamma.gammatables)))
 		throw "Can't create virtual RGB profile";
-	CalcMD5();
+	CalcMD5FromGenerated();
 }
 
 
@@ -122,7 +117,7 @@ CMSProfile::CMSProfile(CMSGamma &gamma,CMSWhitePoint &whitepoint)
 {
 	if(!(prof=cmsCreateGrayProfile(&whitepoint.whitepoint,gamma.GetGammaTable())))
 		throw "Can't create virtual Grey profile";
-	CalcMD5();
+	CalcMD5FromGenerated();
 }
 
 
@@ -131,7 +126,7 @@ CMSProfile::CMSProfile(CMSWhitePoint &whitepoint)
 {
 	if(!(prof=cmsCreateLabProfile(&whitepoint.whitepoint)))
 		throw "Can't create virtual LAB profile";
-	CalcMD5();
+	CalcMD5FromGenerated();
 }
 
 
@@ -143,7 +138,7 @@ CMSProfile::CMSProfile(char *srcbuf,int length)
 	memcpy(buffer,srcbuf,buflen);
 	if(!(prof=cmsOpenProfileFromMem(buffer,buflen)))
 		throw "Can't open profile";
-	CalcMD5();
+	CalcMD5FromMem();
 }
 
 
@@ -171,7 +166,7 @@ CMSProfile::CMSProfile(IS_TYPE type)
 			throw "CMSProfile: asked to create a default profile for an unhandled colourspace.";
 			break;		
 	}
-	CalcMD5();
+	CalcMD5FromGenerated();
 	Debug[TRACE] << "Buffer: " << long(buffer) << endl;
 }
 

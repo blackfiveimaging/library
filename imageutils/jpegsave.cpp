@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 
 #include "debug.h"
+#include "binaryblob.h"
 #include "lcmswrapper.h"
 #include "imagesource_flatten.h"
 #include "util.h"

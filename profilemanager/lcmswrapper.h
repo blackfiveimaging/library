@@ -21,9 +21,10 @@
 
 #include <lcms.h>
 #include "md5.h"
-#include "binaryblob.h"
+//#include "binaryblob.h"
 #include "imagesource_types.h"
 
+class BinaryBlob;
 
 enum LCMSWrapper_Intent
 {
@@ -69,7 +70,9 @@ class CMSProfile
 	bool Save(const char *filename);
 	bool operator==(const CMSProfile &other);
 	protected:
-	void CalcMD5();
+	void CalcMD5FromGenerated();
+	void CalcMD5FromFile();
+	void CalcMD5FromMem();
 	MD5Digest *md5;
 	cmsHPROFILE prof;
 	bool generated;	// Was this profile generated on the fly?
