@@ -50,7 +50,7 @@ ConfigTemplate ProfileManager::Template[]=
 
 
 ProfileManager::ProfileManager(ConfigFile *inifile,const char *section) :
-	ConfigDB(Template), SearchPathHandler(), first(NULL), proffromdisplay_size(0), spiter(*this)
+	ConfigDB(Template), SearchPathHandler(), PTMutex(), first(NULL), proffromdisplay_size(0), spiter(*this)
 {
 #ifndef WIN32
 	xdisplay = XOpenDisplay(NULL);
@@ -715,6 +715,7 @@ void ProfileManager::FlushProfileInfoList()
 
 ProfileInfo *ProfileManager::FindProfileInfo(const char *filename)
 {
+	ObtainMutex();
 	ProfileInfo *pi=first;
 	while(pi)
 	{
@@ -722,10 +723,12 @@ ProfileInfo *ProfileManager::FindProfileInfo(const char *filename)
 		if(strcmp(fn,filename)==0)
 		{
 			Debug[TRACE] << "Found " << filename << endl;
+			ReleaseMutex();
 			return(pi);
 		}
 		pi=pi->Next();
 	}
+	ReleaseMutex();
 	return(NULL);
 }
 
@@ -755,23 +758,45 @@ ProfileInfo *ProfileManager::GetProfileInfo(int i)
 }
 
 
+void ProfileManager::ReleaseMutex()
+{
+	Debug[TRACE] << "In ProfileManager::ReleaseMutex()" << std::endl;
+	ProfileInfo *pi=first;
+	while(pi)
+	{
+		if(pi->remove)
+		{
+			ProfileInfo *n=pi->next;
+			delete pi;
+			pi=n;
+		}
+		else
+			pi=pi->next;
+	}
+	PTMutex::ReleaseMutex();
+}
+
+
 // ProfileInfo
 
 
 ProfileInfo::ProfileInfo(ProfileManager &pm,const char *filename)
-	: profilemanager(pm), next(NULL), prev(NULL), filename(NULL), iscached(false), description(NULL), isdevicelink(false)
+	: profilemanager(pm), next(NULL), prev(NULL), filename(NULL), iscached(false), description(NULL), isdevicelink(false), remove(false)
 {
 	if(!filename)
 		throw "ProfileInfo: Null Filename";
+	profilemanager.ObtainMutex();
 	if((next=profilemanager.first))
 		next->prev=this;
 	profilemanager.first=this;
 	this->filename=strdup(filename);
+	profilemanager.ReleaseMutex();
 }
 
 
 ProfileInfo::~ProfileInfo()
 {
+	profilemanager.ObtainMutex();
 	if(prev)
 		prev->next=next;
 	else
@@ -782,6 +807,7 @@ ProfileInfo::~ProfileInfo()
 		free(filename);
 	if(description)
 		free(description);
+	profilemanager.ReleaseMutex();
 }
 
 
@@ -806,7 +832,10 @@ void ProfileInfo::GetInfo()
 		iscached=true;
 	}
 	else
+	{
+		remove=true;
 		throw "ProfileInfo: Can't open profile";
+	}
 }
 
 

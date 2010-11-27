@@ -99,6 +99,12 @@ class hack_outbuf : public std::streambuf {
 		else
 			return(0);
     }
+	virtual
+    int sync()
+	{
+        if(file)
+           return(fflush(file));
+    }
 };
 
 class hack_ostream : public std::ostream, public hack_outbuf

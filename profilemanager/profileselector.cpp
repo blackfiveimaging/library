@@ -157,6 +157,9 @@ static void profileselector_build_options(ProfileSelector *c)
 		c->optionlist=NULL;
 	}
 
+	// Lock profile list against other threads.
+	c->pm->ObtainMutex();
+
 	Debug[TRACE] << "Building profile option list" << endl;
 	ProfileInfo *pi=c->pm->GetFirstProfileInfo();
 	while(pi)
@@ -167,17 +170,20 @@ static void profileselector_build_options(ProfileSelector *c)
 			Debug[TRACE] << "Filename : " << filename << endl;
 			const char *uiname=pi->GetDescription();
 			Debug[TRACE] << "UIName : " << uiname << endl;
-			profsel_entry *ps=new profsel_entry(filename,uiname);
-			if(!g_list_find_custom(c->optionlist,ps,mycmp))
+			if(filename && uiname)
 			{
-				if(verifyprofile(c,pi))
+				profsel_entry *ps=new profsel_entry(filename,uiname);
+				if(!g_list_find_custom(c->optionlist,ps,mycmp))
 				{
-					std::string uiname_truncated=TruncateUTF8(uiname,42);
-					profsel_entry *ps2=new profsel_entry(filename,uiname_truncated.c_str());
-					c->optionlist=g_list_append(c->optionlist,ps2);
+					if(verifyprofile(c,pi))
+					{
+						std::string uiname_truncated=TruncateUTF8(uiname,42);
+						profsel_entry *ps2=new profsel_entry(filename,uiname_truncated.c_str());
+						c->optionlist=g_list_append(c->optionlist,ps2);
+					}
 				}
+				delete ps;
 			}
-			delete ps;
 		}
 		catch (const char *err)
 		{
@@ -186,6 +192,9 @@ static void profileselector_build_options(ProfileSelector *c)
 		pi=pi->Next();
 	}
 	Debug[TRACE] << "Done" << endl;
+
+	// Unlock profile list
+	c->pm->ReleaseMutex();
 
 	c->optionlist=g_list_sort(c->optionlist,mycmp_desc);
 
@@ -373,7 +382,7 @@ void profileselector_set_type(ProfileSelector *c,IS_TYPE colourspace)
 void profileselector_set_filename(ProfileSelector *c,const char *filename)
 {
 	char *fn=c->pm->MakeRelative(filename);
-	cerr << "MakeRelative returned " << fn << endl;
+	Debug[TRACE] << "profileselector_set_filename: MakeRelative returned " << fn << std::endl;
 	try
 	{
 		if(c->filename)

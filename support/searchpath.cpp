@@ -343,7 +343,7 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 
 	if(!last || !subdirs)
 	{
-		Debug[TRACE] << "No previous filename provided - starting over..." << endl;
+//		Debug[TRACE] << "No previous filename provided - starting over..." << endl;
 		if(toplevel)
 			delete toplevel;
 		toplevel=NULL;
@@ -352,7 +352,7 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 		if(spiterator==header.paths.end())
 			return(NULL);
 
-		Debug[TRACE] << "Setting toplevel to " << (*spiterator)->path << endl;
+//		Debug[TRACE] << "Setting toplevel to " << (*spiterator)->path << endl;
 		toplevel=new DirTreeWalker((*spiterator)->path);
 		subdirs=toplevel->NextDirectory();
 		++spiterator;
@@ -365,7 +365,7 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 			searchfilename=subdirs->NextFile();
 		if(!searchfilename)
 		{
-			Debug[TRACE] << "No more filenames, going onto next directory..." << endl;
+//			Debug[TRACE] << "No more filenames, going onto next directory..." << endl;
 
 			if(subdirs)
 				subdirs=subdirs->NextDirectory();
@@ -373,7 +373,7 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 			// If we've reached the end of the files, we load the next path...
 			if(!subdirs)
 			{
-				Debug[TRACE] << "No more directories, going onto next path..." << endl;
+//				Debug[TRACE] << "No more directories, going onto next path..." << endl;
 				if(toplevel)
 					delete toplevel;
 				toplevel=NULL;
@@ -381,14 +381,14 @@ const char *SearchPathIterator::GetNextFilename(const char *last)
 				if(spiterator==header.paths.end())
 					return(NULL);
 
-				Debug[TRACE] << "Setting toplevel to " << (*spiterator)->path << endl;
+//				Debug[TRACE] << "Setting toplevel to " << (*spiterator)->path << endl;
 				toplevel=new DirTreeWalker((*spiterator)->path);
 				subdirs=toplevel->NextDirectory();
 				++spiterator;
 			}
 		}
 	}
-	Debug[TRACE] << "Returning filename " << (searchfilename ? searchfilename : "NULL") << endl;
+//	Debug[TRACE] << "Returning filename " << (searchfilename ? searchfilename : "NULL") << endl;
 //	Debug.PopLevel();
 	searchfn="";
 	if(searchfilename)

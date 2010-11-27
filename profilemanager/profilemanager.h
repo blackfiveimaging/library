@@ -5,6 +5,7 @@
 #include "lcmswrapper.h"
 #include "configdb.h"
 #include "searchpath.h"
+#include "ptmutex.h"
 
 #ifndef WIN32
 #include <X11/Xlib.h>
@@ -38,7 +39,7 @@ enum CMProofMode
 class CMTransformFactory;
 class ProfileInfo;
 
-class ProfileManager : public ConfigDB, public SearchPathHandler
+class ProfileManager : public ConfigDB, public SearchPathHandler, public PTMutex
 {
 	public:
 	ProfileManager(ConfigFile *Configfile,const char *section);
@@ -59,10 +60,16 @@ class ProfileManager : public ConfigDB, public SearchPathHandler
 	virtual void ClearPaths();
 	virtual char *SearchPaths(const char *path);
 	virtual const char *GetNextFilename(const char *prev);
+
+	// ProfileInfo list handling - ObtainMutex() the profilemanager around any code blocks
+	// that depend on this information being consistent between threads.  ReleaseMutex() when done.
 	ProfileInfo *GetFirstProfileInfo();
 	ProfileInfo *GetProfileInfo(int i);
 	int GetProfileInfoCount();
 	ProfileInfo *FindProfileInfo(const char *fn);
+	virtual void ReleaseMutex();	// We take this opportunity to remove bad profiles from the list.
+
+	// Rendering intent helper functions for the benefit of UI code.
 	int GetIntentCount();
 	const char *GetIntentName(LCMSWrapper_Intent intent);
 	const char *GetIntentDescription(LCMSWrapper_Intent intent);
@@ -144,6 +151,7 @@ class ProfileInfo
 	char *description;
 	IS_TYPE colourspace;
 	bool isdevicelink;
+	bool remove;	//	We mark bad profiles and remove them.  Sidesteps an exception issue on Win32 that needs investigating further.
 	friend class ProfileManager;
 };
 #endif
