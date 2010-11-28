@@ -17,45 +17,12 @@
 #include "egg-pixbuf-thumbnail.h"
 
 #include "generaldialogs.h"
+#include "livedisplaycheck.h"
 #include "util.h"
 #include "searchpath.h"
 #include "debug.h"
 
 using namespace std;
-
-#ifdef WIN32
-class LiveDisplayCheck
-{
-	public:
-	bool HaveDisplay()
-	{
-		return(true);
-	}
-};
-#else
-#include <X11/Xlib.h>
-class LiveDisplayCheck
-{
-	public:
-	LiveDisplayCheck()
-	{
-		xdisplay = XOpenDisplay(NULL);
-	}
-	~LiveDisplayCheck()
-	{
-		if(xdisplay)
-			XCloseDisplay(xdisplay);
-	}
-	bool HaveDisplay()
-	{
-		return(xdisplay!=0);
-	}
-	protected:
-	Display *xdisplay;
-};
-#endif
-
-static LiveDisplayCheck display;
 
 
 // Error message handling
@@ -63,7 +30,7 @@ static LiveDisplayCheck display;
 
 void ErrorMessage_Dialog(const char *message,GtkWidget *parent)
 {
-	if(display.HaveDisplay())
+	if(LiveDisplay.HaveDisplay())
 	{
 		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(parent),GtkDialogFlags(0),
 			GTK_MESSAGE_ERROR,GTK_BUTTONS_CLOSE,

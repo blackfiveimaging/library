@@ -1,7 +1,9 @@
 #include <iostream>
 
+#include "debug.h"
 #include "errordialogqueue.h"
 #include "generaldialogs.h"
+#include "livedisplaycheck.h"
 
 
 ErrorMessageQueue::ErrorMessageQueue() : PTMutex()
@@ -14,7 +16,7 @@ ErrorMessageQueue::~ErrorMessageQueue()
 
 void ErrorMessageQueue::AddMessage(const char *message)
 {
-	std::cerr << "***Queuing error message: " << message << std::endl;
+	Debug[WARN] << "***Queuing error message: " << message << std::endl;
 	ObtainMutex();
 	messages.push_back(message);
 	ReleaseMutex();
@@ -51,8 +53,13 @@ void ErrorDialogQueue::SetParent(GtkWidget *newparent)
 
 void ErrorDialogQueue::AddMessage(const char *message)
 {
-	ErrorMessageQueue::AddMessage(message);
-	g_timeout_add(1,displaymessages,this);
+	if(LiveDisplay.HaveDisplay())
+	{
+		ErrorMessageQueue::AddMessage(message);
+		g_timeout_add(1,displaymessages,this);
+	}
+	else
+		Debug[ERROR] << message << endl;
 }
 
 gboolean ErrorDialogQueue::displaymessages(gpointer ud)
