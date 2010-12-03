@@ -48,6 +48,43 @@ class RWMutex : public PTMutex
 										// AttemptShared()  ->   Obtain()  ->  Release()  ->  Release() and want
 										// the lock to remain exclusive until the second Release.
 	bool CheckExclusive();
+
+	// Lock class within the RWMutex namespace.  Use like this:
+	// { // Enter critical section
+	//   RWMutex::Lock lock(mutex);
+	//   ...
+	// }
+	// thus the lock will be automatically released as the scope ends, even if
+	// an exception is thrown within.
+	// Since RWMutex derives from PTMutex, you can use PTMutex::Lock if you only
+	// need an exclusive lock.
+
+	class SharedLock
+	{
+		public:
+		SharedLock(RWMutex &mutex, bool immediate=true) : mutex(mutex), locked(false)
+		{
+			if(immediate)
+			{
+				mutex.ObtainMutexShared();
+				locked=true;
+			}
+		}
+		~SharedLock()
+		{
+			if(locked)
+				mutex.ReleaseMutex();
+		}
+		bool Attempt()
+		{
+			return(locked=mutex.AttemptMutexShared());
+		}
+		protected:
+		RWMutex &mutex;
+		bool locked;
+	};
+
+
 	protected:
 	void Increment();
 	void Decrement(bool shared=false);

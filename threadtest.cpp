@@ -3,8 +3,10 @@
 
 #include "config.h"
 
+#include "support/debug.h"
 #include "support/progressthread.h"
 #include "support/threadevent.h"
+#include "rwmutex.h"
 
 using namespace std;
 
@@ -46,7 +48,7 @@ int main(int argc, char **argv)
 #endif
 
 
-#if 1
+#if 0
 
 //------------------------------------
 
@@ -139,12 +141,66 @@ int main(int argc, char **argv)
 }
 #endif
 
-#if 0
+#if 1
 
-class TestThread1 : public ThreadFunction
+#if 0
+class Lock
 {
 	public:
-	TestThread1(RWMutex &mutex) : ThreadFunction(), mutex(mutex)
+	Lock(PTMutex &mutex,bool immediate=true) : mutex(mutex), locked(false)
+	{
+		if(immediate)
+		{
+			mutex.ObtainMutex();
+			locked=true;
+		}
+	}
+	~Lock()
+	{
+		if(locked)
+			mutex.ReleaseMutex();
+	}
+	bool Attempt()
+	{
+		return(locked=mutex.AttemptMutex());
+	}
+	protected:
+	PTMutex &mutex;
+	bool locked;
+};
+
+
+class SharedLock
+{
+	public:
+	SharedLock(RWMutex &mutex, bool immediate=true) : mutex(mutex), locked(false)
+	{
+		if(immediate)
+		{
+			mutex.ObtainMutexShared();
+			locked=true;
+		}
+	}
+	~SharedLock()
+	{
+		if(locked)
+			mutex.ReleaseMutex();
+	}
+	bool Attempt()
+	{
+		return(locked=mutex.AttemptMutex());
+	}
+	protected:
+	RWMutex &mutex;
+	bool locked;
+};
+#endif
+
+
+class TestThread1 : public ThreadFunction, public Thread
+{
+	public:
+	TestThread1(RWMutex &mutex) : ThreadFunction(), Thread(this), mutex(mutex)
 	{
 		cerr << "Creating TestThread1" << endl;
 	}
@@ -154,20 +210,23 @@ class TestThread1 : public ThreadFunction
 	}
 	virtual int Entry(Thread &t)
 	{
-		cerr << "Subthread attempting write lock" << endl;
-		if(mutex.AttemptMutex())
 		{
-			cerr << "Obtained write-lock" << endl;
-			mutex.ReleaseMutex();
-		}
-		else
-			cerr << "Subthread Can't get write lock - read lock held elsewhere?" << endl;
-		mutex.ObtainMutexShared();
-		cerr << "Got shared mutex" << endl;
+			PTMutex::Lock lock1(mutex,false);
 
-		cerr << "Sub-thread about to sleep..." << endl;
-		ProgressThread p(t);
-		t.SendSync();
+			Debug[TRACE] << "Subthread attempting write lock" << endl;
+			if(lock1.Attempt())
+			{
+				Debug[TRACE] << "Obtained write-lock" << endl;
+			}
+			else
+				Debug[TRACE] << "Subthread Can't get write lock - read lock held elsewhere?" << endl;
+		}
+
+		RWMutex::SharedLock lock2(mutex);
+		Debug[TRACE] << "Subthread Got shared lock - about to sleep" << endl;
+
+		ProgressThread p(*this);
+		SendSync();
 		for(int i=0;i<100;++i)
 		{
 #ifdef WIN32
@@ -177,20 +236,10 @@ class TestThread1 : public ThreadFunction
 #endif
 			if(!p.DoProgress())
 			{
-				cerr << "Thread cancelled - exiting" << endl;
-				mutex.ReleaseMutex();
+				Debug[TRACE] << "Thread cancelled - exiting" << endl;
 				return(0);
 			}
 		}
-
-		cerr << "Woken up - attempting exclusive lock (with shared lock still held)" << endl;
-		mutex.ObtainMutex();
-		cerr << "Subthread got exclusive lock" << endl;
-		mutex.ObtainMutexShared();
-		cerr << "Subthread got shared lock (with exclusive lock still held)" << endl;
-
-		mutex.ReleaseMutex();
-		mutex.ReleaseMutex();
 
 		t.SendSync();
 #ifdef WIN32
@@ -198,9 +247,40 @@ class TestThread1 : public ThreadFunction
 #else
 			sleep(5);
 #endif
-		mutex.ReleaseMutex();
 		cerr << "Thread finished sleeping - exiting" << endl;
-	//	cerr << "Sub-thread ID: " << (long)pthread_self() << endl;
+		return(0);
+	}
+	protected:
+	RWMutex &mutex;
+};
+
+
+class TestThread2 : public ThreadFunction
+{
+	public:
+	TestThread2(RWMutex &mutex) : ThreadFunction(), mutex(mutex)
+	{
+		cerr << "Creating TestThread1" << endl;
+	}
+	virtual ~TestThread2()
+	{
+		cerr << "Disposing of TestThread1" << endl;
+	}
+	virtual int Entry(Thread &t)
+	{
+		t.SendSync();
+		cerr << "Subthread attempting write lock" << endl;
+		{
+			RWMutex::SharedLock lock(mutex);
+			cerr << "Sub-thread about to sleep..." << endl;
+#ifdef WIN32
+			Sleep(200);
+#else
+			usleep(200000);
+#endif
+}
+		cerr << "Woken up - attempting exclusive lock (with shared lock still held)" << endl;
+		cerr << "Thread finished sleeping - exiting" << endl;
 		return(0);
 	}
 	protected:
@@ -210,35 +290,21 @@ class TestThread1 : public ThreadFunction
 
 int main(int argc, char **argv)
 {
+	Debug.SetLevel(TRACE);
 	RWMutex mutex;
-
-	mutex.ObtainMutexShared();	// Get a non-exclusive lock...
-
-	cerr << "Got shared lock" << endl;
-
 	TestThread1 tt1(mutex);
-	Thread t(&tt1);
-	t.Start();
-	t.WaitSync();
-
-	mutex.ReleaseMutex();
-
-	t.WaitSync();
-
-	mutex.ObtainMutexShared();
-
-#if 0
-	while(!t.TestFinished())
 	{
-		cerr << "Thread still running - sleeping for 1 second" << endl;
-		sleep(1);
-		cerr << "Sending break..." << endl;
-		t.Stop();
+		// Obtaining shared lock...
+		Debug[TRACE] << "Obtaining shared lock from main thread..." << endl;
+		RWMutex::SharedLock lock(mutex);
+		Debug[TRACE] << "Starting thread..." << endl;
+		tt1.Start();
+		tt1.WaitSync();
+		Debug[TRACE] << "Main thread received signal..." << endl;
 	}
-#endif
-	t.WaitFinished();
+	tt1.WaitFinished();
 
-	cerr << "Done" << endl;
+	Debug[TRACE] << "Done" << endl;
 
 	return(0);
 }
