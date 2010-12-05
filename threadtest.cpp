@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 #endif
 
 
-#if 0
+#if 1
 
 //------------------------------------
 
@@ -62,15 +62,16 @@ class TestThread_WaitTH : public ThreadFunction
 	}
 	virtual ~TestThread_WaitTH()
 	{
+		cerr << "Destructing WaitTH" << endl;
 		thread.WaitFinished();
 	}
 	virtual int Entry(Thread &t)
 	{
-		cerr << "Thread " << t.GetThreadID() << " initializing" << endl;
+//		cerr << "Thread " << t.GetThreadID() << " initializing" << endl;
 
 		event.WaitAndHold();
 
-		cerr << "Thread " << t.GetThreadID() << " pausing..." << endl;
+//		cerr << "Thread " << t.GetThreadID() << " pausing..." << endl;
 
 #ifdef WIN32
 			Sleep(1000);
@@ -79,7 +80,7 @@ class TestThread_WaitTH : public ThreadFunction
 #endif
 
 		event.Release();
-		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
+//		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
 		return(0);
 	}
 	protected:
@@ -98,15 +99,16 @@ class TestThread_SendTH : public ThreadFunction
 	}
 	virtual ~TestThread_SendTH()
 	{
+		cerr << "Destructing SendTH" << endl;
 		thread.WaitFinished();
 	}
 	virtual int Entry(Thread &t)
 	{
-		cerr << "Thread " << t.GetThreadID() << " initializing" << endl;
+//		cerr << "Thread " << t.GetThreadID() << " initializing" << endl;
 
 		event.Trigger();
 
-		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
+//		cerr << "Thread " << t.GetThreadID() << " exiting" << endl;
 		return(0);
 	}
 	protected:
@@ -117,6 +119,7 @@ class TestThread_SendTH : public ThreadFunction
 
 int main(int argc, char **argv)
 {
+	Debug.SetLevel(TRACE);
 	ThreadEventHandler tehandler;
 	ThreadEvent e1(tehandler,"Event1");
 	ThreadEvent *e2=new ThreadEvent(tehandler,"Event2");
@@ -141,61 +144,7 @@ int main(int argc, char **argv)
 }
 #endif
 
-#if 1
-
 #if 0
-class Lock
-{
-	public:
-	Lock(PTMutex &mutex,bool immediate=true) : mutex(mutex), locked(false)
-	{
-		if(immediate)
-		{
-			mutex.ObtainMutex();
-			locked=true;
-		}
-	}
-	~Lock()
-	{
-		if(locked)
-			mutex.ReleaseMutex();
-	}
-	bool Attempt()
-	{
-		return(locked=mutex.AttemptMutex());
-	}
-	protected:
-	PTMutex &mutex;
-	bool locked;
-};
-
-
-class SharedLock
-{
-	public:
-	SharedLock(RWMutex &mutex, bool immediate=true) : mutex(mutex), locked(false)
-	{
-		if(immediate)
-		{
-			mutex.ObtainMutexShared();
-			locked=true;
-		}
-	}
-	~SharedLock()
-	{
-		if(locked)
-			mutex.ReleaseMutex();
-	}
-	bool Attempt()
-	{
-		return(locked=mutex.AttemptMutex());
-	}
-	protected:
-	RWMutex &mutex;
-	bool locked;
-};
-#endif
-
 
 class TestThread1 : public ThreadFunction, public Thread
 {
@@ -227,7 +176,7 @@ class TestThread1 : public ThreadFunction, public Thread
 
 		ProgressThread p(*this);
 		SendSync();
-		for(int i=0;i<100;++i)
+		for(int i=0;i<20;++i)
 		{
 #ifdef WIN32
 			Sleep(20);
@@ -255,10 +204,10 @@ class TestThread1 : public ThreadFunction, public Thread
 };
 
 
-class TestThread2 : public ThreadFunction
+class TestThread2 : public ThreadFunction, public Thread
 {
 	public:
-	TestThread2(RWMutex &mutex) : ThreadFunction(), mutex(mutex)
+	TestThread2(RWMutex &mutex) : ThreadFunction(), Thread(this), mutex(mutex)
 	{
 		cerr << "Creating TestThread1" << endl;
 	}
@@ -274,9 +223,9 @@ class TestThread2 : public ThreadFunction
 			RWMutex::SharedLock lock(mutex);
 			cerr << "Sub-thread about to sleep..." << endl;
 #ifdef WIN32
-			Sleep(200);
+			Sleep(50);
 #else
-			usleep(200000);
+			usleep(50000);
 #endif
 }
 		cerr << "Woken up - attempting exclusive lock (with shared lock still held)" << endl;
@@ -290,7 +239,7 @@ class TestThread2 : public ThreadFunction
 
 int main(int argc, char **argv)
 {
-	Debug.SetLevel(TRACE);
+	Debug.SetLevel(ERROR);
 	RWMutex mutex;
 	TestThread1 tt1(mutex);
 	{

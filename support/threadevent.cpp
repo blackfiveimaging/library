@@ -13,8 +13,8 @@ class ThreadEvent_Subscriber
 	public:
 	ThreadEvent_Subscriber(ThreadEvent &header) : count(0), header(header), nextsub(NULL), prevsub(NULL)
 	{
+		PTMutex::Lock lock(header.mutex);
 		id=Thread::GetThreadID();
-		header.mutex.ObtainMutex();
 		prevsub=header.firstsubscriber;
 		if(prevsub)
 		{
@@ -24,18 +24,16 @@ class ThreadEvent_Subscriber
 		}
 		else
 			header.firstsubscriber=this;
-		header.mutex.ReleaseMutex();
 	}
 	~ThreadEvent_Subscriber()
 	{
-		header.mutex.ObtainMutex();
+		PTMutex::Lock lock(header.mutex);
 		if(nextsub)
 			nextsub->prevsub=prevsub;
 		if(prevsub)
 			prevsub->nextsub=nextsub;
 		else
 			header.firstsubscriber=nextsub;
-		header.mutex.ReleaseMutex();
 	}
 	ThreadEvent_Subscriber *NextSubscriber()
 	{
@@ -77,10 +75,9 @@ ThreadEventHandler::ThreadEventHandler() : PTMutex(), firstevent(NULL)
 ThreadEventHandler::~ThreadEventHandler()
 {
 	Debug[TRACE] << "In ThreadEventHandler's destructor" << endl;
-	ObtainMutex();
+	PTMutex::Lock lock(*this);
 	while(firstevent)
 		delete firstevent;
-	ReleaseMutex();
 	Debug[TRACE] << "ThreadEventHandler's destructor completed" << endl;
 }
 
@@ -109,7 +106,7 @@ ThreadEvent *ThreadEventHandler::FindEvent(const char *name)
 ThreadEvent::ThreadEvent(ThreadEventHandler &header,const char *eventname)
 	: mutex(), header(header), nextevent(NULL), prevevent(NULL), name(NULL), firstsubscriber(NULL)
 {
-	header.ObtainMutex();
+	PTMutex::Lock lock(header);
 	if(eventname)
 		name=strdup(eventname);
 
@@ -122,32 +119,30 @@ ThreadEvent::ThreadEvent(ThreadEventHandler &header,const char *eventname)
 	}
 	else
 		header.firstevent=this;
-
-	header.ReleaseMutex();
 }
 
 
 ThreadEvent::~ThreadEvent()
 {
 	// Detach from the header's queue while holding the header's mutex.
-	header.ObtainMutex();
-	if(nextevent)
-		nextevent->prevevent=prevevent;
-	if(prevevent)
-		prevevent->nextevent=nextevent;
-	else
-		header.firstevent=nextevent;
-	header.ReleaseMutex();
+	{
+		PTMutex::Lock lock(header);
+		if(nextevent)
+			nextevent->prevevent=prevevent;
+		if(prevevent)
+			prevevent->nextevent=nextevent;
+		else
+			header.firstevent=nextevent;
+	}
 
 	// Now remove any subscribers while holding an exclusive lock on the ThreadEvent
-	mutex.ObtainMutex();
+	PTMutex::Lock lock(mutex);
+
 	while(firstsubscriber)
 		delete firstsubscriber;
 
 	if(name)
 		free(name);
-
-	mutex.ReleaseMutex();
 }
 
 
@@ -180,7 +175,7 @@ ThreadCondition &ThreadEvent::WaitAndHold()
 void ThreadEvent::Trigger()
 {
 	Debug[TRACE] << "Triggering event..." << endl;
-	mutex.ObtainMutex();
+	PTMutex::Lock eventlock(mutex);
 	Debug[TRACE] << "Got event mutex" << endl;
 	ThreadEvent_Subscriber *sub=firstsubscriber;
 	while(sub)
@@ -190,20 +185,17 @@ void ThreadEvent::Trigger()
 		sub=sub->NextSubscriber();
 	}
 
-	cond.ObtainMutex();
+	PTMutex::Lock condlock(cond);
 	Debug[TRACE] << "Obtained trigger Mutex" << endl;
 	cond.Broadcast();
 	Debug[TRACE] << "Sent signal - releasing" << endl;
-	cond.ReleaseMutex();
-	mutex.ReleaseMutex();
-	Debug[TRACE] << "Released event Mutex" << endl;
 }
 
 
 int ThreadEvent::Query()
 {
 	int result=0;
-	mutex.ObtainMutex();
+	PTMutex::Lock lock(mutex);
 	ThreadEvent_Subscriber *sub=FindSubscriber();
 	if(sub)
 	{
@@ -211,7 +203,6 @@ int ThreadEvent::Query()
 		Debug[TRACE] << "Subscriber count is " << result << endl;
 		sub->Clear();
 	}
-	mutex.ReleaseMutex();
 	return(result);
 }
 
@@ -246,9 +237,11 @@ int ThreadEvent::QueryAndWait()
 	cond.WaitCondition();
 	cond.ReleaseMutex();
 
+	mutex.ObtainMutex();
 	// The event which woke us up should have incremented the subscriber's count, so clear it.
 	if((sub=FindSubscriber()))
 		sub->Clear();
+	mutex.ReleaseMutex();
 
 	return(1);
 }
@@ -258,33 +251,31 @@ ThreadCondition &ThreadEvent::QueryWaitAndHold()
 {
 	// Must keep mutex held between query and wait.
 	int result=0;
-	mutex.ObtainMutex();
-
-	cond.ObtainMutex();
-
-	// Do we have a subscriber for this thread?
-	ThreadEvent_Subscriber *sub=FindSubscriber();
-	if(sub)
 	{
-		result=sub->GetCount();
-		Debug[TRACE] << "QueryAndWait: Subscriber count is " << result << endl;
-		sub->Clear();
-	}
+		PTMutex::Lock lock(mutex);
 
-	// If the subscriber's event count is non-zero we release the mutex and return the count
-	if(result)
-	{
-		mutex.ReleaseMutex();
-		return(cond);
-	}
+		// Do we have a subscriber for this thread?
+		ThreadEvent_Subscriber *sub=FindSubscriber();
+		if(sub)
+		{
+			result=sub->GetCount();
+			Debug[TRACE] << "QueryAndWait: Subscriber count is " << result << endl;
+			sub->Clear();
+		}
 
-	mutex.ReleaseMutex();
+		// If the subscriber's event count is non-zero we release the mutex and return the count
+		if(result)
+			return(cond);
+
+		cond.ObtainMutex();
+	}
 
 	// If there is no subscriber, or if it received no events, we wait.
 	cond.WaitCondition();
 
 	// The event which woke us up should have incremented the subscriber's count, so clear it.
-	if((sub=FindSubscriber()))
+	ThreadEvent_Subscriber *sub=FindSubscriber();
+	if(sub)
 		sub->Clear();
 
 	return(cond);
@@ -300,40 +291,36 @@ void ThreadEvent::Release()
 void ThreadEvent::Subscribe()
 {
 	Debug[TRACE] << "ThreadEvent - obtaining mutex" << endl;
-	mutex.ObtainMutex();
+	PTMutex::Lock lock(mutex);
 	Debug[TRACE] << "ThreadEvent - searching for existing subscriber..." << endl;
 	if(!FindSubscriber())
 		new ThreadEvent_Subscriber(*this);
 	Debug[TRACE] << "ThreadEvent - Releasing mutex" << endl;
-	mutex.ReleaseMutex();
 }
 
 
 void ThreadEvent::Unsubscribe()
 {
-	mutex.ObtainMutex();
+	PTMutex::Lock lock(mutex);
 	ThreadEvent_Subscriber *sub=FindSubscriber();
 	if(sub)
 		delete sub;
-	mutex.ReleaseMutex();
 }
 
 
 ThreadEvent_Subscriber *ThreadEvent::FindSubscriber()
 {
-	mutex.ObtainMutexShared();
+	RWMutex::SharedLock lock(mutex);
 	ThreadID id=Thread::GetThreadID();
 	ThreadEvent_Subscriber *sub=firstsubscriber;
 	while(sub)
 	{
 		if(sub->GetID()==id)
 		{
-			mutex.ReleaseMutex();
 			return(sub);
 		}
 		sub=sub->NextSubscriber();
 	}
-	mutex.ReleaseMutex();
 	return(NULL);
 }
 

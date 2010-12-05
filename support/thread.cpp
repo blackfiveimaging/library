@@ -43,6 +43,7 @@ void *Thread::LaunchStub(void *ud)
 void Thread::Start()
 {
 	returncode=0;
+	PTMutex::Lock lock(cond1);
 	state=THREAD_STARTED;
 	pthread_create(&thread,0,LaunchStub,this);
 }
@@ -50,11 +51,8 @@ void Thread::Start()
 
 void Thread::Stop()
 {
-	cond1.ObtainMutex();
+	PTMutex::Lock lock(cond1);
 	state=THREAD_CANCELLED;
-	cond1.ReleaseMutex();
-//	pthread_join(thread,&discarded);
-//	state=THREAD_IDLE;
 }
 
 
@@ -80,6 +78,7 @@ int Thread::WaitFinished()
 {
 	void *discarded=NULL;
 	pthread_join(thread,&discarded);
+	PTMutex::Lock lock(cond1);
 	state=THREAD_IDLE;
 	return(returncode);
 }
@@ -96,6 +95,7 @@ bool Thread::TestFinished()
 	bool result=threadmutex.AttemptMutex();
 	if(result)
 	{
+		PTMutex::Lock lock(cond1);
 		if(state!=THREAD_IDLE)
 		{
 			void *discarded;

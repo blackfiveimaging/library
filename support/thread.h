@@ -31,18 +31,16 @@ class ThreadSync : public ThreadCondition
 	}
 	virtual void Broadcast()
 	{
-		ObtainMutex();
+		PTMutex::Lock lock(*this);
 		ThreadCondition::Broadcast();
 		received=true;
-		ReleaseMutex();
 	}
 	virtual void WaitCondition()
 	{
-		ObtainMutex();
+		PTMutex::Lock lock(*this);
 		if(!received)
 			ThreadCondition::WaitCondition();
 		received=false;
-		ReleaseMutex();
 	}
 	protected:
 	bool received;
