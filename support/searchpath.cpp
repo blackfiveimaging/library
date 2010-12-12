@@ -20,7 +20,7 @@ class SearchPathInstance
 	SearchPathInstance(const char *path);
 	~SearchPathInstance();
 	char *Simplify(const char *file);
-	std::string Search(const char *file);
+	std::string Search(const char *file,bool recursive);
 	char *MakeAbsolute(const char *file);
 	SearchPathInstance *Next();
 	protected:
@@ -74,44 +74,30 @@ char *SearchPathInstance::Simplify(const char *file)
 }
 
 
-std::string SearchPathInstance::Search(const char *file)
+std::string SearchPathInstance::Search(const char *file,bool recursive)
 {
-#ifdef WIN32
-	struct _stat statbuf;
-#else
-	struct stat statbuf;
-#endif
-
-	DirTree_Dirs dtd(path);
-	const char *dir;
-	while((dir=dtd.Next()))
+	std::string tmp=path;
+	tmp+=SEARCHPATH_SEPARATOR;
+	tmp+=file;
+	if(CheckFileExists(tmp.c_str()))
+		return(tmp);
+	if(recursive)
 	{
-//		Debug[TRACE] << "Searching for " << file << " in " << dir << endl;
-		std::string fn=dir;
-		fn+=SEARCHPATH_SEPARATOR;
-		fn+=file;
-//		Debug[TRACE] << " -> " << fn << endl;
-#ifdef WIN32
-		wchar_t *p2=UTF8ToWChar(fn.c_str());	// We check for existence of wchar filename but return UTF8 name
-		bool exists=_wstat(p2,&statbuf)==0;
-		free(p2);
-		if(exists)
-			return(fn);
-#else
-		if(stat(fn.c_str(),&statbuf)==0)
-			return(fn);
-#endif
+		DirTree_Dirs dtd(path);
+		const char *dir;
+		while((dir=dtd.Next()))
+		{
+	//		Debug[TRACE] << "Searching for " << file << " in " << dir << endl;
+			std::string fn=dir;
+			fn+=SEARCHPATH_SEPARATOR;
+			fn+=file;
+	//		Debug[TRACE] << " -> " << fn << endl;
+			if(CheckFileExists(fn.c_str()))
+				return(fn);
+		}
 	}
-#ifdef WIN32
-		wchar_t *p2=UTF8ToWChar(file);	// We check for existence of wchar filename but return UTF8 name
-		bool exists=_wstat(p2,&statbuf)==0;
-		free(p2);
-		if(exists)
-			return(file);
-#else
-		if(stat(file,&statbuf)==0)
-			return(file);
-#endif
+	if(CheckFileExists(file))
+		return(file);
 	return("");
 }
 
@@ -200,7 +186,7 @@ SearchPathHandler::~SearchPathHandler()
 }
 
 
-char *SearchPathHandler::SearchPaths(const char *file)
+char *SearchPathHandler::SearchPaths(const char *file,bool recursive)
 {
 #ifdef WIN32
 	struct _stat statbuf;
@@ -213,7 +199,7 @@ char *SearchPathHandler::SearchPaths(const char *file)
 	while(it!=paths.end())
 	{
 		Debug[TRACE] << "Searching for " << file << " in " << (*it)->path << endl;
-		std::string p=(*it)->Search(file);
+		std::string p=(*it)->Search(file,recursive);
 		if(p.size())
 		{
 			Debug[TRACE] << " -> " << p << endl;

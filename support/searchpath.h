@@ -105,7 +105,7 @@ class SearchPathHandler
 	SearchPathHandler(SearchPathHandler &other);
 	SearchPathHandler &operator=(SearchPathHandler &other);
 	virtual ~SearchPathHandler();
-	virtual char *SearchPaths(const char *file);
+	virtual char *SearchPaths(const char *file,bool recursive=true);
 	virtual char *MakeRelative(const char *file);
 	virtual void AddPath(const char *path);
 	virtual void RemovePath(const char *path);
