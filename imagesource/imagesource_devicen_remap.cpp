@@ -51,7 +51,7 @@ ISDataType *ImageSource_DeviceN_Remap::GetRow(int row)
 				if(table[s]>-1)
 					rowbuffer[x*samplesperpixel+table[s]]=srcdata[x*source->samplesperpixel+s];
 			}
-			rowbuffer[x*samplesperpixel+source->samplesperpixel-1]=srcdata[x*samplesperpixel+source->samplesperpixel-1];
+			rowbuffer[x*samplesperpixel+source->samplesperpixel-1]=srcdata[x*source->samplesperpixel+source->samplesperpixel-1];
 		}
 	}
 	else
