@@ -760,7 +760,6 @@ ProfileInfo *ProfileManager::GetProfileInfo(int i)
 
 void ProfileManager::ReleaseMutex()
 {
-	Debug[TRACE] << "In ProfileManager::ReleaseMutex()" << std::endl;
 	ProfileInfo *pi=first;
 	while(pi)
 	{
