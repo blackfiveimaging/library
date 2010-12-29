@@ -69,13 +69,13 @@ static void printoutputselector_queue_changed(GtkEntry *entry,gpointer *ud)
 			if(driver[0]=='p' && driver[1]=='s')
 			{
 #ifdef HAVE_LIBCUPS
-				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
+				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("Can't automatically identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
 #else
-				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2.")):
+				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("This program has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2.")):
 #endif
 			}
 			else
-				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint has identified a suitable driver for this queue."));
+				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("A driver has been automatically detected for this queue."));
 			Debug[TRACE] << "Got driver: " << driver << " from Queue" << endl;
 			po->SetString("Driver",driver);
 			stpui_printerselector_set_driver(STPUI_PRINTERSELECTOR(ob->printersel),driver);
@@ -84,12 +84,12 @@ static void printoutputselector_queue_changed(GtkEntry *entry,gpointer *ud)
 		else
 		{
 #ifdef WIN32
-			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("Please note: The Windows port of PhotoPrint\ncan't make use of Windows drivers, and can only be used\nwith printers directly supported by Gutenprint"));
+			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("Please note: native Windows drivers are not currently\nsupported, so only printers directly supported by Gutenprint\ncan currently be used."));
 #else
 #ifdef HAVE_LIBCUPS
-			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
+			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("Can't automatically identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
 #else
-			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2.")):
+			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("This program has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2.")):
 #endif
 #endif
 		}
