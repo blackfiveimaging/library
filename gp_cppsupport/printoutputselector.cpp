@@ -66,10 +66,32 @@ static void printoutputselector_queue_changed(GtkEntry *entry,gpointer *ud)
 		char *driver=po->GetPrinterDriver();
 		if(driver)
 		{
+			if(driver[0]=='p' && driver[1]=='s')
+			{
+#ifdef HAVE_LIBCUPS
+				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
+#else
+				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2.")):
+#endif
+			}
+			else
+				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint has identified a suitable driver for this queue."));
 			Debug[TRACE] << "Got driver: " << driver << " from Queue" << endl;
 			po->SetString("Driver",driver);
 			stpui_printerselector_set_driver(STPUI_PRINTERSELECTOR(ob->printersel),driver);
 			free(driver);
+		}
+		else
+		{
+#ifdef WIN32
+			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("Please note: The Windows port of PhotoPrint\ncan't make use of Windows drivers, and can only be used\nwith printers directly supported by Gutenprint"));
+#else
+#ifdef HAVE_LIBCUPS
+			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
+#else
+			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("PhotoPrint has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2.")):
+#endif
+#endif
 		}
 		g_signal_emit(G_OBJECT (ob),printoutputselector_signals[CHANGED_SIGNAL], 0);
 	}
@@ -141,6 +163,12 @@ printoutputselector_new (PrintOutput *po)
 	stpui_printerselector_set_driver(STPUI_PRINTERSELECTOR(ob->printersel),po->FindString("Driver"));
 	gtk_widget_show(ob->printersel);
 	
+	ob->driverhint=gtk_label_new("");
+	g_object_set (ob->driverhint, "xalign", 0.0, NULL);
+	gtk_table_attach_defaults(GTK_TABLE(table),ob->driverhint,1,2,2,3);
+	gtk_table_set_row_spacing(GTK_TABLE(table),1,4);
+	gtk_widget_show(ob->driverhint);
+
 	return(GTK_WIDGET(ob));
 }
 

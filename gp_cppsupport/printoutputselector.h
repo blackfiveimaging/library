@@ -32,6 +32,7 @@ struct _PrintOutputSelector
 	GtkWidget *string;
 	GtkWidget *combo;
 	GtkWidget *printersel;
+	GtkWidget *driverhint;
 	GList *queues;
 	PrintOutput *po;
 };
