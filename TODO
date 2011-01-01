@@ -48,4 +48,5 @@ class ImageSink
 Need a variant of the JobQueue system for handling UI events, to avoid the problems currently caused by events being pumped from within signal handlers.
 
 Investigate using smart pointers for ref counting and figure out how that would interact with gtk idle handlers.
+Need to use a map between addresses and refcounters; merely using a templated class will cause problems with polymorphism.
 
