@@ -36,7 +36,9 @@ ISDataType *ImageSource_Gamma::GetRow(int row)
 
 	switch(STRIP_ALPHA(type))
 	{
-		case IS_TYPE_RGB:	// RGB is the only colourspace in which we treat 0 as black.
+		case IS_TYPE_LAB:
+		case IS_TYPE_HSV:
+		case IS_TYPE_RGB:	// RGB, LAB and HSV are colourspaces in which we treat 0 as black.
 			if(HAS_ALPHA(type))	// We don't want to adjust the alpha channel!
 			{
 				for(int i=0;i<width;++i)

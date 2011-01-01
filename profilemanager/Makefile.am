@@ -15,7 +15,8 @@ libprofilemanager_la_SOURCES =	\
 	intentselector.cpp	\
 	intentselector.h	\
 	ciesupport.cpp \
-	ciesupport.h
+	ciesupport.h \
+	naivetransforms.h
 
 libprofilemanager_la_LDFLAGS = -static
 

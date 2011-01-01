@@ -9,6 +9,7 @@
 #include "../support/debug.h"
 
 #include "profilemanager.h"
+#include "naivetransforms.h"
 #include "searchpathdbhandler.h"
 
 #ifdef HAVE_CONFIG_H
@@ -476,7 +477,8 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 		if(*d1==*d2)
 		{
 			Debug[TRACE] << "Source and target profiles are identical - no need to transform" << endl;
-			return(NULL);
+			// Instead of returning NULL, return a NULL transform.
+			return(new NullCMSTransform(srcprofile->GetColourSpace()));
 		}
 
 		transform=Search(d1,d2,intent);
