@@ -12,7 +12,8 @@ check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				mkrgbprofile mklabprofile mkgreyprofile \
 				composite imgsrctest \
 				combotest tabui \
-				printqueuetest stpuitest debugtest errorqueuetest
+				printqueuetest stpuitest debugtest errorqueuetest \
+				smartptrtest
 
 
 bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest
@@ -37,6 +38,7 @@ jpegscan_SOURCES = jpegscan.cpp
 dirtreetest_SOURCES = dirtreetest.cpp
 tabui_SOURCES = tabui.cpp
 errorqueuetest_SOURCES = errorqueuetest.cpp
+smartptrtest_SOURCES = smartptrtest.cpp
 
 LDADD = \
 	argyllsupport/libargyllsupport.la \

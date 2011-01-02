@@ -42,6 +42,7 @@ libsupport_la_SOURCES =	\
 	threadevent.h \
 	refcount.cpp \
 	refcount.h \
+	refcountptr.cpp \
 	refcountptr.h \
 	\
 	searchpath.cpp \

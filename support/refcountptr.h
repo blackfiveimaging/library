@@ -1,17 +1,25 @@
 // Refcounting smart pointer.
 
 // TODO:
-// protect counters with mutex
 // create a global list of counters, so multiple smart pointers can safely be created from regular pointers
-
 
 #ifndef REFCOUNTPTR_H
 #define REFCOUNTPTR_H
 
+#include <iostream>
 
+#include "ptmutex.h"
+#include "debug.h"
+
+template <class X> class RefCountPtr;
+
+// We use a void * type here so the actual counter doesn't have to be templated
+// which makes comparisons for equality much easier.
 class RefCountPtr_Counter
 {
 	public:
+	template <class X> friend class RefCountPtr;
+	private:
 	RefCountPtr_Counter(void *p = 0, unsigned c = 1) : ptr(p), count(c)
 	{
 	}
@@ -28,28 +36,48 @@ class RefCountPtr_Counter
 };
 
 
-template <class X> class RefCountPtr
+// Base class used to make the mutex visible to all templated variants of the RefCountPtr
+// Note: the mutex protects against nothing more than data races on the count variable.
+class RefCountPtrBase
 {
 	public:
-    typedef X element_type;
+	RefCountPtrBase() : refcounter(NULL)
+	{
+	}
+	~RefCountPtrBase()
+	{
+	}
+	protected:
+	RefCountPtr_Counter *refcounter;
+	static PTMutex mutex;
+	template <class X> friend class RefCountPtr;
+};
 
-    explicit RefCountPtr(X* p = 0) // allocate a new counter
-        : refcounter(0)
+
+template <class X> class RefCountPtr : public RefCountPtrBase
+{
+	public:
+	explicit RefCountPtr(X *p = NULL) : RefCountPtrBase() // allocate a new counter
 	{
 		if(p)
 			refcounter=new RefCountPtr_Counter(p);
 	}
-    ~RefCountPtr()
+	~RefCountPtr()
 	{
 		release();
 	}
-    RefCountPtr(const RefCountPtr &r)
-    {
+
+	// Copy constructor - should never be called in practice.
+	RefCountPtr(const RefCountPtr &r) : RefCountPtrBase()
+	{
+		PTMutex::Lock lock(mutex);
 		acquire(r.refcounter);
 	}
+
     RefCountPtr &operator=(const RefCountPtr &r)
     {
-		if (this != &r)
+		PTMutex::Lock lock(mutex);
+		if(refcounter != r.refcounter)
 		{
 			release();
 			acquire(r.refcounter);
@@ -57,20 +85,23 @@ template <class X> class RefCountPtr
 		return *this;
     }
 
-    template <class Y> RefCountPtr(const RefCountPtr<Y>& r)
-    {
+	template <class Y> RefCountPtr(const RefCountPtr<Y>& r) : RefCountPtrBase()
+	{
+		PTMutex::Lock lock(mutex);
 		acquire(r.refcounter);
 	}
 
-    template <class Y> RefCountPtr& operator=(const RefCountPtr<Y>& r)
-    {
+	template <class Y> RefCountPtr& operator=(const RefCountPtr<Y>& r)
+	{
+		PTMutex::Lock lock(mutex);
 		// Compare refcounters rather than this and r, to avoid polymorphism problems.
-        if (refcounter!=r.refcounter) {
-            release();
-            acquire(r.refcounter);
+		if (refcounter!=r.refcounter)
+		{
+			release();
+			acquire(r.refcounter);
         }
-        return *this;
-    }
+		return *this;
+	}
 
 	inline X& operator*() const
 	{
@@ -89,11 +120,11 @@ template <class X> class RefCountPtr
 		return(refcounter ? refcounter->count : 0);
 	}
 
-	RefCountPtr_Counter *refcounter;
 	private:
 	void acquire(RefCountPtr_Counter* c) throw()
-	{ // increment the count
-		std::cerr << "Acquiring reference" << std::endl;
+	{
+		// increment the count
+		Debug[TRACE] << "Acquiring reference" << std::endl;
 		refcounter = c;
 		if(c)
 			++(*c);
@@ -102,16 +133,16 @@ template <class X> class RefCountPtr
 	void release()
 	{
 		// decrement the count, delete if it is 0
-		std::cerr << "Releasing ptr..." << std::endl;
+		Debug[TRACE] << "Releasing ptr..." << std::endl;
 		if (refcounter)
 		{
 			if (--(*refcounter)==0)
 			{
-				std::cerr << "Refcount zero, deleting..." << std::endl;
+				Debug[TRACE] << "Refcount zero, deleting..." << std::endl;
 				delete (X *)refcounter->ptr;
 				delete refcounter;
 			}
-			refcounter = 0;
+			refcounter = NULL;
 		}
 	}
 };
