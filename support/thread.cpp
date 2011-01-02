@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "debug.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif

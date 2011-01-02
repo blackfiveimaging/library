@@ -7,6 +7,7 @@
 #define REFCOUNTPTR_H
 
 #include <iostream>
+#include <map>
 
 #include "ptmutex.h"
 #include "debug.h"
@@ -19,19 +20,22 @@ class RefCountPtr_Counter
 {
 	public:
 	template <class X> friend class RefCountPtr;
+	friend class std::map<void *,RefCountPtr_Counter>;
 	private:
-	RefCountPtr_Counter(void *p = 0, unsigned c = 1) : ptr(p), count(c)
+	RefCountPtr_Counter(unsigned c = 0) : count(c)
 	{
+		Debug[TRACE] << "In RefCountptr_Counter constructor" << std::endl;
 	}
 	unsigned int operator--()
 	{
+		Debug[TRACE] << "Decrementing count from " << count << std::endl;
 		return(--count);
 	}
 	unsigned int operator++()
 	{
+		Debug[TRACE] << "Incrementing count from " << count << std::endl;
 		return(++count);
 	}
-	void *ptr;
 	unsigned int count;
 };
 
@@ -41,15 +45,17 @@ class RefCountPtr_Counter
 class RefCountPtrBase
 {
 	public:
-	RefCountPtrBase() : refcounter(NULL)
+	RefCountPtrBase(void *p=NULL) : ptr(p), count(NULL)
 	{
 	}
 	~RefCountPtrBase()
 	{
 	}
 	protected:
-	RefCountPtr_Counter *refcounter;
+	void *ptr;
+	RefCountPtr_Counter *count;
 	static PTMutex mutex;
+	static std::map<void *,RefCountPtr_Counter> map;
 	template <class X> friend class RefCountPtr;
 };
 
@@ -57,10 +63,10 @@ class RefCountPtrBase
 template <class X> class RefCountPtr : public RefCountPtrBase
 {
 	public:
-	explicit RefCountPtr(X *p = NULL) : RefCountPtrBase() // allocate a new counter
+	explicit RefCountPtr(X *p = NULL) : RefCountPtrBase(p) // allocate a new counter
 	{
 		if(p)
-			refcounter=new RefCountPtr_Counter(p);
+			acquire(p);
 	}
 	~RefCountPtr()
 	{
@@ -68,81 +74,93 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 	}
 
 	// Copy constructor - should never be called in practice.
-	RefCountPtr(const RefCountPtr &r) : RefCountPtrBase()
+	RefCountPtr(const RefCountPtr &r) : RefCountPtrBase(NULL)
 	{
-		PTMutex::Lock lock(mutex);
-		acquire(r.refcounter);
+		Debug[TRACE] << "In untemplated copy constructor" << std::endl;
+		acquire(r.count);
 	}
 
     RefCountPtr &operator=(const RefCountPtr &r)
     {
 		PTMutex::Lock lock(mutex);
-		if(refcounter != r.refcounter)
+		if(ptr != r.ptr)
 		{
 			release();
-			acquire(r.refcounter);
+			acquire(r.ptr);
 		}
 		return *this;
     }
 
-	template <class Y> RefCountPtr(const RefCountPtr<Y>& r) : RefCountPtrBase()
+	template <class Y> RefCountPtr(const RefCountPtr<Y>& r) : RefCountPtrBase(NULL)
 	{
-		PTMutex::Lock lock(mutex);
-		acquire(r.refcounter);
+		Debug[TRACE] << "In templated copy constructor" << std::endl;
+		acquire(r.ptr);
 	}
 
 	template <class Y> RefCountPtr& operator=(const RefCountPtr<Y>& r)
 	{
-		PTMutex::Lock lock(mutex);
-		// Compare refcounters rather than this and r, to avoid polymorphism problems.
-		if (refcounter!=r.refcounter)
+		// Compare actual pointers rather than this and r, to avoid polymorphism problems.
+		// Technically catches situations other than simple self-assignment but the end result
+		// is the same.
+		if (ptr!=r.ptr)
 		{
+			PTMutex::Lock lock(mutex);
 			release();
-			acquire(r.refcounter);
+			acquire(r.ptr);
         }
 		return *this;
 	}
 
 	inline X& operator*() const
 	{
-		return(*(X *)refcounter->ptr);
+		return(*(X *)ptr);
 	}
 	inline X* operator->() const
 	{
-		return((X *)refcounter->ptr);
+		return((X *)ptr);
 	}
 	inline X* GetPtr() const
 	{
-		return (refcounter ? refcounter->ptr : 0);
+		return (ptr);
 	}
 	inline unsigned int GetCount() const
 	{
-		return(refcounter ? refcounter->count : 0);
+		return(count ? count->count : 0);
 	}
 
 	private:
-	void acquire(RefCountPtr_Counter* c) throw()
+	void acquire(void *p) throw()
 	{
-		// increment the count
-		Debug[TRACE] << "Acquiring reference" << std::endl;
-		refcounter = c;
-		if(c)
-			++(*c);
+		ptr=p;
+		if(p)
+		{
+			// If we have a pointer, we lock the mutex, search the map for a matching
+			// count record and increment its reference count if found.
+			PTMutex::Lock lock(mutex);
+			Debug[TRACE] << "Acquiring reference" << std::endl;
+			count=&map[p];
+			Debug[TRACE] << "Map element " << long(count) << std::endl;
+			// increment the count
+			++(*count);
+		}
+		Debug[TRACE] << "Acquisition complete" << std::endl;
 	}
 
 	void release()
 	{
-		// decrement the count, delete if it is 0
-		Debug[TRACE] << "Releasing ptr..." << std::endl;
-		if (refcounter)
+		if(count)
 		{
-			if (--(*refcounter)==0)
+			PTMutex::Lock lock(mutex);
+
+			// decrement the count, delete if it is 0
+			Debug[TRACE] << "Releasing ptr..." << std::endl;
+			if (--(*count)==0)
 			{
 				Debug[TRACE] << "Refcount zero, deleting..." << std::endl;
-				delete (X *)refcounter->ptr;
-				delete refcounter;
+				map.erase(ptr);
+				delete (X *)ptr;
 			}
-			refcounter = NULL;
+			count = NULL;
 		}
 	}
 };

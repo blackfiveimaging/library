@@ -1,7 +1,9 @@
 #include <iostream>
-
+#include "debug.h"
+#include "thread.h"
 #include "refcountptr.h"
 
+using namespace std;
 
 class Class1
 {
@@ -43,14 +45,52 @@ class Class2 : public Class1
 };
 
 
+class TestThread : public ThreadFunction, public Thread
+{
+	public:
+	TestThread(RefCountPtr<Class1 *> ptr) : ThreadFunction(), Thread(this), ptr(ptr)
+	{
+		Start();
+	}
+	virtual ~TestThread()
+	{
+	}
+	virtual int Entry(Thread &t)
+	{
+		t.SendSync();
+		{
+			std::cerr << "Sub-thread about to sleep..." << std::endl;
+#ifdef WIN32
+			Sleep(50);
+#else
+			usleep(50000);
+#endif
+		}
+		if(&*ptr)
+			ptr->DoStuff();
+		std::cerr << "Thread finished sleeping - exiting" << std::endl;
+		return(0);
+	}
+	protected:
+	RefCountPtr<Class1>ptr;
+};
+
+
+
 int main(int argc,char **argv)
 {
+//	Debug.SetLevel(TRACE);
 	RefCountPtr<Class2> ptr1(new Class2);
+	RefCountPtr<Class1> ptr3(new Class1(30));
 	{
 		RefCountPtr<Class1> ptr2;
 		ptr2=ptr1;
+		RefCountPtr<Class1> ptr4(ptr1);
+		TestThread thread(ptr1);
 		ptr1->DoStuff();
 		ptr2->DoStuff();
+		ptr3->DoStuff();
+		ptr4->DoStuff();
 		std::cout << "Leaving scope - one pointer will be removed..." << std::endl;
 	}	
 	ptr1->DoStuff();
