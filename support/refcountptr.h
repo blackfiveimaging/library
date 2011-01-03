@@ -42,6 +42,7 @@ class RefCountPtr_Counter
 
 // Base class used to make the mutex visible to all templated variants of the RefCountPtr
 // Note: the mutex protects against nothing more than data races on the count variable.
+
 class RefCountPtrBase
 {
 	public:
@@ -50,6 +51,14 @@ class RefCountPtrBase
 	}
 	~RefCountPtrBase()
 	{
+	}
+	operator bool()
+	{
+		return(ptr);
+	}
+	bool operator==(const RefCountPtrBase &other)
+	{
+		return(other.ptr==ptr);
 	}
 	protected:
 	void *ptr;

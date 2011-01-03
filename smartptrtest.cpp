@@ -66,7 +66,7 @@ class TestThread : public ThreadFunction, public Thread
 			usleep(50000);
 #endif
 		}
-		if(&*ptr)
+		if(ptr)
 			ptr->DoStuff();
 		std::cerr << "Thread finished sleeping - exiting" << std::endl;
 		return(0);
@@ -91,6 +91,8 @@ int main(int argc,char **argv)
 		ptr2->DoStuff();
 		ptr3->DoStuff();
 		ptr4->DoStuff();
+		std::cout << "ptr1==ptr2: " << (ptr1==ptr2) << std::endl;
+		std::cout << "ptr1==ptr3: " << (ptr1==ptr3) << std::endl;
 		std::cout << "Leaving scope - one pointer will be removed..." << std::endl;
 	}	
 	ptr1->DoStuff();
