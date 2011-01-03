@@ -195,9 +195,9 @@ class PVTest : public ConfigFile, public ProfileManager
 	{
 		ImageSource *is=ISLoadImage(fn);
 		CMSTransform *trans;
-		CMSProfile *emb=is->GetEmbeddedProfile();
+		RefCountPtr<CMSProfile>emb=is->GetEmbeddedProfile();
 		if(emb)
-			trans=factory.GetTransform(CM_COLOURDEVICE_DISPLAY,emb);
+			trans=factory.GetTransform(CM_COLOURDEVICE_DISPLAY,&*emb);
 		else
 			trans=factory.GetTransform(CM_COLOURDEVICE_DISPLAY,is->type);
 		is=new ImageSource_CMS(is,trans);

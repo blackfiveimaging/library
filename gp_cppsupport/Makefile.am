@@ -1,5 +1,5 @@
 AM_CFLAGS = -Wall
-AM_CXXFLAGS = -Wall $(GP_CFLAGS) $(GTK2_CFLAGS)
+AM_CXXFLAGS = -Wall $(GP_CFLAGS) $(GTK2_CFLAGS) -I../support/ -I../imagesource/ -I../profilemanager/ -I./
 
 noinst_LTLIBRARIES = libgp_cppsupport.la
 

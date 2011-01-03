@@ -14,8 +14,8 @@
 #include <stdlib.h>
 
 #include "imagesource_types.h"
-
-class CMSProfile;
+#include "refcountptr.h"
+#include "lcmswrapper.h"
 
 class ImageSource
 {
@@ -27,19 +27,19 @@ class ImageSource
 	virtual ISDataType *GetRow(int row)=0;
 	void MakeRowBuffer();
 	void SetResolution(double xr,double yr);
-	inline CMSProfile *GetEmbeddedProfile()	// Inlined to avoid link order problems
+	inline RefCountPtr<CMSProfile> GetEmbeddedProfile()	// Inlined to avoid link order problems
 	{
 		return(embeddedprofile);
 	}
-	void SetEmbeddedProfile(CMSProfile *profile,bool assumeownership=false);
+	void SetEmbeddedProfile(RefCountPtr<CMSProfile> profile);
+	void SetEmbeddedProfile(CMSProfile *profile);	// Use with caution - will assume ownership...
 	int width,height;
 	enum IS_TYPE type;
 	int samplesperpixel;
 	double xres,yres;
 	bool randomaccess;
 	protected:
-	CMSProfile *embeddedprofile;
-	bool embprofowned;
+	RefCountPtr<CMSProfile> embeddedprofile;
 	int currentrow;
 	ISDataType *rowbuffer;
 };

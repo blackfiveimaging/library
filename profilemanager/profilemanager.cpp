@@ -324,9 +324,9 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,IS_TYP
 CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,ImageSource *src,LCMSWrapper_Intent intent)
 {
 	Debug[TRACE] << "TransformFactory trying embedded profile..." << endl;
-	CMSProfile *srcprofile=src->GetEmbeddedProfile();
+	RefCountPtr<CMSProfile> srcprofile=src->GetEmbeddedProfile();
 	if(srcprofile)
-		return(GetTransform(target,srcprofile,intent));
+		return(GetTransform(target,&*srcprofile,intent));
 	else
 		return(GetTransform(target,IS_TYPE(STRIP_ALPHA(src->type)),intent));
 }

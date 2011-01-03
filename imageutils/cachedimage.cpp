@@ -23,9 +23,11 @@ CachedImage_Deferred::CachedImage_Deferred(ImageSource *source)
 	{
 		throw "Can't allocate pixel buffer";
 	}
-	CMSProfile *prof=source->GetEmbeddedProfile();
-	if(prof)
-		embeddedprofile=new CMSProfile(*prof);
+//	CMSProfile *prof=source->GetEmbeddedProfile();
+//	if(prof)
+//		embeddedprofile=new CMSProfile(*prof);
+	embeddedprofile=source->GetEmbeddedProfile();
+	cerr << "CachedImage: embeddedprofile set to " << long(&*embeddedprofile) << std::endl;
 }
 
 
@@ -35,8 +37,6 @@ CachedImage_Deferred::~CachedImage_Deferred()
 		delete[] imagedata;
 	if(source);
 		delete source;
-	if(embeddedprofile)
-		delete embeddedprofile;
 }
 
 
@@ -122,8 +122,7 @@ ImageSource_CachedImage::ImageSource_CachedImage(CachedImage_Deferred *img) : Im
 	randomaccess=true;
 	if(img->embeddedprofile)
 	{
-		CMSProfile *prof=new CMSProfile(*img->embeddedprofile);
-		SetEmbeddedProfile(prof,true);
+		SetEmbeddedProfile(img->embeddedprofile);
 	}
 }
 

@@ -34,7 +34,7 @@ class JPEGSaver : public ImageSaver
 	JPEGSaver(const char *filename,ImageSource *is,int compression=85);
 	~JPEGSaver();
 	void Save();
-	void EmbedProfile(CMSProfile *profile);
+	void EmbedProfile(RefCountPtr<CMSProfile> profile);
 	private:
 	struct ImageSource *imagesource;
 	int width,height;

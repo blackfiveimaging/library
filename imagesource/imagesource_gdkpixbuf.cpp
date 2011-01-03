@@ -125,7 +125,6 @@ ImageSource_GdkPixbuf::ImageSource_GdkPixbuf(GdkPixbuf *pixbuf) : pixbuf(pixbuf)
 void ImageSource_GdkPixbuf::Init()
 {
 	xres=yres=72;  // FIXME - read these from the file
-	embeddedprofile=NULL;
 
 	if(gdk_pixbuf_get_colorspace(pixbuf)!=GDK_COLORSPACE_RGB)
 		throw "GdkPixbuf loader only supports RGB images!";

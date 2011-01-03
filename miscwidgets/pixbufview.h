@@ -42,6 +42,7 @@ struct _PixbufViewClass
 	GtkWidgetClass parent_class;
 	
 	void (*changed)(PixbufView *pv);
+	void (*mousemove)(PixbufView *pv);
 	void (*popupmenu)(PixbufView *pv);
 };
 

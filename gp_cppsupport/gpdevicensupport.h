@@ -2,9 +2,9 @@
 #define GPDEVICENSUPPORT_H
 
 #include <gutenprint/gutenprint.h>
-#include "gp_cppsupport/gprintersettings.h"
-#include "imagesource/devicencolorant.h"
-#include "imagesource/imagesource_devicen_preview.h"
+#include "gprintersettings.h"
+#include "devicencolorant.h"
+#include "imagesource_devicen_preview.h"
 
 // List header subclass - not strictly necessary,
 // but avoids the need for untidy casts elsewhere.

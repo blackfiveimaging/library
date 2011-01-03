@@ -28,7 +28,7 @@ class CachedImage_Deferred
 	int samplesperpixel;
 	IS_TYPE type;
 	ISDataType *imagedata;
-	CMSProfile *embeddedprofile;
+	RefCountPtr<CMSProfile> embeddedprofile;
 	double xres,yres;
 	friend class ImageSource_CachedImage;
 	friend class ImageSource_Tee;

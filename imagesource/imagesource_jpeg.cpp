@@ -122,7 +122,6 @@ void ImageSource_JPEG::Init()
 	}
 
 	randomaccess=false;
-	embeddedprofile=NULL;
 	currentrow=-1;
 
 	switch(cinfo->density_unit)
@@ -145,7 +144,7 @@ void ImageSource_JPEG::Init()
 	if(read_icc_profile(cinfo,&iccprofile,&profilelen))
 	{
 		iccprofbuffer=(char *)iccprofile;
-		SetEmbeddedProfile(new CMSProfile(iccprofbuffer,profilelen),true);
+		SetEmbeddedProfile(new CMSProfile(iccprofbuffer,profilelen));
 	}
 
 	if(!(tmprow=(unsigned char *)malloc(sizeof(char)*(width*samplesperpixel))))

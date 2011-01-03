@@ -122,8 +122,6 @@ ImageSource_PNM::ImageSource_PNM(const char *filename)
 	tuplerow = pnm_allocpamrow(&header);
 
 	MakeRowBuffer();
-
-	embeddedprofile=NULL;
 }
 
 #endif

@@ -229,8 +229,6 @@ TIFFSaver::TIFFSaver(const char *filename,struct ImageSource *is,bool deep,int b
 
 	if(is->GetEmbeddedProfile())
 	{
-		if(embprofile)
-			delete embprofile;
 		embprofile=is->GetEmbeddedProfile()->GetBlob();
 		TIFFSetField(file, TIFFTAG_ICCPROFILE, embprofile->GetSize(),embprofile->GetPointer());
 	}

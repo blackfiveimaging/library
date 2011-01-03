@@ -449,7 +449,7 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 
 	if(TIFFGetField(file, TIFFTAG_ICCPROFILE, &proflen, &profbuffer))
 	{
-		SetEmbeddedProfile(new CMSProfile(profbuffer,proflen),true);
+		SetEmbeddedProfile(new CMSProfile(profbuffer,proflen));
 	}
 
 	if(resunit==RESUNIT_CENTIMETER)

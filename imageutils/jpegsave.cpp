@@ -132,7 +132,7 @@ void JPEGSaver::Save()
 }
 
 
-void JPEGSaver::EmbedProfile(CMSProfile *profile)
+void JPEGSaver::EmbedProfile(RefCountPtr<CMSProfile> profile)
 {
 	if(!profile)
 		return;

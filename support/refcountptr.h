@@ -133,7 +133,7 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 	}
 	inline X* GetPtr() const
 	{
-		return (ptr);
+		return ((X *)ptr);
 	}
 	inline unsigned int GetCount() const
 	{

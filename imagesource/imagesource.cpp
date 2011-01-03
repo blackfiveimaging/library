@@ -5,7 +5,7 @@
 
 using namespace std;
 
-ImageSource::ImageSource() : embeddedprofile(NULL), embprofowned(false), rowbuffer(NULL)
+ImageSource::ImageSource() : rowbuffer(NULL)
 {
 	type=IS_TYPE_RGB;
 	samplesperpixel=3;
@@ -17,7 +17,7 @@ ImageSource::ImageSource() : embeddedprofile(NULL), embprofowned(false), rowbuff
 
 
 ImageSource::ImageSource(int width, int height, IS_TYPE type)
-	: width(width), height(height), type(type), embeddedprofile(NULL), embprofowned(false), rowbuffer(NULL)
+	: width(width), height(height), type(type), rowbuffer(NULL)
 {
 	switch(type)
 	{
@@ -50,7 +50,7 @@ ImageSource::ImageSource(int width, int height, IS_TYPE type)
 }
 
 
-ImageSource::ImageSource(ImageSource *src) : embprofowned(false), rowbuffer(NULL)
+ImageSource::ImageSource(ImageSource *src) : rowbuffer(NULL)
 {
 	width=src->width;
 	height=src->height;
@@ -59,6 +59,7 @@ ImageSource::ImageSource(ImageSource *src) : embprofowned(false), rowbuffer(NULL
 	xres=src->xres;
 	yres=src->yres;
 	randomaccess=src->randomaccess;
+	Debug[TRACE] << "Adopting other source's embedded profile... ( " << long(src->embeddedprofile.GetPtr()) << std::endl;
 	embeddedprofile=src->embeddedprofile;
 	currentrow=-1;
 }
@@ -68,8 +69,6 @@ ImageSource::~ImageSource()
 {
 	if(rowbuffer)
 		free(rowbuffer);
-	if(embeddedprofile && embprofowned)
-		delete embeddedprofile;
 }
 
 
@@ -87,11 +86,16 @@ void ImageSource::SetResolution(double xr,double yr)
 }
 
 
-void ImageSource::SetEmbeddedProfile(CMSProfile *profile,bool owned)
+void ImageSource::SetEmbeddedProfile(RefCountPtr<CMSProfile> profile)
 {
-	if(embeddedprofile && embprofowned)
-		delete embeddedprofile;
 	embeddedprofile=profile;
-	embprofowned=owned;
+	Debug[WARN] << "SetEmbeddedProfile - from smart pointer, to " << long(embeddedprofile.GetPtr()) << std::endl;
+}
+
+
+void ImageSource::SetEmbeddedProfile(CMSProfile *profile)
+{
+	embeddedprofile=RefCountPtr<CMSProfile>(profile);
+	Debug[WARN] << "SetEmbeddedProfile - from regular pointer, to " << long(profile) << std::endl;
 }
 

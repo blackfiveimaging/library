@@ -318,8 +318,6 @@ ImageSource_BMP::ImageSource_BMP(const char *filename) : ImageSource(), strips(N
 		}
 	}
 
-	embeddedprofile=NULL;
-
 	Debug[TRACE] << "BMP type: " << type << endl;
 
 	MakeRowBuffer();

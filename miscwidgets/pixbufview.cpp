@@ -89,7 +89,7 @@ pixbufview_class_init (PixbufViewClass *cl)
 	g_signal_new ("mousemove",
 		G_TYPE_FROM_CLASS (cl),
 		GSignalFlags(G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION),
-		G_STRUCT_OFFSET (PixbufViewClass, changed),
+		G_STRUCT_OFFSET (PixbufViewClass, mousemove),
 		NULL, NULL,
 		g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
@@ -439,6 +439,7 @@ pixbufview_motion_notify( GtkWidget      *widget,
 			pageview->yoffset=0;
 
 		gtk_widget_queue_draw (GTK_WIDGET (pageview));
+		g_signal_emit_by_name (GTK_OBJECT (pageview), "changed");
 		g_signal_emit_by_name (GTK_OBJECT (pageview), "mousemove");
 	}
 	else
@@ -489,7 +490,7 @@ pixbufview_motion_notify( GtkWidget      *widget,
 				pageview->mousex=pw-1;
 			if(pageview->mousey>=ph)
 				pageview->mousey=ph-1;
-			g_signal_emit_by_name (GTK_OBJECT (pageview), "changed");
+			g_signal_emit_by_name (GTK_OBJECT (pageview), "mousemove");
 		}
 	}
 	return FALSE;
