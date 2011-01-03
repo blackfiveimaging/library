@@ -52,11 +52,11 @@ class RefCountPtrBase
 	~RefCountPtrBase()
 	{
 	}
-	operator bool()
+	operator bool()	// Alows use of expressions such as "if(smartptr) ..."
 	{
 		return(ptr);
 	}
-	bool operator==(const RefCountPtrBase &other)
+	bool operator==(const RefCountPtrBase &other)	// Avoids problem whereby the above bool value would be used for comparisons!
 	{
 		return(other.ptr==ptr);
 	}
@@ -82,11 +82,12 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 		release();
 	}
 
-	// Copy constructor - should never be called in practice.
+	// Untemplated copy constructor and assignment operators - used when
+	// the other smart pointer is to the same type of object.
 	RefCountPtr(const RefCountPtr &r) : RefCountPtrBase(NULL)
 	{
 		Debug[TRACE] << "In untemplated copy constructor" << std::endl;
-		acquire(r.count);
+		acquire(r.ptr);
 	}
 
     RefCountPtr &operator=(const RefCountPtr &r)
@@ -100,6 +101,8 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 		return *this;
     }
 
+	// Templated copy constructor and assignment operators - used when
+	// the other smart pointer is to a derivative class of the one this pointer points to.
 	template <class Y> RefCountPtr(const RefCountPtr<Y>& r) : RefCountPtrBase(NULL)
 	{
 		Debug[TRACE] << "In templated copy constructor" << std::endl;

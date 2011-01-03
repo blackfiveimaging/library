@@ -61,9 +61,9 @@ class TestThread : public ThreadFunction, public Thread
 		{
 			std::cerr << "Sub-thread about to sleep..." << std::endl;
 #ifdef WIN32
-			Sleep(50);
+			Sleep(500);
 #else
-			usleep(50000);
+			usleep(500000);
 #endif
 		}
 		if(ptr)
@@ -75,17 +75,20 @@ class TestThread : public ThreadFunction, public Thread
 	RefCountPtr<Class1>ptr;
 };
 
-
+RefCountPtr<Class1> MakeObject(int param)
+{
+	return(RefCountPtr<Class1>(new Class1(param)));
+}
 
 int main(int argc,char **argv)
 {
-//	Debug.SetLevel(TRACE);
+	Debug.SetLevel(TRACE);
 	RefCountPtr<Class2> ptr1(new Class2);
-	RefCountPtr<Class1> ptr3(new Class1(30));
+	RefCountPtr<Class1> ptr3=MakeObject(20);
 	{
 		RefCountPtr<Class1> ptr2;
 		ptr2=ptr1;
-		RefCountPtr<Class1> ptr4(ptr1);
+		RefCountPtr<Class1> ptr4(ptr3);
 		TestThread thread(ptr1);
 		ptr1->DoStuff();
 		ptr2->DoStuff();
