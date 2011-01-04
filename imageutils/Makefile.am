@@ -8,6 +8,8 @@ libimageutils_la_SOURCES =	\
 	rotatepixbuf.cpp	\
 	rotatepixbuf.h	\
 	\
+	imagesink.h \
+	\
 	cachedimage.cpp	\
 	cachedimage.h	\
 	\
