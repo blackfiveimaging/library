@@ -101,11 +101,11 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 		return(*this);
     }
 
-    RefCountPtr &operator=(const void *p)
+    RefCountPtr &operator=(X *p)
     {
+		PTMutex::Lock lock(mutex);
 		release();
-		if(p)
-			throw "RefCountPtr::Arbitrary assign detected";
+		acquire(p);
 		return(*this);
 	}
 

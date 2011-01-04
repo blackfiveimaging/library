@@ -14,6 +14,7 @@
 
 #include "imagesource.h"
 #include "lcmswrapper.h"
+#include "refcountptr.h"
 
 
 class ImageSource_CMS : public ImageSource
@@ -22,14 +23,13 @@ class ImageSource_CMS : public ImageSource
 //	ImageSource_CMS(ImageSource *source,CMSDB &inp,CMSDB &outp);
 //	ImageSource_CMS(ImageSource *source,CMSProfile *inp,CMSDB &outp);
 	ImageSource_CMS(ImageSource *source,CMSProfile *inp,CMSProfile *outp);
-	ImageSource_CMS(ImageSource *source,CMSTransform *transform);
+	ImageSource_CMS(ImageSource *source,RefCountPtr<CMSTransform> transform);
 	virtual ~ImageSource_CMS();
 	ISDataType *GetRow(int row);
 	private:
 	void Init();
 	ImageSource *source;
-	CMSTransform *transform;
-	bool disposetransform;
+	RefCountPtr<CMSTransform> transform;
 	int tmpsourcespp;
 	int tmpdestspp;
 	unsigned short *tmp1;

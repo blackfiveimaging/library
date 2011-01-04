@@ -27,9 +27,6 @@ ImageSource_CMS::~ImageSource_CMS()
 
 	if(source)
 		delete source;
-
-	if(disposetransform)
-		delete transform;
 }
 
 
@@ -95,17 +92,13 @@ ImageSource_CMS::ImageSource_CMS(ImageSource *source,CMSProfile *inp,CMSProfile 
 	: ImageSource(source), source(source)
 {
 	transform=new CMSTransform(inp,outp);
-	disposetransform=true;
-
 	Init();
 }
 
 
-ImageSource_CMS::ImageSource_CMS(ImageSource *source,CMSTransform *transform)
+ImageSource_CMS::ImageSource_CMS(ImageSource *source,RefCountPtr<CMSTransform> transform)
 	: ImageSource(source), source(source), transform(transform)
 {
-	disposetransform=false;
-
 	Init();
 }
 
