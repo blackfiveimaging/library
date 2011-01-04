@@ -4,7 +4,9 @@
 #include <iostream>
 
 #include "progress.h"
-#include "imagesource/imagesource.h"
+#include "refcountptr.h"
+#include "imagesource.h"
+#include "imagesink.h"
 
 // CachedImage_Deferred - the base class for cached images.  Sets up the width, height, type, etc.
 // and allocated storage, but doesn't actually read the data from the ImageSource until asked.
@@ -12,18 +14,16 @@
 // ReadRow() reads and caches a single row.
 // Generally you won't use this except with ImageSource_Tee.
 
-class CachedImage_Deferred
+class CachedImage_Deferred : public ImageSink
 {
 	public:
-	CachedImage_Deferred(ImageSource *source);
+	CachedImage_Deferred(RefCountPtr<ImageSource>source);
 	virtual ~CachedImage_Deferred();
-	virtual void ReadImage(Progress *prog=NULL);
-	virtual void ReadRow(int row);
+	virtual void ProcessRow(int row);
 	virtual ISDataType *GetRow(int row);
 	virtual ImageSource *GetImageSource();
 	virtual ISDeviceNValue GetPixel(int x, int y);
 	protected:
-	ImageSource *source;
 	int width, height;
 	int samplesperpixel;
 	IS_TYPE type;
@@ -40,9 +40,9 @@ class CachedImage_Deferred
 class CachedImage : public CachedImage_Deferred
 {
 	public:
-	CachedImage(ImageSource *src, Progress *prog=NULL) : CachedImage_Deferred(src)
+	CachedImage(RefCountPtr<ImageSource> src, Progress *prog=NULL) : CachedImage_Deferred(src)
 	{
-		ReadImage(prog);
+		ProcessImage(prog);
 	}
 	virtual ~CachedImage()
 	{

@@ -3,6 +3,11 @@
 // The advantage of using this interface is that multiple sinks
 // can be made to operate on a single ImageSource in sync - such as
 // a utility to decompose a CMYK image as four individual greyscale planes.
+//
+// When subclassing, override ProcessRow() at a minimum.
+//
+// When using a subclass, call ProcessRow() once per row, and call Finish() at the end.
+// (By default Finish() releases the reference count pointer.)
 
 #ifndef IMAGESINK_H
 #define IMAGESINK_H
@@ -23,19 +28,31 @@ class ImageSink
 	}
 	virtual bool ProcessImage(Progress *prog=NULL)
 	{
-		for(int i=0;i<source->height;++i)
+		if(!source)
+			throw "ImageSink::ProcessImage.source is NULL";
+		// Displaying the progress meter can be expensive,
+		// so we only update it often enough to reflect single
+		// percentage steps.
+		int progressmodulo=source->height/100;
+		if(progressmodulo==0) progressmodulo=1;
+
+		bool cont=true;
+
+		for(int row=0;row<source->height && cont==true;++row)
 		{
-			ProcessRow(i);
-			if(prog)
-			{
-				if(!prog->DoProgress(i,source->height-1))
-				return(false);
-			}
+			ProcessRow(row);
+			if((row % progressmodulo)==0 && prog)
+				cont=prog->DoProgress(row,source->height);
 		}
-		return(true);
+		Finish();
+		return(cont);
 	}
 	virtual void ProcessRow(int row)
 	{
+	}
+	virtual void Finish()
+	{
+		source=NULL;	// Release reference when done.
 	}
 	protected:
 	RefCountPtr<ImageSource> source;

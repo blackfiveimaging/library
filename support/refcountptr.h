@@ -98,8 +98,16 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 			release();
 			acquire(r.ptr);
 		}
-		return *this;
+		return(*this);
     }
+
+    RefCountPtr &operator=(const void *p)
+    {
+		release();
+		if(p)
+			throw "RefCountPtr::Arbitrary assign detected";
+		return(*this);
+	}
 
 	// Templated copy constructor and assignment operators - used when
 	// the other smart pointer is to a derivative class of the one this pointer points to.
@@ -173,6 +181,7 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 				delete (X *)ptr;
 			}
 			count = NULL;
+			ptr = NULL;
 		}
 	}
 };

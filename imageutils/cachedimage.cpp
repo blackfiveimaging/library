@@ -7,8 +7,8 @@
 
 using namespace std;
 
-CachedImage_Deferred::CachedImage_Deferred(ImageSource *source)
-	: source(source), width(source->width), height(source->height),
+CachedImage_Deferred::CachedImage_Deferred(RefCountPtr<ImageSource> source)
+	: ImageSink(source), width(source->width), height(source->height),
 	samplesperpixel(source->samplesperpixel), type(source->type), embeddedprofile(NULL),
 	xres(source->xres), yres(source->yres)
 {
@@ -23,9 +23,6 @@ CachedImage_Deferred::CachedImage_Deferred(ImageSource *source)
 	{
 		throw "Can't allocate pixel buffer";
 	}
-//	CMSProfile *prof=source->GetEmbeddedProfile();
-//	if(prof)
-//		embeddedprofile=new CMSProfile(*prof);
 	embeddedprofile=source->GetEmbeddedProfile();
 	cerr << "CachedImage: embeddedprofile set to " << long(&*embeddedprofile) << std::endl;
 }
@@ -35,38 +32,10 @@ CachedImage_Deferred::~CachedImage_Deferred()
 {
 	if(imagedata)
 		delete[] imagedata;
-	if(source);
-		delete source;
 }
 
 
-void CachedImage_Deferred::ReadImage(Progress *prog)
-{
-	Debug[TRACE] << "CachedImage: ReadImage()" << endl;
-	if(!source)
-		throw "CachedImage_Deferred::ReadImage - source is NULL";
-
-	// Displaying the progress meter can be expensive,
-	// so we only update it often enough to reflect single
-	// percentage steps.
-	int progressmodulo=height/100;
-	if(progressmodulo==0) progressmodulo=1;
-
-	bool cont=true;
-
-	for(int row=0;row<height && cont==true;++row)
-	{
-		ReadRow(row);
-		if((row % progressmodulo)==0 && prog)
-			cont=prog->DoProgress(row,height);
-	}
-	if(source)
-		delete source;
-	source=NULL;
-}
-
-
-void CachedImage_Deferred::ReadRow(int row)
+void CachedImage_Deferred::ProcessRow(int row)
 {
 	ISDataType *srcdata=source->GetRow(row);
 	ISDataType *dstdata=GetRow(row);
