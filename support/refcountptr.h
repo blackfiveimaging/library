@@ -131,6 +131,14 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 		return *this;
 	}
 
+	template <class Y> RefCountPtr &operator=(Y *p)
+    {
+		// We make a temporary ptr and assign that, to achieve type-safety
+		RefCountPtr<Y> tmp(p);
+		*this=tmp;
+		return(*this);
+	}
+
 	inline X& operator*() const
 	{
 		return(*(X *)ptr);

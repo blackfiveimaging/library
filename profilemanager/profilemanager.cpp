@@ -239,7 +239,7 @@ CMTransformFactory *ProfileManager::GetTransformFactory()
 
 // CMTransformFactoryNode
 
-CMTransformFactoryNode::CMTransformFactoryNode(CMTransformFactory *header,CMSTransform *transform,MD5Digest &d1,MD5Digest &d2,
+CMTransformFactoryNode::CMTransformFactoryNode(CMTransformFactory *header,RefCountPtr<CMSTransform> transform,MD5Digest &d1,MD5Digest &d2,
 	LCMSWrapper_Intent intent,bool proof,LCMSWrapper_Intent proofintent)
 	: header(header), prev(NULL), next(NULL), transform(transform), digest1(d1), digest2(d2), intent(intent), proof(proof),proofintent(proofintent)
 {
@@ -263,9 +263,6 @@ CMTransformFactoryNode::~CMTransformFactoryNode()
 		prev->next=next;
 	else
 		header->first=next;
-
-	if(transform)
-		delete transform;
 }
 
 
@@ -285,7 +282,7 @@ CMTransformFactory::~CMTransformFactory()
 }
 
 
-CMSTransform *CMTransformFactory::Search(MD5Digest *srcdigest,MD5Digest *dstdigest,
+RefCountPtr<CMSTransform> CMTransformFactory::Search(MD5Digest *srcdigest,MD5Digest *dstdigest,
 	LCMSWrapper_Intent intent,bool proof,LCMSWrapper_Intent proofintent)
 {
 	CMTransformFactoryNode *tfn=first;
@@ -296,11 +293,12 @@ CMSTransform *CMTransformFactory::Search(MD5Digest *srcdigest,MD5Digest *dstdige
 			return(tfn->transform);
 		tfn=tfn->next;
 	}
-	return(NULL);
+	RefCountPtr<CMSTransform> tmp;
+	return(tmp);
 }
 
 
-CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,IS_TYPE type,LCMSWrapper_Intent intent)
+RefCountPtr<CMSTransform> CMTransformFactory::GetTransform(enum CMColourDevice target,IS_TYPE type,LCMSWrapper_Intent intent)
 {
 	Debug[TRACE] << "TransformFactory getting default profile for image of type: " << type << endl;
 	CMSProfile *srcprofile=manager.GetDefaultProfile(type);
@@ -308,7 +306,8 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,IS_TYP
 		Debug[TRACE] << "Have source profile with input space" << srcprofile->GetColourSpace() << endl;
 	else
 		Debug[TRACE] << "Unable to open default profile" << endl;
-	CMSTransform *t=NULL;
+
+	RefCountPtr<CMSTransform> t;
 	try
 	{
 		t=GetTransform(target,srcprofile,intent);
@@ -321,7 +320,7 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,IS_TYP
 }
 
 
-CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,ImageSource *src,LCMSWrapper_Intent intent)
+RefCountPtr<CMSTransform> CMTransformFactory::GetTransform(enum CMColourDevice target,ImageSource *src,LCMSWrapper_Intent intent)
 {
 	Debug[TRACE] << "TransformFactory trying embedded profile..." << endl;
 	RefCountPtr<CMSProfile> srcprofile=src->GetEmbeddedProfile();
@@ -332,16 +331,16 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,ImageS
 }
 
 
-CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,CMSProfile *srcprofile,LCMSWrapper_Intent intent)
+RefCountPtr<CMSTransform> CMTransformFactory::GetTransform(enum CMColourDevice target,CMSProfile *srcprofile,LCMSWrapper_Intent intent)
 {
-	CMSTransform *result=NULL;
+	RefCountPtr<CMSTransform> result;
 	// If a NULL profile is supplied, we currently bail out.
 	// Theoretically we could continue if the target's profile is a DeviceLink,
 	// or we could assume a colourspace to match the target's profile,
 	// and fall back gracefully.
 
 	if(!srcprofile)
-		return(NULL);
+		return(result);
 
 	Debug[TRACE] << "TransformFactory using source profile of type: " << srcprofile->GetColourSpace() << endl;
 	
@@ -383,18 +382,18 @@ CMSTransform *CMTransformFactory::GetTransform(enum CMColourDevice target,CMSPro
 }
 
 
-CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,LCMSWrapper_Intent intent)
+RefCountPtr<CMSTransform> CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,LCMSWrapper_Intent intent)
 {
+	RefCountPtr<CMSTransform> transform;
 	// No point whatever in continuing without an output device profile...
 	if(!destprofile)
-		return(NULL);
+		return(transform);
 
 	if(srcprofile)
 		Debug[TRACE] << "TransformFactory using source profile of type: " << srcprofile->GetColourSpace() << endl;
 	else
 		Debug[TRACE] << "TransformFactory - no source profile present." << endl;
 
-	CMSTransform *transform=NULL;
 	if(intent==LCMSWRAPPER_INTENT_DEFAULT)
 		intent=LCMSWrapper_Intent(manager.FindInt("RenderingIntent"));
 	if(intent==LCMSWRAPPER_INTENT_DEFAULT)
@@ -478,7 +477,8 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 		{
 			Debug[TRACE] << "Source and target profiles are identical - no need to transform" << endl;
 			// Instead of returning NULL, return a NULL transform.
-			return(new NullCMSTransform(srcprofile->GetColourSpace()));
+			transform=new NullCMSTransform(srcprofile->GetColourSpace());
+			return(transform);
 		}
 
 		transform=Search(d1,d2,intent);
@@ -494,19 +494,19 @@ CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfil
 }
 
 
-CMSTransform *CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,
+RefCountPtr<CMSTransform> CMTransformFactory::GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,
 	LCMSWrapper_Intent intent,LCMSWrapper_Intent displayintent)
 {
 //	Debug[TRACE] << "Getting proofing transform - Using intent: " << intent << endl;
+	RefCountPtr<CMSTransform> transform;
 
 	// No point whatever in continuing without an output device profile...
 	if(!destprofile)
-		return(NULL);
+		return(transform);
 
 	if(!proofprofile)
 		throw _("No Proof profile provided!");
 
-	CMSTransform *transform=NULL;
 	if(intent==LCMSWRAPPER_INTENT_DEFAULT)
 		intent=LCMSWrapper_Intent(manager.FindInt("RenderingIntent"));
 	if(intent==LCMSWRAPPER_INTENT_DEFAULT)

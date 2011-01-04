@@ -2,6 +2,8 @@
 #include "debug.h"
 #include "thread.h"
 #include "refcountptr.h"
+#include "lcmswrapper.h"
+#include "naivetransforms.h"
 
 using namespace std;
 
@@ -83,7 +85,11 @@ RefCountPtr<Class1> MakeObject(int param)
 int main(int argc,char **argv)
 {
 	Debug.SetLevel(TRACE);
+	RefCountPtr<CMSTransform> trans;
+	trans=new NullCMSTransform(IS_TYPE_RGB);
+#if 0
 	RefCountPtr<Class2> ptr1(new Class2);
+
 	RefCountPtr<Class1> ptr3=MakeObject(20);
 	{
 		RefCountPtr<Class1> ptr2;
@@ -100,6 +106,7 @@ int main(int argc,char **argv)
 	}	
 	ptr1->DoStuff();
 	std::cout << "Terminating program..." << std::endl;
+#endif
 	return(0);
 }
 

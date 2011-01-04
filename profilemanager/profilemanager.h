@@ -6,6 +6,7 @@
 #include "configdb.h"
 #include "searchpath.h"
 #include "ptmutex.h"
+#include "refcountptr.h"
 
 #ifndef WIN32
 #include <X11/Xlib.h>
@@ -95,12 +96,12 @@ class ProfileManager : public ConfigDB, public SearchPathHandler, public PTMutex
 class CMTransformFactoryNode
 {
 	public:
-	CMTransformFactoryNode(CMTransformFactory *header,CMSTransform *transform,MD5Digest &d1,MD5Digest &d2,LCMSWrapper_Intent intent,bool proof=false,LCMSWrapper_Intent=LCMSWRAPPER_INTENT_PERCEPTUAL);
+	CMTransformFactoryNode(CMTransformFactory *header,RefCountPtr<CMSTransform> transform,MD5Digest &d1,MD5Digest &d2,LCMSWrapper_Intent intent,bool proof=false,LCMSWrapper_Intent=LCMSWRAPPER_INTENT_PERCEPTUAL);
 	~CMTransformFactoryNode();
 	protected:
 	CMTransformFactory *header;
 	CMTransformFactoryNode *prev,*next;
-	CMSTransform *transform;
+	RefCountPtr<CMSTransform> transform;
 	MD5Digest digest1;
 	MD5Digest digest2;
 	LCMSWrapper_Intent intent;
@@ -115,13 +116,13 @@ class CMTransformFactory
 	public:
 	CMTransformFactory(ProfileManager &cm);
 	~CMTransformFactory();
-	CMSTransform *GetTransform(enum CMColourDevice target,CMSProfile *srcprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
-	CMSTransform *GetTransform(CMSProfile *targetprofile,CMSProfile *srcprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
-	CMSTransform *GetTransform(enum CMColourDevice target,ImageSource *src,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
-	CMSTransform *GetTransform(enum CMColourDevice target,IS_TYPE type,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
-	CMSTransform *GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,
+	RefCountPtr<CMSTransform> GetTransform(enum CMColourDevice target,CMSProfile *srcprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
+	RefCountPtr<CMSTransform> GetTransform(CMSProfile *targetprofile,CMSProfile *srcprofile,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
+	RefCountPtr<CMSTransform> GetTransform(enum CMColourDevice target,ImageSource *src,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
+	RefCountPtr<CMSTransform> GetTransform(enum CMColourDevice target,IS_TYPE type,LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT);
+	RefCountPtr<CMSTransform> GetTransform(CMSProfile *destprofile,CMSProfile *srcprofile,CMSProfile *proofprofile,
 		LCMSWrapper_Intent intent=LCMSWRAPPER_INTENT_DEFAULT,LCMSWrapper_Intent displayintent=LCMSWRAPPER_INTENT_DEFAULT);
-	CMSTransform *Search(MD5Digest *srcdigest,MD5Digest *dstdigest,LCMSWrapper_Intent intent,
+	RefCountPtr<CMSTransform> Search(MD5Digest *srcdigest,MD5Digest *dstdigest,LCMSWrapper_Intent intent,
 		bool proof=0,LCMSWrapper_Intent proofintent=LCMSWRAPPER_INTENT_DEFAULT);
 	void Flush();
 	ProfileManager &GetManager();
