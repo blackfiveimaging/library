@@ -21,7 +21,7 @@
 #include "binaryblob.h"
 #include "util.h"
 
-#include "tiffsave.h"
+#include "tiffsaver.h"
 
 using namespace std;
 
@@ -41,6 +41,69 @@ TIFFSaver::~TIFFSaver()
 }
 
 
+void TIFFSaver::ProcessRow(int row)
+{
+	if(file)
+	{
+		int strip=row/stripheight;
+		int firstrow=strip*stripheight;
+		int lastrow=firstrow+stripheight-1;
+		if(lastrow>=height)
+			lastrow=height-1;
+
+		unsigned char *dst=tmpbuffer+(row-firstrow)*(deep ? bytesperrow*2 : bytesperrow);
+				
+		ISDataType *src=source->GetRow(row);
+				
+		switch(bitsperpixel)
+		{
+			case 1:		// 1 bit per sample - pack 8 samples into each byte.
+				for(int i=0;i<width;i+=8)
+				{
+					int j;
+					unsigned int t,t2=0;
+					int l=(width-i)>8 ? 7 : width-(i+1);
+					for(j=0;j<=l;++j)
+					{
+						t=int(src[i+l-j]);
+						t2>>=1;
+						t2|=t&0x8000;
+					}
+					dst[i/8]=t2;
+				}
+				break;
+			default:
+				if(deep)	// Save with 16 bits per sample?
+				{
+					unsigned short *dst16=(unsigned short *)dst;
+					for(int i=0;i<bytesperrow;++i)
+					{
+						dst16[i]=src[i];
+					}
+				}
+				else	// 8 bits per sample
+				{
+					for(int i=0;i<bytesperrow;++i)
+					{
+						unsigned int t;
+						t=int(src[i]);
+						t=ISTOEIGHT(t);
+						if(t>255) t=255;
+						if(t<0) t=0;
+						dst[i]=t;
+					}
+				}
+				break;
+		}
+		if(row==lastrow)
+		{
+			TIFFWriteEncodedStrip(file, strip, tmpbuffer, stripsize);
+		}
+	}
+}
+
+
+#if 0
 void TIFFSaver::Save()
 {
 	if(file)
@@ -66,7 +129,7 @@ void TIFFSaver::Save()
 
 				dst=tmpbuffer+(row-firstrow)*(deep ? bytesperrow*2 : bytesperrow);
 				
-				src=imagesource->GetRow(row);
+				src=source->GetRow(row);
 				
 				switch(bitsperpixel)
 				{
@@ -115,10 +178,11 @@ void TIFFSaver::Save()
 			progress->DoProgress(height,height);
 	}
 }
+#endif
 
 
-TIFFSaver::TIFFSaver(const char *filename,struct ImageSource *is,bool deep,int bpp,int compression)
-	: ImageSaver(), deep(deep), imagesource(is), embprofile(NULL)
+TIFFSaver::TIFFSaver(const char *filename,RefCountPtr<ImageSource> is,bool deep,int bpp,int compression)
+	: ImageSaver(is), deep(deep), embprofile(NULL)
 {
 	switch(is->type)
 	{

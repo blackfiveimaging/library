@@ -2,9 +2,12 @@
 Need an "ImageSink" superclass, upon which CachedImage, PixbufFromImageSource and the Image Savers will be based.
 The sinks will have a ProcessRow() function, as well as a ProcessImage(Progress &) function.
 The advantage of this is that several imagesinks can in this way operate on the same image, like so:
-ImageSource *source=ISLoadImage("filename");
-CachedImage img1(new ImageSource_Tee(source));
-CachedImage img2(new ImageSource_Tee(source));
+
+(ImageSource_Tee would be much improved by using refcountptr.)
+
+RefCountPtr<ImageSource> source(ISLoadImage("filename"));
+CachedImage_Deferred img1(source);
+CachedImage_Deferred img2(source);
 TIFFSaver saver("filenameout",source);
 
 for(int row=0;row<source->height;++row)
@@ -47,6 +50,6 @@ class ImageSink
 
 Need a variant of the JobQueue system for handling UI events, to avoid the problems currently caused by events being pumped from within signal handlers.
 
-Investigate using smart pointers for ref counting and figure out how that would interact with gtk idle handlers.
-Need to use a map between addresses and refcounters; merely using a templated class will cause problems with polymorphism.
+| Investigate using smart pointers for ref counting and figure out how that would interact with gtk idle handlers.
+| Need to use a map between addresses and refcounters; merely using a templated class will cause problems with polymorphism.
 

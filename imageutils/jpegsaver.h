@@ -31,12 +31,11 @@ class JPEGSaver : public ImageSaver
 {
 	public:
 	// Provide a NULL filename to output to stdout
-	JPEGSaver(const char *filename,ImageSource *is,int compression=85);
+	JPEGSaver(const char *filename,RefCountPtr<ImageSource> is,int compression=85);
 	~JPEGSaver();
-	void Save();
+	void ProcessRow(int row);
 	void EmbedProfile(RefCountPtr<CMSProfile> profile);
 	private:
-	struct ImageSource *imagesource;
 	int width,height;
 	int bytesperrow;
 	struct jpeg_compress_struct *cinfo;

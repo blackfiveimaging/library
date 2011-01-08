@@ -24,9 +24,9 @@
 class TIFFSaver : public ImageSaver
 {
 	public:
-	TIFFSaver(const char *filename,ImageSource *is,bool deep=false,int bitsperpixel=0,int compression=COMPRESSION_NONE);
+	TIFFSaver(const char *filename,RefCountPtr<ImageSource> is,bool deep=false,int bitsperpixel=0,int compression=COMPRESSION_NONE);
 	virtual ~TIFFSaver();
-	virtual void Save();
+	virtual void ProcessRow(int row);
 	private:
 	int width,height;
 	int bitsperpixel;
@@ -38,7 +38,6 @@ class TIFFSaver : public ImageSaver
 	int bytesperrow;
 	TIFF *file;
 	unsigned char *tmpbuffer;
-	ImageSource *imagesource;
 	BinaryBlob *embprofile;
 };
 

@@ -7,8 +7,8 @@
 #include "imagesource_montage.h"
 #include "imagesource_gaussianblur.h"
 #include "imagesource_mask.h"
-#include "tiffsave.h"
-#include "jpegsave.h"
+#include "tiffsaver.h"
+#include "jpegsaver.h"
 #include "util.h"
 #include "progresstext.h"
 
@@ -52,14 +52,14 @@ int main(int argc,char **argv)
 			ImageSource *shadow=new ImageSource_Solid(IS_TYPE_RGB,mask->width,mask->height,black);
 			shadow=new ImageSource_Mask(shadow,mask);
 
-			ImageSource_Montage mon2(IS_TYPE_RGB);
-			mon2.Add(is,(128-w)/2+13,(128-h)/2+13);
+			ImageSource_Montage *mon2=new ImageSource_Montage(IS_TYPE_RGB);
+			mon2->Add(is,(128-w)/2+13,(128-h)/2+13);
 
-			mon2.Add(shadow,0,0);
-			mon2.Add(background,0,0);
+			mon2->Add(shadow,0,0);
+			mon2->Add(background,0,0);
 		
 			ProgressText p;
-			JPEGSaver s(outfn,&mon2,90);
+			JPEGSaver s(outfn,RefCountPtr<ImageSource>(mon2),90);
 			s.SetProgress(&p);
 			s.Save();
 			free(outfn);

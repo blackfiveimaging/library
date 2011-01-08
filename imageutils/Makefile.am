@@ -14,10 +14,10 @@ libimageutils_la_SOURCES =	\
 	cachedimage.h	\
 	\
 	imagesaver.h	\
-	jpegsave.cpp	\
-	jpegsave.h	\
-	tiffsave.cpp	\
-	tiffsave.h
+	jpegsaver.cpp	\
+	jpegsaver.h	\
+	tiffsaver.cpp	\
+	tiffsaver.h
 
 libimageutils_la_LDFLAGS = -static
 

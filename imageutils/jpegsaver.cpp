@@ -23,7 +23,7 @@
 #include "util.h"
 
 #include "iccjpeg.h"
-#include "jpegsave.h"
+#include "jpegsaver.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -73,7 +73,52 @@ JPEGSaver::~JPEGSaver()
 		free(tmpbuffer);
 }
 
+void JPEGSaver::ProcessRow(int row)
+{
+	if(cinfo)
+	{
+		unsigned char *dst=tmpbuffer;
+				
+		ISDataType *src=source->GetRow(row);
 
+		switch(source->type)
+		{
+			case IS_TYPE_RGB:
+				for(int i=0;i<bytesperrow;++i)
+				{
+					unsigned int t;
+					t=int(src[i]);
+					t=ISTOEIGHT(t);
+					if(t>255) t=255;
+					if(t<0) t=0;
+					dst[i]=t;
+				}
+				break;
+			default:
+				for(int i=0;i<bytesperrow;++i)
+				{
+					unsigned int t;
+					t=IS_SAMPLEMAX-src[i];
+					t=ISTOEIGHT(t);
+					if(t>255) t=255;
+					if(t<0) t=0;
+					dst[i]=t;
+				}
+				break;
+		}
+		JSAMPROW rowptr[1]={tmpbuffer};
+		jpeg_write_scanlines(cinfo, rowptr, 1);
+	}
+	if(row==height-1)
+	{
+		jpeg_finish_compress(cinfo);
+		jpeg_destroy_compress(cinfo);
+		delete cinfo;
+		cinfo=NULL;
+	}
+}
+
+#if 0
 void JPEGSaver::Save()
 {	
 	if(err->file)
@@ -92,9 +137,9 @@ void JPEGSaver::Save()
 
 			dst=tmpbuffer;
 				
-			src=imagesource->GetRow(row);
+			src=source->GetRow(row);
 
-			switch(imagesource->type)
+			switch(source->type)
 			{
 				case IS_TYPE_RGB:
 					for(i=0;i<bytesperrow;++i)
@@ -130,6 +175,7 @@ void JPEGSaver::Save()
 		cinfo=NULL;
 	}
 }
+#endif
 
 
 void JPEGSaver::EmbedProfile(RefCountPtr<CMSProfile> profile)
@@ -147,8 +193,28 @@ void JPEGSaver::EmbedProfile(RefCountPtr<CMSProfile> profile)
 }
 
 
-JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression)
-	: ImageSaver(), imagesource(is), cinfo(NULL), tmpbuffer(NULL)
+// HACK - this class simply adopts a refcounted ImageSource pointer, preventing
+// any downstream imagesources from attempting to delete it directly.
+class ImageSource_Ref : public ImageSource
+{
+	public:
+	ImageSource_Ref(RefCountPtr<ImageSource> source) : source(source)
+	{
+	}
+	~ImageSource_Ref()
+	{
+	}
+	ISDataType *GetRow(int row)
+	{
+		return(source->GetRow(row));
+	}
+	protected:
+	RefCountPtr<ImageSource> source;
+};
+
+
+JPEGSaver::JPEGSaver(const char *filename,RefCountPtr<ImageSource> is,int compression)
+	: ImageSaver(is), cinfo(NULL), tmpbuffer(NULL)
 {
 	if(STRIP_ALPHA(is->type)==IS_TYPE_BW)
 		throw _("JPEG Saver only supports greyscale and colour images!");
@@ -156,8 +222,9 @@ JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression
 //	if(STRIP_ALPHA(is->type)==IS_TYPE_CMYK)
 //		throw _("Saving CMYK JPEGs not (yet) supported");
 
+// Can't do this directly with a refcounted source!
 	if(HAS_ALPHA(is->type))
-		is=new ImageSource_Flatten(is);
+		source=new ImageSource_Flatten(new ImageSource_Ref(is));
 
 	this->width=is->width;
 	this->height=is->height;
@@ -172,7 +239,12 @@ JPEGSaver::JPEGSaver(const char *filename,struct ImageSource *is,int compression
 	if(filename)
 	{
 		if((err->file = FOpenUTF8(filename,"wb")) == NULL)
+		{
+			delete cinfo;
+			delete err;
+			cinfo=NULL;
 			throw _("Can't open file for saving");
+		}
 		Debug[TRACE] << "File " << filename << " opened" << endl;
 	}
 	else
