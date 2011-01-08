@@ -1,7 +1,10 @@
 // Refcounting smart pointer.
 
 // TODO:
-// create a global list of counters, so multiple smart pointers can safely be created from regular pointers
+// DONE: create a global list of counters, so multiple smart pointers can safely be created from regular pointers
+// Specialise char * type to use free() instead of delete, for c-string compatibility.  (Allocators?)
+// Perhaps add constructor taking references, that doesn't delete - for compatibility with local objects?  (Dangerous)
+// Make a smart-pointer superclass
 
 #ifndef REFCOUNTPTR_H
 #define REFCOUNTPTR_H

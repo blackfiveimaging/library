@@ -44,5 +44,7 @@ class ImageSource
 	ISDataType *rowbuffer;
 };
 
+typedef ImageSource *ImageSource_p;	// Normal pointer to imagesource type
+typedef RefCountPtr<ImageSource> ImageSource_rp; // Refcounted smart-pointer imagesource type
 
 #endif
