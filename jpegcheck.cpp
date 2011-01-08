@@ -4,7 +4,7 @@
 
 #include "imagesource_util.h"
 #include "progresstext.h"
-#include "jpegsave.h"
+#include "jpegsaver.h"
 
 
 int main(int argc,char **argv)
@@ -15,7 +15,7 @@ int main(int argc,char **argv)
 		{
 			ImageSource *is=ISLoadImage(argv[1]);
 //			is=new ImageSource_Rotate(is,180);
-			JPEGSaver ts(argv[2],is);
+			JPEGSaver ts(argv[2],RefCountPtr<ImageSource>(is));
 			ProgressText p;
 			ts.SetProgress(&p);
 			ts.Save();

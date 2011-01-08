@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "jpegsave.h"
+#include "jpegsaver.h"
 #include "progresstext.h"
 #include "layoutrectangle.h"
 #include "imagesource_util.h"
@@ -177,7 +177,7 @@ int main(int argc,char **argv)
 					mon->Add(is,0,0);
 					
 					char *outfile=buildfilename(argv[i],"st","jpg");
-					JPEGSaver ts(outfile,mon,myvars.q);
+					JPEGSaver ts(outfile,RefCountPtr<ImageSource>(mon),myvars.q);
 			        ProgressText p;
 			        ts.SetProgress(&p);
 			        ts.Save();

@@ -23,8 +23,8 @@
 #include "imagesource_chequerboard.h"
 #include "imagesource_hsweep.h"
 #include "imagesource_hticks.h"
-#include "jpegsave.h"
-#include "tiffsave.h"
+#include "jpegsaver.h"
+#include "tiffsaver.h"
 #include "progresstext.h"
 
 
@@ -92,7 +92,7 @@ int main(int argc,char **argv)
 		if(argc<2)
 			return(0);
 		ImageSource *is=new ImageSource_RainbowSweep(1024,300);
-		JPEGSaver js(argv[1],is);
+		JPEGSaver js(argv[1],RefCountPtr<ImageSource>(is));
 		js.Save();
 		delete is;
 	}
