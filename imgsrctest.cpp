@@ -94,7 +94,6 @@ int main(int argc,char **argv)
 		ImageSource *is=new ImageSource_RainbowSweep(1024,300);
 		JPEGSaver js(argv[1],RefCountPtr<ImageSource>(is));
 		js.Save();
-		delete is;
 	}
 	catch(const char *err)
 	{

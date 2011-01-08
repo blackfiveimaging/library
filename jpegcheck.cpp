@@ -19,7 +19,6 @@ int main(int argc,char **argv)
 			ProgressText p;
 			ts.SetProgress(&p);
 			ts.Save();
-			delete is;
 		}
 	}
 	catch(const char *err)
