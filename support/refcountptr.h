@@ -17,15 +17,17 @@
 
 template <class X> class RefCountPtr;
 
+
 // We use a void * type here so the actual counter doesn't have to be templated
 // which makes comparisons for equality much easier.
+enum DeletionSemantics {DELETION_NONE,DELETION_FREE,DELETION_DELETE,DELETION_DELETEARRAY};
 class RefCountPtr_Counter
 {
 	public:
 	template <class X> friend class RefCountPtr;
 	friend class std::map<void *,RefCountPtr_Counter>;
 	private:
-	RefCountPtr_Counter(unsigned c = 0) : count(c)
+	RefCountPtr_Counter(DeletionSemantics semantics=DELETION_DELETE,unsigned c = 0) : semantics(semantics), count(c)
 	{
 		Debug[TRACE] << "In RefCountptr_Counter constructor" << std::endl;
 	}
@@ -39,8 +41,13 @@ class RefCountPtr_Counter
 		Debug[TRACE] << "Incrementing count from " << count << std::endl;
 		return(++count);
 	}
+	DeletionSemantics semantics;
 	unsigned int count;
 };
+
+
+// Generic smart pointer base class
+
 
 
 // Base class used to make the mutex visible to all templated variants of the RefCountPtr
@@ -79,6 +86,13 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 	{
 		if(p)
 			acquire(p);
+	}
+
+	// Dangerous!  Create a pointer from a reference.
+	// Deletion is ignored, so you're responsible for tracking lifetime.
+	explicit RefCountPtr(X &p) : RefCountPtrBase(&p) // allocate a new counter
+	{
+		acquire(&p,DELETION_NONE);
 	}
 	~RefCountPtr()
 	{
@@ -129,7 +143,10 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 		{
 			PTMutex::Lock lock(mutex);
 			release();
-			acquire(r.ptr);
+			if(count)
+				acquire(r.ptr,count->semantics);
+			else
+				acquire(r.ptr);
         }
 		return *this;
 	}
@@ -160,7 +177,7 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 	}
 
 	private:
-	void acquire(void *p) throw()
+	void acquire(void *p,DeletionSemantics semantics=DELETION_DELETE)
 	{
 		ptr=p;
 		if(p)
@@ -171,6 +188,15 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 			Debug[TRACE] << "Acquiring reference" << std::endl;
 			count=&map[p];
 			Debug[TRACE] << "Map element " << long(count) << std::endl;
+
+			// Ensure the pointer doesn't already exist with conflicting semantics.
+			if(count->count && (count->semantics!=semantics))
+			{
+				Debug[ERROR] << "RefCountPointer has conflicting deletion semantics!" << std::endl;
+			}
+			else
+				count->semantics=semantics;
+
 			// increment the count
 			++(*count);
 		}
@@ -188,14 +214,29 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 			if (--(*count)==0)
 			{
 				Debug[TRACE] << "Refcount zero, deleting..." << std::endl;
+				switch(count->semantics)
+				{
+					case DELETION_NONE:
+						break;
+					case DELETION_FREE:
+						free(ptr);
+						break;
+					case DELETION_DELETE:
+						delete (X *)ptr;
+						break;
+					case DELETION_DELETEARRAY:
+						delete[] (X *)ptr;
+						break;
+				}
 				map.erase(ptr);
-				delete (X *)ptr;
 			}
 			count = NULL;
 			ptr = NULL;
 		}
 	}
 };
+
+template<> RefCountPtr<char>::RefCountPtr(char *p);
 
 #endif // RefCountPtr_H
 
