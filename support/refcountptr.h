@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <map>
+#include <cstdlib>
 
 #include "ptmutex.h"
 #include "debug.h"
