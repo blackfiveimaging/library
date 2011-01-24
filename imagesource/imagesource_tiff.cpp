@@ -444,12 +444,17 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 	TIFFGetField(file, TIFFTAG_XRESOLUTION, &xres);
 	TIFFGetField(file, TIFFTAG_YRESOLUTION, &yres);
 
-	char *profbuffer;
-	int proflen;
+	char *blobbuffer;
+	int bloblen;
 
-	if(TIFFGetField(file, TIFFTAG_ICCPROFILE, &proflen, &profbuffer))
+	if(TIFFGetField(file, TIFFTAG_ICCPROFILE, &bloblen, &blobbuffer))
 	{
-		SetEmbeddedProfile(new CMSProfile(profbuffer,proflen));
+		SetEmbeddedProfile(new CMSProfile(blobbuffer,bloblen));
+	}
+
+	if(TIFFGetField(file, TIFFTAG_PHOTOSHOP, &bloblen, &blobbuffer))
+	{
+		parasites[ISPARATYPE_PSIMAGERESOURCEBLOCK]=new ISParasite(blobbuffer,bloblen,ISPARATYPE_PSIMAGERESOURCEBLOCK,ISPARA_TIFF);
 	}
 
 	if(resunit==RESUNIT_CENTIMETER)

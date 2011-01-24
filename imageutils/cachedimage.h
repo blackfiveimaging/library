@@ -2,6 +2,7 @@
 #define CACHEDIMAGE_H
 
 #include <iostream>
+#include <map>
 
 #include "progress.h"
 #include "refcountptr.h"
@@ -29,6 +30,7 @@ class CachedImage_Deferred : public ImageSink
 	IS_TYPE type;
 	ISDataType *imagedata;
 	RefCountPtr<CMSProfile> embeddedprofile;
+	std::map<ISParasiteType,RefCountPtr<ISParasite> > parasites;
 	double xres,yres;
 	friend class ImageSource_CachedImage;
 	friend class ImageSource_Tee;

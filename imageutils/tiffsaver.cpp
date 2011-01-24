@@ -297,6 +297,12 @@ TIFFSaver::TIFFSaver(const char *filename,RefCountPtr<ImageSource> is,bool deep,
 		TIFFSetField(file, TIFFTAG_ICCPROFILE, embprofile->GetSize(),embprofile->GetPointer());
 	}
 
+	if(psirb=is->GetParasite(ISPARATYPE_PSIMAGERESOURCEBLOCK,ISPARA_TIFF))
+	{
+		Debug[TRACE] << "FOUND CLIPPING PATH -adding to output TIFF" << std::endl;
+		TIFFSetField(file,TIFFTAG_PHOTOSHOP, psirb->GetSize(),psirb->GetPointer());
+	}
+
 	stripsize = TIFFStripSize(file);
 	bytesperrow = (width*bitsperpixel+7)/8;
 

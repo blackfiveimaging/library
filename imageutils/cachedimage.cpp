@@ -9,7 +9,7 @@ using namespace std;
 
 CachedImage_Deferred::CachedImage_Deferred(RefCountPtr<ImageSource> source)
 	: ImageSink(source), width(source->width), height(source->height),
-	samplesperpixel(source->samplesperpixel), type(source->type), embeddedprofile(NULL),
+	samplesperpixel(source->samplesperpixel), type(source->type), embeddedprofile(NULL), parasites(source->GetParasites()),
 	xres(source->xres), yres(source->yres)
 {
 	Debug[TRACE] << "In CachedImage_Deferred constructor" << endl;
@@ -93,6 +93,7 @@ ImageSource_CachedImage::ImageSource_CachedImage(CachedImage_Deferred *img) : Im
 	{
 		SetEmbeddedProfile(img->embeddedprofile);
 	}
+	parasites=img->parasites;
 }
 
 

@@ -191,9 +191,21 @@ class PVTest : public ConfigFile, public ProfileManager
 	~PVTest()
 	{
 	}
+	void ShowParasites(ImageSource *is)
+	{
+		if(is)
+		{
+			RefCountPtr<ISParasite> p=is->GetParasite(ISPARATYPE_PSIMAGERESOURCEBLOCK);
+			if(p)
+				Debug[TRACE] << "Got clipping path parasite" << std::endl;
+			else
+				Debug[TRACE] << "No clipping path parasite" << std::endl;
+		}
+	}
 	void SetImage(const char *fn)
 	{
 		ImageSource *is=ISLoadImage(fn);
+		ShowParasites(is);
 		RefCountPtr<CMSTransform> trans;
 		RefCountPtr<CMSProfile>emb=is->GetEmbeddedProfile();
 		if(emb)
@@ -203,6 +215,7 @@ class PVTest : public ConfigFile, public ProfileManager
 		is=new ImageSource_CMS(is,trans);
 //		is=new ImageSource_Dither(is,8);
 		is=new ImageSource_DropShadow(is,20,5);
+		ShowParasites(is);
 		GdkPixbuf *pb=pixbuf_from_imagesource(is);
 		delete is;
 

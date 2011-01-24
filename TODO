@@ -1,3 +1,39 @@
+ImageSources will need to carry around a collection of parasites - data from the source file that the stack
+doesn't know how to deal with.  Clipping paths will fall into this category, but ICC profiles won't, since
+the stack is capable of dealing with those.
+Need to deal with some parasites being file-format-specific.
+
+enum ISParasiteType {ISPARA_UNKNOWN, ISPARA_CLIPPATH};
+enum ISParasiteApplicability {ISPARA_UNKNOWN, ISPARA_UNIVERSAL, ISPARA_TIFF, ISPARA_JPEG};
+class ISParasite : public BinaryBlob
+{
+	public:
+	ISParasite(const char *buf,int buzsize,ISParasiteType type,ISParasiteApplicability applic=ISPARA_UNIVERSAL) : BinaryBlob(buf,bufsize), type(type)
+	{
+	}
+	virtual ~ISParasite
+	{
+	}
+	// Query a parasite for applicability.  For example, the TIFF saver will query if(para.Applicable(ISPARA_TIFF))
+	bool Applicable(ISParasiteApplicability app)
+	{
+		if(applic==ISPARA_UNIVERSAL || app=ISPARA_UNIVERSAL || applic==app)
+			return(true);
+		else
+			return(false);
+	}
+	protected:
+	ISParasiteType type;
+	ISParasiteApplicability applic;
+};
+
+Two ways this can be handled:  Either each imagesource will "steal" the parasites from the previous one, or we use reference counting.
+Refcounting is probably the best best, at least initially, since it allows, for example, to save the four channels individually.  The "stealing"
+model would leave only the first saver able to access the parasite.
+
+std::map<RefCountPtr> ISParasites
+Should be OK copy-constructor-wise?
+
 
 Need an "ImageSink" superclass, upon which CachedImage, PixbufFromImageSource and the Image Savers will be based.
 The sinks will have a ProcessRow() function, as well as a ProcessImage(Progress &) function.

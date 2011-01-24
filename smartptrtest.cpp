@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <memory>
 #include "debug.h"
 #include "thread.h"
 
@@ -312,6 +313,26 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 		return *this;
 	}
 
+	// Adopt the object pointed to by an auto_ptr.  This allows programs to use the cheaper auto_ptr when refcounting's
+	// not needed while still having an easy path to promote the pointer to refcounting if need be.
+	template <class Y> RefCountPtr& operator=(auto_ptr<Y>& r)
+	{
+		// Compare actual pointers rather than this and r, to avoid polymorphism problems.
+		// Technically catches situations other than simple self-assignment but the end result
+		// is the same.
+		if (ptr!=&*r)
+		{
+			Y *p=r.release();
+			PTMutex::Lock lock(mutex);
+			release();
+			if(count)
+				acquire(p,count->semantics);
+			else
+				acquire(p);
+        }
+		return *this;
+	}
+
 	template <class Y> RefCountPtr &operator=(Y *p)
     {
 		// We make a temporary ptr and assign that, to achieve type-safety
@@ -496,13 +517,11 @@ int main(int argc,char **argv)
 {
 	Debug.SetLevel(TRACE);
 
-#if 0
-	SmartPtr<Class2> ptr1(new Class2);
+	auto_ptr<Class2> ptr1(new Class2);
 	ptr1->DoStuff();
-#endif
 #if 1
 
-	RefCountPtr<Class2> ptr1(new Class2);
+//	RefCountPtr<Class2> ptr1(new Class2);
 	RefCountPtr<Class1> ptr3=MakeObject(20);
 	{
 		const char *tmp="Hello World";
@@ -512,16 +531,18 @@ int main(int argc,char **argv)
 		ptr2=ptr1;
 
 		RefCountPtr<Class1> ptr4(ptr3);
-		TestThread thread(ptr1);
-		ptr1->DoStuff();
+//		TestThread thread(ptr1);
+		if(&*ptr1)
+			ptr1->DoStuff();
 		ptr2->DoStuff();
 		ptr3->DoStuff();
 		ptr4->DoStuff();
-		std::cout << "ptr1==ptr2: " << (ptr1==ptr2) << std::endl;
-		std::cout << "ptr1==ptr3: " << (ptr1==ptr3) << std::endl;
+//		std::cout << "ptr1==ptr2: " << (ptr1==ptr2) << std::endl;
+//		std::cout << "ptr1==ptr3: " << (ptr1==ptr3) << std::endl;
 		std::cout << "Leaving scope - one pointer will be removed..." << std::endl;
-	}	
-	ptr1->DoStuff();
+	}
+	if(&*ptr1)
+		ptr1->DoStuff();
 	std::cout << "Terminating program..." << std::endl;
 #endif
 

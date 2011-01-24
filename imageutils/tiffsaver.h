@@ -39,6 +39,7 @@ class TIFFSaver : public ImageSaver
 	TIFF *file;
 	unsigned char *tmpbuffer;
 	BinaryBlob *embprofile;
+	RefCountPtr<ISParasite> psirb;	// PhotoShop Image Resource Block - for clipping path.
 };
 
 #endif

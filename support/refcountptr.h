@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <map>
+#include <memory>
 #include <cstdlib>
 
 #include "ptmutex.h"
@@ -133,6 +134,26 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 	{
 		Debug[TRACE] << "In templated copy constructor" << std::endl;
 		acquire(r.ptr);
+	}
+
+	// Adopt the object pointed to by an auto_ptr.  This allows programs to use the cheaper auto_ptr when refcounting's
+	// not needed while still having an easy path to promote the pointer to refcounting if need be.
+	template <class Y> RefCountPtr& operator=(std::auto_ptr<Y>& r)
+	{
+		// Compare actual pointers rather than this and r, to avoid polymorphism problems.
+		// Technically catches situations other than simple self-assignment but the end result
+		// is the same.
+		if (ptr!=&*r)
+		{
+			Y *p=r.release();
+			PTMutex::Lock lock(mutex);
+			release();
+			if(count)
+				acquire(p,count->semantics);
+			else
+				acquire(p);
+        }
+		return *this;
 	}
 
 	template <class Y> RefCountPtr& operator=(const RefCountPtr<Y>& r)

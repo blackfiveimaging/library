@@ -50,7 +50,7 @@ ImageSource::ImageSource(int width, int height, IS_TYPE type)
 }
 
 
-ImageSource::ImageSource(ImageSource *src) : rowbuffer(NULL)
+ImageSource::ImageSource(ImageSource *src) : embeddedprofile(src->embeddedprofile), parasites(src->parasites), rowbuffer(NULL)
 {
 	width=src->width;
 	height=src->height;
@@ -59,8 +59,7 @@ ImageSource::ImageSource(ImageSource *src) : rowbuffer(NULL)
 	xres=src->xres;
 	yres=src->yres;
 	randomaccess=src->randomaccess;
-	Debug[TRACE] << "Adopting other source's embedded profile... ( " << long(src->embeddedprofile.GetPtr()) << std::endl;
-	embeddedprofile=src->embeddedprofile;
+	Debug[TRACE] << "Adopted other source's embedded profile... ( " << long(embeddedprofile.GetPtr()) << std::endl;
 	currentrow=-1;
 }
 
@@ -97,5 +96,17 @@ void ImageSource::SetEmbeddedProfile(CMSProfile *profile)
 {
 	embeddedprofile=RefCountPtr<CMSProfile>(profile);
 	Debug[WARN] << "SetEmbeddedProfile - from regular pointer, to " << long(profile) << std::endl;
+}
+
+
+RefCountPtr<ISParasite> ImageSource::GetParasite(ISParasiteType type,ISParasiteApplicability applic)
+{
+	Debug[TRACE] << "*** Hunting for parasite " << type << ", applic: " << applic << std::endl;
+	RefCountPtr<ISParasite> p=parasites[type];
+	if(p && p->Applicable(applic))
+		return(p);
+	Debug[TRACE] << "*** Not found" << std::endl;
+	p=NULL;
+	return(p);
 }
 

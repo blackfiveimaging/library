@@ -12,8 +12,10 @@
 #define IMAGESOURCE_H
 
 #include <stdlib.h>
+#include <map>
 
 #include "imagesource_types.h"
+#include "imagesource_parasite.h"
 #include "refcountptr.h"
 #include "lcmswrapper.h"
 
@@ -33,6 +35,11 @@ class ImageSource
 	}
 	void SetEmbeddedProfile(RefCountPtr<CMSProfile> profile);
 	void SetEmbeddedProfile(CMSProfile *profile);	// Use with caution - will assume ownership...
+	RefCountPtr<ISParasite> GetParasite(ISParasiteType type,ISParasiteApplicability applic=ISPARA_UNIVERSAL);
+	inline const std::map<ISParasiteType,RefCountPtr<ISParasite> > &GetParasites()
+	{
+		return(parasites);
+	}
 	int width,height;
 	enum IS_TYPE type;
 	int samplesperpixel;
@@ -40,6 +47,7 @@ class ImageSource
 	bool randomaccess;
 	protected:
 	RefCountPtr<CMSProfile> embeddedprofile;
+	std::map<ISParasiteType,RefCountPtr<ISParasite> > parasites;
 	int currentrow;
 	ISDataType *rowbuffer;
 };
