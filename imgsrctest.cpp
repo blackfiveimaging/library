@@ -21,13 +21,15 @@
 #include "imagesource_scaledensity.h"
 #include "imagesource_gamma.h"
 #include "imagesource_chequerboard.h"
+#include "imagesource/imagesource_dropshadow.h"
 #include "imagesource_hsweep.h"
 #include "imagesource_hticks.h"
 #include "jpegsaver.h"
 #include "tiffsaver.h"
 #include "progresstext.h"
+#include "profilemanager/profilemanager.h"
 
-
+#if 0
 class ImageSource_RainbowSweep : public ImageSource
 {
 	public:
@@ -101,28 +103,66 @@ int main(int argc,char **argv)
 	}
 	return(0);
 }
+#endif
+
+#if 1
+
+class Test : public ConfigFile, public ProfileManager
+{
+	public:
+	Test() : ConfigFile(), ProfileManager(this,"[ColourManagement]"), factory(*this)
+	{
+	}
+	~Test()
+	{
+	}
+	void ShowParasites(ImageSource *is)
+	{
+		if(is)
+		{
+			RefCountPtr<ISParasite> p=is->GetParasite(ISPARATYPE_PSIMAGERESOURCEBLOCK);
+			if(p)
+				Debug[TRACE] << "Got clipping path parasite" << std::endl;
+			else
+				Debug[TRACE] << "No clipping path parasite" << std::endl;
+		}
+	}
+	void ProcessImage(const char *fn)
+	{
+		RefCountPtr<char> tmp=RefCountPtr<char>(BuildFilename(fn,"-test","tif"));
+		ImageSource *is=ISLoadImage(fn);
+		ShowParasites(is);
+
+		CachedImage cached((ImageSource_rp(is)));
+		is=cached.GetImageSource();
+
+		RefCountPtr<CMSTransform> trans;
+		RefCountPtr<CMSProfile>emb=is->GetEmbeddedProfile();
+		if(emb)
+			trans=factory.GetTransform(CM_COLOURDEVICE_DISPLAY,&*emb);
+		else
+			trans=factory.GetTransform(CM_COLOURDEVICE_DISPLAY,is->type);
+		is=new ImageSource_CMS(is,trans);
+//		is=new ImageSource_DropShadow(is,20,5);
+
+		ProgressText prog;
+		TIFFSaver ts(&*tmp,ImageSource_rp(is));
+		ts.SetProgress(&prog);
+		ts.Save();
+	}
+	protected:
+	CMTransformFactory factory;
+};
 
 
-#if 0
 int main(int argc,char **argv)
 {
 	try
 	{
 		if(argc<2)
 			return(0);
-		ProgressText prog;
-		for(int i=1;i<argc;++i)
-		{
-			ImageSource *is=ISLoadImage(argv[i]);
-			CachedImage img(is);
-			delete is;
-			is=new ImageSource_CachedImage(&img);
-			is=ISScaleImageBySize(is,is->width/2,is->height/2,IS_SCALING_DOWNSAMPLE);
-			prog.DoProgress(i,argc);
-			JPEGSaver js(argv[i],is);
-			js.Save();
-//			delete is;
-		}
+		Test test;
+		test.ProcessImage(argv[1]);
 	}
 	catch(const char *err)
 	{
@@ -131,6 +171,7 @@ int main(int argc,char **argv)
 	return(0);
 }
 #endif
+
 #if 0
 
 // Render a sweep pattern for approximate gamma determination.

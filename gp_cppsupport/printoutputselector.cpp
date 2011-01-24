@@ -71,7 +71,7 @@ static void printoutputselector_queue_changed(GtkEntry *entry,gpointer *ud)
 #ifdef HAVE_LIBCUPS
 				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("Can't automatically identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
 #else
-				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("This program has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2.")):
+				gtk_label_set_text(GTK_LABEL(ob->driverhint),_("This program has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
 #endif
 			}
 			else
@@ -89,7 +89,7 @@ static void printoutputselector_queue_changed(GtkEntry *entry,gpointer *ud)
 #ifdef HAVE_LIBCUPS
 			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("Can't automatically identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
 #else
-			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("This program has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2.")):
+			gtk_label_set_text(GTK_LABEL(ob->driverhint),_("This program has been built without CUPS support,\nand can't identify the correct driver for this queue.\nIf in doubt, use Adobe Postscript Level 2."));
 #endif
 #endif
 		}

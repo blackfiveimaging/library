@@ -395,14 +395,14 @@ std::ostream& operator<<(std::ostream &s,CMSProfile &cp)
 }
 
 
-CMSTransform::CMSTransform()
+CMSTransform::CMSTransform() : transform(NULL)
 {
 	inputtype=IS_TYPE_NULL;
 	outputtype=IS_TYPE_NULL;
 }
 
 
-CMSTransform::CMSTransform(CMSProfile *in,CMSProfile *out,LCMSWrapper_Intent intent)
+CMSTransform::CMSTransform(CMSProfile *in,CMSProfile *out,LCMSWrapper_Intent intent) : transform(NULL)
 {
 	inputtype=in->GetColourSpace();
 	outputtype=out->GetColourSpace();
@@ -410,7 +410,7 @@ CMSTransform::CMSTransform(CMSProfile *in,CMSProfile *out,LCMSWrapper_Intent int
 }
 
 
-CMSTransform::CMSTransform(CMSProfile *devicelink,LCMSWrapper_Intent intent)
+CMSTransform::CMSTransform(CMSProfile *devicelink,LCMSWrapper_Intent intent) : transform(NULL)
 {
 	inputtype=devicelink->GetColourSpace();
 	outputtype=devicelink->GetDeviceLinkOutputSpace();
@@ -418,7 +418,7 @@ CMSTransform::CMSTransform(CMSProfile *devicelink,LCMSWrapper_Intent intent)
 }
 
 
-CMSTransform::CMSTransform(CMSProfile *profiles[],int profilecount,LCMSWrapper_Intent intent)
+CMSTransform::CMSTransform(CMSProfile *profiles[],int profilecount,LCMSWrapper_Intent intent) : transform(NULL)
 {
 	inputtype=profiles[0]->GetColourSpace();
 	if(profiles[profilecount-1]->IsDeviceLink())
