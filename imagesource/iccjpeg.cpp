@@ -248,3 +248,99 @@ read_icc_profile (j_decompress_ptr cinfo,
 
   return TRUE;
 }
+
+
+// Similar code for reading PhotoShop Image Resource Block
+
+#define IRB_MARKER  (JPEG_APP0 + 13)	/* JPEG marker code for IRB */
+#define IRB_OVERHEAD_LEN  14		/* size of non-profile data in APP13 */
+#define MAX_DATA_BYTES_IN_IRB_MARKER  (MAX_BYTES_IN_MARKER - IRB_OVERHEAD_LEN)
+
+
+void
+setup_read_irb (j_decompress_ptr cinfo)
+{
+  /* Tell the library to keep any APP2 data it may find */
+  jpeg_save_markers(cinfo, IRB_MARKER, 0xFFFF);
+}
+
+static boolean
+marker_is_irb (jpeg_saved_marker_ptr marker)
+{
+  return
+    marker->marker == IRB_MARKER &&
+    marker->data_length >= IRB_OVERHEAD_LEN &&
+    /* verify the identifying string */
+    GETJOCTET(marker->data[0]) == 0x50 && // P
+    GETJOCTET(marker->data[1]) == 0x68 && // h
+    GETJOCTET(marker->data[2]) == 0x6f && // o
+    GETJOCTET(marker->data[3]) == 0x74 && // t
+    GETJOCTET(marker->data[4]) == 0x6f && // o
+    GETJOCTET(marker->data[5]) == 0x73 && // s
+    GETJOCTET(marker->data[6]) == 0x68 && // h
+    GETJOCTET(marker->data[7]) == 0x6f && // o
+    GETJOCTET(marker->data[8]) == 0x70 && // p
+    GETJOCTET(marker->data[9]) == 0x20 && // ' '
+    GETJOCTET(marker->data[10]) == 0x33 && // 3
+    GETJOCTET(marker->data[11]) == 0x2e && // .
+    GETJOCTET(marker->data[12]) == 0x30 && // 0
+    GETJOCTET(marker->data[13]) == 0x0;
+}
+
+// IRB has no marker sequence.  Is the IRB guaranteed to fit into a single block?
+// FIXME - for now we'll just concatenate them in the order in which they're found.
+boolean
+read_irb (j_decompress_ptr cinfo,
+		  JOCTET **irb_data_ptr,
+		  unsigned int *irb_data_len)
+{
+	jpeg_saved_marker_ptr marker;
+	JOCTET *irb_data;
+	unsigned int total_length=0;
+
+	*irb_data_ptr = NULL;		/* avoid confusion if FALSE return */
+	*irb_data_len = 0;
+
+	/* This first pass over the saved markers discovers whether there are
+	* any ICC markers and verifies the consistency of the marker numbering.
+	*/
+
+	for (marker = cinfo->marker_list; marker != NULL; marker = marker->next)
+	{
+		if (marker_is_irb(marker))
+			total_length+=marker->data_length - IRB_OVERHEAD_LEN;
+	}
+
+	if (total_length <= 0)
+	return FALSE;		/* found only empty markers? */
+
+	/* Allocate space for assembled data */
+	irb_data = (JOCTET *) malloc(total_length * sizeof(JOCTET));
+	if (irb_data == NULL)
+		return FALSE;		/* oops, out of memory */
+
+	unsigned int data_offset=0;
+	/* and fill it in */
+	for (marker = cinfo->marker_list; marker != NULL; marker = marker->next)
+	{
+		if (marker_is_irb(marker))
+		{
+		    JOCTET FAR *src_ptr;
+		    JOCTET *dst_ptr;
+		    unsigned int length;
+		    dst_ptr = irb_data + data_offset;
+		    src_ptr = marker->data + IRB_OVERHEAD_LEN;
+		    length = marker->data_length-IRB_OVERHEAD_LEN;
+			data_offset+=length;
+		    while (length--)
+				*dst_ptr++ = *src_ptr++;
+		}
+	}
+
+	*irb_data_ptr = irb_data;
+	*irb_data_len = total_length;
+
+	return TRUE;
+}
+
+

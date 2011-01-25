@@ -94,6 +94,7 @@ void ImageSource_JPEG::Init()
 	jpeg_stdio_src(cinfo, err->File);
 
 	setup_read_icc_profile(cinfo);
+	setup_read_irb(cinfo);
 
 	jpeg_read_header(cinfo,TRUE);
 
@@ -139,12 +140,18 @@ void ImageSource_JPEG::Init()
 			break;
 	}
 	
-	JOCTET *iccprofile;
-	unsigned int profilelen;
-	if(read_icc_profile(cinfo,&iccprofile,&profilelen))
+	JOCTET *blobbuffer;
+	unsigned int bloblen;
+	if(read_icc_profile(cinfo,&blobbuffer,&bloblen))
 	{
-		iccprofbuffer=(char *)iccprofile;
-		SetEmbeddedProfile(new CMSProfile(iccprofbuffer,profilelen));
+		iccprofbuffer=(char *)blobbuffer;
+		SetEmbeddedProfile(new CMSProfile(iccprofbuffer,bloblen));
+	}
+
+	if(read_irb(cinfo,&blobbuffer,&bloblen))
+	{
+		parasites[ISPARATYPE_PSIMAGERESOURCEBLOCK]=new ISParasite((const char *)blobbuffer,bloblen,
+			ISPARATYPE_PSIMAGERESOURCEBLOCK,ISParasiteApplicability(ISPARA_TIFF|ISPARA_JPEG));
 	}
 
 	if(!(tmprow=(unsigned char *)malloc(sizeof(char)*(width*samplesperpixel))))

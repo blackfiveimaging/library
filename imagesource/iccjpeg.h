@@ -81,3 +81,11 @@ extern void setup_read_icc_profile JPP((j_decompress_ptr cinfo));
 extern boolean read_icc_profile JPP((j_decompress_ptr cinfo,
 				     JOCTET **icc_data_ptr,
 				     unsigned int *icc_data_len));
+
+// Similar functions for extracting a Photoshop Image Resource Block
+
+extern void setup_read_irb JPP((j_decompress_ptr cinfo));
+extern boolean read_irb JPP((j_decompress_ptr cinfo,
+				     JOCTET **irb_data_ptr,
+				     unsigned int *irb_data_len));
+
