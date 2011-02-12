@@ -782,10 +782,14 @@ void ProfileManager::ReleaseMutex()
 
 
 ProfileInfo::ProfileInfo(ProfileManager &pm,const char *filename)
-	: profilemanager(pm), next(NULL), prev(NULL), filename(NULL), iscached(false), description(NULL), isdevicelink(false), remove(false)
+	: profilemanager(pm), next(NULL), prev(NULL), filename(NULL), iscached(false), description(NULL), isdevicelink(false), remove(false), virt(false)
 {
 	if(!filename)
 		throw "ProfileInfo: Null Filename";
+
+	if(strcmp(filename,SYSTEMMONITORPROFILE_ESCAPESTRING)==0 || strcmp(filename,BUILTINSRGB_ESCAPESTRING)==0 || strcmp(filename,BUILTINSGREY_ESCAPESTRING)==0)
+		virt=true;
+
 	profilemanager.ObtainMutex();
 	if((next=profilemanager.first))
 		next->prev=this;
@@ -815,6 +819,12 @@ ProfileInfo::~ProfileInfo()
 ProfileInfo *ProfileInfo::Next()
 {
 	return(next);
+}
+
+
+bool ProfileInfo::IsVirtual()
+{
+	return(virt);
 }
 
 

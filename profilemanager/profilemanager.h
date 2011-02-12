@@ -143,6 +143,7 @@ class ProfileInfo
 	const char *GetDescription();
 	IS_TYPE GetColourSpace();
 	bool IsDeviceLink();
+	bool IsVirtual();
 	protected:
 	void GetInfo();
 	ProfileManager &profilemanager;
@@ -153,6 +154,7 @@ class ProfileInfo
 	IS_TYPE colourspace;
 	bool isdevicelink;
 	bool remove;	//	We mark bad profiles and remove them.  Sidesteps an exception issue on Win32 that needs investigating further.
+	bool virt;
 	friend class ProfileManager;
 };
 #endif
