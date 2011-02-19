@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <libgen.h>
+
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -109,6 +111,12 @@ CMSProfile *ProfileManager::GetProfile(const char *name)
 		else
 		{
 			char *fn=SearchPaths(name);
+			if(!fn)
+			{
+				char *tmp=strdup(name);
+				fn=SearchPaths(basename(tmp));
+				free(tmp);
+			}
 			if(fn && strlen(fn))
 			{
 				try
