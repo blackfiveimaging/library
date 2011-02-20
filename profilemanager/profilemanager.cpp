@@ -140,11 +140,19 @@ CMSProfile *ProfileManager::GetProfile(const char *name)
 CMSProfile *ProfileManager::GetProfile(enum CMColourDevice target)
 {
 	const char *profilename=NULL;
+	CMSProfile *result=NULL;
 	switch(target)
 	{
 		case CM_COLOURDEVICE_DISPLAY:
+			// If we can't open the monitor's profile, we fall back to the default RGB profile.
 			if(FindInt("MonitorProfileActive"))
+			{
 				profilename=FindString("MonitorProfile");
+				result=GetProfile(profilename);
+			}
+			if(!result)
+				result=GetProfile(CM_COLOURDEVICE_DEFAULTRGB);
+			return(result);
 			break;
 		case CM_COLOURDEVICE_PRINTERPROOF:
 			if(FindInt("MonitorProfileActive"))
