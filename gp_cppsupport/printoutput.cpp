@@ -6,6 +6,7 @@
 using namespace std;
 
 #include "../miscwidgets/generaldialogs.h"
+#include "../miscwidgets/livedisplaycheck.h"
 
 #include "../support/debug.h"
 
@@ -121,8 +122,16 @@ void PrintOutput::DBToQueues()
 	else
 	{
 		Debug[TRACE] << "Warning - printer queue not found" << endl;
-		printoutput_queue_dialog(this);
-		tmp=FindString("Queue");
+		try
+		{
+			printoutput_queue_dialog(this);
+			tmp=FindString("Queue");
+		}
+		catch (const char *err)
+		{
+			// If we end up here, there's no display, so pick a "safe" queue...
+			tmp=PRINTERQUEUE_SAVETOFILE;
+		}
 	}
 	SetPrinterQueue(tmp);
 	tmp=FindString("Command");

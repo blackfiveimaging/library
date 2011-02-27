@@ -5,7 +5,6 @@
 
 #include "printerqueueswrapper.h"
 #include "../miscwidgets/generaldialogs.h"
-
 #include "../support/debug.h"
 
 using namespace std;

@@ -15,6 +15,7 @@
 #include "stpui_widgets/stpui_printerselector.h"
 
 #include "../support/debug.h"
+#include "../miscwidgets/livedisplaycheck.h"
 
 #include "printoutputselector.h"
 
@@ -220,6 +221,8 @@ printoutputselector_init (PrintOutputSelector *ob)
 
 void printoutput_queue_dialog(PrintOutput *po)
 {
+	if(!LiveDisplay.HaveDisplay())
+		throw "Running without a display - can't show dialog!";
 	const char *oldqueue=po->FindString("Queue");
 	char *labeltext=g_strdup_printf(_("The printer queue %s\n is not found - please choose another"),oldqueue);
 	GtkWidget *dlg=gtk_dialog_new_with_buttons(_("Printer queue not found"),NULL,
