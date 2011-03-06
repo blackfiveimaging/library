@@ -104,6 +104,8 @@ class hack_outbuf : public std::streambuf {
 	{
         if(file)
            return(fflush(file));
+		else
+			return(0);
     }
 };
 

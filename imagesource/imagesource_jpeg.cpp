@@ -222,14 +222,18 @@ ISDataType *ImageSource_JPEG::GetRow(int row)
 
 ImageSource_JPEG::~ImageSource_JPEG()
 {
+	Debug[TRACE] << "JPEG*** Getting rest of image..." << endl;
 	while(currentrow<(height-1))
 		GetRow(currentrow+1);
 
+	Debug[TRACE] << "JPEG*** Freeing aux memory..." << endl;
 	if(iccprofbuffer)
 		free(iccprofbuffer);
 
 	if(tmprow)
 		free(tmprow);
+
+	Debug[TRACE] << "JPEG*** Finishing up JPEG..." << endl;
 
 	if(cinfo)
 	{
