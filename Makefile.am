@@ -4,7 +4,7 @@ SUBDIRS = po argyllsupport support imagesource imageutils miscwidgets stpui_widg
 
 localedir=$(datadir)/locale
 
-AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./imagesource/ -I./imageutils -I./splashscreen \
+AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./layoutsupport -I./imagesource/ -I./imageutils -I./splashscreen \
 	-I./miscwidgets -I./profilemanager -I./effects \
 	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
