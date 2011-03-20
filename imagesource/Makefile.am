@@ -88,8 +88,6 @@ libimagesource_la_SOURCES =	\
 	imagesource_scale.h	\
 	imagesource_scaledensity.cpp	\
 	imagesource_scaledensity.h	\
-	imagesource_segmentmask.cpp \
-	imagesource_segmentmask.h \
 	imagesource_solid.cpp	\
 	imagesource_solid.h	\
 	imagesource_tee.h \

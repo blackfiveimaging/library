@@ -18,13 +18,13 @@
 #include "stp_support/stputil.h"
 #include "gprintersettings.h"
 
-#include "../support/debug.h"
-#include "../support/util.h"
+#include "debug.h"
+#include "util.h"
 
-#include "../miscwidgets/generaldialogs.h"
+#include "generaldialogs.h"
 
-#include "../config.h"
-#include "../gettext.h"
+#include "config.h"
+#include "gettext.h"
 
 #define _(x) gettext(x)
 #define N_(x) gettext_noop(x)

@@ -16,8 +16,9 @@ check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				smartptrtest imgsinktest
 
 
-bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest
+bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest rastertotiff
 
+rastertotiff_SOURCES = rastertotiff.cpp
 configtest_SOURCES = configtest.cpp
 debugtest_SOURCES = debugtest.cpp
 gprintertest_SOURCES = gprintertest.cpp
@@ -84,7 +85,7 @@ pixbufthumbnail/libpixbufthumbnail.la:
 	$(MAKE) libpixbufthumbnail.la
 
 
-EXTRA_DIST = COPYING README TODO
+EXTRA_DIST = COPYING README TODO gettext.h
 
 
 ACLOCAL_AMFLAGS = -I m4

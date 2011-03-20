@@ -11,14 +11,6 @@ libsupport_la_SOURCES =	\
 	configdb.cpp	\
 	configdb.h	\
 	\
-	layoutrectangle.cpp	\
-	layoutrectangle.h	\
-	pageextent.h	\
-	signature.cpp	\
-	signature.h	\
-	circlemontage.cpp \
-	circlemontage.h \
-	\
 	jobqueue.h \
 	pathsupport.cpp \
 	pathsupport.h \

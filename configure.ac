@@ -69,6 +69,7 @@ else
 fi)
 
 AC_CHECK_LIB(cups,httpConnect)
+AC_CHECK_LIB(cupsimage,cupsRasterOpen)
 
 # Checks for header files.
 AC_HEADER_STDC

@@ -12,11 +12,11 @@
 
 #include <string>
 
-#include "support/configdb.h"
-#include "support/pageextent.h"
-#include "support/consumer.h"
+#include "configdb.h"
+#include "pageextent.h"
+#include "consumer.h"
 #include "printoutput.h"
-#include "support/progress.h"
+#include "progress.h"
 #include <gutenprint/gutenprint.h>
 
 #include "gprintersettings.h"
