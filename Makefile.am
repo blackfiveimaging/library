@@ -16,9 +16,8 @@ check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				smartptrtest imgsinktest
 
 
-bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest rastertotiff
+bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest
 
-rastertotiff_SOURCES = rastertotiff.cpp
 configtest_SOURCES = configtest.cpp
 debugtest_SOURCES = debugtest.cpp
 gprintertest_SOURCES = gprintertest.cpp
