@@ -87,12 +87,14 @@ CMSProfile *ProfileManager::GetProfile(const char *name)
 	CMSProfile *result=NULL;
 	if(name && strlen(name))
 	{
-		if(strcmp(name,SYSTEMMONITORPROFILE_ESCAPESTRING)==0 && proffromdisplay_size)
+		if(strcmp(name,SYSTEMMONITORPROFILE_ESCAPESTRING)==0)
 		{
-#ifdef WIN32	
-			result=new CMSProfile(displayprofilename);
+#ifdef WIN32
+			if(displayprofilename)
+				result=new CMSProfile(displayprofilename);
 #else
-			result=new CMSProfile((char *)proffromdisplay,proffromdisplay_size);
+			if(proffromdisplay_size)
+				result=new CMSProfile((char *)proffromdisplay,proffromdisplay_size);
 #endif
 			if(!result)
 			{
