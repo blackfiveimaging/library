@@ -24,7 +24,7 @@ CachedImage_Deferred::CachedImage_Deferred(RefCountPtr<ImageSource> source)
 		throw "Can't allocate pixel buffer";
 	}
 	embeddedprofile=source->GetEmbeddedProfile();
-	cerr << "CachedImage: embeddedprofile set to " << long(&*embeddedprofile) << std::endl;
+	Debug[TRACE] << "CachedImage: embeddedprofile set to " << long(&*embeddedprofile) << std::endl;
 }
 
 
@@ -87,7 +87,6 @@ ImageSource_CachedImage::ImageSource_CachedImage(CachedImage_Deferred *img) : Im
 	yres=img->yres;
 	samplesperpixel=img->samplesperpixel;
 	type=img->type;
-//	cerr << "Image type: " << type << endl;
 	randomaccess=true;
 	if(img->embeddedprofile)
 	{

@@ -96,6 +96,9 @@ ISMontage_Component::ISMontage_Component(ImageSource_Montage *header,ImageSource
 
 ISMontage_Component::~ISMontage_Component()
 {
+	Debug[TRACE] << "In ISMontage_Component destructor" << std::endl;
+
+	Debug[TRACE] << "Freeing " << long(source) << std::endl;
 	if(source)
 		delete source;
 	if(prev)
@@ -152,14 +155,19 @@ ImageSource_Montage::ImageSource_Montage(IS_TYPE type,int resolution, int sample
 
 ImageSource_Montage::~ImageSource_Montage()
 {
+	Debug[TRACE] << "In montage destructor" << std::endl;
 	while(first)
+	{
+		Debug[TRACE] << "Deleting component " << long(first) << std::endl;
 		delete first;
+	}
+	Debug[TRACE] << "Montage destructor finished " << std::endl;
 }
 
 
 void ImageSource_Montage::Add(ImageSource *is,int xpos,int ypos)
 {
-	Debug[TRACE] << "Adding image of type " << is->type << " to page of type " << type << endl;
+	Debug[TRACE] << "Adding image of type " << is->type << " to page of type " << type << "( " << long(is) << ")" << endl;
 	if(STRIP_ALPHA(is->type)!=STRIP_ALPHA(type))
 		throw "Can't yet mix different colour spaces on one page";
 	new ISMontage_Component(this,is,xpos,ypos);

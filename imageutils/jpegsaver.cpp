@@ -48,7 +48,7 @@ static void isjpeg_error_exit (j_common_ptr cinfo)
 	JPEGSaver_ErrManager *myerr = (JPEGSaver_ErrManager *) cinfo->err;
 	cinfo->err->output_message(cinfo);
 	cinfo->err->format_message(cinfo,buffer);
-	cerr << buffer << endl;
+	Debug[ERROR] << buffer << endl;
 	if(myerr->file && myerr->file!=stdout)
 		fclose(myerr->file);
 	exit(1);

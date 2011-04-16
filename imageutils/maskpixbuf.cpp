@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "debug.h"
 #include "rotatepixbuf.h"
 #include "maskpixbuf.h"
 
@@ -38,7 +39,7 @@ void maskpixbuf(GdkPixbuf *img,int xpos,int ypos,int width,int height,const GdkP
 	switch(gdk_pixbuf_get_n_channels(scaledmask))
 	{
 		case 1:
-			cerr << "8 bit mask" << endl;
+			Debug[TRACE] << "maskpixbuf: 8 bit mask" << endl;
 			for(int y=0;y<height;++y)
 			{
 				guchar *src=gdk_pixbuf_get_pixels(img)+gdk_pixbuf_get_rowstride(img)*(y+ypos);

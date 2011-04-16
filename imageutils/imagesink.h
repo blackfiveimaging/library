@@ -52,7 +52,9 @@ class ImageSink
 	}
 	virtual void Finish()
 	{
+		Debug[TRACE] << "Assigning NULL to pointer, releasing reference..." << std::endl;
 		source=NULL;	// Release reference when done.
+		Debug[TRACE] << "Reference released" << std::endl;
 	}
 	protected:
 	RefCountPtr<ImageSource> source;

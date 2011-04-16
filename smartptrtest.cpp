@@ -540,6 +540,7 @@ int main(int argc,char **argv)
 //		std::cout << "ptr1==ptr2: " << (ptr1==ptr2) << std::endl;
 //		std::cout << "ptr1==ptr3: " << (ptr1==ptr3) << std::endl;
 		std::cout << "Leaving scope - one pointer will be removed..." << std::endl;
+		ptr4=NULL;
 	}
 	if(&*ptr1)
 		ptr1->DoStuff();
