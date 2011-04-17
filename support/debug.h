@@ -11,7 +11,7 @@
 // FIXME Win32 namespace clash
 #undef ERROR
 
-enum DebugLevel {NONE, ERROR, WARN, COMMENT, TRACE};
+enum DebugLevel {NONE, ERROR, WARN, COMMENT, TRACE, MINUTIAE};
 
 class NullStream : public std::streambuf, public std::ostream
 {

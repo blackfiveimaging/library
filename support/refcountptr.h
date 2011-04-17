@@ -31,16 +31,16 @@ class RefCountPtr_Counter
 	private:
 	RefCountPtr_Counter(DeletionSemantics semantics=DELETION_DELETE,unsigned c = 0) : semantics(semantics), count(c)
 	{
-		Debug[TRACE] << "In RefCountptr_Counter constructor" << std::endl;
+		Debug[MINUTIAE] << "In RefCountptr_Counter constructor" << std::endl;
 	}
 	unsigned int operator--()
 	{
-		Debug[TRACE] << "Decrementing count from " << count << std::endl;
+		Debug[MINUTIAE] << "Decrementing count from " << count << std::endl;
 		return(--count);
 	}
 	unsigned int operator++()
 	{
-		Debug[TRACE] << "Incrementing count from " << count << std::endl;
+		Debug[MINUTIAE] << "Incrementing count from " << count << std::endl;
 		return(++count);
 	}
 	DeletionSemantics semantics;
@@ -105,7 +105,7 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 	// the other smart pointer is to the same type of object.
 	RefCountPtr(const RefCountPtr &r) : RefCountPtrBase(NULL)
 	{
-		Debug[TRACE] << "In untemplated copy constructor" << std::endl;
+		Debug[MINUTIAE] << "In untemplated copy constructor" << std::endl;
 		acquire(r.ptr);
 	}
 
@@ -132,7 +132,7 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 	// the other smart pointer is to a derivative class of the one this pointer points to.
 	template <class Y> RefCountPtr(const RefCountPtr<Y>& r) : RefCountPtrBase(NULL)
 	{
-		Debug[TRACE] << "In templated copy constructor" << std::endl;
+		Debug[MINUTIAE] << "In templated copy constructor" << std::endl;
 		acquire(r.ptr);
 	}
 
@@ -207,9 +207,9 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 			// If we have a pointer, we lock the mutex, search the map for a matching
 			// count record and increment its reference count if found.
 			PTMutex::Lock lock(mutex);
-			Debug[TRACE] << "Acquiring reference" << std::endl;
+			Debug[MINUTIAE] << "Acquiring reference" << std::endl;
 			count=&map[p];
-			Debug[TRACE] << "Map element " << long(count) << std::endl;
+			Debug[MINUTIAE] << "Map element " << long(count) << std::endl;
 
 			// Ensure the pointer doesn't already exist with conflicting semantics.
 			if(count->count && (count->semantics!=semantics))
@@ -222,7 +222,7 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 			// increment the count
 			++(*count);
 		}
-		Debug[TRACE] << "Acquisition complete" << std::endl;
+		Debug[MINUTIAE] << "Acquisition complete" << std::endl;
 	}
 
 	void release()
@@ -232,10 +232,10 @@ template <class X> class RefCountPtr : public RefCountPtrBase
 			PTMutex::Lock lock(mutex);
 
 			// decrement the count, delete if it is 0
-			Debug[TRACE] << "Releasing ptr..." << std::endl;
+			Debug[MINUTIAE] << "Releasing ptr..." << std::endl;
 			if (--(*count)==0)
 			{
-				Debug[TRACE] << "Refcount zero, deleting..." << std::endl;
+				Debug[MINUTIAE] << "Refcount zero, deleting..." << std::endl;
 				switch(count->semantics)
 				{
 					case DELETION_NONE:

@@ -146,5 +146,7 @@ void ImageSource_CMS::Init()
 //	Debug[TRACE] << "tmpdestspp: " << tmpdestspp << endl;
 //	Debug[TRACE] << "samplesperpixel: " << samplesperpixel << endl;
 
+	SetEmbeddedProfile(NULL);
+
 	MakeRowBuffer();
 }
