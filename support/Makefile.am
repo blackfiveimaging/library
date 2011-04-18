@@ -21,6 +21,7 @@ libsupport_la_SOURCES =	\
 	rangeparser.cpp \
 	rangeparser.h \
 	\
+	cyclicbuffer.h \
 	thread.cpp \
 	thread.h \
 	ptmutex.cpp \
