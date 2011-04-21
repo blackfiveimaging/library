@@ -5,7 +5,7 @@
 #include <gtk/gtk.h>
 
 #include "miscwidgets/simplecombo.h"
-
+#include "breakhandler.h"
 #include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
@@ -15,6 +15,11 @@ using namespace std;
 gboolean updatefunc(gpointer ud)
 {
 	SimpleCombo *c=SIMPLECOMBO(ud);
+
+	if(BreakHandler.TestBreak())
+		std::cerr << "Break signal received..." << std::endl;
+	else
+		std::cerr << "No break signal received..." << std::endl;
 
 	int idx=simplecombo_get_index(c);
 	if(idx==2)

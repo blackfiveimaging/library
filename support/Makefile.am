@@ -37,6 +37,8 @@ libsupport_la_SOURCES =	\
 	refcount.h \
 	refcountptr.cpp \
 	refcountptr.h \
+	breakhandler.cpp \
+	breakhandler.h \
 	\
 	searchpath.cpp \
 	searchpath.h \
