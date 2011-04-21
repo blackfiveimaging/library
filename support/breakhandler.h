@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <signal.h>
+#include <time.h>
+#include "debug.h"
 
 using namespace std;
 
@@ -12,17 +14,17 @@ class BreakSignalHandler
 	BreakSignalHandler()
 	{
 		breakreceived=false;
-		std::cerr << "Installing signal handler..." << std::endl;
+		oldtime=time(NULL);
 		signal(SIGINT, &sighandler);
 	}
 	inline bool TestBreak()	// Returns true if break has been received
 	{
-		std::cerr << "Checking break signal..." << std::endl;
 		return(breakreceived);
 	}
 	protected:
 	static void sighandler(int sig);
 	static bool breakreceived;
+	static time_t oldtime;
 };
 
 extern BreakSignalHandler BreakHandler;

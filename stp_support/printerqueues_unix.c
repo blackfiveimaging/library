@@ -558,7 +558,9 @@ static void endjob(struct pqinfo *pq)
 		if(pq->priv->cancelled)
 		{
 //			fprintf(stderr,"Job cancelled - sending term signal");
-			kill(pq->priv->childpid,SIGTERM);
+			// Might as well not do this, since it doesn't seem to work anyway.
+			// FIXME - figure out the job ID and cancel it using lprm.
+//			kill(pq->priv->childpid,SIGTERM);
 		}
 		close(pq->priv->pipefd[0]);
 		close(pq->priv->pipefd[1]);

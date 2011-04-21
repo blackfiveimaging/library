@@ -16,6 +16,7 @@
 #include <stdlib.h>
 
 #include "debug.h"
+#include "breakhandler.h"
 
 #include "progress.h"
 
@@ -76,5 +77,25 @@ class ProgressText : public Progress
 	int limit;
 	char *message;
 };
+
+
+// Subclass of ProgressText that checks for ctrl-c
+class ProgressTextBreak : public ProgressText
+{
+	public:
+	ProgressTextBreak() : ProgressText()
+	{
+	}
+	virtual ~ProgressTextBreak()
+	{
+	}
+	virtual bool DoProgress(int i,int maxi)
+	{
+		bool result=ProgressText::DoProgress(i,maxi);
+		result&=(BreakHandler.TestBreak()==false);
+		return(result);
+	}
+};
+
 
 #endif
