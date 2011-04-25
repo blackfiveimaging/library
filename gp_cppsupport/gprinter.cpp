@@ -282,7 +282,7 @@ void GPrinter::writefunc(void *obj, const char *buf, size_t bytes)
 		if(!result)
 		{
 			writeerror=true;
-			Debug[TRACE] << "cons->Write() returned " << result << endl;
+			Debug[TRACE] << "cons->Write() asked to write " << bytes << "bytes, but returned " << result << std::endl;
 		}
 	}
 }

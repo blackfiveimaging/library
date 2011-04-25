@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -582,7 +583,11 @@ static int writedata(struct pqinfo *pq,const char *data,int bytecount)
 {
 	int written=write(pq->priv->outputfd,data,bytecount);
 	if(written<bytecount)
+	{
+		fprintf(stderr,"printerqueues_unix/writedata: Attempted to write %d bytes, could only write %d\n",bytecount,written);
+		perror("error code");
 		aborted=1;
+	}
 	return(1-aborted);
 }
 
