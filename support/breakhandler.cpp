@@ -5,14 +5,16 @@
 
 void BreakSignalHandler::sighandler(int sig)
 {
+	Debug[TRACE] << "BreakSignalHandler - ctrl-c received" << std::endl;
 	time_t now=time(NULL);
 	if((now-oldtime)<2)
 	{
 		Debug[WARN] << "Multiple Ctrl-C signals received, quitting at user's insistence." << std::endl;
-		exit(0);
+		signal(SIGINT, SIG_DFL);
+		raise(SIGINT);
+//		exit(0);
 	}
 	oldtime=now;
-//	signal(SIGINT, SIG_DFL);
 	breakreceived=true;
 }
 

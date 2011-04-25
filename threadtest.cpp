@@ -8,6 +8,8 @@
 #include "support/threadevent.h"
 #include "rwmutex.h"
 
+#include "breakhandler.h"
+
 using namespace std;
 
 #if 0
@@ -120,6 +122,12 @@ class TestThread_SendTH : public ThreadFunction
 int main(int argc, char **argv)
 {
 	Debug.SetLevel(TRACE);
+
+	if(BreakHandler.TestBreak())
+		std::cerr << "Break signal received..." << std::endl;
+	else
+		std::cerr << "No break signal received..." << std::endl;
+
 	ThreadEventHandler tehandler;
 	ThreadEvent e1(tehandler,"Event1");
 	ThreadEvent *e2=new ThreadEvent(tehandler,"Event2");
