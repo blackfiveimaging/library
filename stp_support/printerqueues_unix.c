@@ -581,12 +581,19 @@ static void canceljob(struct pqinfo *pq)
 
 static int writedata(struct pqinfo *pq,const char *data,int bytecount)
 {
-	int written=write(pq->priv->outputfd,data,bytecount);
-	if(written<bytecount)
+	int remain=bytecount;
+	while(remain)
 	{
-		fprintf(stderr,"printerqueues_unix/writedata: Attempted to write %d bytes, could only write %d\n",bytecount,written);
-		perror("error code");
-		aborted=1;
+		int written=write(pq->priv->outputfd,data,remain);
+		if(written<0)
+		{
+			perror("error code");
+			aborted=1;
+		}
+		data+=written;
+		remain-=written;
+		if(remain)
+			usleep(10000);
 	}
 	return(1-aborted);
 }
