@@ -581,6 +581,7 @@ static void canceljob(struct pqinfo *pq)
 
 static int writedata(struct pqinfo *pq,const char *data,int bytecount)
 {
+//	fprintf(stderr,"%d\n",bytecount);
 	int remain=bytecount;
 	while(remain)
 	{
@@ -593,7 +594,7 @@ static int writedata(struct pqinfo *pq,const char *data,int bytecount)
 		data+=written;
 		remain-=written;
 		if(remain)
-			usleep(10000);
+			usleep(500);
 	}
 	return(1-aborted);
 }

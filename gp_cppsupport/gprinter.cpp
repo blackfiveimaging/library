@@ -271,20 +271,41 @@ void GPrinter::Help()
 
 void GPrinter::writefunc(void *obj, const char *buf, size_t bytes)
 {
-	if(bytes)	// Have seen requests to write zero bytes - catch them
-				// otherwise cons->Write() will quite correctly report that
-				// it's written zero byes and result in job termination!
-	{
-		Consumer *cons=(Consumer *)obj;
-		bool result=false;
-		if(cons)
-			result=cons->Write(buf,bytes);
-		if(!result)
+	#define BUFSIZE 32768
+	static int bufptr=0;
+	static char tmpbuffer[BUFSIZE];
+
+//	if(bytes)	// Have seen requests to write zero bytes - catch them
+//				// otherwise cons->Write() will quite correctly report that
+//				// it's written zero byes and result in job termination!
+//	{
+		// Will now use zero byte request as a flush command...
+
+		// FIXME - do this more neatly.
+
+		if(bytes==0 || bufptr+bytes>BUFSIZE)
 		{
-			writeerror=true;
-			Debug[TRACE] << "cons->Write() asked to write " << bytes << "bytes, but returned " << result << std::endl;
+			Consumer *cons=(Consumer *)obj;
+			bool result=false;
+			if(cons)
+			{
+				result=cons->Write(tmpbuffer,bufptr);
+				bufptr=0;
+				if(bytes)
+					result=cons->Write(buf,bytes);
+			}
+			if(!result)
+			{
+				writeerror=true;
+				Debug[TRACE] << "cons->Write() asked to write " << bytes << "bytes, but returned " << result << std::endl;
+			}
 		}
-	}
+		else
+		{
+			for(int i=bytes;i>0;--i)
+				tmpbuffer[bufptr++]=*buf++;
+		}
+//	}
 }
 
 
@@ -392,6 +413,8 @@ void GPrinter::Print(ImageSource *src,int xpos,int ypos,Consumer *cons)
 		result&=stp_print(tmpvars, &stpImage);
 		error=NULL;
 	}
+
+	writefunc(consumer,NULL,0);
 
 	stp_vars_destroy(tmpvars);
 
