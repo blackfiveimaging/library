@@ -193,7 +193,7 @@ char *SearchPathHandler::SearchPaths(const char *file,bool recursive)
 #else
 	struct stat statbuf;
 #endif
-	Debug[WARN] << "Searching for " << file << endl;
+	Debug[TRACE] << "Searching for " << file << endl;
 
 	list<SearchPathInstance *>::iterator it=paths.begin();
 	while(it!=paths.end())
