@@ -712,17 +712,31 @@ void ProfileManager::BuildProfileInfoList()
 {
 	Debug[TRACE] << "Building ProfileInfo List:" << endl;
 	const char *f=NULL;
+	Debug[TRACE] << "Flushed existing list - if any." << endl;
 	FlushProfileInfoList();
 	new ProfileInfo(*this,BUILTINSRGB_ESCAPESTRING);
 	new ProfileInfo(*this,BUILTINSGREY_ESCAPESTRING);
+	Debug[TRACE] << "Added builtins." << endl;
 	while((f=GetNextFilename(f)))
 	{
+		Debug[TRACE] << "Adding " << f << endl;
 		if(!(FindProfileInfo(f)))
 			new ProfileInfo(*this,f);
 	}
-	GetProfileFromDisplay();
+	if(!proffromdisplay_size)	// We don't refresh the system monitor profile here, to avoid threading problems
+	{							// if the list is built from a sub-thread.
+		Debug[TRACE] << "Finished adding disk-based profiles - getting display profile..." << endl;
+		GetProfileFromDisplay();
+		Debug[TRACE] << "Done." << endl;
+	}
 	if(proffromdisplay_size)
+	{
+		Debug[TRACE] << "Got system monitor profile - adding..." << endl;
 		new ProfileInfo(*this,SYSTEMMONITORPROFILE_ESCAPESTRING);
+	}
+	else
+		Debug[TRACE] << "No system monitor profile." << endl;
+	Debug[TRACE] << "ProfileInfoList building complete." << endl;
 }
 
 
@@ -934,33 +948,41 @@ void ProfileManager::GetProfileFromDisplay()
 	else
 		Debug[TRACE] << "No profile associated with default display." << endl;
 #else
+	Debug[TRACE] << "Getting system monitor profile." << endl;
 	if(proffromdisplay)
+	{
+		Debug[TRACE] << "Freeing old system monitor profile." << endl;
 		XFree(proffromdisplay);
+	}
 	proffromdisplay=NULL;
 
 	if(xdisplay)
 	{
-//		Debug[TRACE] << "Got display" << endl;
+		Debug[TRACE] << "Got display - fetching atom" << endl;
 		Atom icc_atom;
 		icc_atom = XInternAtom (xdisplay, "_ICC_PROFILE", False);
 		if (icc_atom != None)
 		{
-//			Debug[TRACE] << "Got atom" << endl;
+			Debug[TRACE] << "Got atom" << endl;
 			Window w=DefaultRootWindow(xdisplay);
 			if(w)
 			{
-//				Debug[TRACE] << "Got window" << endl;
+				Debug[TRACE] << "Got window" << endl;
 				Atom type;
 				int format=0;
 				unsigned long nitems=0;
 				unsigned long bytes_after=0;
 				int result=0;
 
+				Debug[TRACE] << "Calling XGetWindowPropery" << endl;
+
 				result = XGetWindowProperty (xdisplay, w, icc_atom, 0,
 					0x7fffffff,0, XA_CARDINAL,
 					&type, &format, &nitems,
 					&bytes_after, &proffromdisplay);
 				proffromdisplay_size=nitems*(format/8);
+
+				Debug[ERROR] <<"Result: " << result << ", size: " << proffromdisplay_size << endl;
 
 				if(result!=Success)
 				{
