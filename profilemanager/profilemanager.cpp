@@ -55,6 +55,7 @@ ConfigTemplate ProfileManager::Template[]=
 ProfileManager::ProfileManager(ConfigFile *inifile,const char *section) :
 	ConfigDB(Template), SearchPathHandler(), PTMutex(), first(NULL), proffromdisplay_size(0), spiter(*this)
 {
+	creationthread=Thread::GetThreadID();
 #ifndef WIN32
 	xdisplay = XOpenDisplay(NULL);
  	proffromdisplay=NULL;
@@ -723,8 +724,10 @@ void ProfileManager::BuildProfileInfoList()
 		if(!(FindProfileInfo(f)))
 			new ProfileInfo(*this,f);
 	}
-	if(!proffromdisplay_size)	// We don't refresh the system monitor profile here, to avoid threading problems
-	{							// if the list is built from a sub-thread.
+	if(creationthread==Thread::GetThreadID())	// We only refresh the system monitor profile here if we're called from
+												// the same thread as was used to create the ProfileManager,
+												// to avoid threading problems between our own X11 calls and GTK's.
+	{
 		Debug[TRACE] << "Finished adding disk-based profiles - getting display profile..." << endl;
 		GetProfileFromDisplay();
 		Debug[TRACE] << "Done." << endl;

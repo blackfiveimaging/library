@@ -6,6 +6,7 @@
 #include "configdb.h"
 #include "searchpath.h"
 #include "ptmutex.h"
+#include "thread.h"
 #include "refcountptr.h"
 
 #ifndef WIN32
@@ -89,6 +90,7 @@ class ProfileManager : public ConfigDB, public SearchPathHandler, public PTMutex
 	#endif
 	long proffromdisplay_size;
 	SearchPathIterator spiter;
+	ThreadID creationthread;
 	friend class ProfileInfo;
 };
 
