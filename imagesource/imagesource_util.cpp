@@ -111,6 +111,12 @@ ImageSource *ISLoadImage(const char *filename)
 }
 
 
+ImageSource *ISLoadImage(std::string filename)
+{
+	return(ISLoadImage(filename.c_str()));
+}
+
+
 ImageSource *ISScaleImageByResolution(ImageSource *source,double xres,double yres,IS_ScalingQuality quality)
 {
 	ImageSource *result=NULL;

@@ -1,6 +1,7 @@
 #ifndef IMAGESOURCE_UTIL_H
 #define IMAGESOURCE_UTIL_H
 
+#include <string>
 #include "imagesource.h"
 
 enum IS_ScalingQuality
@@ -21,6 +22,7 @@ struct IS_ScalingQualityDescription
 };
 
 
+ImageSource *ISLoadImage(std::string filename);
 ImageSource *ISLoadImage(const char *filename);
 ImageSource *ISScaleImageByResolution(ImageSource *source,double xres,double yres,IS_ScalingQuality quality=IS_SCALING_AUTOMATIC);
 ImageSource *ISScaleImageBySize(ImageSource *source,int w,int h,IS_ScalingQuality quality=IS_SCALING_AUTOMATIC);
