@@ -8,7 +8,7 @@ AC_CONFIG_SRCDIR([threadtest.cpp])
 AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([1.9 foreign])
 
-AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 AM_GNU_GETTEXT([external])
 
 # Checks for programs.
