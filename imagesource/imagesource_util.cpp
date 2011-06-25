@@ -19,7 +19,7 @@
 #include "imagesource_util.h"
 
 
-#include "../config.h"
+#include "config.h"
 
 #include "gettext.h"
 #define _(x) gettext(x)

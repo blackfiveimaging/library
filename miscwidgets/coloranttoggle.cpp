@@ -29,15 +29,15 @@
 #include "config.h"
 #endif
 
-#include "imagesource/imagesource_gdkpixbuf.h"
-#include "imagesource/imagesource_greyscale.h"
-#include "imagesource/imagesource_solid.h"
-#include "imagesource/imagesource_mask.h"
-#include "imagesource/imagesource_devicen_preview.h"
-#include "imagesource/devicencolorant.h"
-#include "imagesource/pixbuf_from_imagesource.h"
+#include "imagesource_gdkpixbuf.h"
+#include "imagesource_greyscale.h"
+#include "imagesource_solid.h"
+#include "imagesource_mask.h"
+#include "imagesource_devicen_preview.h"
+#include "devicencolorant.h"
+#include "pixbuf_from_imagesource.h"
 
-#include "miscwidgets/generaldialogs.h"
+#include "generaldialogs.h"
 #include "pixbuf_from_imagedata.h"
 #include "coloranttoggle.h"
 

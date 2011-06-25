@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "profilemanager/lcmswrapper.h"
-#include "support/debug.h"
+#include "lcmswrapper.h"
+#include "debug.h"
 
 #include "cachedimage.h"
 

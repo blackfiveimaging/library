@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../support/util.h"
+#include "util.h"
 #include "devicencolorant.h"
 
-#include "../support/debug.h"
+#include "debug.h"
 
-#include "../config.h"
-#include "../gettext.h"
+#include "config.h"
+#include "gettext.h"
 
 using namespace std;
 

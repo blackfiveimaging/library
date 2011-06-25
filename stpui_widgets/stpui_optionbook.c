@@ -16,8 +16,8 @@
 #include "stpui_optionbook.h"
 #include "../stp_support/stputil.h"
 
-#include "../config.h"
-#include "../gettext.h"
+#include "config.h"
+#include "gettext.h"
 
 #define _(x) gettext(x)
 

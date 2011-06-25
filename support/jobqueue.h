@@ -6,9 +6,9 @@
 #include <list>
 #include <string>
 
-#include "support/debug.h"
-#include "support/thread.h"
-#include "support/ptmutex.h"
+#include "debug.h"
+#include "thread.h"
+#include "ptmutex.h"
 
 class Worker;
 

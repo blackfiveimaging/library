@@ -2,15 +2,15 @@
 
 #include "spinner.h"
 
-#include "miscwidgets/pixbuf_from_imagedata.h"
-#include "miscwidgets/spinner1.cpp"
-#include "miscwidgets/spinner2.cpp"
-#include "miscwidgets/spinner3.cpp"
-#include "miscwidgets/spinner4.cpp"
-#include "miscwidgets/spinner5.cpp"
-#include "miscwidgets/spinner6.cpp"
-#include "miscwidgets/spinner7.cpp"
-#include "miscwidgets/spinner8.cpp"
+#include "pixbuf_from_imagedata.h"
+#include "spinner1.cpp"
+#include "spinner2.cpp"
+#include "spinner3.cpp"
+#include "spinner4.cpp"
+#include "spinner5.cpp"
+#include "spinner6.cpp"
+#include "spinner7.cpp"
+#include "spinner8.cpp"
 
 Spinner::Spinner()
 {

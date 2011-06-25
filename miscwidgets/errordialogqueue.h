@@ -23,7 +23,7 @@
 
 #include <gtk/gtk.h>
 
-#include "support/ptmutex.h"
+#include "ptmutex.h"
 
 using namespace std;
 

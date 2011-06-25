@@ -13,7 +13,7 @@
 #include <gtk/gtktreestore.h>
 #include <gtk/gtkcellrendererpixbuf.h>
 
-#include "imagesource/devicencolorant.h"
+#include "devicencolorant.h"
 
 
 #define COLORANTSELECTOR_TYPE			(colorantselector_get_type())

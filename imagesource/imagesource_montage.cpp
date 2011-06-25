@@ -168,7 +168,15 @@ ImageSource_Montage::~ImageSource_Montage()
 void ImageSource_Montage::Add(ImageSource *is,int xpos,int ypos)
 {
 	Debug[TRACE] << "Adding image of type " << is->type << " to page of type " << type << "( " << long(is) << ")" << endl;
-	if(STRIP_ALPHA(is->type)!=STRIP_ALPHA(type))
+
+	// We tolerate the adding of a CMYK image to a DeviceN page.  Apart from that, colourspaces much match.
+
+	if(STRIP_ALPHA(type)==IS_TYPE_DEVICEN)
+	{
+		if(STRIP_ALPHA(is->type)!=IS_TYPE_CMYK || samplesperpixel<is->samplesperpixel)
+			throw "DeviceN montages can only accept CMYK or DeviceN images, and can't have fewer samples per pixel than the images!";
+	}
+	else if(STRIP_ALPHA(is->type)!=STRIP_ALPHA(type))
 		throw "Can't yet mix different colour spaces on one page";
 	new ISMontage_Component(this,is,xpos,ypos);
 

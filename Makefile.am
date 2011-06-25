@@ -1,6 +1,6 @@
 # Makefile.am
 
-SUBDIRS = po argyllsupport support imagesource imageutils miscwidgets stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
+SUBDIRS = argyllsupport support imagesource imageutils miscwidgets stpui_widgets stp_support gp_cppsupport pixbufthumbnail profilemanager
 
 localedir=$(datadir)/locale
 

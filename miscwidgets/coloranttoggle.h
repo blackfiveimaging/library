@@ -14,7 +14,7 @@
 #include <gtk/gtkcellrendererpixbuf.h>
 #include <cairo.h>
 
-#include "imagesource/devicencolorant.h"
+#include "devicencolorant.h"
 
 
 #define COLORANTTOGGLE_TYPE			(coloranttoggle_get_type())
