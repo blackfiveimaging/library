@@ -49,5 +49,19 @@ class DebugStream
 
 extern DebugStream Debug;
 
+
+class DebugTracer	// A tracer using RAII semantics; the debug level will be restored when this goes out of scope.
+{
+	public:
+	DebugTracer(DebugLevel level=TRACE)
+	{
+		Debug.PushLevel(level);
+	}
+	~DebugTracer()
+	{
+		Debug.PopLevel();
+	}	
+};
+
 #endif
 

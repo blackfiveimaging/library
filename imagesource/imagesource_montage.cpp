@@ -173,7 +173,7 @@ void ImageSource_Montage::Add(ImageSource *is,int xpos,int ypos)
 
 	if(STRIP_ALPHA(type)==IS_TYPE_DEVICEN)
 	{
-		if(STRIP_ALPHA(is->type)!=IS_TYPE_CMYK || samplesperpixel<is->samplesperpixel)
+		if((STRIP_ALPHA(is->type)!=IS_TYPE_CMYK && STRIP_ALPHA(is->type)!=IS_TYPE_DEVICEN) || samplesperpixel<is->samplesperpixel)
 			throw "DeviceN montages can only accept CMYK or DeviceN images, and can't have fewer samples per pixel than the images!";
 	}
 	else if(STRIP_ALPHA(is->type)!=STRIP_ALPHA(type))
@@ -290,7 +290,7 @@ ISDataType *ImageSource_Montage::GetRow(int row)
 					for(int i=0;i<mc->source->width;++i)
 					{
 						int j;
-						for(j=0;j<samplesperpixel-1;++j)
+						for(j=0;j<mc->source->samplesperpixel;++j)	// note samplesperpixel - different for source/dest...
 						{
 							dst[(mc->xpos+i)*samplesperpixel+j]=src[i*mc->source->samplesperpixel+j];
 						}
@@ -300,8 +300,16 @@ ISDataType *ImageSource_Montage::GetRow(int row)
 				else
 				{
 					// Simplest case - neither source nor destination has an alpha channel.
-					for(int i=0;i<mc->source->width*samplesperpixel;++i)
-						dst[mc->xpos*samplesperpixel+i]=src[i];
+					for(int i=0;i<mc->source->width;++i)
+					{
+						int j;
+						for(j=0;j<mc->source->samplesperpixel;++j)	// note samplesperpixel - different for source/dest...
+						{
+							dst[(mc->xpos+i)*samplesperpixel+j]=src[i*mc->source->samplesperpixel+j];
+						}
+						for(j=mc->source->samplesperpixel;j<samplesperpixel;++j)
+							dst[(mc->xpos+i)*samplesperpixel+j]=0;
+					}
 				}
 			}
 		}
