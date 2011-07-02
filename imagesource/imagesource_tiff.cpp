@@ -17,6 +17,7 @@
  * Test with 16-bit CMYK, Grey
  * Add support for Lab
  * Add indexed->RGB conversion
+ * Need to handle pre-multiplied alpha
  *
  */
 
@@ -32,7 +33,8 @@
 #include "../support/debug.h"
 #include "util.h"
 
-#include "imagesource_tiff.h"#include "../profilemanager/lcmswrapper.h"
+#include "imagesource_tiff.h"
+#include "../profilemanager/lcmswrapper.h"
 
 using namespace std;
 
@@ -233,7 +235,7 @@ ISDataType *ImageSource_TIFF::GetRow(int row)
 		switch(bps)
 		{
 			case 1:
-				for(i=0;i<spr;++i)
+				for(i=0;i<width*samplesperpixel;++i)
 				{
 					t=srcrow[i];
 					for(j=0;j<((width-i*8)>7 ? 8 : width-i*8 );++j)
@@ -246,13 +248,19 @@ ISDataType *ImageSource_TIFF::GetRow(int row)
 				}
 				break;
 			case 8:
-				for(i=0;i<spr;++i)
-					rowbuffer[i]=EIGHTTOIS(srcrow[i]);
+				for(int x=0;x<width;++x)
+				{
+					for(int s=0;s<samplesperpixel;++s)
+						rowbuffer[x*samplesperpixel+s]=EIGHTTOIS(srcrow[x*source_spp+s]);
+				}
 				break;
 			case 16:
 				unsigned short *srcrow16=(unsigned short *)srcrow;
-				for(i=0;i<spr;++i)
-					rowbuffer[i]=srcrow16[i];
+				for(int x=0;x<width;++x)
+				{
+					for(int s=0;s<samplesperpixel;++s)
+						rowbuffer[x*samplesperpixel+s]=srcrow[x*source_spp+s];
+				}
 				break;
 		}
 	}
@@ -286,7 +294,8 @@ int ImageSource_TIFF::CountTIFFDirs(const char *filename,int &largestdir)
 		++count;	
 		uint32 width,height;
 		TIFFGetField(file, TIFFTAG_IMAGEWIDTH, &width);
-		TIFFGetField(file, TIFFTAG_IMAGELENGTH, &height);		Debug[TRACE] << "Got image with dimensions " << width << " x " << height << endl;
+		TIFFGetField(file, TIFFTAG_IMAGELENGTH, &height);
+		Debug[TRACE] << "Got image with dimensions " << width << " x " << height << endl;
 		if((width*height)>largestarea)
 		{
 			largestarea=width*height;
@@ -300,7 +309,8 @@ int ImageSource_TIFF::CountTIFFDirs(const char *filename,int &largestdir)
 	Debug[TRACE] << "A total of " << count << "sub-images, the largest being " << largestdir << endl;
 
 	return(count);
-}
+}
+
 
 ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 {
@@ -314,6 +324,7 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 	uint16 *palettered,*palettegreen,*paletteblue;
 	uint16 inkset;
 	int i;
+	bool have_alpha=false;
 
 	type=IS_TYPE_NULL;
 
@@ -344,6 +355,24 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 	TIFFGetField(file, TIFFTAG_IMAGELENGTH, &height);
 	TIFFGetField(file, TIFFTAG_ROWSPERSTRIP, &sl);
 
+	uint16 extrasamples=0;
+	uint16 *sampleinfo=0;
+	if(TIFFGetField(file, TIFFTAG_EXTRASAMPLES, &extrasamples, &sampleinfo))
+	{
+		Debug[TRACE] << "ImageSource_TIFF: Extrasamples " << extrasamples << std::endl;
+		Debug[TRACE] << "ImageSource_TIFF: SampleInfo[0] " << sampleinfo[0] << std::endl;
+		if(extrasamples && (sampleinfo[0]==EXTRASAMPLE_ASSOCALPHA || sampleinfo[0]==EXTRASAMPLE_UNASSALPHA))
+		{
+			Debug[TRACE] << "Alpha channel detected." << std::endl;
+			--extrasamples;
+			have_alpha=true;
+		}
+	}
+	samplesperpixel=spp-extrasamples;
+
+	Debug[TRACE] << "ImageSource_TIFF: Got an image with " << spp << " samples per pixel" << std::endl;
+	Debug[TRACE] << "ImageSource_TIFF: Photometric: " << photometric << std::endl;
+
 	// If striplength is undefined, assume the image data is in a single strip.
 	if(sl==0) sl=height;
 
@@ -369,18 +398,10 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 				type=IS_TYPE_BW;
 			else
 			{
-				switch(spp)
-				{
-					case 1:
-						type=IS_TYPE_GREY;
-						break;
-					case 2:
-						type=IS_TYPE_GREYA;
-						break;
-					default:
-						break;
-				}
+				type=IS_TYPE_GREY;
 			}
+			if(samplesperpixel>2)
+				throw "ImageSource_TIFF: Greyscale images can't have more than 2 samples per pixel!";
 			break;
 		case PHOTOMETRIC_PALETTE:
 			TIFFGetField(file, TIFFTAG_COLORMAP,&palettered,&palettegreen,&paletteblue);
@@ -406,23 +427,17 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 			}
 			else
 				type=IS_TYPE_GREY;
+			if(samplesperpixel>2)
+				throw "ImageSource_TIFF: Palettized grey images can't currently have more than 2 samples per pixel!";
 			break;
 		case PHOTOMETRIC_RGB:
-			switch(spp)
-			{
-				case 3:
-					type=IS_TYPE_RGB;
-					break;
-				case 4:
-					type=IS_TYPE_RGBA;
-					break;
-				default:
-					throw "ISTIFF Panic: RGB images must have 3 or 4 samples per pixel!";
-					break;
-			}
+			type=IS_TYPE_RGB;
+			if(samplesperpixel>4)
+				throw "ImageSource_TIFF: RGB images can't have more than 2 samples per pixel!";
 			break;
 		case PHOTOMETRIC_SEPARATED:
 			TIFFGetField(file, TIFFTAG_INKSET, &inkset);
+			samplesperpixel=spp;
 			switch(spp)
 			{
 				case 4:
@@ -439,6 +454,9 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 		default:
 			throw "Unsupported file format - must be either 1, 8 or 16-bit greyscale, RGB or CMYK...";
 	}
+
+	if(have_alpha)
+		type=IS_TYPE(type | IS_TYPE_ALPHA);
 
 	TIFFGetField(file, TIFFTAG_RESOLUTIONUNIT, &resunit);
 	TIFFGetField(file, TIFFTAG_XRESOLUTION, &xres);
@@ -473,18 +491,18 @@ ImageSource_TIFF::ImageSource_TIFF(const char *filename) : ImageSource()
 	this->xres=int(xres);
 	this->yres=int(yres);
 	this->resunit=resunit;
-	this->samplesperpixel=spp;
+//	this->samplesperpixel=spp;
 	this->bps=bps;
 	this->photometric=photometric;
 	filerow=0;
 	
 	randomaccess=true;
 
-	this->spr=(width*samplesperpixel);
+	this->spr=(width*spp);
 	if(bps==1)
 		this->spr=(this->spr+7)/8;
 
-	source_spp=samplesperpixel;
+	source_spp=spp;
 
 //  This is no longer valid.  If memory serves it was to hack around Greyscale TIFFs with Alpha.
 //  FIXME: Verify that greyscale TIFFs with Alpha still work OK!

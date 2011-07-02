@@ -76,7 +76,7 @@ GdkPixbuf *pixbuf_from_imagesource(ImageSource *is,
 				case IS_TYPE_GREYA:
 					for(int x=0;x<is->width;++x)
 					{
-						int a=255-ISTOEIGHT(src[x*2+3]);
+						int a=255-ISTOEIGHT(src[x*2+1]);
 						pixels[x*3]=(ISTOEIGHT(IS_SAMPLEMAX-src[x*2])*a+redbg8*(255-a))/255;
 						pixels[x*3+1]=(ISTOEIGHT(IS_SAMPLEMAX-src[x*2])*a+greenbg8*(255-a))/255;
 						pixels[x*3+2]=(ISTOEIGHT(IS_SAMPLEMAX-src[x*2])*a+bluebg8*(255-a))/255;

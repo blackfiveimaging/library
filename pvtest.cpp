@@ -30,7 +30,7 @@
 #define _(x) gettext(x)
 
 
-#if 0
+#if 1
 static void change_page(GtkWidget *widget,gpointer userdata)
 {
 	int idx=simplecombo_get_index(SIMPLECOMBO(widget));
@@ -78,7 +78,7 @@ int main(int argc,char**argv)
 		for(int i=1;i<argc;++i)
 		{
 			ImageSource *is=ISLoadImage(argv[i]);
-			is=new ImageSource_HReflect(is);
+//			is=new ImageSource_HReflect(is);
 			GdkPixbuf *pb=pixbuf_from_imagesource(is);
 			delete is;
 
@@ -104,7 +104,7 @@ int main(int argc,char**argv)
 	return(0);
 }
 #endif
-
+#if 0
 using namespace std;
 // Simple image viewer...
 class PVTest : public SimpleListViewOptions
@@ -190,6 +190,32 @@ class PVTest : public SimpleListViewOptions
 };
 
 
+int main(int argc,char**argv)
+{
+	Debug.SetLevel(TRACE);
+
+	gtk_init(&argc,&argv);
+
+	try
+	{
+		PVTest test;
+		for(int i=1;i<argc;++i)
+			test.AddImage(argv[i]);
+		test.Populate();
+
+		gtk_main();
+
+	}
+	catch(const char *err)
+	{
+		cerr << "Error: " << err << endl;
+	}
+
+	return(0);
+}
+
+#endif
+
 #if 0
 // Testing darktable's slider widgets.
 class PVTest : public ConfigFile, public ProfileManager
@@ -253,29 +279,4 @@ class PVTest : public ConfigFile, public ProfileManager
 	GtkWidget *pview;
 };
 #endif
-
-
-int main(int argc,char**argv)
-{
-	Debug.SetLevel(TRACE);
-
-	gtk_init(&argc,&argv);
-
-	try
-	{
-		PVTest test;
-		for(int i=1;i<argc;++i)
-			test.AddImage(argv[i]);
-		test.Populate();
-
-		gtk_main();
-
-	}
-	catch(const char *err)
-	{
-		cerr << "Error: " << err << endl;
-	}
-
-	return(0);
-}
 

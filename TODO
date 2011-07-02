@@ -1,3 +1,5 @@
+Deal with extra samples in TIFF images.
+
 ImageSources will need to carry around a collection of parasites - data from the source file that the stack
 doesn't know how to deal with.  Clipping paths will fall into this category, but ICC profiles won't, since
 the stack is capable of dealing with those.
