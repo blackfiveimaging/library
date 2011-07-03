@@ -629,38 +629,45 @@ stp_image_status_t GPrinter::GetRow(int row,unsigned char *data)
 #endif
 	int i;
 
-	src=source->GetRow(row+firstrow);
-	src+=(source->samplesperpixel*firstpixel);
-
-	if(progress && !(row&31))
+	try
 	{
-		if(!(progress->DoProgress(row,pixelheight)))
+		src=source->GetRow(row+firstrow);
+		src+=(source->samplesperpixel*firstpixel);
+
+		if(progress && !(row&31))
 		{
-			result=STP_IMAGE_STATUS_ABORT;
-			consumer->Cancel();
+			if(!(progress->DoProgress(row,pixelheight)))
+			{
+				result=STP_IMAGE_STATUS_ABORT;
+				consumer->Cancel();
+			}
+		}
+	
+		switch(source->type)
+		{
+			case IS_TYPE_RGB:
+			case IS_TYPE_CMYK:
+			case IS_TYPE_DEVICEN:
+				for(i=0;i<pixelwidth*source->samplesperpixel;++i)
+				{
+	#ifdef USE8BITPRINTING
+					ISDataType t=*src++;
+					*dst++=ISTOEIGHT(t);
+	#else
+					*dst++=*src++;
+	#endif
+				}
+				break;
+			default:
+				result=STP_IMAGE_STATUS_ABORT;
+				break;
 		}
 	}
-	
-	switch(source->type)
+	catch(const char *err)
 	{
-		case IS_TYPE_RGB:
-		case IS_TYPE_CMYK:
-		case IS_TYPE_DEVICEN:
-			for(i=0;i<pixelwidth*source->samplesperpixel;++i)
-			{
-#ifdef USE8BITPRINTING
-				ISDataType t=*src++;
-				*dst++=ISTOEIGHT(t);
-#else
-				*dst++=*src++;
-#endif
-			}
-			break;
-		default:
-			result=STP_IMAGE_STATUS_ABORT;
-			break;
+		// FIXME: Use errordialogqueue here?
+		Debug[ERROR] << "Error: " << err << std::endl;
 	}
-
 	if(writeerror)
 		result=STP_IMAGE_STATUS_ABORT;
 
@@ -705,7 +712,8 @@ class ImageSource_RainbowSweep : public ImageSource
 		randomaccess=true;
 		MakeRowBuffer();
 	}
-	~ImageSource_RainbowSweep()
+
+	~ImageSource_RainbowSweep()
 	{
 	}
 
@@ -713,7 +721,8 @@ class ImageSource_RainbowSweep : public ImageSource
 	{
 		if(currentrow==row)
 			return(rowbuffer);
-		double a=row;
+
+		double a=row;
 		a/=height;
 
 		for(int x=0;x<width;++x)
