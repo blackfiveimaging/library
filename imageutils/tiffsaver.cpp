@@ -28,11 +28,11 @@ using namespace std;
 
 TIFFSaver::~TIFFSaver()
 {
-	if(file)
-	{
-		TIFFWriteDirectory(file);
-		TIFFClose(file);
-	}
+//	if(file)
+//	{
+		TIFFWriteDirectory(&*file);
+//		TIFFClose(file);
+//	}
 	
 	if(tmpbuffer)
 		free(tmpbuffer);
@@ -43,8 +43,8 @@ TIFFSaver::~TIFFSaver()
 
 void TIFFSaver::ProcessRow(int row)
 {
-	if(file)
-	{
+//	if(file)
+//	{
 		int strip=row/stripheight;
 		int firstrow=strip*stripheight;
 		int lastrow=firstrow+stripheight-1;
@@ -55,9 +55,9 @@ void TIFFSaver::ProcessRow(int row)
 				
 		ISDataType *src=source->GetRow(row);
 				
-		switch(bitsperpixel)
+		switch(STRIP_ALPHA(source->type))
 		{
-			case 1:		// 1 bit per sample - pack 8 samples into each byte.
+			case IS_TYPE_BW:		// 1 bit per sample - pack 8 samples into each byte.
 				for(int i=0;i<width;i+=8)
 				{
 					int j;
@@ -76,14 +76,14 @@ void TIFFSaver::ProcessRow(int row)
 				if(deep)	// Save with 16 bits per sample?
 				{
 					unsigned short *dst16=(unsigned short *)dst;
-					for(int i=0;i<bytesperrow;++i)
+					for(int i=0;i<(source->width*source->samplesperpixel);++i)
 					{
 						dst16[i]=src[i];
 					}
 				}
 				else	// 8 bits per sample
 				{
-					for(int i=0;i<bytesperrow;++i)
+					for(int i=0;i<(source->width*source->samplesperpixel);++i)
 					{
 						unsigned int t;
 						t=int(src[i]);
@@ -97,9 +97,9 @@ void TIFFSaver::ProcessRow(int row)
 		}
 		if(row==lastrow)
 		{
-			TIFFWriteEncodedStrip(file, strip, tmpbuffer, stripsize);
+			TIFFWriteEncodedStrip(&*file, strip, tmpbuffer, stripsize);
 		}
-	}
+//	}
 }
 
 
@@ -182,15 +182,16 @@ void TIFFSaver::Save()
 
 
 TIFFSaver::TIFFSaver(const char *filename,RefCountPtr<ImageSource> is,bool deep,int bpp,int compression)
-	: ImageSaver(is), deep(deep), embprofile(NULL)
+	: ImageSaver(is), deep(deep), file(filename,"w"), tmpbuffer(NULL), embprofile(NULL)
 {
+	int bitsperpixel;
 	switch(is->type)
 	{
 		case IS_TYPE_BW:
 			bitsperpixel=1;
 			break;
 		default:
-			bitsperpixel=is->samplesperpixel*8;
+			bitsperpixel=is->samplesperpixel* (deep ? 16 : 8);
 			break;
 	}
 	if(bpp && (bpp!=bitsperpixel))
@@ -208,6 +209,7 @@ TIFFSaver::TIFFSaver(const char *filename,RefCountPtr<ImageSource> is,bool deep,
 	stripheight=TIFFSAVE_STRIPHEIGHT;
 
 	tmpbuffer=NULL;
+#if 0
 #if WIN32
 	wchar_t *tmpfn=UTF8ToWChar(filename);
 	if(!(file = TIFFOpenW(tmpfn, "w")))
@@ -221,94 +223,74 @@ TIFFSaver::TIFFSaver(const char *filename,RefCountPtr<ImageSource> is,bool deep,
 		throw "Can't open file";
 	}
 #endif
-	switch(bitsperpixel)
+#endif
+	if(HAS_ALPHA(is->type))
 	{
-		case 40:
-			if(HAS_ALPHA(is->type))
-			{
-				TIFFSetField(file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_SEPARATED);
-				TIFFSetField(file, TIFFTAG_SAMPLESPERPIXEL, 5);
-				TIFFSetField(file, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-				TIFFSetField(file, TIFFTAG_BITSPERSAMPLE, deep ? 16 : 8);
-			}
-			else
-				throw "DeviceN TIFF output is not yet complete";
-			break;
-		case 32:
-			if(HAS_ALPHA(is->type))
-			{
-				TIFFSetField(file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-				TIFFSetField(file, TIFFTAG_SAMPLESPERPIXEL, 4);
-				TIFFSetField(file, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-				TIFFSetField(file, TIFFTAG_BITSPERSAMPLE, deep ? 16 : 8);
-			}
-			else
-			{
-				TIFFSetField(file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_SEPARATED);
-				TIFFSetField(file, TIFFTAG_SAMPLESPERPIXEL, 4);
-				TIFFSetField(file, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-				TIFFSetField(file, TIFFTAG_INKSET, INKSET_CMYK);
-				TIFFSetField(file, TIFFTAG_BITSPERSAMPLE, deep ? 16 : 8);
-			}
-			break;
+	    uint16 v[1];
+	    v[0] = EXTRASAMPLE_UNASSALPHA;
+	    TIFFSetField(&*file, TIFFTAG_EXTRASAMPLES, 1, v);
+	}
 
-		case 24:
-			TIFFSetField(file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-			TIFFSetField(file, TIFFTAG_SAMPLESPERPIXEL, 3);
-			TIFFSetField(file, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-			TIFFSetField(file, TIFFTAG_BITSPERSAMPLE, deep ? 16 : 8);
+	int bps=deep ? 16 : 8;
+	switch(STRIP_ALPHA(is->type))
+	{
+		case IS_TYPE_DEVICEN:
+			TIFFSetField(&*file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_SEPARATED);
 			break;
-
-		case 8:
-			TIFFSetField(file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);
-			TIFFSetField(file, TIFFTAG_SAMPLESPERPIXEL, 1);
-			TIFFSetField(file, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-			TIFFSetField(file, TIFFTAG_BITSPERSAMPLE, deep ? 16 : 8);
+		case IS_TYPE_CMYK:
+			TIFFSetField(&*file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_SEPARATED);
+			TIFFSetField(&*file, TIFFTAG_INKSET, INKSET_CMYK);
 			break;
-		
-		case 1:
-			TIFFSetField(file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);
-			TIFFSetField(file, TIFFTAG_SAMPLESPERPIXEL, 1);
-			TIFFSetField(file, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-			TIFFSetField(file, TIFFTAG_BITSPERSAMPLE, 1);
+		case IS_TYPE_RGB:
+			TIFFSetField(&*file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 			break;
-	
+		case IS_TYPE_GREY:
+			TIFFSetField(&*file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);
+			break;
+		case IS_TYPE_BW:
+			TIFFSetField(&*file, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);
+			bps=1;
+			break;
 		default:
-			fprintf(stderr,"FIXME: unsupported bitspersample: %d\n",bitsperpixel);
-			TIFFClose(file);
-			throw "Unsupported image type";
+			Debug[ERROR] << "TIFFSaver: unsupported image type " << is->type << std::endl;
+//			TIFFClose(file);
+			throw "TIFFSaver: Unsupported image type";
 			break;
 	}
-	TIFFSetField(file, TIFFTAG_IMAGEWIDTH, width);
-	TIFFSetField(file, TIFFTAG_IMAGELENGTH, height);
-	TIFFSetField(file, TIFFTAG_ROWSPERSTRIP, stripheight);
+
+	TIFFSetField(&*file, TIFFTAG_SAMPLESPERPIXEL, is->samplesperpixel);
+	TIFFSetField(&*file, TIFFTAG_BITSPERSAMPLE, bps);
+	TIFFSetField(&*file, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+	TIFFSetField(&*file, TIFFTAG_IMAGEWIDTH, width);
+	TIFFSetField(&*file, TIFFTAG_IMAGELENGTH, height);
+	TIFFSetField(&*file, TIFFTAG_ROWSPERSTRIP, stripheight);
 	
 	double xr=xres;
 	double yr=yres;
 	
-	TIFFSetField(file, TIFFTAG_XRESOLUTION, xr);
-	TIFFSetField(file, TIFFTAG_YRESOLUTION, yr);
-	TIFFSetField(file, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);
-	TIFFSetField(file, TIFFTAG_COMPRESSION, compression);
+	TIFFSetField(&*file, TIFFTAG_XRESOLUTION, xr);
+	TIFFSetField(&*file, TIFFTAG_YRESOLUTION, yr);
+	TIFFSetField(&*file, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);
+	TIFFSetField(&*file, TIFFTAG_COMPRESSION, compression);
 
 	if(is->GetEmbeddedProfile())
 	{
 		embprofile=is->GetEmbeddedProfile()->GetBlob();
-		TIFFSetField(file, TIFFTAG_ICCPROFILE, embprofile->GetSize(),embprofile->GetPointer());
+		TIFFSetField(&*file, TIFFTAG_ICCPROFILE, embprofile->GetSize(),embprofile->GetPointer());
 	}
 
 	if(psirb=is->GetParasite(ISPARATYPE_PSIMAGERESOURCEBLOCK,ISPARA_TIFF))
 	{
 		Debug[TRACE] << "FOUND CLIPPING PATH -adding to output TIFF" << std::endl;
-		TIFFSetField(file,TIFFTAG_PHOTOSHOP, psirb->GetSize(),psirb->GetPointer());
+		TIFFSetField(&*file,TIFFTAG_PHOTOSHOP, psirb->GetSize(),psirb->GetPointer());
 	}
 
-	stripsize = TIFFStripSize(file);
+	stripsize = TIFFStripSize(&*file);
 	bytesperrow = (width*bitsperpixel+7)/8;
 
 	if(!(tmpbuffer=(unsigned char *)malloc(stripsize)))
 	{
-		TIFFClose(file);
+//		TIFFClose(file);
 		throw "No memory for tmpbuffer";
 	}
 }
