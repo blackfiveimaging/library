@@ -51,7 +51,8 @@ void TIFFSaver::ProcessRow(int row)
 		if(lastrow>=height)
 			lastrow=height-1;
 
-		unsigned char *dst=tmpbuffer+(row-firstrow)*(deep ? bytesperrow*2 : bytesperrow);
+//		unsigned char *dst=tmpbuffer+(row-firstrow)*(deep ? bytesperrow*2 : bytesperrow);
+		unsigned char *dst=tmpbuffer+(row-firstrow) * bytesperrow;
 				
 		ISDataType *src=source->GetRow(row);
 				
