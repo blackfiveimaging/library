@@ -43,7 +43,7 @@ static void mouse_move(GtkWidget *widget,gpointer userdata)
 	PixbufView *pv=(PixbufView *)userdata;
 	int x=pixbufview_get_mousex(pv);
 	int y=pixbufview_get_mousey(pv);
-	cerr << "Mouse position: " << x << ", " << y << endl;
+//	cerr << "Mouse position: " << x << ", " << y << endl;
 }
 
 

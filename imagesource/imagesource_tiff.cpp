@@ -126,15 +126,15 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 //					}
 					break;
 				case 16:
-					switch(header->samplesperpixel)
-					{
-						case 1:
+//					switch(header->samplesperpixel)
+//					{
+//						case 1:
 							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
 							break;
-						default:
-							Debug[ERROR] << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
-							break;
-					}
+//						default:
+//							Debug[ERROR] << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
+//							break;
+//					}
 					break;
 			}
 			break;
@@ -164,19 +164,19 @@ IS_TIFFStrip::IS_TIFFStrip(ImageSource_TIFF *header,int row) : next(NULL), heade
 //					}
 					break;
 				case 16:
-					switch(header->samplesperpixel)
-					{
-						case 1:
+//					switch(header->samplesperpixel)
+//					{
+//						case 1:
 							TIFFReadEncodedStrip(header->file, i, imgdata, (tsize_t)-1);
 							{
 								for(j=0;j<(header->stripsize/2);++j)
 									imgdata[j]=imgdata[j]^65535;
 							}
 							break;
-						default:
-							Debug[ERROR] << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
-							break;
-					}
+//						default:
+//							Debug[ERROR] << "FIXME - 16-bit greyscale data with 2 samples per pixel not yet handled" << endl;
+//							break;
+//					}
 					break;
 			}
 			break;
@@ -259,7 +259,7 @@ ISDataType *ImageSource_TIFF::GetRow(int row)
 				for(int x=0;x<width;++x)
 				{
 					for(int s=0;s<samplesperpixel;++s)
-						rowbuffer[x*samplesperpixel+s]=srcrow[x*source_spp+s];
+						rowbuffer[x*samplesperpixel+s]=srcrow16[x*source_spp+s];
 				}
 				break;
 		}
