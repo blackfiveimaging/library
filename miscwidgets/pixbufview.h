@@ -31,7 +31,7 @@ struct _PixbufView
 	int xoffset,yoffset;
 	bool dragging;
 	int prev_x,prev_y;
-	int currentpage;
+	unsigned int currentpage;
 	int mousex,mousey;
 	std::deque<GdkPixbuf *> pages;
 };

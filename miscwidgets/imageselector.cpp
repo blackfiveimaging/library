@@ -670,7 +670,7 @@ void imageselector_remove(ImageSelector *c,const char *fn)
 		if(c->selectionlist)
 		{
 			Debug[TRACE] << "Checking selection list" << endl;
-			for(int i=0;i<c->selectionlist->size();++i)
+			for(unsigned int i=0;i<c->selectionlist->size();++i)
 				removebyname(c,(*c->selectionlist)[i].c_str());
 		}
 		else

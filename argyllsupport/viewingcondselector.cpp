@@ -171,7 +171,7 @@ const char *viewingcondselector_get(ViewingCondSelector *c)
 
 bool viewingcondselector_set(ViewingCondSelector *c,const char *value)
 {
-	for(int i=0;i<VIEWINGCONDS_COUNT;++i)
+	for(unsigned int i=0;i<VIEWINGCONDS_COUNT;++i)
 	{
 		if(strcmp(value,viewingconds[i].value)==0)
 		{

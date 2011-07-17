@@ -59,29 +59,6 @@ static void simplelistview_init (SimpleListView *stpuilistview);
 static void simplelistview_destroy(GtkObject *object);
 
 
-static void	simplelistview_entry_changed(GtkEntry *entry,gpointer user_data)
-{
-	SimpleListView *c=SIMPLELISTVIEW(user_data);
-
-	int index=simplelistview_get_index(c);
-
-	SimpleListViewOption *o=(*c->opts)[index];
-
-	if(o && o->tooltip && (strlen(o->tooltip)>0))
-	{
-//		gtk_tooltips_set_tip(c->tips,c->optionmenu,o->tooltip,o->tooltip);
-		gtk_tooltips_enable(c->tips);
-	}
-	else
-	{
-//		gtk_tooltips_set_tip(c->tips,c->optionmenu,"","");
-		gtk_tooltips_disable(c->tips);
-	}
-
-	g_signal_emit(G_OBJECT (c),simplelistview_signals[CHANGED_SIGNAL], 0);
-}
-
-
 void simplelistview_set_opts(SimpleListView *c,SimpleListViewOptions *opts)
 {
 	gtk_list_store_clear(GTK_LIST_STORE(c->liststore));

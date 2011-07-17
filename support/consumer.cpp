@@ -69,10 +69,10 @@ Consumer_Pipe::~Consumer_Pipe()
 bool Consumer_Pipe::Write(const char *buffer,int length)
 {
 #ifdef WIN32
-	fwrite(buffer,length,1,pfile);
+	unsigned int l=fwrite(buffer,length,1,pfile);
 	return(true);
 #else
-	write(pipefd[1],buffer,length);
+	unsigned int l=write(pipefd[1],buffer,length);
 	return(!aborted);
 #endif
 }

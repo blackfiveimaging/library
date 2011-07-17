@@ -24,7 +24,7 @@
 #include "ptmutex.h"
 
 // #if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
-
+#include <vector>
 #include <pthread.h>
 
 // Use a fairly small thread table - a better option would be to create
@@ -92,10 +92,11 @@ class RWMutex : public PTMutex
 	int lockcount;
 	int exclusive;
 #ifdef WIN32
-	struct {void *id; int count;} counttable[RWMUTEX_THREADS_MAX];
+	struct threadtable_entry {void *id; int count;};
 #else
-	struct {pthread_t id; int count;} counttable[RWMUTEX_THREADS_MAX];
+	struct threadtable_entry {pthread_t id; int count;};
 #endif
+	std::vector<threadtable_entry> counttable;
 	int serialno;
 	pthread_cond_t cond;
 };

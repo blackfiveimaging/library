@@ -15,7 +15,7 @@
 #include <gtk/gtk.h>
 #include <cairo.h>
 
-#include "miscwidgets/simplecombo.h"
+#include "simplecombo.h"
 
 #include "blackgenselector.h"
 

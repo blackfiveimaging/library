@@ -445,7 +445,7 @@ std::string ShellQuote(std::string &in)
 #ifdef WIN32
 	string out("\"");
 
-	for(int i=0;i<in.size();++i)
+	for(unsigned int i=0;i<in.size();++i)
 	{
 		if(in[i]!='\"')
 			out+=in[i];
@@ -454,7 +454,7 @@ std::string ShellQuote(std::string &in)
 #else
 	string out("'");
 
-	for(int i=0;i<in.size();++i)
+	for(unsigned int i=0;i<in.size();++i)
 	{
 		if(in[i]=='\'')
 			out+="'\\''";

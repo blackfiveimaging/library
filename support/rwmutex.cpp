@@ -19,11 +19,11 @@ RWMutex::RWMutex() : PTMutex(), lockcount(0), exclusive(0)
 {
 	static int ser=0;
 	serialno=++ser;		// Giving each mutex a serial number makes debugging easier.
-	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
-	{
-		counttable[i].id=0;
-		counttable[i].count=0;
-	}
+//	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
+//	{
+//		counttable[i].id=0;
+//		counttable[i].count=0;
+//	}
 	pthread_cond_init(&cond,0);
 }
 
@@ -163,7 +163,8 @@ bool RWMutex::CheckExclusive()
 	pthread_t current=pthread_self();
 #endif
 //	Debug[TRACE] << "Current thread: " << current << endl;
-	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
+	int j=counttable.size();
+	for(int i=0;i<j;++i)
 	{
 		// If any thread other than this one has count>0 return false;
 		if(counttable[i].id!=current && counttable[i].count!=0)
@@ -191,7 +192,9 @@ void RWMutex::Increment()
 	pthread_t current=pthread_self();
 #endif
 //	Debug[TRACE] << "Increment - searching for thread: " << current << endl;
-	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
+
+	unsigned int j=counttable.size();
+	for(unsigned int i=0;i<j;++i)
 	{
 		if(counttable[i].id==current)
 		{
@@ -202,23 +205,19 @@ void RWMutex::Increment()
 	}
 	// If none found, add a new entry, and set the count to 1;
 //	Debug[TRACE] << "Increment - searching for free slot" << endl;
-	while(1)
+	for(unsigned int i=0;i<j;++i)
 	{
-		for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
+		if(counttable[i].id==0)
 		{
-			if(counttable[i].id==0)
-			{
-//				Debug[TRACE] << "found" << endl;
-				counttable[i].id=current;
-				counttable[i].count=1;
-				return;
-			}
+//			Debug[TRACE] << "found" << endl;
+			counttable[i].id=current;
+			counttable[i].count=1;
+			return;
 		}
-		// If there were no free slots, complain.
-		Debug[WARN] << "RWMutex: thread table full - waiting..." << endl;
-		pthread_cond_wait(&cond,&mutex);
-		Debug[WARN] << "RWMutex - trying again to find a free slot... " << endl;
 	}
+	// No free slots found - create one
+	threadtable_entry e={current,1};
+	counttable.push_back(e);
 }
 
 
@@ -233,7 +232,8 @@ void RWMutex::Decrement(bool shared)
 	pthread_t current=pthread_self();
 #endif
 //	Debug[TRACE] << "Decrement - searching for thread: " << current << endl;
-	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
+	int j=counttable.size();
+	for(int i=0;i<j;++i)
 	{
 		if(counttable[i].id==current)
 		{
@@ -244,7 +244,7 @@ void RWMutex::Decrement(bool shared)
 		}
 	}
 	// If thread was not found, complain.
-//	Debug[TRACE] << "RWMutex: thread not found in table." << endl;
+	Debug[ERROR] << "RWMutex: thread not found in table." << endl;
 }
 
 
@@ -252,7 +252,8 @@ void RWMutex::Dump()
 {
 	Debug[WARN] << "Locks held: " << lockcount << endl;
 	Debug[WARN] << "Exclusive count: " << exclusive << endl;
-	for(int i=0;i<RWMUTEX_THREADS_MAX;++i)
+	int j=counttable.size();
+	for(int i=0;i<j;++i)
 	{
 		if(counttable[i].id)
 			Debug[WARN] << "Thread: " << counttable[i].id << ", count: " << counttable[i].count << endl;

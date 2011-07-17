@@ -272,7 +272,7 @@ void coloranttoggle_refresh(ColorantToggle *c)
 {
 	if(c)
 	{
-		for(int i=0;i<c->buttons.size();++i)
+		for(unsigned int i=0;i<c->buttons.size();++i)
 		{
 			c->buttons[i]->refresh();
 		}
@@ -294,74 +294,29 @@ void coloranttoggle_set_colorants(ColorantToggle *c,DeviceNColorantList *list)
 
 	if(c && list)
 	{
-//		GdkPixbuf *icon=PixbufFromImageData(dab_data,sizeof(dab_data));
 
 		DeviceNColorant *col=list->FirstColorant();
 		int i=0;
 		while(col)
 		{
-
 			if(col->GetName())
 			{
-				// Colorize the icon here
-
-#if 0
-				ImageSource *mask=new ImageSource_GdkPixbuf(icon);
-				mask=new ImageSource_Greyscale(mask);
-
-				DeviceNColorant *col=(*list)[i];
-
-				ISDataType solid[3];
-				solid[0]=EIGHTTOIS(col->red);
-				solid[1]=EIGHTTOIS(col->green);
-				solid[2]=EIGHTTOIS(col->blue);
-
-				ImageSource *is=new ImageSource_Solid(IS_TYPE_RGB,mask->width,mask->height,solid);
-
-				is=new ImageSource_Mask(is,mask);
-				GdkPixbuf *colicon=pixbuf_alpha_from_imagesource(is);
-#endif
-				// We now have a pixbuf with alpha channel
-
-#if 0
-				GtkWidget *img=gtk_image_new_from_pixbuf(colicon);
-				GtkWidget *togglebutton=gtk_toggle_button_new();
-				gtk_button_set_image(GTK_BUTTON(togglebutton),img);
-				gtk_box_pack_start(GTK_BOX(c),togglebutton,FALSE,FALSE,0);
-				gtk_widget_show(togglebutton);
-				gtk_widget_show(img);
-#endif
-
-//				GtkWidget *img=gtk_image_new_from_pixbuf(colicon);
-//				GtkWidget *togglebutton=gtk_check_button_new();
-//				gtk_button_set_image(GTK_BUTTON(togglebutton),img);
-//				gtk_box_pack_start(GTK_BOX(c),togglebutton,FALSE,FALSE,0);
-//				gtk_box_pack_start(GTK_BOX(c),img,FALSE,FALSE,0);
-//				gtk_widget_show(togglebutton);
-//				gtk_widget_show(img);
-
-//				delete is;
-
 				// Now create a list entry for the colorant...
 				ToggleData *td=new ToggleData(c,*col);
 				td->refresh();
 				c->buttons.push_back(td);
-
-//				g_signal_connect(G_OBJECT(togglebutton),"toggled",G_CALLBACK(ToggleData::toggled),td);
-
 			}
 
 			++i;
 			col=col->NextColorant();
-	    }
-//		g_object_unref(icon);
+		}
 	}
 }
 
 
 void coloranttoggle_set_value(ColorantToggle *c,ISDeviceNValue &value)
 {
-	for(int i=0;i<c->buttons.size();++i)
+	for(unsigned int i=0;i<c->buttons.size();++i)
 	{
 		c->buttons[i]->redraw(value[i]);
 	}
