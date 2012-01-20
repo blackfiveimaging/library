@@ -10,13 +10,16 @@
 
 #include <string.h>
 
+#include "config.h"
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtklabel.h>
 #include <gtk/gtkscrolledwindow.h>
 
 #include "stpui_optionbook.h"
 #include "../stp_support/stputil.h"
 
-#include "config.h"
 #include "gettext.h"
 
 #define _(x) gettext(x)
@@ -219,3 +222,6 @@ stpui_optionbook_init (stpui_OptionBook *ob)
 		ob->scrollwin[i]=NULL;
 	}
 }
+
+#endif
+

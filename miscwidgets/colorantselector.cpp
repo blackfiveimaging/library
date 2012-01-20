@@ -14,6 +14,12 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtk.h>
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
@@ -21,10 +27,6 @@
 #include <gtk/gtkscrolledwindow.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixdata.h>
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "imagesource_gdkpixbuf.h"
 #include "imagesource_greyscale.h"
@@ -322,3 +324,4 @@ void colorantselector_set_colorants(ColorantSelector *c,DeviceNColorantList *lis
 	populate_list(c);
 }
 
+#endif // HAVE_GTK

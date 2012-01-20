@@ -12,6 +12,12 @@
 #include <cstring>
 #include <iostream>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#if HAVE_GTK
+
 #include <gtk/gtk.h>
 #include <gtk/gtklabel.h>
 #include <gtk/gtkvbox.h>
@@ -21,10 +27,6 @@
 
 #include "errordialogqueue.h"
 #include "progressbar.h"
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "gettext.h"
 #define _(x) gettext(x)
@@ -151,3 +153,4 @@ void ProgressBar::ErrorMessage(const char *msg)
 	ErrorDialogs.AddMessage(msg);
 }
 
+#endif

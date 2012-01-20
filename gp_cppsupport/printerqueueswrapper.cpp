@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
+
 #include "printerqueueswrapper.h"
 #include "../miscwidgets/generaldialogs.h"
 #include "../support/debug.h"
@@ -11,7 +13,11 @@ using namespace std;
 
 static char *getfilename(void *userdata)
 {
+#if HAVE_GTK
 	return(File_Save_Dialog("Save printer spool file",NULL));
+#else
+	return(NULL);
+#endif
 }
 
 

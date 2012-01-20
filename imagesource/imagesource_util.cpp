@@ -91,7 +91,11 @@ static ImageSource *ISLoadImage_core(const char *filename)
 		Debug[WARN] << "(" << err << ")" << endl;
 		Debug[WARN] << "- falling back to GdkPixbuf loader" << endl;
 	}
+#ifdef HAVE_GTK
 	return(new ImageSource_GdkPixbuf(filename));
+#else
+	return(NULL);
+#endif
 }
 
 

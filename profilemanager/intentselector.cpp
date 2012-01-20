@@ -11,6 +11,10 @@
 
 #include <string.h>
 
+#include "config.h"
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
 #include <gtk/gtkmenu.h>
@@ -160,3 +164,5 @@ void intentselector_setintent(IntentSelector *c,LCMSWrapper_Intent intent)
 	else
 		gtk_tooltips_disable(c->tips);
 }
+#endif
+

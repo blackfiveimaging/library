@@ -3,8 +3,6 @@
 #ifndef PTMUTEX_H
 #define PTMUTEX_H
 
-#include <glib.h>
-
 // #if defined HAVE_LIBPTHREAD || defined HAVE_LIBPTHREADGC2
 
 #include <pthread.h>

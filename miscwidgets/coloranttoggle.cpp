@@ -10,10 +10,15 @@
  */
 
 #include <iostream>
-
 #include <cmath>
 #include <cstring>
 #include <cstdlib>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef HAVE_GTK
 
 #include <gtk/gtk.h>
 #include <gtk/gtkentry.h>
@@ -24,10 +29,6 @@
 #include <gdk-pixbuf/gdk-pixdata.h>
 
 #include <cairo.h>
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "imagesource_gdkpixbuf.h"
 #include "imagesource_greyscale.h"
@@ -322,4 +323,5 @@ void coloranttoggle_set_value(ColorantToggle *c,ISDeviceNValue &value)
 	}
 }
 
+#endif
 

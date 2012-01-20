@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef HAVE_GTK
 
 // AMR - not available with GTK+ <2.4/2.6
 #if 0
@@ -1964,3 +1965,6 @@ egg_pixbuf_get_local_thumbnail_uri (const gchar           *uri,
 }
 
 #endif /* Disabled */
+
+#endif
+

@@ -1,3 +1,7 @@
+
+#include "config.h"
+
+#ifdef HAVE_GTK
 #include <gtk/gtk.h>
 
 #include "spinner.h"
@@ -53,4 +57,6 @@ GtkWidget *Spinner::GetWidget()
 {
 	return(spinner);
 }
+
+#endif
 

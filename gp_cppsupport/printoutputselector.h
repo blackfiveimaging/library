@@ -1,6 +1,7 @@
 #ifndef __PRINTOUTPUTSELECTOR_H__
 #define __PRINTOUTPUTSELECTOR_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -52,5 +53,5 @@ void printoutputselector_refresh(PrintOutputSelector *ob);
 void printoutput_queue_dialog(PrintOutput *po);
 
 G_END_DECLS
-
+#endif // HAVE_GTK
 #endif /* __PRINTOUTPUTSELECTOR_H__ */

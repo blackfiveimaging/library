@@ -1,6 +1,8 @@
 #ifndef __DIMENSION_H__
 #define __DIMENSION_H__
 
+#ifdef HAVE_GTK
+
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtktable.h>
@@ -58,4 +60,5 @@ void dimension_hide_unit(Dimension *ob);
 
 G_END_DECLS
 
+#endif // HAVE_GTK
 #endif /* __DIMENSION_H__ */

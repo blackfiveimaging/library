@@ -9,6 +9,10 @@
 
 #include <string.h>
 
+#include "config.h"
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtkframe.h>
 #include <gtk/gtksizegroup.h>
 #include <gtk/gtklabel.h>
@@ -16,7 +20,6 @@
 #include <math.h>
 #include "dimension.h"
 
-#include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
 #define N_(x) gettext_noop(x)
@@ -351,3 +354,5 @@ void dimension_hide_unit(Dimension *ob)
 {
 	gtk_widget_hide(ob->label);
 }
+#endif
+

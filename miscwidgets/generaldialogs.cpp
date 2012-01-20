@@ -10,9 +10,11 @@
  */
 
 
+#include "config.h"
+
 #include <iostream>
 
-#include <gtk/gtk.h>
+#include "gtkstub.h"
 
 #include "egg-pixbuf-thumbnail.h"
 
@@ -30,6 +32,7 @@ using namespace std;
 
 void ErrorMessage_Dialog(const char *message,GtkWidget *parent)
 {
+#ifdef HAVE_GTK
 	if(LiveDisplay.HaveDisplay())
 	{
 		GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW(parent),GtkDialogFlags(0),
@@ -38,9 +41,12 @@ void ErrorMessage_Dialog(const char *message,GtkWidget *parent)
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 	}
+#endif
 	Debug[ERROR] << message << std::endl;
 }
 
+
+#ifdef HAVE_GTK_H
 
 bool Query_Dialog(const char *message,GtkWidget *parent)
 {
@@ -50,11 +56,11 @@ bool Query_Dialog(const char *message,GtkWidget *parent)
 	int response=gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 	return(response==GTK_RESPONSE_YES);
+	return(1);
 }
 
 
 // File dialog
-
 static void updatepreview(GtkWidget *fc,void *ud)
 {
 	GtkWidget *preview=GTK_WIDGET(ud);
@@ -202,4 +208,6 @@ char *Directory_Dialog(const char *title,const char *oldfilename,GtkWidget *pare
 
 	return(dirname);
 }
+
+#endif
 

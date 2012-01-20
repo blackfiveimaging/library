@@ -1,6 +1,8 @@
 #ifndef SPINNER_H
 #define SPINNER_H
 
+#ifdef HAVE_GTK
+
 #include <gtk/gtkwidget.h>
 #include <gdk/gdkpixbuf.h>
 
@@ -16,5 +18,6 @@ class Spinner
 	GtkWidget *spinner;
 };
 
+#endif // HAVE_GTK
 #endif
 

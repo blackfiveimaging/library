@@ -21,7 +21,7 @@
 #include <deque>
 #include <string>
 
-#include <gtk/gtk.h>
+#include "gtkstub.h"
 
 #include "ptmutex.h"
 
@@ -43,11 +43,11 @@ class ErrorDialogQueue : public ErrorMessageQueue
 {
 	public:
 	ErrorDialogQueue(GtkWidget *parent=NULL);
-	virtual ~ErrorDialogQueue();
 	virtual void SetParent(GtkWidget *newparent);
+	virtual ~ErrorDialogQueue();
 	virtual void AddMessage(const char *message);
 	protected:
-	static gboolean displaymessages(gpointer ud);
+	static bool displaymessages(gpointer ud);
 	GtkWidget *parent;
 };
 

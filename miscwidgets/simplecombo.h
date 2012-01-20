@@ -1,7 +1,7 @@
 #ifndef __SIMPLECOMBO_H__
 #define __SIMPLECOMBO_H__
 
-
+#ifdef HAVE_GTK
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtkoptionmenu.h>
@@ -94,5 +94,6 @@ void simplecombo_set_index(SimpleCombo *c,int index);
 void simplecombo_set_opts(SimpleCombo *c,SimpleComboOptions &opts);
 
 G_END_DECLS
+#endif // HAVE_GTK
 
 #endif /* __SIMPLECOMBO_H__ */

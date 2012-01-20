@@ -10,8 +10,12 @@
 
 #include <iostream>
 
+#include "config.h"
+
 #include "../support/debug.h"
 #include "pixbuf_from_imagesource.h"
+
+#ifdef HAVE_GTK
 
 using namespace std;
 
@@ -260,3 +264,6 @@ GdkPixbuf *pixbuf_alpha_from_imagesource(ImageSource *is,Progress *prog,GdkPixbu
 	}
 	return(pb);
 }
+
+#endif
+

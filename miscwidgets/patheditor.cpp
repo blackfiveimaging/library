@@ -16,6 +16,12 @@
 
 #include <string.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
 #include <gtk/gtkfilesel.h>
@@ -25,10 +31,6 @@
 #include "generaldialogs.h"
 
 #include "patheditor.h"
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "gettext.h"
 #define _(x) gettext(x)
@@ -211,4 +213,5 @@ void patheditor_set_paths(PathEditor *p,SearchPathHandler *sp)
 		path=spi.GetNextPath(path);
 	}
 }
+#endif
 

@@ -3,6 +3,9 @@
 #include <iostream>
 
 #include <string.h>
+#include "config.h"
+
+#ifdef HAVE_GTK
 
 #include <gtk/gtkframe.h>
 #include <gtk/gtksizegroup.h>
@@ -19,7 +22,6 @@
 
 #include "printoutputselector.h"
 
-#include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
 
@@ -254,3 +256,5 @@ void printoutput_queue_dialog(PrintOutput *po)
 			break;
 	}
 }
+#endif
+

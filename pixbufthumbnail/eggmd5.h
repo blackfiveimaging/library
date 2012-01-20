@@ -21,6 +21,8 @@
 #ifndef __EGG_MD5_H__
 #define __EGG_MD5_H__ 1
 
+#ifdef HAVE_GTK
+
 #include <glib-object.h>
 
 G_BEGIN_DECLS
@@ -51,4 +53,5 @@ gboolean      egg_md5_digest_equal  (gconstpointer	  digest1,
 
 G_END_DECLS
 
+#endif // HAVE_GTK
 #endif /* !__EGG_MD5_H__ */

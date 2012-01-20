@@ -12,8 +12,6 @@
 #include <iostream>
 
 #include <string.h>
-#include <glib.h>
-#include <glib/gprintf.h>
 
 #include "stp_support/stputil.h"
 #include "gprintersettings.h"

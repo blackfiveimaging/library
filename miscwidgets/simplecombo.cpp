@@ -13,6 +13,9 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "config.h"
+
+#if HAVE_GTK
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
 #include <gtk/gtkmenu.h>
@@ -23,7 +26,6 @@
 
 #include "simplecombo.h"
 
-#include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
 #define N_(x) gettext_noop(x)
@@ -380,4 +382,5 @@ SimpleComboOption *SimpleComboOptions::operator[](int idx)
 		throw "SimpleComboOptions::[] Index out of range";
 	return(opt);
 }
+#endif // HAVE_GTK
 

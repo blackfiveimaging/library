@@ -13,6 +13,10 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "config.h"
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
 #include <gtk/gtktooltips.h>
@@ -24,7 +28,6 @@
 
 #include "simplelistview.h"
 
-#include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
 #define N_(x) gettext_noop(x)
@@ -390,4 +393,4 @@ void SimpleListViewOptions::Clear()
 	}
 }
 
-
+#endif // HAVE_GTK

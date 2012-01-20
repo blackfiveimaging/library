@@ -1,6 +1,7 @@
 #ifndef __STPUI_OPTIONPAGE_H__
 #define __STPUI_OPTIONPAGE_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -48,5 +49,5 @@ GtkWidget* stpui_optionpage_new (stp_vars_t *vars,int optclass,int optlevelmin,i
 gboolean stpui_optionpage_refresh(stpui_OptionPage *op);
 
 G_END_DECLS
-
+#endif // HAVE_GTK
 #endif /* __STPUI_OPTIONPAGE_H__ */

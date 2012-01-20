@@ -19,7 +19,7 @@
 #include "imagesource_gdkpixbuf.h"
 
 using namespace std;
-
+#ifdef HAVE_GTK
 
 ImageSource_GdkPixbuf::~ImageSource_GdkPixbuf()
 {
@@ -152,4 +152,6 @@ void ImageSource_GdkPixbuf::Init()
 	MakeRowBuffer();
 	randomaccess=true;
 }
+
+#endif
 

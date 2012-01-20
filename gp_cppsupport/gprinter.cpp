@@ -21,10 +21,6 @@
 
 #include <gutenprint/gutenprint.h>
 
-#include <glib.h>
-#include <glib/gstrfuncs.h>
-#include <glib/gprintf.h>
-
 #include "../imagesource/imagesource.h"
 #include "../imagesource/imagesource_flatten.h"
 #include "../support/debug.h"

@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "config.h"
+
 #include "debug.h"
 #include "errordialogqueue.h"
 #include "generaldialogs.h"
@@ -53,16 +55,18 @@ void ErrorDialogQueue::SetParent(GtkWidget *newparent)
 
 void ErrorDialogQueue::AddMessage(const char *message)
 {
+#ifdef HAVE_GTK
 	if(LiveDisplay.HaveDisplay())
 	{
 		ErrorMessageQueue::AddMessage(message);
 		g_timeout_add(1,displaymessages,this);
 	}
 	else
+#endif
 		Debug[ERROR] << message << endl;
 }
-
-gboolean ErrorDialogQueue::displaymessages(gpointer ud)
+#ifdef HAVE_GTK
+bool ErrorDialogQueue::displaymessages(gpointer ud)
 {
 	ErrorDialogQueue *q=(ErrorDialogQueue *)ud;
 	q->ObtainMutex();
@@ -72,9 +76,9 @@ gboolean ErrorDialogQueue::displaymessages(gpointer ud)
 		ErrorMessage_Dialog(m.c_str(),q->parent);
 	}
 	q->ReleaseMutex();
-	return(FALSE);
+	return(false);
 }
-
+#endif
 
 ErrorDialogQueue ErrorDialogs;
 

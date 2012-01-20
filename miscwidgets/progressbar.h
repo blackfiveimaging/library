@@ -4,6 +4,9 @@
 #include "progress.h"
 #include "thread.h"
 #include "refcountui.h"
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtkwidget.h>
 
 class ProgressBar : public Progress
@@ -36,4 +39,5 @@ class ProgressBar_RefCount : public ProgressBar, public RefCountUI
 	}
 };
 
+#endif // HAVE_GTK
 #endif

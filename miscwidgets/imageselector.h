@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#ifdef HAVE_GTK
+
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtkcombo.h>
@@ -62,4 +64,5 @@ void imageselector_remove(ImageSelector *c,const char *filename=NULL);
 
 void imageselector_select_all(ImageSelector *c);
 void imageselector_select_none(ImageSelector *c);
+#endif // HAVE_GTK
 #endif /* __IMAGESELECTOR_H__ */

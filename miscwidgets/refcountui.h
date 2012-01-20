@@ -1,11 +1,12 @@
 #ifndef REFCOUNTUI_H
 #define REFCOUNTUI_H
 
-#include <gtk/gtkmain.h>
-
 #include "../support/refcount.h"
 #include "../support/thread.h"
 #include "../support/debug.h"
+
+#ifdef HAVE_GTK
+#include <gtk/gtkmain.h>
 
 // A UI-safe variant of the reference count class.
 // It differs from the regular RefCount class in two ways:
@@ -73,6 +74,12 @@ class RefCountUI : public RefCount
 	
 	ThreadID threadid;
 };
+
+#else
+
+typedef class RefCount RefCountUI;
+
+#endif // HAVE_GTK
 
 #endif
 

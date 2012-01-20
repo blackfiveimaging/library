@@ -124,8 +124,12 @@ void PrintOutput::DBToQueues()
 		Debug[TRACE] << "Warning - printer queue not found" << endl;
 		try
 		{
+#ifdef HAVE_GTK
 			printoutput_queue_dialog(this);
 			tmp=FindString("Queue");
+#else
+			throw "No GTK!";
+#endif
 		}
 		catch (const char *err)
 		{

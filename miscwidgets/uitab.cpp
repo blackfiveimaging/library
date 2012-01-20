@@ -1,5 +1,7 @@
 #include <iostream>
 
+#ifdef HAVE_GTK
+
 #include <gtk/gtk.h>
 
 #include "uitab.h"
@@ -107,4 +109,5 @@ void UITab::setclosebuttonsize(GtkWidget *wid,GtkStyle *style,gpointer userdata)
 	gtk_widget_set_size_request(wid,x+2,y+2);
 }
 
+#endif
 

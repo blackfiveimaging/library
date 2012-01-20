@@ -1,6 +1,7 @@
 #ifndef __COLORANTSELECTOR_H__
 #define __COLORANTSELECTOR_H__
 
+#if HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -48,5 +49,5 @@ GtkWidget* colorantselector_new(DeviceNColorantList *list);
 void colorantselector_refresh(ColorantSelector *c);
 void colorantselector_set_colorants(ColorantSelector *c,DeviceNColorantList *list);
 
-
+#endif // HAVE_GTK
 #endif /* __COLORANTSELECTOR_H__ */

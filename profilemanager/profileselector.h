@@ -1,6 +1,7 @@
 #ifndef __PROFILESELECTOR_H__
 #define __PROFILESELECTOR_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -66,4 +67,5 @@ gboolean profileselector_refresh(ProfileSelector *c);
 
 G_END_DECLS
 
+#endif // HAVE_GTK
 #endif /* __PROFILESELECTOR_H__ */

@@ -15,6 +15,12 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtk.h>
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
@@ -34,9 +40,6 @@
 
 #include "imageselector_noborder_image.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "gettext.h"
  
@@ -691,3 +694,5 @@ void imageselector_select_none(ImageSelector *c)
 	GtkTreeSelection *select=gtk_tree_view_get_selection (GTK_TREE_VIEW (c->treeview));
 	gtk_tree_selection_unselect_all(select);
 }
+#endif
+

@@ -1,6 +1,7 @@
 #ifndef __PATHEDITOR_H__
 #define __PATHEDITOR_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -56,4 +57,6 @@ gboolean patheditor_refresh(PathEditor *c);
 
 G_END_DECLS
 
+#endif // HAVE_GTK
 #endif /* __PATHEDITOR_H__ */
+

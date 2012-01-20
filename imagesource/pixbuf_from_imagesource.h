@@ -11,6 +11,7 @@
 #ifndef PIXBUF_FROM_IMAGESOURCE_H
 #define PIXBUF_FROM_IMAGESOURCE_H
 
+#ifdef HAVE_GTK
 #include <gdk/gdkpixbuf.h>
 
 #include "imagesource.h"
@@ -21,4 +22,6 @@ GdkPixbuf *pixbuf_from_imagesource(ImageSource *is,
 
 GdkPixbuf *pixbuf_alpha_from_imagesource(ImageSource *is,Progress *prog=NULL,GdkPixbuf *pb=NULL);
 
+#endif // HAVE_GTK
 #endif
+

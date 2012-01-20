@@ -17,6 +17,12 @@
 
 #include <string.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
 #include <gtk/gtkfilesel.h>
@@ -26,10 +32,6 @@
 #include "../miscwidgets/generaldialogs.h"
 #include "../support/util.h"
 #include "../support/debug.h"
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "gettext.h"
 #define _(x) gettext(x)
@@ -443,4 +445,6 @@ const char *profileselector_get_filename(ProfileSelector *p)
 {
 	return(p->filename);
 }
+
+#endif
 

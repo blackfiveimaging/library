@@ -1,6 +1,8 @@
 #ifndef __COLORANTTOGGLE_H__
 #define __COLORANTTOGGLE_H__
 
+#ifdef HAVE_GTK
+
 #include <deque>
 #include <glib.h>
 #include <glib-object.h>
@@ -85,4 +87,7 @@ void coloranttoggle_set_colorants(ColorantToggle *c,DeviceNColorantList *list);
 void coloranttoggle_set_value(ColorantToggle *c,ISDeviceNValue &value);
 
 
+#endif // HAVE_GTK
+
 #endif /* __COLORANTTOGGLE_H__ */
+

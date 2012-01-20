@@ -20,13 +20,14 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif /* HAVE_CONFIG_H */
 
 #include <string.h>
 
 #include "eggmd5.h"
 
+#ifdef HAVE_GTK
 
 typedef struct _Md5Context Md5Context;
 
@@ -535,3 +536,6 @@ md5_transform (guint32	   buf[4],
     buf[2] += c;
     buf[3] += d;
 }
+
+#endif
+

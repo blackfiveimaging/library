@@ -1,6 +1,7 @@
 #ifndef __INTENTSELECTOR_H__
 #define __INTENTSELECTOR_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -44,4 +45,5 @@ LCMSWrapper_Intent intentselector_getintent(IntentSelector *c);
 void intentselector_setintent(IntentSelector *c,LCMSWrapper_Intent intent);
 G_END_DECLS
 
+#endif // HAVE_GTK
 #endif /* __INTENTSELECTOR_H__ */

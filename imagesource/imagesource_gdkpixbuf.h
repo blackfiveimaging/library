@@ -13,6 +13,8 @@
 #define IMAGESOURCE_GDKPIXBUF_H
 
 #include "imagesource.h"
+#ifdef HAVE_GTK
+
 #include <gdk/gdkpixbuf.h>
 
 using namespace std;
@@ -32,5 +34,6 @@ class ImageSource_GdkPixbuf : public ImageSource
 	guchar *pixels;
 	bool hasalpha;
 };
+#endif // HAVE_GTK
 
 #endif

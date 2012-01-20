@@ -22,6 +22,10 @@
 #define __EGG_PIXBUF_THUMBNAIL_H__ 1
 
 #include <time.h>
+#include "config.h"
+
+#ifdef HAVE_GTK
+
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 G_BEGIN_DECLS
@@ -115,5 +119,7 @@ gchar                 *egg_pixbuf_get_thumbnail_filename         (const gchar   
 								  EggPixbufThumbnailSize size); */
 
 G_END_DECLS
+
+#endif // HAVE_GTK
 
 #endif /* !__EGG_PIXBUF_THUMBNAIL_H__ */

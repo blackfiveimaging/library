@@ -1,6 +1,8 @@
 #ifndef UITAB_H
 #define UITAB_H
 
+#if HAVE_GTK
+
 #include <gtk/gtk.h>
 #include "refcountui.h"
 
@@ -27,5 +29,5 @@ class UITab : public RefCountUI
 	GtkWidget *notebook;
 };
 
+#endif // HAVE_GTK
 #endif
-

@@ -16,6 +16,9 @@
 
 #include <string.h>
 
+#include "config.h"
+#ifdef HAVE_GTK
+
 #include "stpui_slider.h"
 #include "dimension.h"
 #include "units.h"
@@ -443,3 +446,5 @@ gboolean stpui_slider_refresh(stpui_Slider *c)
 
 	return(result);
 }
+#endif
+

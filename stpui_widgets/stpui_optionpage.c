@@ -15,6 +15,10 @@
 
 #include <string.h>
 
+#include "config.h"
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtklabel.h>
 #include <gtk/gtktable.h>
 #include <gtk/gtkcheckbutton.h>
@@ -270,3 +274,5 @@ stpui_optionpage_init (stpui_OptionPage *op)
 {
 	op->widgetlist=NULL;
 }
+#endif
+

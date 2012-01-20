@@ -1,6 +1,7 @@
 #ifndef __STPUI_SLIDER_H__
 #define __STPUI_SLIDER_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -48,4 +49,5 @@ gboolean stpui_slider_refresh(stpui_Slider *c);
 
 G_END_DECLS
 
+#endif
 #endif /* __STPUI_SLIDER_H__ */

@@ -3,6 +3,8 @@
 
 #include <deque>
 
+#ifdef HAVE_GTK
+
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtkhbox.h>
@@ -95,4 +97,6 @@ void simplelistview_set_opts(SimpleListView *c,SimpleListViewOptions *opts);
 
 G_END_DECLS
 
+#endif // HAVE_GTK
 #endif /* __SIMPLELISTVIEW_H__ */
+

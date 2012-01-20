@@ -1,6 +1,7 @@
 #ifndef __STPUI_OPTIONBOOK_H__
 #define __STPUI_OPTIONBOOK_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -65,4 +66,5 @@ void stpui_optionbook_rebuild(stpui_OptionBook *ob);
 
 G_END_DECLS
 
+#endif // HAVE_GTK
 #endif /* __STPUI_OPTIONBOOK_H__ */
