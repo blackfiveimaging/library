@@ -1,6 +1,7 @@
 #ifndef ROTATEPIXBUF_H
 #define ROTATEPIXBUF_H
 
+#ifdef HAVE_GTK
 #include <gdk/gdkpixbuf.h>
 #ifndef GDK_PIXBUF_TRANSFORM_H
 
@@ -18,5 +19,5 @@ typedef enum {
 GdkPixbuf *
 pv_gdk_pixbuf_rotate_simple (const GdkPixbuf   *src,
 			  GdkPixbufRotation angle);
-
+#endif // HAVE_GTK
 #endif

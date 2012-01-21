@@ -1,4 +1,7 @@
 #include <string.h>
+#include "config.h"
+
+#ifdef HAVE_GTK
 
 #include "rotatepixbuf.h"
 
@@ -108,3 +111,4 @@ pv_gdk_pixbuf_rotate_simple (const GdkPixbuf   *src,
 }
 
 /* BORROWED FUNCTION ENDS */
+#endif

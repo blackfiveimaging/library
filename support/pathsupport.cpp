@@ -4,8 +4,11 @@
 #include <cstring>
 
 #include <libgen.h>
+#include "config.h"
 
+#ifdef HAVE_GTK
 #include <glib.h>
+#endif
 
 #ifdef WIN32
 #include <w32api.h>
@@ -39,7 +42,11 @@ const char *get_homedir()
 	}
 	return(homedir);
 #else
+#ifdef HAVE_GTK
 	return(g_get_home_dir());
+#else
+	return(getenv("HOME"));
+#endif
 #endif
 }
 

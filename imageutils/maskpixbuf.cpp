@@ -2,7 +2,12 @@
 
 #include <string.h>
 
+#include "config.h"
+
 #include "debug.h"
+
+#ifdef HAVE_GTK
+
 #include "rotatepixbuf.h"
 #include "maskpixbuf.h"
 
@@ -96,3 +101,5 @@ void maskpixbuf(GdkPixbuf *img,int xpos,int ypos,int width,int height,const GdkP
 	}
 	g_object_unref(G_OBJECT(scaledmask));
 }
+#endif
+
