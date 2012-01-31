@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "config.h"
+
 #ifdef HAVE_GTK
 
 #include <gtk/gtk.h>
@@ -7,7 +9,6 @@
 #include "uitab.h"
 #include "../support/debug.h"
 
-#include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
 
