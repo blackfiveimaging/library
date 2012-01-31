@@ -1,7 +1,7 @@
 #ifndef __STPUI_PRINTERSELECTOR_H__
 #define __STPUI_PRINTERSELECTOR_H__
 
-
+#ifdef HAVE_GTK
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtkcombo.h>
@@ -48,5 +48,5 @@ const char *stpui_printerselector_get_driver(stpui_PrinterSelector *c);
 void stpui_printerselector_set_printer_name(stpui_PrinterSelector *c,const char *name);
 void stpui_printerselector_set_driver(stpui_PrinterSelector *c,const char *driver);
 G_END_DECLS
-
+#endif /* HAVE_GTK */
 #endif /* __STPUI_PRINTERSELECTOR_H__ */

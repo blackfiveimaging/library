@@ -9,10 +9,9 @@
  *
  */
 
+#include <iostream>
 
 #include "config.h"
-
-#include <iostream>
 
 #include "gtkstub.h"
 
@@ -46,7 +45,7 @@ void ErrorMessage_Dialog(const char *message,GtkWidget *parent)
 }
 
 
-#ifdef HAVE_GTK_H
+#ifdef HAVE_GTK
 
 bool Query_Dialog(const char *message,GtkWidget *parent)
 {

@@ -1,6 +1,10 @@
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
+
+#include "config.h"
+
+#ifdef HAVE_GTK
 #include <gtk/gtk.h>
 
 #include "pixbufview.h"
@@ -676,4 +680,5 @@ int pixbufview_get_mousey(PixbufView *pv)
 		return(pv->mousey);
 	return(0);
 }
+#endif
 

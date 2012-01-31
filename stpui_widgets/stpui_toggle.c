@@ -8,6 +8,8 @@
  *
  */
 
+#include "config.h"
+#ifdef HAVE_GTK
 
 #include <string.h>
 
@@ -135,3 +137,5 @@ gboolean stpui_toggle_refresh(stpui_Toggle *t)
                                          0, 0, NULL, NULL, t);
 	return(result);
 }
+#endif
+

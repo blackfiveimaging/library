@@ -4,7 +4,7 @@
 
 #ifdef WIN32
 #include <windows.h>
-#else
+#elseif HAVE_GTK
 #include <X11/Xatom.h>
 #endif
 
@@ -56,7 +56,8 @@ ProfileManager::ProfileManager(ConfigFile *inifile,const char *section) :
 	ConfigDB(Template), SearchPathHandler(), PTMutex(), first(NULL), proffromdisplay_size(0), spiter(*this)
 {
 	creationthread=Thread::GetThreadID();
-#ifndef WIN32
+#ifdef WIN32
+#elseif HAVE_GTK
 	xdisplay = XOpenDisplay(NULL);
  	proffromdisplay=NULL;
 #endif
@@ -70,7 +71,8 @@ ProfileManager::ProfileManager(ConfigFile *inifile,const char *section) :
 
 ProfileManager::~ProfileManager()
 {
-#ifndef WIN32
+#ifdef WIN32
+#elseif HAVE_GTK
 	if(proffromdisplay)
 		XFree(proffromdisplay);
 	proffromdisplay=NULL;
@@ -93,7 +95,7 @@ CMSProfile *ProfileManager::GetProfile(const char *name)
 #ifdef WIN32
 			if(displayprofilename)
 				result=new CMSProfile(displayprofilename);
-#else
+#elseif HAVE_GTK
 			if(proffromdisplay_size)
 				result=new CMSProfile((char *)proffromdisplay,proffromdisplay_size);
 #endif
@@ -950,7 +952,7 @@ void ProfileManager::GetProfileFromDisplay()
 	}
 	else
 		Debug[TRACE] << "No profile associated with default display." << endl;
-#else
+#elseif HAVE_GTK
 	Debug[TRACE] << "Getting system monitor profile." << endl;
 	if(proffromdisplay)
 	{

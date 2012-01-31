@@ -8,6 +8,9 @@
  *
  */
 
+#include "config.h"
+
+#ifdef HAVE_GTK
 
 #include <string.h>
 #include <gtk/gtk.h>
@@ -168,3 +171,5 @@ gboolean stpui_file_refresh(stpui_File *t)
                                          0, 0, NULL, NULL, t);
 	return(result);
 }
+#endif
+

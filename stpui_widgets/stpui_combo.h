@@ -1,6 +1,7 @@
 #ifndef __STPUI_COMBO_H__
 #define __STPUI_COMBO_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -45,5 +46,5 @@ GtkWidget* stpui_combo_new (stp_vars_t *vars,const char *optname,GtkWidget *labe
 gboolean stpui_combo_refresh(stpui_Combo *c);
 
 G_END_DECLS
-
+#endif /* HAVE_GTK */
 #endif /* __STPUI_COMBO_H__ */

@@ -84,7 +84,7 @@ class ProfileManager : public ConfigDB, public SearchPathHandler, public PTMutex
 	void GetProfileFromDisplay();
 	#ifdef WIN32
 	char displayprofilename[MAX_PATH];
-	#else
+	#elseif HAVE_GTK
 	Display *xdisplay;
 	unsigned char *proffromdisplay;
 	#endif

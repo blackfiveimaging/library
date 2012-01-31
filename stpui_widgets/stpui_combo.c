@@ -16,6 +16,9 @@
 
 #include <string.h>
 
+#include "config.h"
+#ifdef HAVE_GTK
+
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
 
@@ -344,3 +347,5 @@ gboolean stpui_combo_refresh(stpui_Combo *c)
                                          0, 0, NULL, NULL, c);
 	return(result);
 }
+#endif
+

@@ -3,6 +3,8 @@
 
 #include <deque>
 
+#ifdef HAVE_GTK
+
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
@@ -74,5 +76,5 @@ void pixbufview_set_page(PixbufView *pb,unsigned int page);
 void pixbufview_clear_pages(PixbufView *pb);
 
 G_END_DECLS
-
+#endif // HAVE_GTK
 #endif /* __PIXBUFVIEW_H__ */

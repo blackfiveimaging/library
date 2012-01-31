@@ -1,6 +1,7 @@
 #ifndef __STPUI_FILE_H__
 #define __STPUI_FILE_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -46,5 +47,7 @@ gboolean stpui_file_refresh(stpui_File *t);
 #define STPUI_FILE_DEFAULT_TOKEN "<default>"
 
 G_END_DECLS
+
+#endif /* HAVE_GTK */
 
 #endif /* __STPUI_FILE_H__ */

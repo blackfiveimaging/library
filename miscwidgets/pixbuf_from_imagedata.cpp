@@ -1,3 +1,6 @@
+#include "config.h"
+
+#ifdef HAVE_GTK
 #include <gdk-pixbuf/gdk-pixdata.h>
 
 #include "pixbuf_from_imagedata.h"
@@ -16,4 +19,5 @@ GdkPixbuf *PixbufFromImageData(const guint8 *data,size_t len)
 
 	return(result);
 }
+#endif
 

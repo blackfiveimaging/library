@@ -1,5 +1,9 @@
 #include <string.h>
 
+#include "config.h"
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtklist.h>
 #include <gtk/gtkentry.h>
 
@@ -278,3 +282,5 @@ void stpui_printerselector_set_driver(stpui_PrinterSelector *c,const char *drive
 	else
 		g_print("No driver supplied!\n");
 }
+#endif
+

@@ -66,7 +66,7 @@ void ErrorDialogQueue::AddMessage(const char *message)
 		Debug[ERROR] << message << endl;
 }
 #ifdef HAVE_GTK
-bool ErrorDialogQueue::displaymessages(gpointer ud)
+gboolean ErrorDialogQueue::displaymessages(gpointer ud)
 {
 	ErrorDialogQueue *q=(ErrorDialogQueue *)ud;
 	q->ObtainMutex();

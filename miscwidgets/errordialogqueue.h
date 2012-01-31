@@ -47,7 +47,7 @@ class ErrorDialogQueue : public ErrorMessageQueue
 	virtual ~ErrorDialogQueue();
 	virtual void AddMessage(const char *message);
 	protected:
-	static bool displaymessages(gpointer ud);
+	static gboolean displaymessages(gpointer ud);
 	GtkWidget *parent;
 };
 
