@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include "config.h"
+#ifdef HAVE_GTK
 #include <gtk/gtk.h>
 #include <cairo.h>
 
@@ -19,7 +21,6 @@
 
 #include "blackgenselector.h"
 
-#include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
 #define N_(x) gettext_noop(x)
@@ -445,4 +446,5 @@ void blackgenselector_set(BlackGenSelector *c,Argyll_BlackGenerationCurve &curve
 	c->curve=curve;
 	blackgenselector_refresh(c);
 }
+#endif
 

@@ -1,6 +1,8 @@
 #ifndef __BLACKGENSELECTOR_H__
 #define __BLACKGENSELECTOR_H__
 
+#ifdef HAVE_GTK
+
 #include <glib.h>
 #include <glib-object.h>
 #include <gtk/gtkoptionmenu.h>
@@ -47,5 +49,5 @@ void blackgenselector_set(BlackGenSelector *c,Argyll_BlackGenerationCurve &curve
 Argyll_BlackGenerationCurve &blackgenselector_get(BlackGenSelector *c);
 void blackgenselector_refresh(BlackGenSelector *c);
 
-
+#endif /* HAVE_GTK */
 #endif /* __BLACKGENSELECTOR_H__ */
