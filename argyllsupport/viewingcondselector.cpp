@@ -12,6 +12,10 @@
 
 #include <string.h>
 
+#include "config.h"
+
+#ifdef HAVE_GTK
+
 #include <gtk/gtkentry.h>
 #include <gtk/gtklist.h>
 #include <gtk/gtkmenu.h>
@@ -20,7 +24,6 @@
 
 #include "viewingcondselector.h"
 
-#include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
 #define N_(x) gettext_noop(x)
@@ -181,3 +184,5 @@ bool viewingcondselector_set(ViewingCondSelector *c,const char *value)
 	}
 	return(false);
 }
+#endif
+

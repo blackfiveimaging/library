@@ -1,6 +1,7 @@
 #ifndef __VIEWINGCONDSELECTOR_H__
 #define __VIEWINGCONDSELECTOR_H__
 
+#ifdef HAVE_GTK
 
 #include <glib.h>
 #include <glib-object.h>
@@ -42,4 +43,5 @@ const char *viewingcondselector_get(ViewingCondSelector *c);
 bool viewingcondselector_set(ViewingCondSelector *c,const char *cond);
 G_END_DECLS
 
+#endif /* HAVE_GTK */
 #endif /* __VIEWINGCONDSELECTOR_H__ */
