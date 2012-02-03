@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstring>
 
+#include "config.h"
+
 #include "imagesource/imagesource.h"
 
 #include <gutenprint/gutenprint.h>

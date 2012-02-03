@@ -40,7 +40,9 @@ libmiscwidgets_la_SOURCES =	\
 	pixbuf_from_imagedata.cpp \
 	pixbuf_from_imagedata.h \
 	\
-	refcountui.h
+	refcountui.h \
+	\
+	gtkstub.h
 
 
 BUILT_SOURCES = squiggledata.cpp dabdata.cpp spinner1.cpp spinner2.cpp spinner3.cpp \
