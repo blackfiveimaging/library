@@ -148,10 +148,11 @@ static void pqp_dispose(struct pqprivate *pp)
 }
 
 
-static void pqp_identifyprintsystem(struct pqprivate *pq)
+static bool pqp_identifyprintsystem(struct pqprivate *pq)
 {
 #ifdef HAVE_LIBCUPS
 	pq->printsystem=0;
+	return(true);
 #else
 	int count=sizeof(printsystems)/sizeof(struct PrintSystem);
 	int i;
@@ -160,10 +161,11 @@ static void pqp_identifyprintsystem(struct pqprivate *pq)
 		if (!access(printsystems[i].key_file, R_OK))
 		{
 			pq->printsystem=i;
-			i=count;
+			return(true);
 		}	
 	}
 #endif
+	return(false);
 }
 
 
@@ -194,39 +196,41 @@ static void pqp_buildqueuelist(struct pqprivate *pp)
 	setenv("LANG","C",1);
 	setenv("LC_ALL","C",1);
 	setenv("LC_MESSAGES","C",1);
-	pqp_identifyprintsystem(pp);
 
-	if ((pfile = popen(printsystems[pp->printsystem].scan_command, "r")))
-    {
-		while (fgets(buf, sizeof(buf), pfile) != NULL)
+	if(pqp_identifyprintsystem(pp))
+	{
+		if ((pfile = popen(printsystems[pp->printsystem].scan_command, "r")))
 		{
-			int i;
-			for(i=strlen(buf)-1;i>0;--i)
+			while (fgets(buf, sizeof(buf), pfile) != NULL)
 			{
-				if(buf[i]=='\n')
-					buf[i]=0;
-				if(buf[i]=='\r')
-					buf[i]=0;
+				int i;
+				for(i=strlen(buf)-1;i>0;--i)
+				{
+					if(buf[i]=='\n')
+						buf[i]=0;
+					if(buf[i]=='\r')
+						buf[i]=0;
+				}
+				printernode_create(pp,buf);
 			}
-			printernode_create(pp,buf);
+			pclose(pfile);
 		}
-		pclose(pfile);
-	}
 
-	if(old_lang)
-		setenv("LANG",old_lang,1);
-	else
-		unsetenv("LANG");
+		if(old_lang)
+			setenv("LANG",old_lang,1);
+		else
+			unsetenv("LANG");
 
-	if(old_lcall)
-		setenv("LC_ALL",old_lcall,1);
-	else
-		unsetenv("LC_ALL");
+		if(old_lcall)
+			setenv("LC_ALL",old_lcall,1);
+		else
+			unsetenv("LC_ALL");
 
-	if(old_lcmess)
-		setenv("LC_MESSAGES",old_lcmess,1);
-	else
-		unsetenv("LC_MESSAGES");
+		if(old_lcmess)
+			setenv("LC_MESSAGES",old_lcmess,1);
+		else
+			unsetenv("LC_MESSAGES");
+		}
 	}
 	printernode_create(pp,PRINTERQUEUE_CUSTOMCOMMAND);
 	printernode_create(pp,PRINTERQUEUE_SAVETOFILE);
