@@ -148,11 +148,11 @@ static void pqp_dispose(struct pqprivate *pp)
 }
 
 
-static bool pqp_identifyprintsystem(struct pqprivate *pq)
+static int pqp_identifyprintsystem(struct pqprivate *pq)
 {
 #ifdef HAVE_LIBCUPS
 	pq->printsystem=0;
-	return(true);
+	return(1);
 #else
 	int count=sizeof(printsystems)/sizeof(struct PrintSystem);
 	int i;
@@ -161,11 +161,11 @@ static bool pqp_identifyprintsystem(struct pqprivate *pq)
 		if (!access(printsystems[i].key_file, R_OK))
 		{
 			pq->printsystem=i;
-			return(true);
+			return(1);
 		}	
 	}
 #endif
-	return(false);
+	return(0);
 }
 
 
@@ -403,6 +403,7 @@ static char *getppd(struct pqinfo *pq)
 	char *result=NULL;
 #ifdef HAVE_LIBCUPS
 	const char *ppdname=cupsGetPPD(pq->priv->currentqueue);
+
 	if(ppdname)
 		result=strdup(ppdname);
 #endif
