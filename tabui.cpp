@@ -2,10 +2,11 @@
 
 #include <gtk/gtk.h>
 
+#include "config.h"
+
 #include "miscwidgets/uitab.h"
 #include "miscwidgets/progressspinner.h"
 
-#include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
 

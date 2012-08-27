@@ -1,6 +1,10 @@
 #include <iostream>
 #include <cstring>
 #include <memory>
+#include <cstdlib>
+
+#include "config.h"
+
 #include "debug.h"
 #include "thread.h"
 

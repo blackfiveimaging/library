@@ -57,7 +57,9 @@ libsupport_la_SOURCES =	\
 	debug.cpp	\
 	debug.h	\
 	util.cpp \
-	util.h
+	util.h \
+	\
+	rs232wrapper.h
 
 libsupport_la_LDFLAGS = -static
 

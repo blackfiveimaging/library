@@ -4,9 +4,9 @@
 
 #include <gtk/gtk.h>
 
+#include "config.h"
 #include "miscwidgets/simplecombo.h"
 #include "breakhandler.h"
-#include "config.h"
 #include "gettext.h"
 #define _(x) gettext(x)
 

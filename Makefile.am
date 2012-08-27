@@ -13,11 +13,12 @@ check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				composite imgsrctest \
 				combotest tabui \
 				printqueuetest stpuitest debugtest errorqueuetest \
-				smartptrtest imgsinktest
+				smartptrtest imgsinktest sendserial
 
 
 bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest mmmenugfx misctest
 
+sendserial_SOURCES = sendserial.cpp
 misctest_SOURCES = misctest.cpp
 mmmenugfx_SOURCES = mmmenugfx.cpp
 configtest_SOURCES = configtest.cpp

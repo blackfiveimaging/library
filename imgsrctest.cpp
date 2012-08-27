@@ -39,7 +39,8 @@ class ImageSource_RainbowSweep : public ImageSource
 		randomaccess=true;
 		MakeRowBuffer();
 	}
-	~ImageSource_RainbowSweep()
+
+	~ImageSource_RainbowSweep()
 	{
 	}
 
@@ -47,7 +48,8 @@ class ImageSource_RainbowSweep : public ImageSource
 	{
 		if(currentrow==row)
 			return(rowbuffer);
-		double a=row;
+
+		double a=row;
 		a/=height;
 
 		for(int x=0;x<width;++x)
@@ -105,7 +107,7 @@ int main(int argc,char **argv)
 }
 #endif
 
-#if 1
+#if 0
 
 class Test : public ConfigFile, public ProfileManager
 {
@@ -509,4 +511,35 @@ int main(int argc,char **argv)
 	return(0);
 }
 #endif
+
+
+int main(int argc,char **argv)
+{
+	try
+	{
+		if(argc<2)
+			return(0);
+		ImageSource *is=ISLoadImage(argv[1]);
+		cerr << "File has " << is->samplesperpixel << " spp"<< std::endl;
+		for(int y=0;y<is->height;++y)
+		{
+			ISDataType *row=is->GetRow(y);
+			for(int x=0;x<is->width;++x)
+			{
+				ISDataType r,g,b;
+				r=*row++;
+				g=*row++;
+				b=*row++;
+				int out=(r&0xf800)|((g>>5)&0x0Fe0)|((b>>11)&0x1f);
+				putc(out>>8,stdout);
+				putc(out&255,stdout);
+			}
+		}
+	}
+	catch(const char *err)
+	{
+		cerr << "Error: " << err << endl;
+	}
+	return(0);
+}
 

@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "config.h"
+
 #include "gutenprint/gutenprint.h"
 #include "stpui_widgets/stpui_optionbook.h"
 #include "stpui_widgets/stpui_queue.h"
