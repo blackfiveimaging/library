@@ -6,8 +6,6 @@ AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I../imagesource/ -I../support/
 noinst_LTLIBRARIES = libprofilemanager.la
 
 libprofilemanager_la_SOURCES =	\
-	lcmswrapper.cpp	\
-	lcmswrapper.h	\
 	profilemanager.cpp	\
 	profilemanager.h	\
 	profileselector.cpp	\
@@ -16,7 +14,11 @@ libprofilemanager_la_SOURCES =	\
 	intentselector.h	\
 	ciesupport.cpp \
 	ciesupport.h \
-	naivetransforms.h
+	naivetransforms.h \
+	lcmswrapper_lcms2.cpp	\
+	lcmswrapper_lcms2.h	
+#	lcmswrapper.cpp	\
+#	lcmswrapper.h
 
 libprofilemanager_la_LDFLAGS = -static
 

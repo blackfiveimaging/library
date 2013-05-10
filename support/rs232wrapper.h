@@ -28,7 +28,7 @@ class RS232Wrapper
 			delete[] buffer;
 		if(fd>-1)
 		{
-			tcsetattr(fd,TCSANOW,&newtio);
+			tcsetattr(fd,TCSANOW,&oldtio); // Restore port settings
 			close(fd);
 		}
 	}
@@ -104,13 +104,15 @@ class RS232Wrapper
 	protected:
 	void InitSerial()
 	{
-		fd = open(device.c_str(), O_RDWR | O_NOCTTY ); 
+		Debug[TRACE] << "Attempting to open serial device " << device << std::endl;
+		fd = open(device.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK); // Work around hang with devices that don't bother with DCD
 		if (fd <0)
 		{
 			perror(device.c_str());
 			throw "Can't open serial device";
 		}
 
+		Debug[TRACE] << "Saving old port settings" << std::endl;
 		tcgetattr(fd,&oldtio); /* save current port settings */
 
 		memset(&newtio, 0,sizeof(newtio));
@@ -139,7 +141,7 @@ class RS232Wrapper
 				throw "Baud rate not yet supported";
 				break;
 		}
-		newtio.c_cflag |= CREAD;
+		newtio.c_cflag |= CREAD | CLOCAL;
 		if(startbit)
 			newtio.c_cflag |= CS8 | CREAD;
 		/* set input mode (non-canonical, no echo,...) */
@@ -148,8 +150,22 @@ class RS232Wrapper
 		newtio.c_cc[VTIME]    = 0;   /* inter-character timer unused */
 		newtio.c_cc[VMIN]     = 1;   /* blocking read until 1 char received */
 
+		Debug[TRACE] << "Applying new port settings" << std::endl;
 		tcflush(fd, TCIFLUSH);
 		tcsetattr(fd,TCSANOW,&newtio);
+
+		Debug[TRACE] << "Reopening port" << std::endl;
+		close(fd); // Now open again in blocking mode...
+		fd = open(device.c_str(), O_RDWR | O_NOCTTY);
+		if (fd <0)
+		{
+			perror(device.c_str());
+			throw "Can't open serial device";
+		}
+		Debug[TRACE] << "Setting parameters a second time" << std::endl;
+		tcflush(fd, TCIFLUSH);
+		tcsetattr(fd,TCSANOW,&newtio);
+
 		buffer=new char[64];
 	}
 	void Shuffle()

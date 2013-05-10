@@ -2,7 +2,7 @@
 #define COLOURMANAGEMENT_H
 
 #include "imagesource.h"
-#include "lcmswrapper.h"
+#include "lcmswrapper_lcms2.h"
 #include "configdb.h"
 #include "searchpath.h"
 #include "ptmutex.h"

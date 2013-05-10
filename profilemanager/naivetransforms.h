@@ -2,7 +2,7 @@
 #define NAIVECMYKTRANSFORM_H
 
 #include "imagesource.h"
-#include "lcmswrapper.h"
+#include "lcmswrapper_lcms2.h"
 
 class NaiveRGBToCMYKCMSTransform : public CMSTransform
 {

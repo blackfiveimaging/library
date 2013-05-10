@@ -19,13 +19,13 @@
 #endif
 #endif
 
-extern "C" {
 #include "lcms2.h"
-}
 
 #include "md5.h"
 #include "imagesource_types.h"
 
+
+class BinaryBlob;
 
 enum LCMSWrapper_Intent
 {
@@ -51,7 +51,7 @@ class CMSProfile
 	CMSProfile(CMSRGBPrimaries &primaries,CMSRGBGamma &gamma,CMSWhitePoint &whitepoint); // Create virtual RGB profile
 	CMSProfile(CMSGamma &gamma,CMSWhitePoint &whitepoint); // Create virtual Grey profile
 	CMSProfile(CMSWhitePoint &whitepoint); // Create a virtual LAB profile
-	CMSProfile(); // Create a virtual sRGB profile
+	CMSProfile(IS_TYPE type=IS_TYPE_RGB); // Create a virtual sRGB / sGray profile
 	CMSProfile(const CMSProfile &src); // Copy constructor
 	~CMSProfile();
 	enum IS_TYPE GetColourSpace();
@@ -66,10 +66,13 @@ class CMSProfile
 	const char *GetCopyright();
 	const char *GetFilename();
 	MD5Digest *GetMD5();
+	BinaryBlob *GetBlob();	// Owned by caller, must be deleted when done.
 	bool Save(const char *filename);
 	bool operator==(const CMSProfile &other);
 	protected:
-	void CalcMD5();
+	void CalcMD5FromGenerated();
+	void CalcMD5FromFile();
+	void CalcMD5FromMem();
 	MD5Digest *md5;
 	cmsHPROFILE prof;
 	bool generated;	// Was this profile generated on the fly?
@@ -148,20 +151,32 @@ class CMSRGBPrimaries : public cmsCIExyYTRIPLE
 class CMSGamma
 {
 	public:
-	CMSGamma(float gamma)
+	CMSGamma(float gamma, bool sRGB=false)
 	{
-		gammatable=cmsBuildGamma(NULL,gamma);
+		if(sRGB)
+		{
+			throw "FIXME: sRGB gamma curve not yet supported.";
+//			double params[]={2.4,1.0/1.055,0.055/1.055,1.0/12.92,0.04045};
+//			gammatable=cmsBuildParametricGamma(256,4,params);
+		}
+//                    Y = (aX + b)^Gamma | X >= d
+//                    Y = cX             | X < d
+//a=1/1.055;
+//b=0.055/1.055;
+//c=1.0/12.92
+		else
+			gammatable=cmsBuildGamma(NULL,gamma);
 	}
 	~CMSGamma()
 	{
 		cmsFreeToneCurve(gammatable);
 	}
-	cmsTONECURVE *GetGammaTable()
+	cmsToneCurve *GetGammaTable()
 	{
 		return(gammatable);
 	}
 	protected:
-	cmsTONECURVE *gammatable;
+	cmsToneCurve *gammatable;
 	friend class CMSProfile;
 	friend class CMSRGBGamma;
 };
@@ -185,7 +200,7 @@ class CMSRGBGamma
 	}
 	protected:
 	CMSGamma redgamma,greengamma,bluegamma;
-	cmsTONECURVE *gammatables[3];
+	cmsToneCurve *gammatables[3];
 	friend class CMSProfile;
 };
 
