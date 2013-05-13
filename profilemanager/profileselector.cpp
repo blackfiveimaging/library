@@ -152,7 +152,7 @@ static void profileselector_build_options(ProfileSelector *c)
 		element=c->optionlist;
 		while(element)
 		{
-			g_free(element->data);
+			delete (profsel_entry *)element->data;
 			element=g_list_next(element);
 		}
 		g_list_free(c->optionlist);
