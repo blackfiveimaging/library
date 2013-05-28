@@ -192,21 +192,21 @@ void sanitycheck()
 	int i;
 	double r;
 
-	for(i=0;i<(sizeof(mmtest)/sizeof(float));++i)
+	for(i=0;i<(sizeof(mmtest)/sizeof(mmtest[0]));++i)
 	{
 		r=UNIT_MILLIMETERS_TO_POINTS(mmtest[i]);
 		printf("%lfmm -> %lfpt ",mmtest[i],r);
 		printf("(%lfmm)\n",ROUNDTONEAREST(r,POINTS_PRECISION));
 	}
 	printf("\n");
-	for(i=0;i<(sizeof(intest)/sizeof(float));++i)
+	for(i=0;i<(sizeof(intest)/sizeof(intest[0]));++i)
 	{
 		r=UNIT_INCHES_TO_POINTS(intest[i]);
 		printf("%lfin -> %lfpt ",intest[i],r);
 		printf("(%lfin)\n",ROUNDTONEAREST(r,INCHES_PRECISION));
 	}
 	printf("\n");
-	for(i=0;i<(sizeof(pttest)/sizeof(int));++i)
+	for(i=0;i<(sizeof(pttest)/sizeof(pttest[0]));++i)
 	{
 		r=UNIT_POINTS_TO_MILLIMETERS(pttest[i]);
 		printf("%dpt -> %lfmm ",pttest[i],r);
