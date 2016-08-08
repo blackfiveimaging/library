@@ -13,6 +13,8 @@
 #include "progresstext.h"
 
 
+#if 0
+#define TN_SIZE 128
 int main(int argc,char **argv)
 {
 	try
@@ -24,11 +26,11 @@ int main(int argc,char **argv)
 			free(tmpfn);
 
 			ImageSource *is=ISLoadImage(argv[i]);
-			int w=128;
-			int h=128;
-			if((w=((is->width*h)/is->height))>128)
+			int w=TN_SIZE;
+			int h=TN_SIZE;
+			if((w=((is->width*h)/is->height))>TN_SIZE)
 			{
-				w=128;
+				w=TN_SIZE;
 				h=(is->height*w)/is->width;
 			}
 			is=ISScaleImageBySize(is,w,h);
@@ -60,6 +62,40 @@ int main(int argc,char **argv)
 		
 			ProgressText p;
 			JPEGSaver s(outfn,RefCountPtr<ImageSource>(mon2),90);
+			s.SetProgress(&p);
+			s.Save();
+			free(outfn);
+		}
+	}
+	catch(const char *err)
+	{
+		cerr << "Error: " << err << endl;
+	}
+	return(0);
+}
+#endif
+
+#define TN_SIZE 750
+
+int main(int argc,char **argv)
+{
+	try
+	{
+		for(int i=1;i<argc;++i)
+		{
+			char *outfn=BuildFilename(argv[i],"_tn","jpg");
+
+			ImageSource *is=ISLoadImage(argv[i]);
+			int w=TN_SIZE;
+			int h=TN_SIZE;
+			if((w=((is->width*h)/is->height))>TN_SIZE)
+			{
+				w=TN_SIZE;
+				h=(is->height*w)/is->width;
+			}
+			is=ISScaleImageBySize(is,w,h);
+			ProgressText p;
+			JPEGSaver s(outfn,RefCountPtr<ImageSource>(is),90);
 			s.SetProgress(&p);
 			s.Save();
 			free(outfn);

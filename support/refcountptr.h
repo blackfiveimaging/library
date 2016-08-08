@@ -28,7 +28,6 @@ class RefCountPtr_Counter
 	public:
 	template <class X> friend class RefCountPtr;
 	friend class std::map<void *,RefCountPtr_Counter>;
-	private:
 	RefCountPtr_Counter(DeletionSemantics semantics=DELETION_DELETE,unsigned c = 0) : semantics(semantics), count(c)
 	{
 		Debug[MINUTIAE] << "In RefCountptr_Counter constructor" << std::endl;
@@ -64,7 +63,7 @@ class RefCountPtrBase
 	~RefCountPtrBase()
 	{
 	}
-	operator bool()	// Alows use of expressions such as "if(smartptr) ..."
+	operator bool()	// Allows use of expressions such as "if(smartptr) ..."
 	{
 		return(ptr);
 	}
