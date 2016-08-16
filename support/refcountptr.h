@@ -28,6 +28,7 @@ class RefCountPtr_Counter
 	public:
 	template <class X> friend class RefCountPtr;
 	friend class std::map<void *,RefCountPtr_Counter>;
+	friend class std::pair<void * const, RefCountPtr_Counter>;
 	private:
 	RefCountPtr_Counter(DeletionSemantics semantics=DELETION_DELETE,unsigned c = 0) : semantics(semantics), count(c)
 	{
