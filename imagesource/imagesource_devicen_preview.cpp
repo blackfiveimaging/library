@@ -160,9 +160,12 @@ ISDataType *ImageSource_DeviceN_Preview::GetRow(int row)
 			for(int x=0;x<width;++x)
 			{
 				unsigned int red=IS_SAMPLEMAX,green=IS_SAMPLEMAX,blue=IS_SAMPLEMAX;
-				for(int s=0;s<source->samplesperpixel-1;++s)
+				unsigned int a=0;
+				for(int s=0;s<sourcespp;++s)
 				{
 					unsigned int t=srcdata[x*source->samplesperpixel+s];
+					if(t)
+						a=IS_SAMPLEMAX;
 					unsigned int tr=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].red)*t)/IS_SAMPLEMAX;
 					unsigned int tg=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].green)*t)/IS_SAMPLEMAX;
 					unsigned int tb=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].blue)*t)/IS_SAMPLEMAX;
@@ -173,14 +176,17 @@ ISDataType *ImageSource_DeviceN_Preview::GetRow(int row)
 				rowbuffer[x*samplesperpixel]=red;
 				rowbuffer[x*samplesperpixel+1]=green;
 				rowbuffer[x*samplesperpixel+2]=blue;
-				rowbuffer[x*samplesperpixel+3]=srcdata[x*source->samplesperpixel+source->samplesperpixel-1];
+				if(HAS_ALPHA(source->type))
+					rowbuffer[x*samplesperpixel+3]=srcdata[x*source->samplesperpixel+source->samplesperpixel-1];
+				else
+					rowbuffer[x*samplesperpixel+3]=a;
 			}
 			break;
 		case IS_TYPE_RGB:
 			for(int x=0;x<width;++x)
 			{
 				unsigned int red=IS_SAMPLEMAX,green=IS_SAMPLEMAX,blue=IS_SAMPLEMAX;
-				for(int s=0;s<source->samplesperpixel;++s)
+				for(int s=0;s<sourcespp;++s)
 				{
 					unsigned int t=srcdata[x*source->samplesperpixel+s];
 					unsigned int tr=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].red)*t)/IS_SAMPLEMAX;
@@ -206,10 +212,10 @@ ISDataType *ImageSource_DeviceN_Preview::GetRow(int row)
 }
 
 
-ImageSource_DeviceN_Preview::ImageSource_DeviceN_Preview(struct ImageSource *source,DeviceNColorantList *cols,int firstcolorant)
+ImageSource_DeviceN_Preview::ImageSource_DeviceN_Preview(struct ImageSource *source,DeviceNColorantList *cols,bool addalpha,int firstcolorant)
 	: ImageSource(source), source(source), colorants(NULL)
 {
-	int sourcespp=source->samplesperpixel;
+	sourcespp=source->samplesperpixel;
 	if(HAS_ALPHA(type))
 	{
 		type=IS_TYPE_RGBA;
@@ -218,8 +224,16 @@ ImageSource_DeviceN_Preview::ImageSource_DeviceN_Preview(struct ImageSource *sou
 	}
 	else
 	{
-		type=IS_TYPE_RGB;
-		samplesperpixel=3;
+		if(addalpha)
+		{
+			type=IS_TYPE_RGBA;
+			samplesperpixel=4;
+		}
+		else
+		{
+			type=IS_TYPE_RGB;
+			samplesperpixel=3;
+		}
 	}
 	int c=cols->GetColorantCount();
 	if((c-firstcolorant)<sourcespp)

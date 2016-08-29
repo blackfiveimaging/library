@@ -58,11 +58,12 @@ class ISDeviceNPreview_Colorant;
 class ImageSource_DeviceN_Preview : public ImageSource
 {
 	public:
-	ImageSource_DeviceN_Preview(ImageSource *source,DeviceNColorantList *cols,int firstcolorant=0);
+	ImageSource_DeviceN_Preview(ImageSource *source,DeviceNColorantList *cols,bool addalpha=false,int firstcolorant=0);
 	~ImageSource_DeviceN_Preview();
 	ISDataType *GetRow(int row);
 	protected:
 	ImageSource *source;
+	int sourcespp;
 	ISDeviceNPreview_Colorant *colorants;
 };
 
