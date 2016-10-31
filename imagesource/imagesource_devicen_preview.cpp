@@ -166,12 +166,20 @@ ISDataType *ImageSource_DeviceN_Preview::GetRow(int row)
 					unsigned int t=srcdata[x*source->samplesperpixel+s];
 					if(t)
 						a=IS_SAMPLEMAX;
+					unsigned int tr=((IS_SAMPLEMAX-colorants[s].red)*t)/IS_SAMPLEMAX;
+					unsigned int tg=((IS_SAMPLEMAX-colorants[s].green)*t)/IS_SAMPLEMAX;
+					unsigned int tb=((IS_SAMPLEMAX-colorants[s].blue)*t)/IS_SAMPLEMAX;
+					if(tr<red) red-=tr; else red=0;
+					if(tg<green) green-=tg; else green=0;
+					if(tb<blue) blue-=tb; else blue=0;
+#if 0
 					unsigned int tr=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].red)*t)/IS_SAMPLEMAX;
 					unsigned int tg=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].green)*t)/IS_SAMPLEMAX;
 					unsigned int tb=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].blue)*t)/IS_SAMPLEMAX;
 					if(tr<red) red=tr;
 					if(tg<green) green=tg;
 					if(tb<blue) blue=tb;
+#endif
 				}
 				rowbuffer[x*samplesperpixel]=red;
 				rowbuffer[x*samplesperpixel+1]=green;
@@ -189,12 +197,20 @@ ISDataType *ImageSource_DeviceN_Preview::GetRow(int row)
 				for(int s=0;s<sourcespp;++s)
 				{
 					unsigned int t=srcdata[x*source->samplesperpixel+s];
+					unsigned int tr=((IS_SAMPLEMAX-colorants[s].red)*t)/IS_SAMPLEMAX;
+					unsigned int tg=((IS_SAMPLEMAX-colorants[s].green)*t)/IS_SAMPLEMAX;
+					unsigned int tb=((IS_SAMPLEMAX-colorants[s].blue)*t)/IS_SAMPLEMAX;
+					if(tr<red) red-=tr; else red=0;
+					if(tg<green) green-=tg; else green=0;
+					if(tb<blue) blue-=tb; else blue=0;
+#if 0
 					unsigned int tr=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].red)*t)/IS_SAMPLEMAX;
 					unsigned int tg=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].green)*t)/IS_SAMPLEMAX;
 					unsigned int tb=IS_SAMPLEMAX-((IS_SAMPLEMAX-colorants[s].blue)*t)/IS_SAMPLEMAX;
 					if(tr<red) red=tr;
 					if(tg<green) green=tg;
 					if(tb<blue) blue=tb;
+#endif
 				}
 				rowbuffer[x*samplesperpixel]=red;
 				rowbuffer[x*samplesperpixel+1]=green;
