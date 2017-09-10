@@ -29,6 +29,7 @@ class BinaryBlob;
 
 enum LCMSWrapper_Intent
 {
+	LCMSWRAPPER_INTENT_NONE=-2,		// useful if user-code wants to use an "any intent will do" value when matching/caching.
 	LCMSWRAPPER_INTENT_DEFAULT=-1,
 	LCMSWRAPPER_INTENT_PERCEPTUAL,
 	LCMSWRAPPER_INTENT_RELATIVE_COLORIMETRIC,
