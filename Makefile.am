@@ -6,7 +6,7 @@ localedir=$(datadir)/locale
 
 AM_CXXFLAGS = -DLOCALEDIR=\"$(localedir)\" -Wall -I./support/ -I./layoutsupport -I./imagesource/ -I./imageutils -I./splashscreen \
 	-I./miscwidgets -I./profilemanager -I./effects \
-	$(LCMS_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
+	$(LCMS_CFLAGS) $(LCMS2_CFLAGS) $(GP_CFLAGS) $(GTK2_CFLAGS)
 
 check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				mkrgbprofile mklabprofile mkgreyprofile \
@@ -55,7 +55,7 @@ LDADD = \
 	stpui_widgets/libstpui_widgets.la	\
 	stp_support/libstp_support.la \
 	pixbufthumbnail/libpixbufthumbnail.la	\
-	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(GP_LIBS) $(GTK2_LIBS)
+	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(LCMS2_LIBS) $(GP_LIBS) $(GTK2_LIBS)
 
 
 imagesource/libimagesource.la:
@@ -87,7 +87,7 @@ pixbufthumbnail/libpixbufthumbnail.la:
 	$(MAKE) libpixbufthumbnail.la
 
 
-EXTRA_DIST = COPYING README TODO gettext.h
+EXTRA_DIST = m4/ChangeLog  COPYING README TODO gettext.h
 
 
 ACLOCAL_AMFLAGS = -I m4

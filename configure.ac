@@ -8,7 +8,7 @@ AC_CONFIG_SRCDIR([threadtest.cpp])
 AM_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([1.9 foreign])
 
-AM_GNU_GETTEXT_VERSION([0.18.1])
+AM_GNU_GETTEXT_VERSION([0.19.7])
 AM_GNU_GETTEXT([external])
 
 # Checks for programs.
@@ -41,7 +41,8 @@ AS_IF([test "x$with_ui" != xno],
 	PKG_CHECK_MODULES(X11, x11, [HAVE_X11=yes], [HAVE_X11=no])
 ])
 PKG_CHECK_MODULES([GP], [gutenprint])
-PKG_CHECK_MODULES([LCMS], [lcms])
+PKG_CHECK_MODULES([LCMS2], [lcms2],[AC_DEFINE([HAVE_LCMS2], [1], [Use LCMS2])],
+    [PKG_CHECK_MODULES([LCMS], [lcms],[AC_DEFINE([HAVE_LCMS], [1], [Use LCMS1])])])
 AC_CHECK_LIB(m,pow, LIBM_LIBS="-lm")
 AC_SUBST([LIBM_LIBS])
 AC_CHECK_LIB([pnm], [pnm_readpaminit],,,[-lm])
