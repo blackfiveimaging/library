@@ -12,7 +12,7 @@
 #include "util.h"
 #include "progresstext.h"
 
-
+#if 0
 int main(int argc,char **argv)
 {
 	try
@@ -71,3 +71,37 @@ int main(int argc,char **argv)
 	}
 	return(0);
 }
+#endif
+
+int main(int argc,char **argv)
+{
+	try
+	{
+		for(int i=1;i<argc;++i)
+		{
+			char *tmpfn=BuildFilename(argv[i],"_tn","jpg");
+
+			ImageSource *is=ISLoadImage(argv[i]);
+			int w=1000;
+			int h=1000;
+			if((w=((is->width*h)/is->height))>1000)
+			{
+				w=1000;
+				h=(is->height*w)/is->width;
+			}
+			is=ISScaleImageBySize(is,w,h);
+		
+			ProgressText p;
+			JPEGSaver s(tmpfn,RefCountPtr<ImageSource>(is),90);
+			s.SetProgress(&p);
+			s.Save();
+			free(tmpfn);
+		}
+	}
+	catch(const char *err)
+	{
+		cerr << "Error: " << err << endl;
+	}
+	return(0);
+}
+
