@@ -39,6 +39,7 @@ AS_IF([test "x$with_ui" != xno],
 	# Since the ProfileManager fetches an X atom from the server, we need to link with X11
 	# explicitly on some systems
     AC_CHECK_LIB(X11, XInternAtom, LIBX11_LIBS="-lX11")
+    AC_SUBST([LIBX11_LIBS])
 ])
 PKG_CHECK_MODULES([GP], [gutenprint])
 PKG_CHECK_MODULES([LCMS2], [lcms2],[AC_DEFINE([HAVE_LCMS2], [1], [Use LCMS2])],

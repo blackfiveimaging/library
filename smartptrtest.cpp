@@ -2,6 +2,7 @@
 #include <cstring>
 #include <memory>
 #include <cstdlib>
+#include <unistd.h>
 
 #include "config.h"
 

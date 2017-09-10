@@ -16,10 +16,9 @@ check_PROGRAMS = dirtreetest jpegscan jpegcheck \
 				smartptrtest imgsinktest sendserial
 
 
-bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest mmmenugfx misctest
+bin_PROGRAMS = threadtest gprintertest mkthumbnail profileuitest pvtest configtest mmmenugfx
 
 sendserial_SOURCES = sendserial.cpp
-misctest_SOURCES = misctest.cpp
 mmmenugfx_SOURCES = mmmenugfx.cpp
 configtest_SOURCES = configtest.cpp
 debugtest_SOURCES = debugtest.cpp
