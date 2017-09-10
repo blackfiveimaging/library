@@ -26,8 +26,8 @@
 #define _(x) gettext(x)
 #define N_(x) gettext_noop(x)
 
+#include "lcmswrapper_lcms2.h"
 #include "imagesource.h"
-#include "lcmswrapper.h"
 
 using namespace std;
 
@@ -51,10 +51,43 @@ CMSProfile::CMSProfile(const char *fn) : md5(NULL), generated(false), filename(N
 	if(!(prof=cmsOpenProfileFromFile(filename,"r")))
 		throw "Can't open profile";
 
-	CalcMD5();
+	CalcMD5FromFile();
 }
 
 
+// CalcMD5 has been split because it's getting harder to determine algorithmically which method should be used.
+// Much more predictable to call the right variant explicity in the constructors.
+
+void CMSProfile::CalcMD5FromGenerated()
+{
+	Debug[TRACE] << "Saving profile to RAM for MD5 calculation." << endl;
+	cmsUInt32Number plen=0;
+	cmsSaveProfileToMem(prof,NULL,&plen);
+	if(plen>0)
+	{
+		cerr << "Plen = " << plen << endl;
+		buflen=plen;
+		buffer=(char *)malloc(buflen);
+		if(cmsSaveProfileToMem(prof,buffer,&plen))
+		{
+			cerr << "Saved successfully" << endl;
+			md5=new MD5Digest(buffer+sizeof(cmsICCHeader),buflen-sizeof(cmsICCHeader));
+		}
+	}
+}
+
+void CMSProfile::CalcMD5FromFile()
+{
+	BinaryBlob blob(filename);
+	md5=new MD5Digest(blob.GetPointer()+sizeof(cmsICCHeader),blob.GetSize()-sizeof(cmsICCHeader));
+}
+
+void CMSProfile::CalcMD5FromMem()
+{
+	md5=new MD5Digest(buffer+sizeof(cmsICCHeader),buflen-sizeof(cmsICCHeader));
+}
+
+#if 0
 void CMSProfile::CalcMD5()
 {
 	if(generated)
@@ -92,6 +125,7 @@ void CMSProfile::CalcMD5()
 		md5=new MD5Digest(buffer+sizeof(cmsICCHeader),buflen-sizeof(cmsICCHeader));
 	}
 }
+#endif
 
 
 CMSProfile::CMSProfile(CMSRGBPrimaries &primaries,CMSRGBGamma &gamma,CMSWhitePoint &whitepoint)
@@ -99,7 +133,7 @@ CMSProfile::CMSProfile(CMSRGBPrimaries &primaries,CMSRGBGamma &gamma,CMSWhitePoi
 {
 	if(!(prof=cmsCreateRGBProfile(&whitepoint.whitepoint,&primaries,gamma.gammatables)))
 		throw "Can't create virtual RGB profile";
-	CalcMD5();
+	CalcMD5FromGenerated();
 }
 
 
@@ -108,7 +142,7 @@ CMSProfile::CMSProfile(CMSGamma &gamma,CMSWhitePoint &whitepoint)
 {
 	if(!(prof=cmsCreateGrayProfile(&whitepoint.whitepoint,gamma.GetGammaTable())))
 		throw "Can't create virtual Grey profile";
-	CalcMD5();
+	CalcMD5FromGenerated();
 }
 
 
@@ -117,7 +151,7 @@ CMSProfile::CMSProfile(CMSWhitePoint &whitepoint)
 {
 	if(!(prof=cmsCreateLab2Profile(&whitepoint.whitepoint)))
 		throw "Can't create virtual LAB profile";
-	CalcMD5();
+	CalcMD5FromGenerated();
 }
 
 
@@ -129,16 +163,36 @@ CMSProfile::CMSProfile(char *srcbuf,int length)
 	memcpy(buffer,srcbuf,buflen);
 	if(!(prof=cmsOpenProfileFromMem(buffer,buflen)))
 		throw "Can't open profile";
-	CalcMD5();
+	CalcMD5FromMem();
 }
 
 
-CMSProfile::CMSProfile()
+CMSProfile::CMSProfile(IS_TYPE type)
 	: md5(NULL), generated(true), filename(NULL), buffer(NULL), buflen(0)
 {
-	if(!(prof=cmsCreate_sRGBProfile()))
-		throw "Can't create virtual sRGB profile";
-	CalcMD5();
+	switch(type)
+	{
+		case IS_TYPE_RGB:
+			Debug[TRACE] << "Generating virtual sRGB profile" << endl;
+			if(!(prof=cmsCreate_sRGBProfile()))
+				throw "Can't create virtual sRGB profile";
+			break;
+		case IS_TYPE_GREY:
+			Debug[TRACE] << "Generating virtual sGrey profile" << endl;
+			{
+				CMSGamma gamma(2.4,true);
+				CMSWhitePoint wp(6500);
+				if(!(prof=cmsCreateGrayProfile(&wp.whitepoint,gamma.GetGammaTable())))
+					throw "Can't create virtual sRGB profile";
+			}
+			break;
+			break;
+		default:
+			throw "CMSProfile: asked to create a default profile for an unhandled colourspace.";
+			break;		
+	}
+	CalcMD5FromGenerated();
+	Debug[TRACE] << "Buffer: " << long(buffer) << endl;
 }
 
 
@@ -331,6 +385,20 @@ MD5Digest *CMSProfile::GetMD5()
 }
 
 
+BinaryBlob *CMSProfile::GetBlob()
+{
+	BinaryBlob *result=NULL;
+	if(filename)
+		result=new BinaryBlob(filename);
+	if(!result && buffer)
+	{
+		Debug[TRACE] << "Creating binary blob from " << long(buffer) << ", " << buflen << endl;
+		result=new BinaryBlob(buffer,buflen);
+	}
+	return(result);
+}
+
+
 const char *CMSProfile::GetFilename()
 {
 	return(filename);
@@ -390,14 +458,14 @@ std::ostream& operator<<(std::ostream &s,CMSProfile &cp)
 }
 
 
-CMSTransform::CMSTransform()
+CMSTransform::CMSTransform() : transform(NULL)
 {
 	inputtype=IS_TYPE_NULL;
 	outputtype=IS_TYPE_NULL;
 }
 
 
-CMSTransform::CMSTransform(CMSProfile *in,CMSProfile *out,LCMSWrapper_Intent intent)
+CMSTransform::CMSTransform(CMSProfile *in,CMSProfile *out,LCMSWrapper_Intent intent) : transform(NULL)
 {
 	inputtype=in->GetColourSpace();
 	outputtype=out->GetColourSpace();
@@ -405,7 +473,7 @@ CMSTransform::CMSTransform(CMSProfile *in,CMSProfile *out,LCMSWrapper_Intent int
 }
 
 
-CMSTransform::CMSTransform(CMSProfile *devicelink,LCMSWrapper_Intent intent)
+CMSTransform::CMSTransform(CMSProfile *devicelink,LCMSWrapper_Intent intent) : transform(NULL)
 {
 	inputtype=devicelink->GetColourSpace();
 	outputtype=devicelink->GetDeviceLinkOutputSpace();
@@ -413,7 +481,7 @@ CMSTransform::CMSTransform(CMSProfile *devicelink,LCMSWrapper_Intent intent)
 }
 
 
-CMSTransform::CMSTransform(CMSProfile *profiles[],int profilecount,LCMSWrapper_Intent intent)
+CMSTransform::CMSTransform(CMSProfile *profiles[],int profilecount,LCMSWrapper_Intent intent) : transform(NULL)
 {
 	inputtype=profiles[0]->GetColourSpace();
 	if(profiles[profilecount-1]->IsDeviceLink())
@@ -686,7 +754,8 @@ CMSProofingTransform::CMSProofingTransform(CMSProfile *in,CMSProfile *out,CMSPro
 		ot,
 		proof->prof,
 		CMS_GetLCMSIntent(proofintent),
-		CMS_GetLCMSIntent(viewintent), CMS_GetLCMSFlags(proofintent)|cmsFLAGS_SOFTPROOFING);}
+		CMS_GetLCMSIntent(viewintent), CMS_GetLCMSFlags(proofintent)|cmsFLAGS_SOFTPROOFING);
+}
 
 
 CMSProofingTransform::CMSProofingTransform(CMSProfile *devicelink,CMSProfile *proof,int proofintent,int viewintent)
@@ -743,4 +812,5 @@ CMSProofingTransform::CMSProofingTransform(CMSProfile *devicelink,CMSProfile *pr
 		ot,
 		proof->prof,
 		CMS_GetLCMSIntent(proofintent),
-		CMS_GetLCMSIntent(viewintent), CMS_GetLCMSFlags(proofintent)|cmsFLAGS_SOFTPROOFING);}
+		CMS_GetLCMSIntent(viewintent), CMS_GetLCMSFlags(proofintent)|cmsFLAGS_SOFTPROOFING);
+}

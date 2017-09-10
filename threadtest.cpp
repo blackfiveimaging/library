@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstring>
 
+#include <unistd.h>
+
 #include "config.h"
 
 #include "support/debug.h"

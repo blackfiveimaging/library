@@ -55,7 +55,7 @@ LDADD = \
 	stpui_widgets/libstpui_widgets.la	\
 	stp_support/libstp_support.la \
 	pixbufthumbnail/libpixbufthumbnail.la	\
-	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(LCMS2_LIBS) $(GP_LIBS) $(GTK2_LIBS)
+	$(LIBINTL) $(LIBM_LIBS) $(GETOPT_LIBS) $(JPEG_LIBS) $(PNM_LIBS) $(TIFF_LIBS) $(LCMS_LIBS) $(LCMS2_LIBS) $(GP_LIBS) $(GTK2_LIBS) $(LIBX11_LIBS)
 
 
 imagesource/libimagesource.la:

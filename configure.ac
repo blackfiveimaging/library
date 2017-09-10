@@ -38,7 +38,7 @@ AS_IF([test "x$with_ui" != xno],
 	PKG_CHECK_MODULES([GDKPIXBUF2], [gdk-pixbuf-2.0])
 	# Since the ProfileManager fetches an X atom from the server, we need to link with X11
 	# explicitly on some systems
-	PKG_CHECK_MODULES(X11, x11, [HAVE_X11=yes], [HAVE_X11=no])
+    AC_CHECK_LIB(X11, XInternAtom, LIBX11_LIBS="-lX11")
 ])
 PKG_CHECK_MODULES([GP], [gutenprint])
 PKG_CHECK_MODULES([LCMS2], [lcms2],[AC_DEFINE([HAVE_LCMS2], [1], [Use LCMS2])],
