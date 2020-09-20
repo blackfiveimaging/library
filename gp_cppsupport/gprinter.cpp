@@ -231,7 +231,7 @@ static void parameter_help(stp_parameter_t &dparam)
 			break;
 		case STP_PARAMETER_TYPE_INVALID:
 			printf("Parameter: %s\n",dparam.name);
-			printf("  Paramter not valid for this printer\n");
+			printf("  Parameter not valid for this printer\n");
 			break;
 		default:
 //			printf("Parameter: %s\n",dparam.name);
