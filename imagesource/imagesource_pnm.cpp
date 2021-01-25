@@ -46,7 +46,7 @@ ISDataType *ImageSource_PNM::GetRow(int row)
 		throw "Random access not yet supported in PNM files!";
 
 	for(;currentrow<row;++currentrow)
-		pnm_readpamrow(&header,tuplerow);
+		pnm::pnm_readpamrow(&header,tuplerow);
 	dst=rowbuffer;
 	
 	switch(samplesperpixel)
@@ -55,7 +55,7 @@ ISDataType *ImageSource_PNM::GetRow(int row)
 		case 3:
 			for(x=0;x<width;++x)
 			{
-				sample s=tuplerow[x][0];
+				pnm::sample s=tuplerow[x][0];
 				*dst++=(s*IS_SAMPLEMAX)/header.maxval;
 				s=tuplerow[x][1];
 				*dst++=(s*IS_SAMPLEMAX)/header.maxval;
@@ -89,14 +89,14 @@ ImageSource_PNM::ImageSource_PNM(const char *filename)
 	char *argv[]={"PNMLoader",0};
 	int argc=1;
 
-	pnm_init(&argc,argv);
+	pnm::pnm_init(&argc,argv);
 
 	if(!(file=FOpenUTF8(filename,"rb")))
 		throw "Can't open file";
 
 	Debug[TRACE] << "Attempting to read PNM file..." << endl;
 
-	pnm_readpaminit(file, &header, sizeof(struct pam));
+	pnm::pnm_readpaminit(file, &header, sizeof(struct pnm::pam));
 
 	width=header.width;
 	height=header.height;
@@ -119,7 +119,7 @@ ImageSource_PNM::ImageSource_PNM(const char *filename)
 			break;
 	}
 
-	tuplerow = pnm_allocpamrow(&header);
+	tuplerow = pnm::pnm_allocpamrow(&header);
 
 	MakeRowBuffer();
 }

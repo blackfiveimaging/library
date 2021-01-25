@@ -24,11 +24,13 @@
 
 extern "C"
 {
-#ifdef HAVE_NETPBM_PAM_H
-#include <netpbm/pam.h>
-#else
-#include <pam.h>
-#endif
+	namespace pnm {
+		#ifdef HAVE_NETPBM_PAM_H
+		#include <netpbm/pam.h>
+		#else
+		#include <pam.h>
+		#endif
+	}
 }
 
 using namespace std;
@@ -41,8 +43,8 @@ class ImageSource_PNM : public ImageSource
 	ISDataType *GetRow(int row);
 	private:
 	FILE *file;
-	struct pam header;
-	tuple *tuplerow;
+	struct pnm::pam header;
+	pnm::tuple *tuplerow;
 };
 
 #endif // HAVE_LIB...
